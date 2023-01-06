@@ -1,0 +1,35 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ trunk ]
+
+jobs:
+
+  tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Cache Nim and Nimble
+      id: cache-nim
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.nimble
+          ~/.choosenim
+        key: ${{ runner.os }}-nim
+
+    - name: Setup Nim
+      uses: jiro4989/setup-nim-action@v1
+      with:
+        nim-version: '1.6.10'
+
+    - name: Debug build
+      run: nimble debug
+
+    - name: Run tests
+      run: nimble tests
