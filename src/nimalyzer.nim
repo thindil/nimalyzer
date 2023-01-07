@@ -26,9 +26,9 @@
 ## This is the main module of the program.
 
 # Standard library imports
-import std/[logging, os]
+import std/[logging, os, strutils]
 # External modules imports
-# Internal imports
+# Nimalyzer rules imports
 
 proc main() =
   # Set the logger, where the program output will be send
@@ -36,16 +36,26 @@ proc main() =
   logger.log(lvlInfo, "Starting nimalyzer ver 0.1.0")
   # No configuration file specified, quit from the program
   if paramCount() == 0:
-    logger.log(lvlError, "No configuration file specified. Please run the program with path to the config file as an argument.")
+    logger.log(lvlFatal, "No configuration file specified. Please run the program with path to the config file as an argument.")
     logger.log(lvlInfo, "Stopping nimalyzer.")
     quit QuitFailure
   # Read the configuration file and set the program
   let configFile = paramStr(i = 1)
+  var sources: seq[string]
   try:
     for line in configFile.lines:
-      echo line
+      if line.startsWith(prefix = '#') or line.len == 0:
+        continue
+      elif line.startsWith(prefix = "source"):
+        sources.add(y = line[7..^1])
+        logger.log(lvlDebug, "Added file '" & sources[^1] & "' to the list of files to check.")
   except IOError:
-    logger.log(lvlError, "The specified configuration file '" & configFile & "' doesn't exist.")
+    logger.log(lvlFatal, "The specified configuration file '" & configFile & "' doesn't exist.")
+    logger.log(lvlInfo, "Stopping nimalyzer.")
+    quit QuitFailure
+  # Check if the list of sorce code files is set
+  if sources.len == 0:
+    logger.log(lvlFatal, "No files specified to check. Please enter any files names to the configuration file.")
     logger.log(lvlInfo, "Stopping nimalyzer.")
     quit QuitFailure
   logger.log(lvlInfo, "Stopping nimalyzer.")
