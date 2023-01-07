@@ -29,6 +29,9 @@
 import std/[logging, os, strutils]
 # External modules imports
 # Nimalyzer rules imports
+import rules/[haspragma]
+
+const availableRules = [haspragma.ruleName]
 
 proc main() =
   # Set the logger, where the program output will be send
@@ -41,7 +44,7 @@ proc main() =
     quit QuitFailure
   # Read the configuration file and set the program
   let configFile = paramStr(i = 1)
-  var sources: seq[string]
+  var sources, rules: seq[string]
   try:
     for line in configFile.lines:
       if line.startsWith(prefix = '#') or line.len == 0:
@@ -49,13 +52,25 @@ proc main() =
       elif line.startsWith(prefix = "source"):
         sources.add(y = line[7..^1])
         logger.log(lvlDebug, "Added file '" & sources[^1] & "' to the list of files to check.")
+      elif line.startsWith(prefix = "check"):
+        let ruleName = line[6..line.find(sub = ' ', start = 6) - 1]
+        if ruleName.toLowerAscii notin availableRules:
+          logger.log(lvlFatal, "No rule named '" & ruleName & "' available.")
+          logger.log(lvlInfo, "Stopping nimalyzer.")
+          quit QuitFailure
+        rules.add(y = ruleName)
   except IOError:
     logger.log(lvlFatal, "The specified configuration file '" & configFile & "' doesn't exist.")
     logger.log(lvlInfo, "Stopping nimalyzer.")
     quit QuitFailure
-  # Check if the list of sorce code files is set
+  # Check if the list of source code files is set
   if sources.len == 0:
     logger.log(lvlFatal, "No files specified to check. Please enter any files names to the configuration file.")
+    logger.log(lvlInfo, "Stopping nimalyzer.")
+    quit QuitFailure
+  # Check if the list of rules is set
+  if rules.len == 0:
+    logger.log(lvlFatal, "No rules specified to check. Please enter any rule names to the configuration file.")
     logger.log(lvlInfo, "Stopping nimalyzer.")
     quit QuitFailure
   logger.log(lvlInfo, "Stopping nimalyzer.")
