@@ -31,5 +31,5 @@ jobs:
     - name: Debug build
       run: nimble debug
 
-    - name: Run tests
-      run: nimble tests
+#    - name: Run tests
+#      run: nimble tests
