@@ -26,12 +26,10 @@
 ## This is the main module of the program.
 
 # Standard library imports
-import std/[logging, os, strutils]
+import std/[logging, os, parseopt, strutils]
 # External modules imports
 # Nimalyzer rules imports
 import rules/[haspragma]
-
-const availableRules = [haspragma.ruleName]
 
 proc main() =
   # Set the logger, where the program output will be send
@@ -42,9 +40,13 @@ proc main() =
     logger.log(lvlFatal, "No configuration file specified. Please run the program with path to the config file as an argument.")
     logger.log(lvlInfo, "Stopping nimalyzer.")
     quit QuitFailure
+  const availableRules = [haspragma.ruleName]
   # Read the configuration file and set the program
   let configFile = paramStr(i = 1)
-  var sources, rules: seq[string]
+  type Rule = tuple[name: string, options: string]
+  var
+    sources: seq[string]
+    rules: seq[Rule]
   try:
     for line in configFile.lines:
       if line.startsWith(prefix = '#') or line.len == 0:
@@ -53,12 +55,15 @@ proc main() =
         sources.add(y = line[7..^1])
         logger.log(lvlDebug, "Added file '" & sources[^1] & "' to the list of files to check.")
       elif line.startsWith(prefix = "check"):
-        let ruleName = line[6..line.find(sub = ' ', start = 6) - 1]
-        if ruleName.toLowerAscii notin availableRules:
+        var checkRule = initOptParser(cmdline = line)
+        checkRule.next
+        checkRule.next
+        let ruleName = checkRule.key.toLowerAscii
+        if ruleName notin availableRules:
           logger.log(lvlFatal, "No rule named '" & ruleName & "' available.")
           logger.log(lvlInfo, "Stopping nimalyzer.")
           quit QuitFailure
-        rules.add(y = ruleName)
+        rules.add(y = (name: ruleName, options: checkRule.cmdLineRest))
   except IOError:
     logger.log(lvlFatal, "The specified configuration file '" & configFile & "' doesn't exist.")
     logger.log(lvlInfo, "Stopping nimalyzer.")
