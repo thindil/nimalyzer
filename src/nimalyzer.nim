@@ -31,19 +31,22 @@ import std/[logging, os, parseopt, strutils]
 # Nimalyzer rules imports
 import rules/[haspragma]
 
+proc abortProgram(logger: ConsoleLogger; message: string) =
+  logger.log(lvlFatal, message)
+  logger.log(lvlInfo, "Stopping nimalyzer.")
+  quit QuitFailure
+
 proc main() =
   # Set the logger, where the program output will be send
   let logger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
   logger.log(lvlInfo, "Starting nimalyzer ver 0.1.0")
   # No configuration file specified, quit from the program
   if paramCount() == 0:
-    logger.log(lvlFatal, "No configuration file specified. Please run the program with path to the config file as an argument.")
-    logger.log(lvlInfo, "Stopping nimalyzer.")
-    quit QuitFailure
+    abortProgram(logger, "No configuration file specified. Please run the program with path to the config file as an argument.")
   const availableRules = [haspragma.ruleName]
   # Read the configuration file and set the program
   let configFile = paramStr(i = 1)
-  type Rule = tuple[name: string, options: string]
+  type Rule = tuple[name: string; options: string]
   var
     sources: seq[string]
     rules: seq[Rule]
@@ -65,19 +68,12 @@ proc main() =
           quit QuitFailure
         rules.add(y = (name: ruleName, options: checkRule.cmdLineRest))
   except IOError:
-    logger.log(lvlFatal, "The specified configuration file '" & configFile & "' doesn't exist.")
-    logger.log(lvlInfo, "Stopping nimalyzer.")
-    quit QuitFailure
-  # Check if the list of source code files is set
+    abortProgram(logger, "The specified configuration file '" & configFile & "' doesn't exist.")
+  # Check if the lists of source code files and rules is set
   if sources.len == 0:
-    logger.log(lvlFatal, "No files specified to check. Please enter any files names to the configuration file.")
-    logger.log(lvlInfo, "Stopping nimalyzer.")
-    quit QuitFailure
-  # Check if the list of rules is set
+    abortProgram(logger, "No files specified to check. Please enter any files names to the configuration file.")
   if rules.len == 0:
-    logger.log(lvlFatal, "No rules specified to check. Please enter any rule names to the configuration file.")
-    logger.log(lvlInfo, "Stopping nimalyzer.")
-    quit QuitFailure
+    abortProgram(logger, "No rules specified to check. Please enter any rule configuration to the configuration file.")
   logger.log(lvlInfo, "Stopping nimalyzer.")
 
 when isMainModule:
