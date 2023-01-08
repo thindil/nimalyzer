@@ -65,6 +65,7 @@ proc main() =
         if ruleName notin availableRules:
           abortProgram(logger, "No rule named '" & ruleName & "' available.")
         rules.add(y = (name: ruleName, options: checkRule.cmdLineRest))
+        logger.log(lvlDebug, "Added rule '" & rules[^1].name & "' to the list of rules to check.")
   except IOError:
     abortProgram(logger, "The specified configuration file '" & configFile & "' doesn't exist.")
   # Check if the lists of source code files and rules is set
@@ -72,6 +73,14 @@ proc main() =
     abortProgram(logger, "No files specified to check. Please enter any files names to the configuration file.")
   if rules.len == 0:
     abortProgram(logger, "No rules specified to check. Please enter any rule configuration to the configuration file.")
+  # Check source code files with the selected rules
+  for i in 0..sources.len - 1:
+    logger.log(lvlInfo, "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" & sources[i] & "'")
+    try:
+      let code = readFile(sources[i])
+      echo $code
+    except IOError:
+      logger.log(lvlError, "Can't parse '" & sources[i] & "'. Reason: " & getCurrentExceptionMsg())
   logger.log(lvlInfo, "Stopping nimalyzer.")
 
 when isMainModule:
