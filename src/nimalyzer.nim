@@ -63,9 +63,7 @@ proc main() =
         checkRule.next
         let ruleName = checkRule.key.toLowerAscii
         if ruleName notin availableRules:
-          logger.log(lvlFatal, "No rule named '" & ruleName & "' available.")
-          logger.log(lvlInfo, "Stopping nimalyzer.")
-          quit QuitFailure
+          abortProgram(logger, "No rule named '" & ruleName & "' available.")
         rules.add(y = (name: ruleName, options: checkRule.cmdLineRest))
   except IOError:
     abortProgram(logger, "The specified configuration file '" & configFile & "' doesn't exist.")
