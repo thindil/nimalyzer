@@ -27,6 +27,7 @@
 
 # Standard library imports
 import std/[logging, os, parseopt, strutils]
+import compiler/[idents, options, parser, renderer]
 # External modules imports
 # Nimalyzer rules imports
 import rules/[haspragma]
@@ -73,12 +74,15 @@ proc main() =
     abortProgram(logger, "No files specified to check. Please enter any files names to the configuration file.")
   if rules.len == 0:
     abortProgram(logger, "No rules specified to check. Please enter any rule configuration to the configuration file.")
+  let
+    nimCache = newIdentCache()
+    nimConfig = newConfigRef()
+  nimConfig.options.excl(optHints)
   # Check source code files with the selected rules
   for i in 0..sources.len - 1:
     logger.log(lvlInfo, "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" & sources[i] & "'")
     try:
-      let code = readFile(sources[i])
-      echo $code
+      let code = readFile(sources[i]).parseString(nimCache, nimConfig)
     except IOError:
       logger.log(lvlError, "Can't parse '" & sources[i] & "'. Reason: " & getCurrentExceptionMsg())
   logger.log(lvlInfo, "Stopping nimalyzer.")
