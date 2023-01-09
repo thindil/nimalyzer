@@ -27,7 +27,7 @@
 
 # Standard library imports
 import std/[logging, os, parseopt, strutils]
-import compiler/[idents, llstream, options, parser, pathutils, renderer]
+import compiler/[idents, llstream, options, parser, pathutils]
 # External modules imports
 # Nimalyzer rules imports
 import rules/[haspragma]
