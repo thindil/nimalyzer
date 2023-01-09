@@ -27,7 +27,7 @@
 
 # Standard library imports
 import std/[logging, os, parseopt, strutils]
-import compiler/[idents, options, parser, renderer]
+import compiler/[idents, llstream, options, parser, pathutils, renderer]
 # External modules imports
 # Nimalyzer rules imports
 import rules/[haspragma]
@@ -88,11 +88,14 @@ proc main() =
   for i in 0..sources.len - 1:
     logger.log(lvlInfo, "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
         sources[i] & "'")
-    try:
-      let code = readFile(sources[i]).parseString(nimCache, nimConfig)
-    except IOError:
-      logger.log(lvlError, "Can't parse '" & sources[i] & "'. Reason: " &
-          getCurrentExceptionMsg())
+    var codeParser: Parser
+    let fileName = toAbsolute(file = sources[i], base = toAbsoluteDir(
+        path = getCurrentDir()))
+    openParser(p = codeParser, filename = fileName, llStreamOpen(
+        filename = fileName, mode = fmRead), cache = nimCache,
+        config = nimConfig)
+    # TODO: check rules
+    codeParser.closeParser()
   logger.log(lvlInfo, "Stopping nimalyzer.")
 
 when isMainModule:
