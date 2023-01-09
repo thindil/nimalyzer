@@ -27,7 +27,7 @@
 
 # Standard library imports
 import std/[logging, os, parseopt, strutils]
-import compiler/[idents, llstream, options, parser, pathutils]
+import compiler/[idents, lexer, llstream, options, parser, pathutils]
 # External modules imports
 # Nimalyzer rules imports
 import rules/[haspragma]
@@ -96,12 +96,14 @@ proc main() =
     openParser(p = codeParser, filename = fileName, llStreamOpen(
         filename = fileName, mode = fmRead), cache = nimCache,
         config = nimConfig)
-    for rule in rules:
-      if not rulesCalls[rulesNames.find(item = rule.name)](
-          codeParser = codeParser, fileName = sources[i],
-          options = rule.options, logger = logger) and resultCode == QuitSuccess:
-        resultCode = QuitFailure
-    codeParser.closeParser()
+    while codeParser.tok.tokType != tkEof:
+      for rule in rules:
+        if not rulesCalls[rulesNames.find(item = rule.name)](
+            codeParser = codeParser, fileName = sources[i],
+            options = rule.options, logger = logger) and resultCode == QuitSuccess:
+          resultCode = QuitFailure
+      codeParser.getTok
+    codeParser.closeParser
   logger.log(lvlInfo, "Stopping nimalyzer.")
   quit resultCode
 
