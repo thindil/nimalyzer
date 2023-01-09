@@ -26,6 +26,12 @@
 ## The rule to check if the selected procedure has the selected pragma
 
 # Standard library imports
+import std/logging
+import compiler/parser
 # External modules imports
 
 const ruleName* = "haspragma"
+
+proc ruleCheck*(codeParser: Parser; fileName: string; options: seq[string];
+    logger: ConsoleLogger): bool =
+  return true
