@@ -47,7 +47,7 @@ proc main() =
   const availableRules = [haspragma.ruleName]
   # Read the configuration file and set the program
   let configFile = paramStr(i = 1)
-  type Rule = tuple[name: string; options: string]
+  type Rule = tuple[name: string; options: seq[string]]
   var
     sources: seq[string]
     rules: seq[Rule]
@@ -62,11 +62,17 @@ proc main() =
         var checkRule = initOptParser(cmdline = line)
         checkRule.next
         checkRule.next
-        let ruleName = checkRule.key.toLowerAscii
-        if ruleName notin availableRules:
+        var newRule: Rule = (name: checkRule.key.toLowerAscii, options: @[])
+        if newRule.name notin availableRules:
           abortProgram(logger, "No rule named '" & ruleName & "' available.")
-        rules.add(y = (name: ruleName, options: checkRule.cmdLineRest))
-        logger.log(lvlDebug, "Added rule '" & rules[^1].name & "' to the list of rules to check.")
+        while true:
+          checkRule.next()
+          if checkRule.kind == cmdEnd:
+            break
+          newRule.options.add(y = checkRule.key)
+        rules.add(y = newRule)
+        logger.log(lvlDebug, "Added rule '" & rules[^1].name &
+            "' with options: '" & rules[^1].options.join(", ") & "' to the list of rules to check.")
   except IOError:
     abortProgram(logger, "The specified configuration file '" & configFile & "' doesn't exist.")
   # Check if the lists of source code files and rules is set
@@ -80,11 +86,13 @@ proc main() =
   nimConfig.options.excl(optHints)
   # Check source code files with the selected rules
   for i in 0..sources.len - 1:
-    logger.log(lvlInfo, "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" & sources[i] & "'")
+    logger.log(lvlInfo, "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
+        sources[i] & "'")
     try:
       let code = readFile(sources[i]).parseString(nimCache, nimConfig)
     except IOError:
-      logger.log(lvlError, "Can't parse '" & sources[i] & "'. Reason: " & getCurrentExceptionMsg())
+      logger.log(lvlError, "Can't parse '" & sources[i] & "'. Reason: " &
+          getCurrentExceptionMsg())
   logger.log(lvlInfo, "Stopping nimalyzer.")
 
 when isMainModule:
