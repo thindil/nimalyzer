@@ -44,7 +44,7 @@ proc main() =
   # No configuration file specified, quit from the program
   if paramCount() == 0:
     abortProgram(logger, "No configuration file specified. Please run the program with path to the config file as an argument.")
-  const availableRules = [haspragma.ruleName]
+  const rulesNames = [haspragma.ruleName]
   # Read the configuration file and set the program
   let configFile = paramStr(i = 1)
   type Rule = tuple[name: string; options: seq[string]]
@@ -63,7 +63,7 @@ proc main() =
         checkRule.next
         checkRule.next
         var newRule: Rule = (name: checkRule.key.toLowerAscii, options: @[])
-        if newRule.name notin availableRules:
+        if newRule.name notin rulesNames:
           abortProgram(logger, "No rule named '" & ruleName & "' available.")
         while true:
           checkRule.next()
@@ -84,6 +84,8 @@ proc main() =
     nimCache = newIdentCache()
     nimConfig = newConfigRef()
   nimConfig.options.excl(optHints)
+  const rulesCalls = [haspragma.ruleCheck]
+  var resultCode = QuitSuccess
   # Check source code files with the selected rules
   for i in 0..sources.len - 1:
     logger.log(lvlInfo, "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
@@ -94,9 +96,14 @@ proc main() =
     openParser(p = codeParser, filename = fileName, llStreamOpen(
         filename = fileName, mode = fmRead), cache = nimCache,
         config = nimConfig)
-    # TODO: check rules
+    for rule in rules:
+      if not rulesCalls[rulesNames.find(item = rule.name)](
+          codeParser = codeParser, fileName = sources[i],
+          options = rule.options, logger = logger) and resultCode == QuitSuccess:
+        resultCode = QuitFailure
     codeParser.closeParser()
   logger.log(lvlInfo, "Stopping nimalyzer.")
+  quit resultCode
 
 when isMainModule:
   main()
