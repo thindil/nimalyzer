@@ -99,8 +99,7 @@ proc main() =
     let astTree = codeParser.parseAll
     codeParser.closeParser
     for rule in rules:
-      if not rulesCalls[rulesNames.find(item = rule.name)](
-          astTree = astTree, fileName = sources[i],
+      if not rulesCalls[rulesNames.find(item = rule.name)](astTree = astTree,
           options = rule.options, logger = logger) and resultCode == QuitSuccess:
         resultCode = QuitFailure
   logger.log(lvlInfo, "Stopping nimalyzer.")

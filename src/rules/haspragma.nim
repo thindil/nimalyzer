@@ -32,7 +32,7 @@ import compiler/[ast, renderer]
 
 const ruleName* = "haspragma"
 
-proc ruleCheck*(astTree: PNode; fileName: string; options: seq[string];
+proc ruleCheck*(astTree: PNode; options: seq[string];
     logger: ConsoleLogger): bool =
   result = true
   for node in astTree.items:
