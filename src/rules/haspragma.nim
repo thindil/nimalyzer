@@ -27,11 +27,28 @@
 
 # Standard library imports
 import std/logging
-import compiler/parser
 # External modules imports
+import compiler/[ast, renderer]
 
 const ruleName* = "haspragma"
 
-proc ruleCheck*(codeParser: Parser; fileName: string; options: seq[string];
+proc ruleCheck*(astTree: PNode; fileName: string; options: seq[string];
     logger: ConsoleLogger): bool =
-  return true
+  result = true
+  for node in astTree.items:
+    if node.kind notin routineDefs:
+      continue
+    let pragmas = getDeclPragma(n = node)
+    if pragmas == nil:
+      logger.log(lvlError, "procedure " & $node[0] & " line: " &
+          $node.info.line & " doesn't have declared any pragmas.")
+      result = false
+      continue
+    var strPragmas: seq[string]
+    for pragma in pragmas:
+      strPragmas.add(y = $pragma)
+    for pragma in options:
+      if pragma notin strPragmas:
+        logger.log(lvlError, "procedure " & $node[0] & " line: " &
+            $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+        result = false
