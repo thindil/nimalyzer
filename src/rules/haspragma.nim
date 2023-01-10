@@ -26,7 +26,7 @@
 ## The rule to check if the selected procedure has the selected pragma
 
 # Standard library imports
-import std/logging
+import std/[logging, strutils]
 # External modules imports
 import compiler/[ast, renderer]
 
@@ -48,7 +48,38 @@ proc ruleCheck*(astTree: PNode; fileName: string; options: seq[string];
     for pragma in pragmas:
       strPragmas.add(y = $pragma)
     for pragma in options:
-      if pragma notin strPragmas:
+      if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
         logger.log(lvlError, "procedure " & $node[0] & " line: " &
             $node.info.line & " doesn't have declared pragma: " & pragma & ".")
         result = false
+      elif pragma[^1] == '*' and pragma[0] != '*':
+        var hasPragma = false
+        for procPragma in strPragmas:
+          if procPragma.startsWith(prefix = pragma[0..^2]):
+            hasPragma = true
+            break
+        if not hasPragma:
+          logger.log(lvlError, "procedure " & $node[0] & " line: " &
+              $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+          result = false
+      elif pragma[0] == '*' and pragma[^1] != '*':
+        var hasPragma = false
+        for procPragma in strPragmas:
+          if procPragma.endsWith(suffix = pragma[1..^1]):
+            hasPragma = true
+            break
+        if not hasPragma:
+          logger.log(lvlError, "procedure " & $node[0] & " line: " &
+              $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+          result = false
+      elif '*' in [pragma[0], pragma[^1]]:
+        var hasPragma = false
+        for procPragma in strPragmas:
+          if procPragma.contains(sub = pragma[1..^2]):
+            hasPragma = true
+            break
+        if not hasPragma:
+          logger.log(lvlError, "procedure " & $node[0] & " line: " &
+              $node.info.line & " doesn't have declared pragma with value: " &
+                  pragma & ".")
+          result = false
