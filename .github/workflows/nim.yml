@@ -29,7 +29,9 @@ jobs:
         nim-version: '1.6.10'
 
     - name: Debug build
-      run: nimble debug
+      run: |
+        nimble install compiler
+        nimble debug
 
 #    - name: Run tests
 #      run: nimble tests
