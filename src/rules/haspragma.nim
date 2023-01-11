@@ -36,6 +36,8 @@ proc ruleCheck*(astTree: PNode; options: seq[string];
     logger: ConsoleLogger): bool =
   result = true
   for node in astTree.items:
+    for child in node.items:
+      result = ruleCheck(astTree = child, options = options, logger = logger)
     if node.kind notin routineDefs:
       continue
     let pragmas = getDeclPragma(n = node)
