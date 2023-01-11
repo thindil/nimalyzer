@@ -57,8 +57,10 @@ proc main() =
       if line.startsWith(prefix = '#') or line.len == 0:
         continue
       elif line.startsWith(prefix = "source"):
-        sources.add(y = unixToNativePath(line[7..^1]))
-        logger.log(lvlDebug, "Added file '" & sources[^1] & "' to the list of files to check.")
+        let fileName = unixToNativePath(line[7..^1])
+        if fileName notin sources:
+          sources.add(y = fileName)
+          logger.log(lvlDebug, "Added file '" & fileName & "' to the list of files to check.")
       elif line.startsWith(prefix = "check"):
         var checkRule = initOptParser(cmdline = line)
         checkRule.next
