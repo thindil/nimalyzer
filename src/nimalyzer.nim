@@ -32,15 +32,16 @@ import compiler/[idents, llstream, options, parser, pathutils]
 # Nimalyzer rules imports
 import rules/[haspragma]
 
-proc abortProgram(logger: ConsoleLogger; message: string) =
-  logger.log(lvlFatal, message)
-  logger.log(lvlInfo, "Stopping nimalyzer.")
-  quit QuitFailure
-
 proc main() =
   # Set the logger, where the program output will be send
   let logger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
   logger.log(lvlInfo, "Starting nimalyzer ver 0.1.0")
+
+  proc abortProgram(logger: ConsoleLogger; message: string) =
+    logger.log(lvlFatal, message)
+    logger.log(lvlInfo, "Stopping nimalyzer.")
+    quit QuitFailure
+
   # No configuration file specified, quit from the program
   if paramCount() == 0:
     abortProgram(logger, "No configuration file specified. Please run the program with path to the config file as an argument.")
