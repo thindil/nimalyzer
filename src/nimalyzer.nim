@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki <thindil@laeran.pl>
+# Copyright © 2023 Bartek Jasicki <thindil@laeran.pl.eu.org>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@ import std/[logging, os, parseopt, strutils]
 import compiler/[idents, llstream, options, parser, pathutils]
 # External modules imports
 # Nimalyzer rules imports
-import rules/[haspragma]
+import rules/[haspragma, hasentity]
 
 proc main() =
   # Set the logger, where the program output will be send
@@ -45,7 +45,7 @@ proc main() =
   # No configuration file specified, quit from the program
   if paramCount() == 0:
     abortProgram(logger, "No configuration file specified. Please run the program with path to the config file as an argument.")
-  const rulesNames = [haspragma.ruleName]
+  const rulesNames = [haspragma.ruleName, hasentity.ruleName]
   # Read the configuration file and set the program
   let configFile = paramStr(i = 1)
   type Rule = tuple[name: string; options: seq[string]]
@@ -77,7 +77,7 @@ proc main() =
         checkRule.next
         var newRule: Rule = (name: checkRule.key.toLowerAscii, options: @[])
         if newRule.name notin rulesNames:
-          abortProgram(logger, "No rule named '" & ruleName & "' available.")
+          abortProgram(logger, "No rule named '" & newRule.name & "' available.")
         while true:
           checkRule.next()
           if checkRule.kind == cmdEnd:
@@ -97,7 +97,7 @@ proc main() =
     nimCache = newIdentCache()
     nimConfig = newConfigRef()
   nimConfig.options.excl(optHints)
-  const rulesCalls = [haspragma.ruleCheck]
+  const rulesCalls = [haspragma.ruleCheck, hasentity.ruleCheck]
   var resultCode = QuitSuccess
   # Check source code files with the selected rules
   for i in 0..sources.len - 1:
