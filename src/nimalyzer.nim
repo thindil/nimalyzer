@@ -61,8 +61,12 @@ proc main() =
         if fileName notin sources:
           sources.add(y = fileName)
           logger.log(lvlDebug, "Added file '" & fileName & "' to the list of files to check.")
+      elif line.startsWith(prefix = "files"):
+        for fileName in walkFiles(pattern = line[6..^1]):
+          if fileName notin sources:
+            sources.add(y = fileName)
+            logger.log(lvlDebug, "Added file '" & fileName & "' to the list of files to check.")
       elif line.startsWith(prefix = "directory"):
-        echo "here"
         for fileName in walkDirRec(dir = line[10..^1]):
           if fileName notin sources:
             sources.add(y = fileName)
