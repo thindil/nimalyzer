@@ -86,6 +86,7 @@ proc main() =
         rules.add(y = newRule)
         logger.log(lvlDebug, "Added rule '" & rules[^1].name &
             "' with options: '" & rules[^1].options.join(", ") & "' to the list of rules to check.")
+        rules[^1].options.add(y = "parent")
   except IOError:
     abortProgram(logger, "The specified configuration file '" & configFile & "' doesn't exist.")
   # Check if the lists of source code files and rules is set

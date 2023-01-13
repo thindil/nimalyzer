@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki <thindil@laeran.pl>
+# Copyright © 2023 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,10 +34,12 @@ const ruleName* = "haspragma"
 
 proc ruleCheck*(astTree: PNode; options: seq[string];
     logger: ConsoleLogger): bool =
-  result = true
+  if options[^1] == "parent":
+    result = true
   for node in astTree.items:
     for child in node.items:
-      result = ruleCheck(astTree = child, options = options, logger = logger)
+      result = ruleCheck(astTree = child, options = options[0..^2] & "child",
+          logger = logger)
     if node.kind notin routineDefs:
       continue
     let pragmas = getDeclPragma(n = node)

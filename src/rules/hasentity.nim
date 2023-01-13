@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki <thindil@laeran.pl.eu.org>
+# Copyright © 2023 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string];
   result = false
   for node in astTree.items:
     for child in node.items:
-      result = ruleCheck(astTree = child, options = options[0..1] & "child",
+      result = ruleCheck(astTree = child, options = options[0..^2] & "child",
           logger = logger)
       if result:
         return
@@ -46,6 +46,6 @@ proc ruleCheck*(astTree: PNode; options: seq[string];
       continue
     if startsWith(s = $node[0], prefix = options[1]):
       return true
-  if options.len == 2:
+  if options[^1] == "parent":
     logger.log(lvlError, "Doesn't have declared " & options[0] &
         " with name '" & options[1] & "'.")
