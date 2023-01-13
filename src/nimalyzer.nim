@@ -35,6 +35,7 @@ import rules/[haspragma, hasentity]
 proc main() =
   # Set the logger, where the program output will be send
   let logger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
+  addHandler(handler = logger)
   logger.log(lvlInfo, "Starting nimalyzer ver 0.1.0")
 
   proc abortProgram(logger: ConsoleLogger; message: string) =
@@ -62,6 +63,10 @@ proc main() =
     for line in configFile.lines:
       if line.startsWith(prefix = '#') or line.len == 0:
         continue
+      elif line.startsWith(prefix = "output"):
+        let fileName = unixToNativePath(line[7..^1])
+        addHandler(handler = newFileLogger(filename = fileName, fmtStr = "[$time] - $levelname: "))
+        log(lvlDebug, "Added file '" & fileName &  "' as log file.")
       elif line.startsWith(prefix = "source"):
         let fileName = unixToNativePath(line[7..^1])
         addFile(logger = logger, fileName = fileName, sources = sources)
