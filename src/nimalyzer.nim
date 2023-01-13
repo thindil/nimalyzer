@@ -52,25 +52,25 @@ proc main() =
   var
     sources: seq[string]
     rules: seq[Rule]
+
+  proc addFile(logger: ConsoleLogger; fileName: string; sources: var seq[string]) =
+    if fileName notin sources:
+      sources.add(y = fileName)
+      logger.log(lvlDebug, "Added file '" & fileName & "' to the list of files to check.")
+
   try:
     for line in configFile.lines:
       if line.startsWith(prefix = '#') or line.len == 0:
         continue
       elif line.startsWith(prefix = "source"):
         let fileName = unixToNativePath(line[7..^1])
-        if fileName notin sources:
-          sources.add(y = fileName)
-          logger.log(lvlDebug, "Added file '" & fileName & "' to the list of files to check.")
+        addFile(logger = logger, fileName = fileName, sources = sources)
       elif line.startsWith(prefix = "files"):
         for fileName in walkFiles(pattern = line[6..^1]):
-          if fileName notin sources:
-            sources.add(y = fileName)
-            logger.log(lvlDebug, "Added file '" & fileName & "' to the list of files to check.")
+          addFile(logger = logger, fileName = fileName, sources = sources)
       elif line.startsWith(prefix = "directory"):
         for fileName in walkDirRec(dir = line[10..^1]):
-          if fileName notin sources:
-            sources.add(y = fileName)
-            logger.log(lvlDebug, "Added file '" & fileName & "' to the list of files to check.")
+          addFile(logger = logger, fileName = fileName, sources = sources)
       elif line.startsWith(prefix = "check"):
         var checkRule = initOptParser(cmdline = line)
         checkRule.next
