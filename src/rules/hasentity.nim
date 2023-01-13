@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki <thindil@laeran.pl>
+# Copyright © 2023 Bartek Jasicki <thindil@laeran.pl.eu.org>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -38,10 +38,14 @@ proc ruleCheck*(astTree: PNode; options: seq[string];
   result = false
   for node in astTree.items:
     for child in node.items:
-      result = ruleCheck(astTree = child, options = options, logger = logger)
+      result = ruleCheck(astTree = child, options = options[0..1] & "child",
+          logger = logger)
       if result:
         return
     if node.kind != parseEnum[TNodeKind](s = options[0]):
       continue
-    if $node[0] == options[1]:
+    if startsWith(s = $node[0], prefix = options[1]):
       return true
+  if options.len == 2:
+    logger.log(lvlError, "Doesn't have declared " & options[0] &
+        " with name '" & options[1] & "'.")
