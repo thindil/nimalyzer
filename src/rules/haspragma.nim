@@ -44,7 +44,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string];
       continue
     let pragmas = getDeclPragma(n = node)
     if pragmas == nil:
-      logger.log(lvlError, "procedure " & $node[0] & " line: " &
+      error("procedure " & $node[0] & " line: " &
           $node.info.line & " doesn't have declared any pragmas.")
       result = false
       continue
@@ -53,7 +53,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string];
       strPragmas.add(y = $pragma)
     for pragma in options:
       if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
-        logger.log(lvlError, "procedure " & $node[0] & " line: " &
+        error("procedure " & $node[0] & " line: " &
             $node.info.line & " doesn't have declared pragma: " & pragma & ".")
         result = false
       elif pragma[^1] == '*' and pragma[0] != '*':
@@ -63,7 +63,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string];
             hasPragma = true
             break
         if not hasPragma:
-          logger.log(lvlError, "procedure " & $node[0] & " line: " &
+          error("procedure " & $node[0] & " line: " &
               $node.info.line & " doesn't have declared pragma: " & pragma & ".")
           result = false
       elif pragma[0] == '*' and pragma[^1] != '*':
@@ -73,7 +73,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string];
             hasPragma = true
             break
         if not hasPragma:
-          logger.log(lvlError, "procedure " & $node[0] & " line: " &
+          error("procedure " & $node[0] & " line: " &
               $node.info.line & " doesn't have declared pragma: " & pragma & ".")
           result = false
       elif '*' in [pragma[0], pragma[^1]]:
@@ -83,7 +83,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string];
             hasPragma = true
             break
         if not hasPragma:
-          logger.log(lvlError, "procedure " & $node[0] & " line: " &
+          error("procedure " & $node[0] & " line: " &
               $node.info.line & " doesn't have declared pragma with value: " &
                   pragma & ".")
           result = false

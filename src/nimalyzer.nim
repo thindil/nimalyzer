@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki <thindil@laeran.pl.eu.org>
+# Copyright © 2023 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,11 +36,11 @@ proc main() =
   # Set the logger, where the program output will be send
   let logger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
   addHandler(handler = logger)
-  logger.log(lvlInfo, "Starting nimalyzer ver 0.1.0")
+  info("Starting nimalyzer ver 0.1.0")
 
   proc abortProgram(logger: ConsoleLogger; message: string) =
-    logger.log(lvlFatal, message)
-    logger.log(lvlInfo, "Stopping nimalyzer.")
+    fatal(message)
+    info("Stopping nimalyzer.")
     quit QuitFailure
 
   # No configuration file specified, quit from the program
@@ -57,7 +57,7 @@ proc main() =
   proc addFile(logger: ConsoleLogger; fileName: string; sources: var seq[string]) =
     if fileName notin sources:
       sources.add(y = fileName)
-      logger.log(lvlDebug, "Added file '" & fileName & "' to the list of files to check.")
+      debug("Added file '" & fileName & "' to the list of files to check.")
 
   try:
     for line in configFile.lines:
@@ -66,7 +66,7 @@ proc main() =
       elif line.startsWith(prefix = "output"):
         let fileName = unixToNativePath(line[7..^1])
         addHandler(handler = newFileLogger(filename = fileName, fmtStr = "[$time] - $levelname: "))
-        log(lvlDebug, "Added file '" & fileName &  "' as log file.")
+        debug("Added file '" & fileName &  "' as log file.")
       elif line.startsWith(prefix = "source"):
         let fileName = unixToNativePath(line[7..^1])
         addFile(logger = logger, fileName = fileName, sources = sources)
@@ -89,7 +89,7 @@ proc main() =
             break
           newRule.options.add(y = checkRule.key)
         rules.add(y = newRule)
-        logger.log(lvlDebug, "Added rule '" & rules[^1].name &
+        debug("Added rule '" & rules[^1].name &
             "' with options: '" & rules[^1].options.join(", ") & "' to the list of rules to check.")
         rules[^1].options.add(y = "parent")
   except IOError:
@@ -107,7 +107,7 @@ proc main() =
   var resultCode = QuitSuccess
   # Check source code files with the selected rules
   for i in 0..sources.len - 1:
-    logger.log(lvlInfo, "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
+    info("[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
         sources[i] & "'")
     var codeParser: Parser
     let fileName = toAbsolute(file = sources[i], base = toAbsoluteDir(
@@ -121,7 +121,7 @@ proc main() =
       if not rulesCalls[rulesNames.find(item = rule.name)](astTree = astTree,
           options = rule.options, logger = logger) and resultCode == QuitSuccess:
         resultCode = QuitFailure
-  logger.log(lvlInfo, "Stopping nimalyzer.")
+  info("Stopping nimalyzer.")
   quit resultCode
 
 when isMainModule:

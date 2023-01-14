@@ -47,5 +47,5 @@ proc ruleCheck*(astTree: PNode; options: seq[string];
     if startsWith(s = $node[0], prefix = options[1]):
       return true
   if options[^1] == "parent":
-    logger.log(lvlError, "Doesn't have declared " & options[0] &
+    error("Doesn't have declared " & options[0] &
         " with name '" & options[1] & "'.")
