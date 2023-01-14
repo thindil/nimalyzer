@@ -118,7 +118,7 @@ proc main() =
     codeParser.closeParser
     for rule in rules:
       if not rulesCalls[rulesNames.find(item = rule.name)](astTree = astTree,
-          options = rule.options, logger = logger, parent = true) and resultCode == QuitSuccess:
+          options = rule.options, parent = true) and resultCode == QuitSuccess:
         resultCode = QuitFailure
   info("Stopping nimalyzer.")
   quit resultCode

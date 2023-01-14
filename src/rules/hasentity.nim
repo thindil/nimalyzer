@@ -33,13 +33,11 @@ import compiler/[ast, renderer]
 
 const ruleName* = "hasentity"
 
-proc ruleCheck*(astTree: PNode; options: seq[string];
-    logger: ConsoleLogger; parent: bool): bool =
+proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool): bool =
   result = false
   for node in astTree.items:
     for child in node.items:
-      result = ruleCheck(astTree = child, options = options, logger = logger,
-          parent = false)
+      result = ruleCheck(astTree = child, options = options, parent = false)
       if result:
         return
     if node.kind != parseEnum[TNodeKind](s = options[0]):
