@@ -34,18 +34,18 @@ import compiler/[ast, renderer]
 const ruleName* = "hasentity"
 
 proc ruleCheck*(astTree: PNode; options: seq[string];
-    logger: ConsoleLogger): bool =
+    logger: ConsoleLogger; parent: bool): bool =
   result = false
   for node in astTree.items:
     for child in node.items:
-      result = ruleCheck(astTree = child, options = options[0..^2] & "child",
-          logger = logger)
+      result = ruleCheck(astTree = child, options = options, logger = logger,
+          parent = false)
       if result:
         return
     if node.kind != parseEnum[TNodeKind](s = options[0]):
       continue
     if startsWith(s = $node[0], prefix = options[1]):
       return true
-  if options[^1] == "parent":
+  if parent:
     error("Doesn't have declared " & options[0] &
         " with name '" & options[1] & "'.")

@@ -33,13 +33,13 @@ import compiler/[ast, renderer]
 const ruleName* = "haspragma"
 
 proc ruleCheck*(astTree: PNode; options: seq[string];
-    logger: ConsoleLogger): bool =
-  if options[^1] == "parent":
+    logger: ConsoleLogger, parent: bool): bool =
+  if parent:
     result = true
   for node in astTree.items:
     for child in node.items:
-      result = ruleCheck(astTree = child, options = options[0..^2] & "child",
-          logger = logger)
+      result = ruleCheck(astTree = child, options = options,
+          logger = logger, parent = false)
     if node.kind notin routineDefs:
       continue
     let pragmas = getDeclPragma(n = node)
