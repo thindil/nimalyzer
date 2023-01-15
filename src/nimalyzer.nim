@@ -40,7 +40,8 @@ proc main() =
   setLogFilter(lvl = lvlInfo)
   info("Starting nimalyzer ver 0.1.0")
 
-  proc abortProgram(logger: ConsoleLogger; message: string) {.raises: [], tags: [RootEffect], contractual.} =
+  proc abortProgram(logger: ConsoleLogger; message: string) {.gcsafe, raises: [],
+      tags: [RootEffect], contractual.} =
     require:
       logger != nil
       message.len > 0
