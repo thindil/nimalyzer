@@ -40,8 +40,8 @@ proc main() =
   setLogFilter(lvl = lvlInfo)
   info("Starting nimalyzer ver 0.1.0")
 
-  proc abortProgram(logger: ConsoleLogger; message: string) {.gcsafe, raises: [],
-      tags: [RootEffect], contractual.} =
+  proc abortProgram(logger: ConsoleLogger; message: string) {.gcsafe, raises: [
+      ], tags: [RootEffect], contractual.} =
     require:
       logger != nil
       message.len > 0
@@ -65,13 +65,17 @@ proc main() =
     rules: seq[Rule]
 
   proc addFile(logger: ConsoleLogger; fileName: string; sources: var seq[
-      string]) {.raises: [], tags: [RootEffect].} =
-    if fileName notin sources:
-      sources.add(y = fileName)
-      try:
-        debug("Added file '" & fileName & "' to the list of files to check.")
-      except Exception:
-        echo "Can't log message"
+      string]) {.gcsafe, raises: [], tags: [RootEffect], contractual.} =
+    require:
+      logger != nil
+      fileName.len > 0
+    body:
+      if fileName notin sources:
+        sources.add(y = fileName)
+        try:
+          debug("Added file '" & fileName & "' to the list of files to check.")
+        except Exception:
+          echo "Can't log message"
 
   try:
     for line in configFile.lines:
