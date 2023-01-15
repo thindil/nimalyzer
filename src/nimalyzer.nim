@@ -33,7 +33,7 @@ import contracts
 # Nimalyzer rules imports
 import rules/[haspragma, hasentity]
 
-proc main() =
+proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect].} =
   # Set the logger, where the program output will be send
   let logger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
   addHandler(handler = logger)
