@@ -29,6 +29,7 @@
 import std/[logging, os, parseopt, strutils]
 # External modules imports
 import compiler/[idents, llstream, options, parser, pathutils]
+import contracts
 # Nimalyzer rules imports
 import rules/[haspragma, hasentity]
 
@@ -39,13 +40,17 @@ proc main() =
   setLogFilter(lvl = lvlInfo)
   info("Starting nimalyzer ver 0.1.0")
 
-  proc abortProgram(logger: ConsoleLogger; message: string) {.raises: [], tags: [RootEffect].}=
-    try:
-      fatal(message)
-      info("Stopping nimalyzer.")
-    except Exception:
-      echo "Can't log messages"
-    quit QuitFailure
+  proc abortProgram(logger: ConsoleLogger; message: string) {.raises: [], tags: [RootEffect], contractual.} =
+    require:
+      logger != nil
+      message.len > 0
+    body:
+      try:
+        fatal(message)
+        info("Stopping nimalyzer.")
+      except Exception:
+        echo "Can't log messages"
+      quit QuitFailure
 
   # No configuration file specified, quit from the program
   if paramCount() == 0:
@@ -58,7 +63,8 @@ proc main() =
     sources: seq[string]
     rules: seq[Rule]
 
-  proc addFile(logger: ConsoleLogger; fileName: string; sources: var seq[string]) {.raises: [], tags: [RootEffect].} =
+  proc addFile(logger: ConsoleLogger; fileName: string; sources: var seq[
+      string]) {.raises: [], tags: [RootEffect].} =
     if fileName notin sources:
       sources.add(y = fileName)
       try:
