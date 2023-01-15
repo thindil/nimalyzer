@@ -27,8 +27,8 @@
 
 # Standard library imports
 import std/[logging, os, parseopt, strutils]
-import compiler/[idents, llstream, options, parser, pathutils]
 # External modules imports
+import compiler/[idents, llstream, options, parser, pathutils]
 # Nimalyzer rules imports
 import rules/[haspragma, hasentity]
 
@@ -39,9 +39,12 @@ proc main() =
   setLogFilter(lvl = lvlInfo)
   info("Starting nimalyzer ver 0.1.0")
 
-  proc abortProgram(logger: ConsoleLogger; message: string) =
-    fatal(message)
-    info("Stopping nimalyzer.")
+  proc abortProgram(logger: ConsoleLogger; message: string) {.raises: [], tags: [RootEffect].}=
+    try:
+      fatal(message)
+      info("Stopping nimalyzer.")
+    except Exception:
+      echo "Can't log messages"
     quit QuitFailure
 
   # No configuration file specified, quit from the program
@@ -55,10 +58,13 @@ proc main() =
     sources: seq[string]
     rules: seq[Rule]
 
-  proc addFile(logger: ConsoleLogger; fileName: string; sources: var seq[string]) =
+  proc addFile(logger: ConsoleLogger; fileName: string; sources: var seq[string]) {.raises: [], tags: [RootEffect].} =
     if fileName notin sources:
       sources.add(y = fileName)
-      debug("Added file '" & fileName & "' to the list of files to check.")
+      try:
+        debug("Added file '" & fileName & "' to the list of files to check.")
+      except Exception:
+        echo "Can't log message"
 
   try:
     for line in configFile.lines:
