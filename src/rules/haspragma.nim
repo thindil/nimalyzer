@@ -32,17 +32,23 @@ import compiler/[ast, renderer]
 
 const ruleName* = "haspragma"
 
-proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool): bool =
+proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
+    fileName: string): bool =
   if parent:
     result = true
+  let messagePrefix = if getLogFilter() < lvlNotice:
+      ""
+    else:
+      fileName & ": "
   for node in astTree.items:
     for child in node.items:
-      result = ruleCheck(astTree = child, options = options, parent = false)
+      result = ruleCheck(astTree = child, options = options, parent = false,
+          fileName = fileName)
     if node.kind notin routineDefs:
       continue
     let pragmas = getDeclPragma(n = node)
     if pragmas == nil:
-      error("procedure " & $node[0] & " line: " &
+      error(messagePrefix & "procedure " & $node[0] & " line: " &
           $node.info.line & " doesn't have declared any pragmas.")
       result = false
       continue
@@ -51,7 +57,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool): bool =
       strPragmas.add(y = $pragma)
     for pragma in options:
       if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
-        error("procedure " & $node[0] & " line: " &
+        error(messagePrefix & "procedure " & $node[0] & " line: " &
             $node.info.line & " doesn't have declared pragma: " & pragma & ".")
         result = false
       elif pragma[^1] == '*' and pragma[0] != '*':
@@ -61,7 +67,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool): bool =
             hasPragma = true
             break
         if not hasPragma:
-          error("procedure " & $node[0] & " line: " &
+          error(messagePrefix & "procedure " & $node[0] & " line: " &
               $node.info.line & " doesn't have declared pragma: " & pragma & ".")
           result = false
       elif pragma[0] == '*' and pragma[^1] != '*':
@@ -71,7 +77,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool): bool =
             hasPragma = true
             break
         if not hasPragma:
-          error("procedure " & $node[0] & " line: " &
+          error(messagePrefix & "procedure " & $node[0] & " line: " &
               $node.info.line & " doesn't have declared pragma: " & pragma & ".")
           result = false
       elif '*' in [pragma[0], pragma[^1]]:
@@ -81,7 +87,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool): bool =
             hasPragma = true
             break
         if not hasPragma:
-          error("procedure " & $node[0] & " line: " &
+          error(messagePrefix & "procedure " & $node[0] & " line: " &
               $node.info.line & " doesn't have declared pragma with value: " &
                   pragma & ".")
           result = false

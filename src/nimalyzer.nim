@@ -69,8 +69,9 @@ proc main() =
         debug("Setting the program verbosity to '" & line[10..^1] & "'.")
       elif line.startsWith(prefix = "output"):
         let fileName = unixToNativePath(line[7..^1])
-        addHandler(handler = newFileLogger(filename = fileName, fmtStr = "[$time] - $levelname: "))
-        debug("Added file '" & fileName &  "' as log file.")
+        addHandler(handler = newFileLogger(filename = fileName,
+            fmtStr = "[$time] - $levelname: "))
+        debug("Added file '" & fileName & "' as log file.")
       elif line.startsWith(prefix = "source"):
         let fileName = unixToNativePath(line[7..^1])
         addFile(logger = logger, fileName = fileName, sources = sources)
@@ -122,7 +123,8 @@ proc main() =
     codeParser.closeParser
     for rule in rules:
       if not rulesCalls[rulesNames.find(item = rule.name)](astTree = astTree,
-          options = rule.options, parent = true) and resultCode == QuitSuccess:
+          options = rule.options, parent = true, fileName = sources[i]) and
+          resultCode == QuitSuccess:
         resultCode = QuitFailure
   info("Stopping nimalyzer.")
   quit resultCode

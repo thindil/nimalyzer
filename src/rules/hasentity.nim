@@ -33,11 +33,13 @@ import compiler/[ast, renderer]
 
 const ruleName* = "hasentity"
 
-proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool): bool =
+proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
+    fileName: string): bool =
   result = false
   for node in astTree.items:
     for child in node.items:
-      result = ruleCheck(astTree = child, options = options, parent = false)
+      result = ruleCheck(astTree = child, options = options, parent = false,
+          fileName = fileName)
       if result:
         return
     if node.kind != parseEnum[TNodeKind](s = options[0]):
@@ -45,5 +47,5 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool): bool =
     if startsWith(s = $node[0], prefix = options[1]):
       return true
   if parent:
-    error("Doesn't have declared " & options[0] &
-        " with name '" & options[1] & "'.")
+    error((if getLogFilter() < lvlNotice: "D" else: fileName & ": d") &
+        "oesn't have declared " & options[0] & " with name '" & options[1] & "'.")
