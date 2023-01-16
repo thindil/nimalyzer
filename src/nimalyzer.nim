@@ -40,10 +40,9 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect].} =
   setLogFilter(lvl = lvlInfo)
   info("Starting nimalyzer ver 0.1.0")
 
-  proc abortProgram(logger: ConsoleLogger; message: string) {.gcsafe, raises: [
-      ], tags: [RootEffect], contractual.} =
+  proc abortProgram(message: string) {.gcsafe, raises: [], tags: [RootEffect],
+      contractual.} =
     require:
-      logger != nil
       message.len > 0
     body:
       try:
@@ -55,7 +54,7 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect].} =
 
   # No configuration file specified, quit from the program
   if paramCount() == 0:
-    abortProgram(logger, "No configuration file specified. Please run the program with path to the config file as an argument.")
+    abortProgram("No configuration file specified. Please run the program with path to the config file as an argument.")
   const rulesNames = [haspragma.ruleName, hasentity.ruleName]
   # Read the configuration file and set the program
   let configFile = paramStr(i = 1)
@@ -104,7 +103,7 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect].} =
         checkRule.next
         var newRule: Rule = (name: checkRule.key.toLowerAscii, options: @[])
         if newRule.name notin rulesNames:
-          abortProgram(logger, "No rule named '" & newRule.name & "' available.")
+          abortProgram("No rule named '" & newRule.name & "' available.")
         while true:
           checkRule.next()
           if checkRule.kind == cmdEnd:
@@ -114,12 +113,12 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect].} =
         debug("Added rule '" & rules[^1].name &
             "' with options: '" & rules[^1].options.join(", ") & "' to the list of rules to check.")
   except IOError:
-    abortProgram(logger, "The specified configuration file '" & configFile & "' doesn't exist.")
+    abortProgram("The specified configuration file '" & configFile & "' doesn't exist.")
   # Check if the lists of source code files and rules is set
   if sources.len == 0:
-    abortProgram(logger, "No files specified to check. Please enter any files names to the configuration file.")
+    abortProgram("No files specified to check. Please enter any files names to the configuration file.")
   if rules.len == 0:
-    abortProgram(logger, "No rules specified to check. Please enter any rule configuration to the configuration file.")
+    abortProgram("No rules specified to check. Please enter any rule configuration to the configuration file.")
   let
     nimCache = newIdentCache()
     nimConfig = newConfigRef()
