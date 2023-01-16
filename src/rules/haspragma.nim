@@ -34,15 +34,14 @@ const ruleName* = "haspragma"
 
 proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
     fileName: string): bool =
-  if parent:
-    result = true
+  result = parent
   let messagePrefix = if getLogFilter() < lvlNotice:
       ""
     else:
       fileName & ": "
   for node in astTree.items:
     for child in node.items:
-      result = ruleCheck(astTree = child, options = options, parent = false,
+      result = ruleCheck(astTree = child, options = options, parent = result,
           fileName = fileName)
     if node.kind notin routineDefs:
       continue
