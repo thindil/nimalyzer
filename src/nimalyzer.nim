@@ -33,13 +33,13 @@ import contracts
 # Nimalyzer rules imports
 import rules/[haspragma, hasentity]
 
-proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect], contractual.} =
+proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
+    contractual.} =
   # Set the logger, where the program output will be send
   body:
     let logger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
-    info("Starting nimalyzer ver 0.1.0")
 
     proc abortProgram(message: string) {.gcsafe, raises: [], tags: [RootEffect],
         contractual.} =
@@ -50,8 +50,13 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect], contractual.} =
           fatal(message)
           info("Stopping nimalyzer.")
         except Exception:
-          echo "Can't log messages"
+          echo "Can't log messages."
         quit QuitFailure
+
+    try:
+      info("Starting nimalyzer ver 0.1.0")
+    except Exception:
+      abortProgram("Can't log messages.")
 
     # No configuration file specified, quit from the program
     if paramCount() == 0:
@@ -74,20 +79,29 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect], contractual.} =
           try:
             debug("Added file '" & fileName & "' to the list of files to check.")
           except Exception:
-            echo "Can't log message"
+            abortProgram("Can't log messages.")
 
     try:
       for line in configFile.lines:
         if line.startsWith(prefix = '#') or line.len == 0:
           continue
         elif line.startsWith(prefix = "verbosity"):
-          setLogFilter(lvl = parseEnum[Level](s = line[10..^1]))
-          debug("Setting the program verbosity to '" & line[10..^1] & "'.")
+          try:
+            setLogFilter(lvl = parseEnum[Level](s = line[10..^1]))
+            try:
+              debug("Setting the program verbosity to '" & line[10..^1] & "'.")
+            except Exception:
+              abortProgram("Can't log messages.")
+          except ValueError:
+            abortProgram("Invalid value set in configuration file for the program verbosity level.")
         elif line.startsWith(prefix = "output"):
           let fileName = unixToNativePath(line[7..^1])
           addHandler(handler = newFileLogger(filename = fileName,
               fmtStr = "[$time] - $levelname: "))
-          debug("Added file '" & fileName & "' as log file.")
+          try:
+            debug("Added file '" & fileName & "' as log file.")
+          except Exception:
+            abortProgram("Can't log messages.")
         elif line.startsWith(prefix = "source"):
           let fileName = unixToNativePath(line[7..^1])
           addFile(fileName = fileName, sources = sources)
@@ -95,8 +109,12 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect], contractual.} =
           for fileName in walkFiles(pattern = line[6..^1]):
             addFile(fileName = fileName, sources = sources)
         elif line.startsWith(prefix = "directory"):
-          for fileName in walkDirRec(dir = line[10..^1]):
-            addFile(fileName = fileName, sources = sources)
+          try:
+            for fileName in walkDirRec(dir = line[10..^1]):
+              addFile(fileName = fileName, sources = sources)
+          except OSError:
+            abortProgram("Can't add files to check. Reason: " &
+                getCurrentExceptionMsg())
         elif line.startsWith(prefix = "check"):
           var checkRule = initOptParser(cmdline = line)
           checkRule.next
@@ -110,8 +128,11 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect], contractual.} =
               break
             newRule.options.add(y = checkRule.key)
           rules.add(y = newRule)
-          debug("Added rule '" & rules[^1].name &
-              "' with options: '" & rules[^1].options.join(", ") & "' to the list of rules to check.")
+          try:
+            debug("Added rule '" & rules[^1].name &
+                "' with options: '" & rules[^1].options.join(", ") & "' to the list of rules to check.")
+          except Exception:
+            abortProgram("Can't log messages.")
     except IOError:
       abortProgram("The specified configuration file '" & configFile & "' doesn't exist.")
     # Check if the lists of source code files and rules is set
@@ -127,22 +148,40 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect], contractual.} =
     var resultCode = QuitSuccess
     # Check source code files with the selected rules
     for i in 0..sources.len - 1:
-      info("[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
-          sources[i] & "'")
+      try:
+        info("[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
+            sources[i] & "'")
+      except Exception:
+        abortProgram("Can't log messages.")
       var codeParser: Parser
-      let fileName = toAbsolute(file = sources[i], base = toAbsoluteDir(
-          path = getCurrentDir()))
-      openParser(p = codeParser, filename = fileName, llStreamOpen(
-          filename = fileName, mode = fmRead), cache = nimCache,
-          config = nimConfig)
-      let astTree = codeParser.parseAll
-      codeParser.closeParser
-      for rule in rules:
-        if not rulesCalls[rulesNames.find(item = rule.name)](astTree = astTree,
-            options = rule.options, parent = true, fileName = sources[i]) and
-            resultCode == QuitSuccess:
-          resultCode = QuitFailure
-    info("Stopping nimalyzer.")
+      try:
+        let fileName = toAbsolute(file = sources[i], base = toAbsoluteDir(
+            path = getCurrentDir()))
+        try:
+          openParser(p = codeParser, filename = fileName, llStreamOpen(
+              filename = fileName, mode = fmRead), cache = nimCache,
+              config = nimConfig)
+        except IOError, ValueError, KeyError, Exception:
+          abortProgram("Can't open file '" & sources[i] &
+              "' to parse. Reason: " & getCurrentExceptionMsg())
+        try:
+          let astTree = codeParser.parseAll
+          codeParser.closeParser
+          for rule in rules:
+            if not rulesCalls[rulesNames.find(item = rule.name)](
+                astTree = astTree, options = rule.options, parent = true,
+                fileName = sources[i]) and resultCode == QuitSuccess:
+              resultCode = QuitFailure
+        except ValueError, IOError, KeyError, Exception:
+          abortProgram("The file '" & sources[i] &
+              "' can't be parsed to AST. Reason: " & getCurrentExceptionMsg())
+      except OSError:
+        abortProgram("Can't parse file '" & sources[i] & "'. Reason: " &
+            getCurrentExceptionMsg())
+    try:
+      info("Stopping nimalyzer.")
+    except Exception:
+      abortProgram("Can't log messages.")
     quit resultCode
 
 when isMainModule:
