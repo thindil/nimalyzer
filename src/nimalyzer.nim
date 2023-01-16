@@ -63,10 +63,9 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect].} =
     sources: seq[string]
     rules: seq[Rule]
 
-  proc addFile(logger: ConsoleLogger; fileName: string; sources: var seq[
-      string]) {.gcsafe, raises: [], tags: [RootEffect], contractual.} =
+  proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [],
+      tags: [RootEffect], contractual.} =
     require:
-      logger != nil
       fileName.len > 0
     body:
       if fileName notin sources:
@@ -90,13 +89,13 @@ proc main() {.tags: [ReadIOEffect, WriteIOEffect, RootEffect].} =
         debug("Added file '" & fileName & "' as log file.")
       elif line.startsWith(prefix = "source"):
         let fileName = unixToNativePath(line[7..^1])
-        addFile(logger = logger, fileName = fileName, sources = sources)
+        addFile(fileName = fileName, sources = sources)
       elif line.startsWith(prefix = "files"):
         for fileName in walkFiles(pattern = line[6..^1]):
-          addFile(logger = logger, fileName = fileName, sources = sources)
+          addFile(fileName = fileName, sources = sources)
       elif line.startsWith(prefix = "directory"):
         for fileName in walkDirRec(dir = line[10..^1]):
-          addFile(logger = logger, fileName = fileName, sources = sources)
+          addFile(fileName = fileName, sources = sources)
       elif line.startsWith(prefix = "check"):
         var checkRule = initOptParser(cmdline = line)
         checkRule.next
