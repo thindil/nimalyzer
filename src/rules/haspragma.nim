@@ -29,64 +29,70 @@
 import std/[logging, strutils]
 # External modules imports
 import compiler/[ast, renderer]
+import contracts
 
 const ruleName* = "haspragma"
 
 proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
-    fileName: string): bool =
-  result = parent
-  let messagePrefix = if getLogFilter() < lvlNotice:
-      ""
-    else:
-      fileName & ": "
-  for node in astTree.items:
-    for child in node.items:
-      result = ruleCheck(astTree = child, options = options, parent = result,
-          fileName = fileName)
-    if node.kind notin routineDefs:
-      continue
-    let pragmas = getDeclPragma(n = node)
-    if pragmas == nil:
-      error(messagePrefix & "procedure " & $node[0] & " line: " &
-          $node.info.line & " doesn't have declared any pragmas.")
-      result = false
-      continue
-    var strPragmas: seq[string]
-    for pragma in pragmas:
-      strPragmas.add(y = $pragma)
-    for pragma in options:
-      if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
+    fileName: string): bool {.contractual.} =
+  require:
+    astTree != nil
+    options.len > 0
+    fileName.len > 0
+  body:
+    result = parent
+    let messagePrefix = if getLogFilter() < lvlNotice:
+        ""
+      else:
+        fileName & ": "
+    for node in astTree.items:
+      for child in node.items:
+        result = ruleCheck(astTree = child, options = options, parent = result,
+            fileName = fileName)
+      if node.kind notin routineDefs:
+        continue
+      let pragmas = getDeclPragma(n = node)
+      if pragmas == nil:
         error(messagePrefix & "procedure " & $node[0] & " line: " &
-            $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+            $node.info.line & " doesn't have declared any pragmas.")
         result = false
-      elif pragma[^1] == '*' and pragma[0] != '*':
-        var hasPragma = false
-        for procPragma in strPragmas:
-          if procPragma.startsWith(prefix = pragma[0..^2]):
-            hasPragma = true
-            break
-        if not hasPragma:
+        continue
+      var strPragmas: seq[string]
+      for pragma in pragmas:
+        strPragmas.add(y = $pragma)
+      for pragma in options:
+        if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
           error(messagePrefix & "procedure " & $node[0] & " line: " &
               $node.info.line & " doesn't have declared pragma: " & pragma & ".")
           result = false
-      elif pragma[0] == '*' and pragma[^1] != '*':
-        var hasPragma = false
-        for procPragma in strPragmas:
-          if procPragma.endsWith(suffix = pragma[1..^1]):
-            hasPragma = true
-            break
-        if not hasPragma:
-          error(messagePrefix & "procedure " & $node[0] & " line: " &
-              $node.info.line & " doesn't have declared pragma: " & pragma & ".")
-          result = false
-      elif '*' in [pragma[0], pragma[^1]]:
-        var hasPragma = false
-        for procPragma in strPragmas:
-          if procPragma.contains(sub = pragma[1..^2]):
-            hasPragma = true
-            break
-        if not hasPragma:
-          error(messagePrefix & "procedure " & $node[0] & " line: " &
-              $node.info.line & " doesn't have declared pragma with value: " &
-                  pragma & ".")
-          result = false
+        elif pragma[^1] == '*' and pragma[0] != '*':
+          var hasPragma = false
+          for procPragma in strPragmas:
+            if procPragma.startsWith(prefix = pragma[0..^2]):
+              hasPragma = true
+              break
+          if not hasPragma:
+            error(messagePrefix & "procedure " & $node[0] & " line: " &
+                $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+            result = false
+        elif pragma[0] == '*' and pragma[^1] != '*':
+          var hasPragma = false
+          for procPragma in strPragmas:
+            if procPragma.endsWith(suffix = pragma[1..^1]):
+              hasPragma = true
+              break
+          if not hasPragma:
+            error(messagePrefix & "procedure " & $node[0] & " line: " &
+                $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+            result = false
+        elif '*' in [pragma[0], pragma[^1]]:
+          var hasPragma = false
+          for procPragma in strPragmas:
+            if procPragma.contains(sub = pragma[1..^2]):
+              hasPragma = true
+              break
+          if not hasPragma:
+            error(messagePrefix & "procedure " & $node[0] & " line: " &
+                $node.info.line & " doesn't have declared pragma with value: " &
+                    pragma & ".")
+            result = false
