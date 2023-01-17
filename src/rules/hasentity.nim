@@ -35,12 +35,22 @@ import contracts
 const ruleName* = "hasentity"
 
 proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
-    fileName: string): bool {.contractual.} =
+    fileName: string): bool {.contractual, raises: [], tags: [RootEffect].} =
   require:
     astTree != nil
     options.len == 2
     fileName.len > 0
   body:
+    let nodeKind = try:
+        parseEnum[TNodeKind](s = options[0])
+      except ValueError:
+        nkNone
+    if nodeKind == nkNone:
+      try:
+        fatal("Invalid type of entity: " & options[0])
+      except Exception:
+        echo "Can't log message."
+      return false
     result = false
     for node in astTree.items:
       for child in node.items:
@@ -48,10 +58,21 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
             fileName = fileName)
         if result:
           return
-      if node.kind != parseEnum[TNodeKind](s = options[0]):
+      if node.kind != nodeKind:
         continue
-      if startsWith(s = $node[0], prefix = options[1]):
-        return true
+      try:
+        if startsWith(s = $node[0], prefix = options[1]):
+          return true
+      except KeyError:
+        continue
+      except Exception:
+        try:
+          fatal("Error during checking hasEntity rule: " & getCurrentExceptionMsg())
+        except Exception:
+          echo "Can't log message."
     if parent:
-      error((if getLogFilter() < lvlNotice: "D" else: fileName & ": d") &
-          "oesn't have declared " & options[0] & " with name '" & options[1] & "'.")
+      try:
+        error((if getLogFilter() < lvlNotice: "D" else: fileName & ": d") &
+            "oesn't have declared " & options[0] & " with name '" & options[1] & "'.")
+      except Exception:
+        echo "Can't log message."
