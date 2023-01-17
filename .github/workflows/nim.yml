@@ -36,6 +36,7 @@ jobs:
     - name: Check with Nimalyzer
       run: |
         bin/nimalyzer config/nimalyzer.cfg
+        bin/nimalyzer config/rules.cfg
 
 #    - name: Run tests
 #      run: nimble tests
