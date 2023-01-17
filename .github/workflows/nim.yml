@@ -33,5 +33,16 @@ jobs:
         nimble install -y compiler
         nimble debug
 
+    - name: Check with Nimalyzer
+      run: |
+        bin/nimalyzer config/nimalyzer.cfg
+
 #    - name: Run tests
 #      run: nimble tests
+
+    - name: Upload the log
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+         name: nimalyzer.log
+         path: nimalyzer.log
