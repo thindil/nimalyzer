@@ -34,7 +34,7 @@ import contracts
 const ruleName* = "haspragma"
 
 proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
-    fileName: string): bool {.contractual.} =
+    fileName: string): bool {.contractual, raises: [], tags: [RootEffect].} =
   require:
     astTree != nil
     options.len > 0
@@ -51,19 +51,39 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
             fileName = fileName)
       if node.kind notin routineDefs:
         continue
-      let pragmas = getDeclPragma(n = node)
+      let
+        pragmas = getDeclPragma(n = node)
+        procName = try:
+            $node[0]
+          except KeyError, Exception:
+            ""
+      if procName.len == 0:
+        try:
+          fatal("Can't get the name of the procedure.")
+        except Exception:
+          echo "Can't log message."
+        return false
       if pragmas == nil:
-        error(messagePrefix & "procedure " & $node[0] & " line: " &
-            $node.info.line & " doesn't have declared any pragmas.")
+        try:
+          error(messagePrefix & "procedure " & procName & " line: " &
+              $node.info.line & " doesn't have declared any pragmas.")
+        except Exception:
+          echo "Can't log message."
         result = false
         continue
       var strPragmas: seq[string]
       for pragma in pragmas:
-        strPragmas.add(y = $pragma)
+        try:
+          strPragmas.add(y = $pragma)
+        except KeyError, Exception:
+          discard
       for pragma in options:
         if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
-          error(messagePrefix & "procedure " & $node[0] & " line: " &
-              $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+          try:
+            error(messagePrefix & "procedure " & procName & " line: " &
+                $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+          except Exception:
+            echo "Can't log message."
           result = false
         elif pragma[^1] == '*' and pragma[0] != '*':
           var hasPragma = false
@@ -72,8 +92,11 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
               hasPragma = true
               break
           if not hasPragma:
-            error(messagePrefix & "procedure " & $node[0] & " line: " &
-                $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+            try:
+              error(messagePrefix & "procedure " & procName & " line: " &
+                  $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+            except Exception:
+              echo "Can't log message."
             result = false
         elif pragma[0] == '*' and pragma[^1] != '*':
           var hasPragma = false
@@ -82,8 +105,11 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
               hasPragma = true
               break
           if not hasPragma:
-            error(messagePrefix & "procedure " & $node[0] & " line: " &
-                $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+            try:
+              error(messagePrefix & "procedure " & procName & " line: " &
+                  $node.info.line & " doesn't have declared pragma: " & pragma & ".")
+            except Exception:
+              echo "Can't log message."
             result = false
         elif '*' in [pragma[0], pragma[^1]]:
           var hasPragma = false
@@ -92,7 +118,10 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
               hasPragma = true
               break
           if not hasPragma:
-            error(messagePrefix & "procedure " & $node[0] & " line: " &
-                $node.info.line & " doesn't have declared pragma with value: " &
-                    pragma & ".")
+            try:
+              error(messagePrefix & "procedure " & procName & " line: " &
+                  $node.info.line & " doesn't have declared pragma with value: " &
+                      pragma & ".")
+            except Exception:
+              echo "Can't log message."
             result = false
