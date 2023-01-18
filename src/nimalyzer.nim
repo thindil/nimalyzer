@@ -66,7 +66,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     const rulesNames = [haspragma.ruleName, hasentity.ruleName]
     # Read the configuration file and set the program
     let configFile = paramStr(i = 1)
-    type Rule = tuple[name: string; options: seq[string]]
+    type Rule = tuple[name: string; options: seq[string]; negation: bool]
     var
       sources: seq[string]
       rules: seq[Rule]
@@ -121,7 +121,12 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           var checkRule = initOptParser(cmdline = line)
           checkRule.next
           checkRule.next
-          var newRule: Rule = (name: checkRule.key.toLowerAscii, options: @[])
+          var newRule: Rule = (name: checkRule.key.toLowerAscii, options: @[],
+              negation: false)
+          if newRule.name == "not":
+            newRule.negation = true
+            checkRule.next
+            newRule.name = checkRule.key.toLowerAscii
           if newRule.name notin rulesNames:
             abortProgram("No rule named '" & newRule.name & "' available.")
           while true:
@@ -131,8 +136,9 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             newRule.options.add(y = checkRule.key)
           rules.add(y = newRule)
           try:
-            debug("Added rule '" & rules[^1].name &
-                "' with options: '" & rules[^1].options.join(", ") & "' to the list of rules to check.")
+            debug("Added" & (if rules[^1].negation: " negation" else: "") &
+                " rule '" & rules[^1].name & "' with options: '" & rules[
+                ^1].options.join(", ") & "' to the list of rules to check.")
           except Exception:
             abortProgram("Can't log messages.")
     except IOError:
@@ -173,6 +179,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               fileName: sources[i])
           for rule in rules:
             options.options = rule.options
+            options.negation = rule.negation
             if not rulesCalls[rulesNames.find(item = rule.name)](
                 astTree = astTree, options = options) and resultCode == QuitSuccess:
               resultCode = QuitFailure

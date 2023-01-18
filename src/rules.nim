@@ -29,3 +29,4 @@ type RuleOptions* = object
   options*: seq[string]
   parent*: bool
   fileName*: string
+  negation*: bool

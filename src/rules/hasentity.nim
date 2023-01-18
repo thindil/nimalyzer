@@ -56,7 +56,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
       except Exception:
         echo "Can't log message."
       return false
-    result = false
+    result = (if options.negation: true else: false)
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = childOptions)
@@ -66,7 +66,16 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
         continue
       try:
         if startsWith(s = $node[0], prefix = options.options[1]):
-          return true
+          if options.negation:
+            try:
+              error((if getLogFilter() < lvlNotice: "H" else: options.fileName &
+                  ": h") & "as declared " & options.options[0] &
+                  " with name '" & options.options[1] & "'.")
+            except Exception:
+              echo "Can't log message."
+            return false
+          else:
+            return true
       except KeyError:
         continue
       except Exception:
