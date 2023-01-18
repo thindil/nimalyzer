@@ -76,7 +76,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
 
     for node in astTree.items:
       for child in node.items:
-        result = ruleCheck(astTree = child, options = options)
+        result = ruleCheck(astTree = child, options = RuleOptions(
+            options: options.options, parent: result, fileName: options.fileName,
+            negation: options.negation))
       if node.kind notin routineDefs:
         continue
       let
