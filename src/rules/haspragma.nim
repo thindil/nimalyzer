@@ -42,11 +42,38 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
     options.options.len > 0
     options.fileName.len > 0
   body:
-    result = options.parent
+    result = (if options.negation: not options.parent else: options.parent)
     let messagePrefix = if getLogFilter() < lvlNotice:
         ""
       else:
         options.fileName & ": "
+
+    proc setResult(procName, line, pragma: string;
+        hasPragma: bool): bool {.raises: [], tags: [RootEffect], contractual.} =
+      require:
+        procName.len > 0
+        line.len > 0
+        pragma.len > 0
+      body:
+        if not hasPragma:
+          if options.negation:
+            return true
+          try:
+            error(messagePrefix & "procedure " & procName & " line: " &
+                line & " doesn't have declared pragma: " & pragma & ".")
+          except Exception:
+            echo "Can't log message."
+          return false
+        else:
+          if options.negation:
+            try:
+              error(messagePrefix & "procedure " & procName & " line: " &
+                  line & " has declared pragma: " & pragma & ".")
+            except Exception:
+              echo "Can't log message."
+            return false
+          return true
+
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = options)
@@ -65,12 +92,15 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
           echo "Can't log message."
         return false
       if pragmas == nil:
-        try:
-          error(messagePrefix & "procedure " & procName & " line: " &
-              $node.info.line & " doesn't have declared any pragmas.")
-        except Exception:
-          echo "Can't log message."
-        result = false
+        if not options.negation:
+          try:
+            error(messagePrefix & "procedure " & procName & " line: " &
+                $node.info.line & " doesn't have declared any pragmas.")
+          except Exception:
+            echo "Can't log message."
+          result = false
+        else:
+          result = true
         continue
       var strPragmas: seq[string]
       for pragma in pragmas:
@@ -80,49 +110,32 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
           discard
       for pragma in options.options:
         if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
-          try:
-            error(messagePrefix & "procedure " & procName & " line: " &
-                $node.info.line & " doesn't have declared pragma: " & pragma & ".")
-          except Exception:
-            echo "Can't log message."
-          result = false
+          result = setResult(procName = procName, line = $node.info.line,
+              pragma = pragma, hasPragma = false)
         elif pragma[^1] == '*' and pragma[0] != '*':
           var hasPragma = false
           for procPragma in strPragmas:
             if procPragma.startsWith(prefix = pragma[0..^2]):
               hasPragma = true
               break
-          if not hasPragma:
-            try:
-              error(messagePrefix & "procedure " & procName & " line: " &
-                  $node.info.line & " doesn't have declared pragma: " & pragma & ".")
-            except Exception:
-              echo "Can't log message."
-            result = false
+          result = setResult(procName = procName, line = $node.info.line,
+              pragma = pragma, hasPragma = hasPragma)
         elif pragma[0] == '*' and pragma[^1] != '*':
           var hasPragma = false
           for procPragma in strPragmas:
             if procPragma.endsWith(suffix = pragma[1..^1]):
               hasPragma = true
               break
-          if not hasPragma:
-            try:
-              error(messagePrefix & "procedure " & procName & " line: " &
-                  $node.info.line & " doesn't have declared pragma: " & pragma & ".")
-            except Exception:
-              echo "Can't log message."
-            result = false
+          result = setResult(procName = procName, line = $node.info.line,
+              pragma = pragma, hasPragma = hasPragma)
         elif '*' in [pragma[0], pragma[^1]]:
           var hasPragma = false
           for procPragma in strPragmas:
             if procPragma.contains(sub = pragma[1..^2]):
               hasPragma = true
               break
-          if not hasPragma:
-            try:
-              error(messagePrefix & "procedure " & procName & " line: " &
-                  $node.info.line & " doesn't have declared pragma with value: " &
-                      pragma & ".")
-            except Exception:
-              echo "Can't log message."
-            result = false
+          result = setResult(procName = procName, line = $node.info.line,
+              pragma = pragma, hasPragma = hasPragma)
+        else:
+          result = setResult(procName = procName, line = $node.info.line,
+              pragma = pragma, hasPragma = true)
