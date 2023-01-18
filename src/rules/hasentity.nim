@@ -31,48 +31,54 @@ import std/[logging, strutils]
 # External modules imports
 import compiler/[ast, renderer]
 import contracts
+# Internal modules imports
+import ../rules
 
 const ruleName* = "hasentity"
 
-proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
-    fileName: string): bool {.contractual, raises: [], tags: [RootEffect].} =
+proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
+    raises: [], tags: [RootEffect].} =
   require:
     astTree != nil
-    options.len == 2
-    fileName.len > 0
+    options.options.len == 2
+    options.fileName.len > 0
   body:
-    let nodeKind = try:
-        parseEnum[TNodeKind](s = options[0])
-      except ValueError:
-        nkNone
+    let
+      nodeKind = try:
+          parseEnum[TNodeKind](s = options.options[0])
+        except ValueError:
+          nkNone
+      childOptions = RuleOptions(options: options.options, parent: false,
+          fileName: options.fileName)
     if nodeKind == nkNone:
       try:
-        fatal("Invalid type of entity: " & options[0])
+        fatal("Invalid type of entity: " & options.options[0])
       except Exception:
         echo "Can't log message."
       return false
     result = false
     for node in astTree.items:
       for child in node.items:
-        result = ruleCheck(astTree = child, options = options, parent = false,
-            fileName = fileName)
+        result = ruleCheck(astTree = child, options = childOptions)
         if result:
           return
       if node.kind != nodeKind:
         continue
       try:
-        if startsWith(s = $node[0], prefix = options[1]):
+        if startsWith(s = $node[0], prefix = options.options[1]):
           return true
       except KeyError:
         continue
       except Exception:
         try:
-          fatal("Error during checking hasEntity rule: " & getCurrentExceptionMsg())
+          fatal("Error during checking hasEntity rule: " &
+              getCurrentExceptionMsg())
         except Exception:
           echo "Can't log message."
-    if parent:
+    if options.parent:
       try:
-        error((if getLogFilter() < lvlNotice: "D" else: fileName & ": d") &
-            "oesn't have declared " & options[0] & " with name '" & options[1] & "'.")
+        error((if getLogFilter() < lvlNotice: "D" else: options.fileName &
+            ": d") & "oesn't have declared " & options.options[0] &
+            " with name '" & options.options[1] & "'.")
       except Exception:
         echo "Can't log message."

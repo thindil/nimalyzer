@@ -30,25 +30,26 @@ import std/[logging, strutils]
 # External modules imports
 import compiler/[ast, renderer]
 import contracts
+# Internal modules imports
+import ../rules
 
 const ruleName* = "haspragma"
 
-proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
-    fileName: string): bool {.contractual, raises: [], tags: [RootEffect].} =
+proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
+    raises: [], tags: [RootEffect].} =
   require:
     astTree != nil
-    options.len > 0
-    fileName.len > 0
+    options.options.len > 0
+    options.fileName.len > 0
   body:
-    result = parent
+    result = options.parent
     let messagePrefix = if getLogFilter() < lvlNotice:
         ""
       else:
-        fileName & ": "
+        options.fileName & ": "
     for node in astTree.items:
       for child in node.items:
-        result = ruleCheck(astTree = child, options = options, parent = result,
-            fileName = fileName)
+        result = ruleCheck(astTree = child, options = options)
       if node.kind notin routineDefs:
         continue
       let
@@ -77,7 +78,7 @@ proc ruleCheck*(astTree: PNode; options: seq[string]; parent: bool;
           strPragmas.add(y = $pragma)
         except KeyError, Exception:
           discard
-      for pragma in options:
+      for pragma in options.options:
         if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
           try:
             error(messagePrefix & "procedure " & procName & " line: " &

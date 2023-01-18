@@ -30,6 +30,8 @@ import std/[logging, os, parseopt, strutils]
 # External modules imports
 import compiler/[idents, llstream, options, parser, pathutils]
 import contracts
+# Internal modules imports
+import rules
 # Nimalyzer rules imports
 import rules/[haspragma, hasentity]
 
@@ -167,10 +169,12 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         try:
           let astTree = codeParser.parseAll
           codeParser.closeParser
+          var options = RuleOptions(options: @[], parent: true,
+              fileName: sources[i])
           for rule in rules:
+            options.options = rule.options
             if not rulesCalls[rulesNames.find(item = rule.name)](
-                astTree = astTree, options = rule.options, parent = true,
-                fileName = sources[i]) and resultCode == QuitSuccess:
+                astTree = astTree, options = options) and resultCode == QuitSuccess:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
           abortProgram("The file '" & sources[i] &
