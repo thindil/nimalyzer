@@ -25,8 +25,14 @@
 
 ## Provides various things for the program rules
 
-type RuleOptions* = object
-  options*: seq[string]
-  parent*: bool
-  fileName*: string
-  negation*: bool
+type
+
+  RuleTypes* = enum
+    none, check, search
+
+  RuleOptions* = object
+    options*: seq[string]
+    parent*: bool
+    fileName*: string
+    negation*: bool
+    ruleType*: RuleTypes

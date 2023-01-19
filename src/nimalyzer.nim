@@ -71,6 +71,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       name: string
       options: seq[string]
       negation: bool
+      ruleType: RuleTypes
     var
       sources: seq[string]
       rules: seq[RuleData]
@@ -124,9 +125,15 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         elif line.startsWith(prefix = "check"):
           var configRule = initOptParser(cmdline = line)
           configRule.next
+          let ruleType: RuleTypes = try:
+              parseEnum[RuleTypes](s = configRule.key)
+            except ValueError:
+              none
+          if ruleType == none:
+            abortProgram("Unknown type of rule: '" & configRule.key & "'.")
           configRule.next
           var newRule = RuleData(name: configRule.key.toLowerAscii, options: @[],
-              negation: false)
+              negation: false, ruleType: ruleType)
           if newRule.name == "not":
             newRule.negation = true
             configRule.next
