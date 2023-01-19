@@ -122,22 +122,22 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             abortProgram("Can't add files to check. Reason: " &
                 getCurrentExceptionMsg())
         elif line.startsWith(prefix = "check"):
-          var checkRule = initOptParser(cmdline = line)
-          checkRule.next
-          checkRule.next
-          var newRule = RuleData(name: checkRule.key.toLowerAscii, options: @[],
+          var configRule = initOptParser(cmdline = line)
+          configRule.next
+          configRule.next
+          var newRule = RuleData(name: configRule.key.toLowerAscii, options: @[],
               negation: false)
           if newRule.name == "not":
             newRule.negation = true
-            checkRule.next
-            newRule.name = checkRule.key.toLowerAscii
+            configRule.next
+            newRule.name = configRule.key.toLowerAscii
           if not rulesList.hasKey(key = newRule.name):
             abortProgram("No rule named '" & newRule.name & "' available.")
           while true:
-            checkRule.next()
-            if checkRule.kind == cmdEnd:
+            configRule.next()
+            if configRule.kind == cmdEnd:
               break
-            newRule.options.add(y = checkRule.key)
+            newRule.options.add(y = configRule.key)
           rules.add(y = newRule)
           try:
             debug("Added" & (if rules[^1].negation: " negation" else: "") &
