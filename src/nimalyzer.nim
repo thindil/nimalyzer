@@ -67,10 +67,13 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         hasentity.ruleName: hasentity.ruleCheck}.toTable
     # Read the configuration file and set the program
     let configFile = paramStr(i = 1)
-    type Rule = tuple[name: string; options: seq[string]; negation: bool]
+    type RuleData = object
+      name: string
+      options: seq[string]
+      negation: bool
     var
       sources: seq[string]
-      rules: seq[Rule]
+      rules: seq[RuleData]
 
     proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [
         ], tags: [RootEffect], contractual.} =
@@ -122,7 +125,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           var checkRule = initOptParser(cmdline = line)
           checkRule.next
           checkRule.next
-          var newRule: Rule = (name: checkRule.key.toLowerAscii, options: @[],
+          var newRule = RuleData(name: checkRule.key.toLowerAscii, options: @[],
               negation: false)
           if newRule.name == "not":
             newRule.negation = true
