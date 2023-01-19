@@ -26,7 +26,7 @@
 ## This is the main module of the program.
 
 # Standard library imports
-import std/[logging, os, parseopt, strutils]
+import std/[logging, os, parseopt, strutils, tables]
 # External modules imports
 import compiler/[idents, llstream, options, parser, pathutils]
 import contracts
@@ -63,7 +63,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     # No configuration file specified, quit from the program
     if paramCount() == 0:
       abortProgram("No configuration file specified. Please run the program with path to the config file as an argument.")
-    const rulesNames = [haspragma.ruleName, hasentity.ruleName]
+    const rulesList = {haspragma.ruleName: haspragma.ruleCheck,
+        hasentity.ruleName: hasentity.ruleCheck}.toTable
     # Read the configuration file and set the program
     let configFile = paramStr(i = 1)
     type Rule = tuple[name: string; options: seq[string]; negation: bool]
@@ -127,7 +128,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             newRule.negation = true
             checkRule.next
             newRule.name = checkRule.key.toLowerAscii
-          if newRule.name notin rulesNames:
+          if not rulesList.hasKey(key = newRule.name):
             abortProgram("No rule named '" & newRule.name & "' available.")
           while true:
             checkRule.next()
@@ -152,7 +153,6 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       nimCache = newIdentCache()
       nimConfig = newConfigRef()
     nimConfig.options.excl(optHints)
-    const rulesCalls = [haspragma.ruleCheck, hasentity.ruleCheck]
     var resultCode = QuitSuccess
     # Check source code files with the selected rules
     for i in 0..sources.len - 1:
@@ -180,8 +180,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           for rule in rules:
             options.options = rule.options
             options.negation = rule.negation
-            if not rulesCalls[rulesNames.find(item = rule.name)](
-                astTree = astTree, options = options) and resultCode == QuitSuccess:
+            if not rulesList[rule.name](astTree = astTree,
+                options = options) and resultCode == QuitSuccess:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
           abortProgram("The file '" & sources[i] &
