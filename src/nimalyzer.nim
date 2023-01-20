@@ -134,7 +134,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             abortProgram("Unknown type of rule: '" & configRule.key & "'.")
           configRule.next
           var newRule = RuleData(name: configRule.key.toLowerAscii, options: @[
-              ], negation: false, ruleType: ruleType)
+            ], negation: false, ruleType: ruleType)
           if newRule.name == "not":
             newRule.negation = true
             configRule.next
@@ -148,9 +148,9 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             newRule.options.add(y = configRule.key)
           rules.add(y = newRule)
           try:
-            debug("Added" & (if rules[^1].negation: " negation" else: "") &
-                " rule '" & rules[^1].name & "' with options: '" & rules[
-                ^1].options.join(", ") & "' to the list of rules to check.")
+            debug("Added" & (if rules[^1].negation: " negation " else: " ") &
+                $rules[^1].ruleType & " rule '" & rules[^1].name &
+                "' with options: '" & rules[^1].options.join(", ") & "' to the list of rules to check.")
           except Exception:
             abortProgram("Can't log messages.")
     except IOError:
