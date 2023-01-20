@@ -51,11 +51,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
       childOptions = RuleOptions(options: options.options, parent: false,
           fileName: options.fileName)
     if nodeKind == nkNone:
-      try:
-        fatal("Invalid type of entity: " & options.options[0])
-      except Exception:
-        echo "Can't log message."
-      return false
+      return message(text = "Invalid type of entity: " & options.options[0],
+          level = lvlFatal)
     result = (if options.negation: true else: false)
     for node in astTree.items:
       for child in node.items:
@@ -67,27 +64,19 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
       try:
         if startsWith(s = $node[0], prefix = options.options[1]):
           if options.negation:
-            try:
-              error((if getLogFilter() < lvlNotice: "H" else: options.fileName &
-                  ": h") & "as declared " & options.options[0] &
-                  " with name '" & options.options[1] & "'.")
-            except Exception:
-              echo "Can't log message."
-            return false
+            return message(text = (if getLogFilter() <
+                lvlNotice: "H" else: options.fileName & ": h") &
+                "as declared " & options.options[0] & " with name '" &
+                options.options[1] & "'.")
           else:
             return true
       except KeyError:
         continue
       except Exception:
-        try:
-          fatal("Error during checking hasEntity rule: " &
-              getCurrentExceptionMsg())
-        except Exception:
-          echo "Can't log message."
+        discard message(text = "Error during checking hasEntity rule: " &
+             getCurrentExceptionMsg(), level = lvlFatal)
     if options.parent:
-      try:
-        error((if getLogFilter() < lvlNotice: "D" else: options.fileName &
-            ": d") & "oesn't have declared " & options.options[0] &
-            " with name '" & options.options[1] & "'.")
-      except Exception:
-        echo "Can't log message."
+      discard message(text = (if getLogFilter() <
+          lvlNotice: "D" else: options.fileName & ": d") &
+          "oesn't have declared " & options.options[0] & " with name '" &
+          options.options[1] & "'.")

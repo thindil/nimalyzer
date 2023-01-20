@@ -58,26 +58,19 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
         if not hasPragma:
           if options.negation:
             return true
-          try:
-            error(messagePrefix & "procedure " & procName & " line: " &
+          return message(text = messagePrefix & "procedure " & procName & " line: " &
                 line & " doesn't have declared pragma: " & pragma & ".")
-          except Exception:
-            echo "Can't log message."
-          return false
         else:
           if options.negation:
-            try:
-              error(messagePrefix & "procedure " & procName & " line: " &
+            return message(text = messagePrefix & "procedure " & procName & " line: " &
                   line & " has declared pragma: " & pragma & ".")
-            except Exception:
-              echo "Can't log message."
-            return false
           return true
 
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
-            options: options.options, parent: result, fileName: options.fileName,
+            options: options.options, parent: result,
+            fileName: options.fileName,
             negation: options.negation))
       if node.kind notin routineDefs:
         continue
@@ -88,19 +81,12 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
           except KeyError, Exception:
             ""
       if procName.len == 0:
-        try:
-          fatal("Can't get the name of the procedure.")
-        except Exception:
-          echo "Can't log message."
-        return false
+        return message(text = "Can't get the name of the procedure.",
+            level = lvlFatal)
       if pragmas == nil:
         if not options.negation:
-          try:
-            error(messagePrefix & "procedure " & procName & " line: " &
+          result = message(messagePrefix & "procedure " & procName & " line: " &
                 $node.info.line & " doesn't have declared any pragmas.")
-          except Exception:
-            echo "Can't log message."
-          result = false
         else:
           result = true
         continue

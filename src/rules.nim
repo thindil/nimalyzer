@@ -25,6 +25,11 @@
 
 ## Provides various things for the program rules
 
+# Standard library imports
+import std/logging
+# External modules imports
+import contracts
+
 type
 
   RuleTypes* = enum
@@ -36,3 +41,15 @@ type
     fileName*: string
     negation*: bool
     ruleType*: RuleTypes
+
+proc message*(text: string; returnValue: bool = false;
+    level: Level = lvlError): bool {.raises: [], tags: [RootEffect],
+    contractual.} =
+  require:
+    text.len > 0
+  body:
+    result = returnValue
+    try:
+      log(level, text)
+    except Exception:
+      echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
