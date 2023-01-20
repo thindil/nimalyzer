@@ -190,6 +190,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           for rule in rules:
             options.options = rule.options
             options.negation = rule.negation
+            options.ruleType = rule.ruleType
             if not rulesList[rule.name](astTree = astTree,
                 options = options) and resultCode == QuitSuccess:
               resultCode = QuitFailure
