@@ -57,13 +57,23 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
       body:
         if not hasPragma:
           if options.negation:
-            return true
-          return message(text = messagePrefix & "procedure " & procName & " line: " &
-                line & " doesn't have declared pragma: " & pragma & ".")
+            if options.ruleType == check:
+              return true
+            else:
+              return false
+          return message(text = messagePrefix & "procedure " & procName &
+              " line: " & line & " doesn't have declared pragma: " & pragma &
+              ".", returnValue = (if options.ruleType ==
+              check: false else: true), level = (if options.ruleType ==
+              check: lvlError else: lvlNotice))
         else:
           if options.negation:
             return message(text = messagePrefix & "procedure " & procName & " line: " &
                   line & " has declared pragma: " & pragma & ".")
+          if options.ruleType == search:
+            return message(text = messagePrefix & "procedure " & procName & " line: " &
+                  line & " has declared pragma: " & pragma & ".",
+                  returnValue = true, level = lvlNotice)
           return true
 
     for node in astTree.items:
@@ -85,10 +95,18 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
             level = lvlFatal)
       if pragmas == nil:
         if not options.negation:
-          result = message(messagePrefix & "procedure " & procName & " line: " &
-                $node.info.line & " doesn't have declared any pragmas.")
+          if options.ruleType == check:
+            result = message(messagePrefix & "procedure " & procName & " line: " &
+                  $node.info.line & " doesn't have declared any pragmas.")
+          else:
+            result = false
         else:
-          result = true
+          if options.ruleType == search:
+            result = message(messagePrefix & "procedure " & procName & " line: " &
+                  $node.info.line & " doesn't have declared any pragmas.",
+                  returnValue = true, level = lvlNotice)
+          else:
+            result = true
         continue
       var strPragmas: seq[string]
       for pragma in pragmas:

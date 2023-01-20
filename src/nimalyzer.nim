@@ -122,7 +122,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           except OSError:
             abortProgram("Can't add files to check. Reason: " &
                 getCurrentExceptionMsg())
-        elif line.startsWith(prefix = "check"):
+        elif line.startsWith(prefix = "check") or line.startsWith(
+            prefix = "search"):
           var configRule = initOptParser(cmdline = line)
           configRule.next
           let ruleType: RuleTypes = try:
@@ -132,8 +133,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           if ruleType == none:
             abortProgram("Unknown type of rule: '" & configRule.key & "'.")
           configRule.next
-          var newRule = RuleData(name: configRule.key.toLowerAscii, options: @[],
-              negation: false, ruleType: ruleType)
+          var newRule = RuleData(name: configRule.key.toLowerAscii, options: @[
+              ], negation: false, ruleType: ruleType)
           if newRule.name == "not":
             newRule.negation = true
             configRule.next
