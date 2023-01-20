@@ -186,8 +186,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         try:
           let astTree = codeParser.parseAll
           codeParser.closeParser
-          var options = RuleOptions(options: @[], parent: true,
-              fileName: sources[i])
+          var options = RuleOptions(parent: true, fileName: sources[i])
           for rule in rules:
             options.options = rule.options
             options.negation = rule.negation
