@@ -49,7 +49,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
         options.fileName & ": "
 
     proc setResult(procName, line, pragma: string;
-        hasPragma: bool): bool {.raises: [], tags: [RootEffect], contractual.} =
+        hasPragma, oldResult: bool): bool {.raises: [], tags: [RootEffect], contractual.} =
       require:
         procName.len > 0
         line.len > 0
@@ -57,11 +57,11 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
       body:
         if not hasPragma:
           if options.negation and options.ruleType == check:
-            return true
+            return if not oldResult: oldResult else: true
           return message(text = messagePrefix & "procedure " & procName &
               " line: " & line & " doesn't have declared pragma: " & pragma &
               ".", returnValue = (if options.ruleType ==
-              check: false else: true), level = (if options.ruleType ==
+              check: false else: (if not oldResult: oldResult else: true)), level = (if options.ruleType ==
               check: lvlError else: lvlNotice))
         else:
           if options.negation:
@@ -74,7 +74,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
             return message(text = messagePrefix & "procedure " & procName & " line: " &
                   line & " has declared pragma: " & pragma & ".",
                   returnValue = true, level = lvlNotice)
-          return true
+          return if not oldResult: oldResult else: true
 
     for node in astTree.items:
       for child in node.items:
@@ -117,38 +117,32 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
           discard
       for pragma in options.options:
         if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
-          echo "no pragma"
           result = setResult(procName = procName, line = $node.info.line,
-              pragma = pragma, hasPragma = false)
+              pragma = pragma, hasPragma = false, oldResult = result)
         elif pragma[^1] == '*' and pragma[0] != '*':
-          echo "first *"
           var hasPragma = false
           for procPragma in strPragmas:
             if procPragma.startsWith(prefix = pragma[0..^2]):
               hasPragma = true
-              echo "here"
               break
           result = setResult(procName = procName, line = $node.info.line,
-              pragma = pragma, hasPragma = hasPragma)
+              pragma = pragma, hasPragma = hasPragma, oldResult = result)
         elif pragma[0] == '*' and pragma[^1] != '*':
-          echo "last *"
           var hasPragma = false
           for procPragma in strPragmas:
             if procPragma.endsWith(suffix = pragma[1..^1]):
               hasPragma = true
               break
           result = setResult(procName = procName, line = $node.info.line,
-              pragma = pragma, hasPragma = hasPragma)
+              pragma = pragma, hasPragma = hasPragma, oldResult = result)
         elif '*' in [pragma[0], pragma[^1]]:
-          echo "middle *"
           var hasPragma = false
           for procPragma in strPragmas:
             if procPragma.contains(sub = pragma[1..^2]):
               hasPragma = true
               break
           result = setResult(procName = procName, line = $node.info.line,
-              pragma = pragma, hasPragma = hasPragma)
+              pragma = pragma, hasPragma = hasPragma, oldResult = result)
         else:
-          echo "has pragma"
           result = setResult(procName = procName, line = $node.info.line,
-              pragma = pragma, hasPragma = true)
+              pragma = pragma, hasPragma = true, oldResult = result)
