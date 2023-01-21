@@ -43,16 +43,25 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
 
+    proc message(text: string; level: Level = lvlInfo) {.raises: [], tags: [
+        RootEffect], contractual.} =
+      require:
+        text.len > 0
+      body:
+        try:
+          log(level, text)
+        except Exception:
+          echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
+          echo "Stopping nimalyzer"
+          quit QuitFailure
+
     proc abortProgram(message: string) {.gcsafe, raises: [], tags: [RootEffect],
         contractual.} =
       require:
         message.len > 0
       body:
-        try:
-          fatal(message)
-          info("Stopping nimalyzer.")
-        except Exception:
-          echo "Can't log messages."
+        message(text = message, level = lvlFatal)
+        message(text = "Stopping nimalyzer.")
         quit QuitFailure
 
     try:
@@ -83,10 +92,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       body:
         if fileName notin sources:
           sources.add(y = fileName)
-          try:
-            debug("Added file '" & fileName & "' to the list of files to check.")
-          except Exception:
-            abortProgram("Can't log messages.")
+          message(text = "Added file '" & fileName &
+              "' to the list of files to check.", level = lvlDebug)
 
     try:
       for line in configFile.lines:
@@ -95,20 +102,16 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         elif line.startsWith(prefix = "verbosity"):
           try:
             setLogFilter(lvl = parseEnum[Level](s = line[10..^1]))
-            try:
-              debug("Setting the program verbosity to '" & line[10..^1] & "'.")
-            except Exception:
-              abortProgram("Can't log messages.")
+            message(text = "Setting the program verbosity to '" & line[10..^1] &
+                "'.", level = lvlDebug)
           except ValueError:
             abortProgram("Invalid value set in configuration file for the program verbosity level.")
         elif line.startsWith(prefix = "output"):
           let fileName = unixToNativePath(line[7..^1])
           addHandler(handler = newFileLogger(filename = fileName,
               fmtStr = "[$time] - $levelname: "))
-          try:
-            debug("Added file '" & fileName & "' as log file.")
-          except Exception:
-            abortProgram("Can't log messages.")
+          message(text = "Added file '" & fileName & "' as log file.",
+              level = lvlDebug)
         elif line.startsWith(prefix = "source"):
           let fileName = unixToNativePath(line[7..^1])
           addFile(fileName = fileName, sources = sources)
@@ -147,12 +150,11 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               break
             newRule.options.add(y = configRule.key)
           rules.add(y = newRule)
-          try:
-            debug("Added" & (if rules[^1].negation: " negation " else: " ") &
-                $rules[^1].ruleType & " rule '" & rules[^1].name &
-                "' with options: '" & rules[^1].options.join(", ") & "' to the list of rules to check.")
-          except Exception:
-            abortProgram("Can't log messages.")
+          message(text = "Added" & (if rules[
+              ^1].negation: " negation " else: " ") & $rules[^1].ruleType &
+              " rule '" & rules[^1].name & "' with options: '" & rules[
+              ^1].options.join(", ") & "' to the list of rules to check.",
+              level = lvlDebug)
     except IOError:
       abortProgram("The specified configuration file '" & configFile & "' doesn't exist.")
     # Check if the lists of source code files and rules is set
@@ -167,11 +169,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     var resultCode = QuitSuccess
     # Check source code files with the selected rules
     for i in 0..sources.len - 1:
-      try:
-        info("[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
-            sources[i] & "'")
-      except Exception:
-        abortProgram("Can't log messages.")
+      message(text = "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
+          sources[i] & "'")
       var codeParser: Parser
       try:
         let fileName = toAbsolute(file = sources[i], base = toAbsoluteDir(
@@ -200,10 +199,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       except OSError:
         abortProgram("Can't parse file '" & sources[i] & "'. Reason: " &
             getCurrentExceptionMsg())
-    try:
-      info("Stopping nimalyzer.")
-    except Exception:
-      abortProgram("Can't log messages.")
+    message(text = "Stopping nimalyzer.")
     quit resultCode
 
 when isMainModule:
