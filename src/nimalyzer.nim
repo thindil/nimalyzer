@@ -187,6 +187,10 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           codeParser.closeParser
           var options = RuleOptions(parent: true, fileName: sources[i])
           for rule in rules:
+            message(text = "Parsing rule" & (
+                if rule.negation: " negation " else: " ") & $rule.ruleType &
+                " rule '" & rule.name & "' with options: '" & rule.options.join(
+                ", ") & "'.", level = lvlDebug)
             options.options = rule.options
             options.negation = rule.negation
             options.ruleType = rule.ruleType
