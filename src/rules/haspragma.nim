@@ -56,11 +56,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
         pragma.len > 0
       body:
         if not hasPragma:
-          if options.negation:
-            if options.ruleType == check:
-              return true
-            else:
-              return false
+          if options.negation and options.ruleType == check:
+            return true
           return message(text = messagePrefix & "procedure " & procName &
               " line: " & line & " doesn't have declared pragma: " & pragma &
               ".", returnValue = (if options.ruleType ==
@@ -68,8 +65,11 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
               check: lvlError else: lvlNotice))
         else:
           if options.negation:
-            return message(text = messagePrefix & "procedure " & procName & " line: " &
-                  line & " has declared pragma: " & pragma & ".")
+            if options.ruleType == check:
+              return message(text = messagePrefix & "procedure " & procName & " line: " &
+                    line & " has declared pragma: " & pragma & ".")
+            else:
+              return false
           if options.ruleType == search:
             return message(text = messagePrefix & "procedure " & procName & " line: " &
                   line & " has declared pragma: " & pragma & ".",
