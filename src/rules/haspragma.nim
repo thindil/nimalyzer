@@ -79,9 +79,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
-            options: options.options, parent: result,
-            fileName: options.fileName,
-            negation: options.negation,
+            options: options.options, parent: (
+            if options.negation: not options.parent else: options.parent),
+            fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType))
       if node.kind notin routineDefs:
         continue
@@ -117,17 +117,21 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
           discard
       for pragma in options.options:
         if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
+          echo "no pragma"
           result = setResult(procName = procName, line = $node.info.line,
               pragma = pragma, hasPragma = false)
         elif pragma[^1] == '*' and pragma[0] != '*':
+          echo "first *"
           var hasPragma = false
           for procPragma in strPragmas:
             if procPragma.startsWith(prefix = pragma[0..^2]):
               hasPragma = true
+              echo "here"
               break
           result = setResult(procName = procName, line = $node.info.line,
               pragma = pragma, hasPragma = hasPragma)
         elif pragma[0] == '*' and pragma[^1] != '*':
+          echo "last *"
           var hasPragma = false
           for procPragma in strPragmas:
             if procPragma.endsWith(suffix = pragma[1..^1]):
@@ -136,6 +140,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
           result = setResult(procName = procName, line = $node.info.line,
               pragma = pragma, hasPragma = hasPragma)
         elif '*' in [pragma[0], pragma[^1]]:
+          echo "middle *"
           var hasPragma = false
           for procPragma in strPragmas:
             if procPragma.contains(sub = pragma[1..^2]):
@@ -144,5 +149,6 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
           result = setResult(procName = procName, line = $node.info.line,
               pragma = pragma, hasPragma = hasPragma)
         else:
+          echo "has pragma"
           result = setResult(procName = procName, line = $node.info.line,
               pragma = pragma, hasPragma = true)
