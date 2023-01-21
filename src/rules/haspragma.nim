@@ -42,14 +42,14 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
     options.options.len > 0
     options.fileName.len > 0
   body:
-    result = (if options.negation: not options.parent else: options.parent)
+    result = true
     let messagePrefix = if getLogFilter() < lvlNotice:
         ""
       else:
         options.fileName & ": "
 
-    proc setResult(procName, line, pragma: string;
-        hasPragma, oldResult: bool): bool {.raises: [], tags: [RootEffect], contractual.} =
+    proc setResult(procName, line, pragma: string; hasPragma,
+        oldResult: bool): bool {.raises: [], tags: [RootEffect], contractual.} =
       require:
         procName.len > 0
         line.len > 0
@@ -58,11 +58,16 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
         if not hasPragma:
           if options.negation and options.ruleType == check:
             return if not oldResult: oldResult else: true
-          return message(text = messagePrefix & "procedure " & procName &
-              " line: " & line & " doesn't have declared pragma: " & pragma &
-              ".", returnValue = (if options.ruleType ==
-              check: false else: (if not oldResult: oldResult else: true)), level = (if options.ruleType ==
-              check: lvlError else: lvlNotice))
+          if options.ruleType == check:
+            return message(text = messagePrefix & "procedure " & procName &
+                " line: " & line & " doesn't have declared pragma: " & pragma &
+                ".")
+          else:
+            if options.negation:
+              return message(text = messagePrefix & "procedure " & procName &
+                  " line: " & line & " doesn't have declared pragma: " & pragma &
+                  ".", returnValue = true, level = lvlNotice)
+            return false
         else:
           if options.negation:
             if options.ruleType == check:
@@ -79,8 +84,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
-            options: options.options, parent: (
-            if options.negation: not options.parent else: options.parent),
+            options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType))
       if node.kind notin routineDefs:
@@ -146,3 +150,5 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
         else:
           result = setResult(procName = procName, line = $node.info.line,
               pragma = pragma, hasPragma = true, oldResult = result)
+    if options.parent and not result and options.ruleType == search:
+      return message(text = "The selected pragma(s) not found.")
