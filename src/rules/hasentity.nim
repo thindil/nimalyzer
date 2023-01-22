@@ -65,22 +65,34 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
       try:
         if startsWith(s = $node[0], prefix = options.options[1]):
           if options.negation:
-            return message(text = (if getLogFilter() <
-                lvlNotice: "H" else: options.fileName & ": h") &
-                "as declared " & options.options[0] & " with name '" &
-                options.options[1] & "' at line: " & $node.info.line & ".",
-                returnValue = true)
+            if options.ruleType == check:
+              return message(text = (if getLogFilter() <
+                  lvlNotice: "H" else: options.fileName & ": h") &
+                  "as declared " & options.options[0] & " with name '" &
+                  options.options[1] & "' at line: " & $node.info.line & ".",
+                  returnValue = true)
+            else:
+              return false
           else:
-            return true
+            if options.ruleType == check:
+              return true
+            else:
+              return message(text = (if getLogFilter() <
+                  lvlNotice: "H" else: options.fileName & ": h") &
+                  "as declared " & options.options[0] & " with name '" &
+                  options.options[1] & "' at line: " & $node.info.line & ".",
+                  returnValue = true, level = lvlNotice)
       except KeyError:
         continue
       except Exception:
         discard message(text = "Error during checking hasEntity rule: " &
              getCurrentExceptionMsg(), level = lvlFatal)
-    if options.parent:
-      if options.negation:
+    if options.parent and not result:
+      if options.negation and options.ruleType == check:
         return
-      discard message(text = (if getLogFilter() <
+      return message(text = (if getLogFilter() <
           lvlNotice: "D" else: options.fileName & ": d") &
           "oesn't have declared " & options.options[0] & " with name '" &
-          options.options[1] & "'.")
+          options.options[1] & "'.", returnValue = (if options.ruleType ==
+              check: true else: false), level = (if options.ruleType ==
+              check: lvlError else: lvlNotice))
