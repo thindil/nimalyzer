@@ -194,8 +194,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             options.options = rule.options
             options.negation = rule.negation
             options.ruleType = rule.ruleType
-            if not rulesList[rule.name](astTree = astTree,
-                options = options) and resultCode == QuitSuccess:
+            if not rulesList[rule.name](astTree = astTree, options = options):
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
           abortProgram("The file '" & sources[i] &
