@@ -168,24 +168,24 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     nimConfig.options.excl(optHints)
     var resultCode = QuitSuccess
     # Check source code files with the selected rules
-    for i in 0..sources.len - 1:
+    for i, source in sources.pairs:
       message(text = "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
-          sources[i] & "'")
+          source & "'")
       var codeParser: Parser
       try:
-        let fileName = toAbsolute(file = sources[i], base = toAbsoluteDir(
+        let fileName = toAbsolute(file = source, base = toAbsoluteDir(
             path = getCurrentDir()))
         try:
           openParser(p = codeParser, filename = fileName, llStreamOpen(
               filename = fileName, mode = fmRead), cache = nimCache,
               config = nimConfig)
         except IOError, ValueError, KeyError, Exception:
-          abortProgram("Can't open file '" & sources[i] &
+          abortProgram("Can't open file '" & source &
               "' to parse. Reason: " & getCurrentExceptionMsg())
         try:
           let astTree = codeParser.parseAll
           codeParser.closeParser
-          var options = RuleOptions(parent: true, fileName: sources[i])
+          var options = RuleOptions(parent: true, fileName: source)
           for index, rule in rules.pairs:
             message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
                 "]" & (if rule.negation: " negation " else: " ") &
@@ -197,10 +197,10 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             if not rulesList[rule.name](astTree = astTree, options = options):
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
-          abortProgram("The file '" & sources[i] &
+          abortProgram("The file '" & source &
               "' can't be parsed to AST. Reason: " & getCurrentExceptionMsg())
       except OSError:
-        abortProgram("Can't parse file '" & sources[i] & "'. Reason: " &
+        abortProgram("Can't parse file '" & source & "'. Reason: " &
             getCurrentExceptionMsg())
     message(text = "Stopping nimalyzer.")
     quit resultCode
