@@ -59,7 +59,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
       for child in node.items:
         result = ruleCheck(astTree = child, options = childOptions)
         if result:
-          return not options.negation
+          if options.ruleType == check:
+            return not options.negation
+          return
       if node.kind != nodeKind:
         continue
       try:
@@ -72,7 +74,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
                   options.options[1] & "' at line: " & $node.info.line & ".",
                   returnValue = true)
             else:
-              return false
+              return true
           else:
             if options.ruleType == check:
               return true
@@ -88,8 +90,13 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
         discard message(text = "Error during checking hasEntity rule: " &
              getCurrentExceptionMsg(), level = lvlFatal)
     if options.parent and not result:
-      if options.negation and options.ruleType == check:
-        return
+      if options.negation:
+        if options.ruleType == check:
+          return
+        return message(text = (if getLogFilter() <
+            lvlNotice: "D" else: options.fileName & ": d") &
+            "oesn't have declared " & options.options[0] & " with name '" &
+            options.options[1] & "'.", returnValue = true, level = lvlNotice)
       return message(text = (if getLogFilter() <
           lvlNotice: "D" else: options.fileName & ": d") &
           "oesn't have declared " & options.options[0] & " with name '" &
