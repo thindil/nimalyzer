@@ -49,16 +49,17 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
         except ValueError:
           nkNone
       childOptions = RuleOptions(options: options.options, parent: false,
-          fileName: options.fileName)
+          fileName: options.fileName, negation: options.negation,
+          ruleType: options.ruleType)
     if nodeKind == nkNone:
       return message(text = "Invalid type of entity: " & options.options[0],
           level = lvlFatal)
-    result = (if options.negation: true else: false)
+    result = false
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = childOptions)
         if result:
-          return
+          return not options.negation
       if node.kind != nodeKind:
         continue
       try:
@@ -67,7 +68,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
             return message(text = (if getLogFilter() <
                 lvlNotice: "H" else: options.fileName & ": h") &
                 "as declared " & options.options[0] & " with name '" &
-                options.options[1] & "'.")
+                options.options[1] & "' at line: " & $node.info.line & ".",
+                returnValue = true)
           else:
             return true
       except KeyError:
@@ -76,6 +78,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
         discard message(text = "Error during checking hasEntity rule: " &
              getCurrentExceptionMsg(), level = lvlFatal)
     if options.parent:
+      if options.negation:
+        return
       discard message(text = (if getLogFilter() <
           lvlNotice: "D" else: options.fileName & ": d") &
           "oesn't have declared " & options.options[0] & " with name '" &
