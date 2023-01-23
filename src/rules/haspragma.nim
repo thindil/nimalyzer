@@ -35,21 +35,21 @@ import ../rules
 
 const ruleName* = "haspragma"
 
-proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
+proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
   require:
     astTree != nil
     options.options.len > 0
     options.fileName.len > 0
   body:
-    result = true
+    result = 1
     let messagePrefix = if getLogFilter() < lvlNotice:
         ""
       else:
         options.fileName & ": "
 
-    proc setResult(procName, line, pragma: string; hasPragma,
-        oldResult: bool): bool {.raises: [], tags: [RootEffect], contractual.} =
+    proc setResult(procName, line, pragma: string; hasPragma: bool;
+        oldResult: int): int {.raises: [], tags: [RootEffect], contractual.} =
       require:
         procName.len > 0
         line.len > 0
@@ -57,7 +57,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
       body:
         if not hasPragma:
           if options.negation and options.ruleType == check:
-            return if not oldResult: oldResult else: true
+            return if oldResult == 0: oldResult else: 1
           if options.ruleType == check:
             return message(text = messagePrefix & "procedure " & procName &
                 " line: " & line & " doesn't have declared pragma: " & pragma &
@@ -66,20 +66,20 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
             if options.negation:
               return message(text = messagePrefix & "procedure " & procName &
                   " line: " & line & " doesn't have declared pragma: " & pragma &
-                  ".", returnValue = true, level = lvlNotice)
-            return false
+                  ".", returnValue = 1, level = lvlNotice)
+            return 0
         else:
           if options.negation:
             if options.ruleType == check:
               return message(text = messagePrefix & "procedure " & procName & " line: " &
                     line & " has declared pragma: " & pragma & ".")
             else:
-              return false
+              return 0
           if options.ruleType == search:
             return message(text = messagePrefix & "procedure " & procName & " line: " &
                   line & " has declared pragma: " & pragma & ".",
-                  returnValue = true, level = lvlNotice)
-          return if not oldResult: oldResult else: true
+                  returnValue = 1, level = lvlNotice)
+          return if oldResult == 0: oldResult else: 1
 
     for node in astTree.items:
       for child in node.items:
@@ -104,14 +104,14 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
             result = message(messagePrefix & "procedure " & procName & " line: " &
                   $node.info.line & " doesn't have declared any pragmas.")
           else:
-            result = false
+            result = 0
         else:
           if options.ruleType == search:
             result = message(messagePrefix & "procedure " & procName & " line: " &
                   $node.info.line & " doesn't have declared any pragmas.",
-                  returnValue = true, level = lvlNotice)
+                  returnValue = 1, level = lvlNotice)
           else:
-            result = true
+            result = 1
         continue
       var strPragmas: seq[string]
       for pragma in pragmas:
@@ -150,5 +150,5 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): bool {.contractual,
         else:
           result = setResult(procName = procName, line = $node.info.line,
               pragma = pragma, hasPragma = true, oldResult = result)
-    if options.parent and not result and options.ruleType == search:
+    if options.parent and result == 0 and options.ruleType == search:
       return message(text = "The selected pragma(s) not found.")

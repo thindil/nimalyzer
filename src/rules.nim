@@ -42,8 +42,8 @@ type
     negation*: bool
     ruleType*: RuleTypes
 
-proc message*(text: string; returnValue: bool = false;
-    level: Level = lvlError): bool {.raises: [], tags: [RootEffect],
+proc message*(text: string; returnValue: int = 0;
+    level: Level = lvlError): int {.raises: [], tags: [RootEffect],
     contractual.} =
   require:
     text.len > 0
