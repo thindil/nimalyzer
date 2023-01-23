@@ -43,26 +43,21 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     options.options.len == 2
     options.fileName.len > 0
   body:
-    let
-      nodeKind = try:
+    let nodeKind = try:
           parseEnum[TNodeKind](s = options.options[0])
         except ValueError:
           nkNone
-      childOptions = RuleOptions(options: options.options, parent: false,
-          fileName: options.fileName, negation: options.negation,
-          ruleType: options.ruleType)
-    result = 0
     if nodeKind == nkNone:
       message(text = "Invalid type of entity: " & options.options[0],
           returnValue = result, level = lvlFatal)
       return
+    result = options.amount
     for node in astTree.items:
       for child in node.items:
-        result = ruleCheck(astTree = child, options = childOptions)
-        if result > 0:
-          if options.ruleType == check:
-            return (not options.negation).int
-          return
+        result = ruleCheck(astTree = child, options = RuleOptions(
+            options: options.options, parent: false, fileName: options.fileName,
+            negation: options.negation, ruleType: options.ruleType,
+            amount: result))
       if node.kind != nodeKind:
         continue
       try:
@@ -76,9 +71,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                   returnValue = result, decrease = false)
             else:
               result.inc
-            return
           else:
-            if options.ruleType == check:
+            if options.ruleType != search:
               result.inc
             else:
               message(text = (if getLogFilter() <
@@ -86,25 +80,34 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                   "as declared " & options.options[0] & " with name '" &
                   options.options[1] & "' at line: " & $node.info.line & ".",
                   returnValue = result, level = lvlNotice, decrease = false)
-            return
       except KeyError:
         continue
       except Exception:
         message(text = "Error during checking hasEntity rule: " &
             getCurrentExceptionMsg(), returnValue = result, level = lvlFatal)
-    if options.parent and result < 1:
-      if options.negation:
-        if options.ruleType == check:
+        return
+    if options.parent:
+      if options.ruleType == RuleTypes.count:
+        message(text = (if getLogFilter() <
+            lvlNotice: "D" else: options.fileName & ": d") & "eclared " &
+            options.options[0] & " with name '" & options.options[1] &
+            "' found: " & $result, returnValue = result, level = lvlNotice)
+        result.inc
+        return
+      if result < 1:
+        if options.negation:
+          if options.ruleType == check:
+            return
+          message(text = (if getLogFilter() <
+              lvlNotice: "D" else: options.fileName & ": d") &
+              "oesn't have declared " & options.options[0] & " with name '" &
+              options.options[1] & "'.", returnValue = result,
+                  level = lvlNotice, decrease = false)
           return
         message(text = (if getLogFilter() <
             lvlNotice: "D" else: options.fileName & ": d") &
             "oesn't have declared " & options.options[0] & " with name '" &
-            options.options[1] & "'.", returnValue = result, level = lvlNotice,
-                decrease = false)
-        return
-      message(text = (if getLogFilter() <
-          lvlNotice: "D" else: options.fileName & ": d") &
-          "oesn't have declared " & options.options[0] & " with name '" &
-          options.options[1] & "'.", returnValue = result, level = (
-          if options.ruleType == check: lvlError else: lvlNotice), decrease = (
-          if options.ruleType == check: false else: true))
+            options.options[1] & "'.", returnValue = result, level = (
+            if options.ruleType == check: lvlError else: lvlNotice),
+            decrease = (
+            if options.ruleType == check: false else: true))

@@ -41,6 +41,7 @@ type
     fileName*: string
     negation*: bool
     ruleType*: RuleTypes
+    amount*: int
 
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
     decrease: bool = true) {.raises: [], tags: [RootEffect], contractual.} =

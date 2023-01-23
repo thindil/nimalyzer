@@ -194,6 +194,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             options.options = rule.options
             options.negation = rule.negation
             options.ruleType = rule.ruleType
+            options.amount = 0
             if rulesList[rule.name](astTree = astTree, options = options) < 1:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
