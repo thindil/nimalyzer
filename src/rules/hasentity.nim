@@ -51,10 +51,11 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       childOptions = RuleOptions(options: options.options, parent: false,
           fileName: options.fileName, negation: options.negation,
           ruleType: options.ruleType)
-    if nodeKind == nkNone:
-      return message(text = "Invalid type of entity: " & options.options[0],
-          level = lvlFatal)
     result = 0
+    if nodeKind == nkNone:
+      message(text = "Invalid type of entity: " & options.options[0],
+          returnValue = result, level = lvlFatal)
+      return
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = childOptions)
@@ -68,38 +69,42 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         if startsWith(s = $node[0], prefix = options.options[1]):
           if options.negation:
             if options.ruleType == check:
-              return message(text = (if getLogFilter() <
+              message(text = (if getLogFilter() <
                   lvlNotice: "H" else: options.fileName & ": h") &
                   "as declared " & options.options[0] & " with name '" &
                   options.options[1] & "' at line: " & $node.info.line & ".",
-                  returnValue = 1)
+                  returnValue = result, decrease = false)
             else:
-              return 1
+              result.inc
+            return
           else:
             if options.ruleType == check:
-              return 1
+              result.inc
             else:
-              return message(text = (if getLogFilter() <
+              message(text = (if getLogFilter() <
                   lvlNotice: "H" else: options.fileName & ": h") &
                   "as declared " & options.options[0] & " with name '" &
                   options.options[1] & "' at line: " & $node.info.line & ".",
-                  returnValue = 1, level = lvlNotice)
+                  returnValue = result, level = lvlNotice, decrease = false)
+            return
       except KeyError:
         continue
       except Exception:
-        discard message(text = "Error during checking hasEntity rule: " &
-             getCurrentExceptionMsg(), level = lvlFatal)
+        message(text = "Error during checking hasEntity rule: " &
+            getCurrentExceptionMsg(), returnValue = result, level = lvlFatal)
     if options.parent and result < 1:
       if options.negation:
         if options.ruleType == check:
           return
-        return message(text = (if getLogFilter() <
+        message(text = (if getLogFilter() <
             lvlNotice: "D" else: options.fileName & ": d") &
             "oesn't have declared " & options.options[0] & " with name '" &
-            options.options[1] & "'.", returnValue = 1, level = lvlNotice)
-      return message(text = (if getLogFilter() <
+            options.options[1] & "'.", returnValue = result, level = lvlNotice,
+                decrease = false)
+        return
+      message(text = (if getLogFilter() <
           lvlNotice: "D" else: options.fileName & ": d") &
           "oesn't have declared " & options.options[0] & " with name '" &
-          options.options[1] & "'.", returnValue = (if options.ruleType ==
-              check: 1 else: 0), level = (if options.ruleType ==
-              check: lvlError else: lvlNotice))
+          options.options[1] & "'.", returnValue = result, level = (
+          if options.ruleType == check: lvlError else: lvlNotice), decrease = (
+          if options.ruleType == check: false else: true))

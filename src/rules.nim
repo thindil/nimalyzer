@@ -42,13 +42,15 @@ type
     negation*: bool
     ruleType*: RuleTypes
 
-proc message*(text: string; returnValue: int = 0;
-    level: Level = lvlError): int {.raises: [], tags: [RootEffect],
-    contractual.} =
+proc message*(text: string; returnValue: var int; level: Level = lvlError;
+    decrease: bool = true) {.raises: [], tags: [RootEffect], contractual.} =
   require:
     text.len > 0
   body:
-    result = returnValue
+    if decrease:
+      returnValue.dec
+    else:
+      returnValue.inc
     try:
       log(level, text)
     except Exception:
