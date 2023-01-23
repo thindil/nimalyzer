@@ -42,7 +42,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     options.options.len > 0
     options.fileName.len > 0
   body:
-    result = 1
+    result = options.amount
     let messagePrefix = if getLogFilter() < lvlNotice:
         ""
       else:
@@ -74,17 +74,21 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
               message(text = messagePrefix & "procedure " & procName &
                   " line: " & line & " has declared pragma: " & pragma & ".",
                   returnValue = oldResult)
+            else:
+              oldResult.dec
           if options.ruleType == search:
             message(text = messagePrefix & "procedure " & procName & " line: " &
                 line & " has declared pragma: " & pragma & ".",
                 returnValue = oldResult, level = lvlNotice, decrease = false)
+          else:
+            oldResult.inc
 
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
-            ruleType: options.ruleType))
+            ruleType: options.ruleType, amount: result))
       if node.kind notin routineDefs:
         continue
       let
@@ -96,6 +100,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       if procName.len == 0:
         message(text = "Can't get the name of the procedure.", level = lvlFatal,
             returnValue = result)
+        result.inc
         return
       if pragmas == nil:
         if not options.negation:
@@ -150,6 +155,15 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         else:
           setResult(procName = procName, line = $node.info.line,
               pragma = pragma, hasPragma = true, oldResult = result)
-    if options.parent and result == 0 and options.ruleType == search:
-      message(text = "The selected pragma(s) not found.", returnValue = result)
-      return 0
+    if options.parent:
+      if result == 0 and options.ruleType == search:
+        message(text = "The selected pragma(s) not found.",
+            returnValue = result)
+        return 0
+      if options.ruleType == RuleTypes.count:
+        message(text = (if getLogFilter() <
+            lvlNotice: "D" else: options.fileName & ": d") &
+                "eclared procedures with selected pragmas found: " & $result,
+                returnValue = result, level = lvlNotice)
+        result.inc
+        return
