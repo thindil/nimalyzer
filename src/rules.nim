@@ -33,7 +33,7 @@ import contracts
 type
 
   RuleTypes* = enum
-    none, check, search
+    none, check, search, count
 
   RuleOptions* = object
     options*: seq[string]

@@ -126,7 +126,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             abortProgram("Can't add files to check. Reason: " &
                 getCurrentExceptionMsg())
         elif line.startsWith(prefix = "check") or line.startsWith(
-            prefix = "search"):
+            prefix = "search") or line.startsWith(prefix = "count"):
           var configRule = initOptParser(cmdline = line)
           configRule.next
           let ruleType: RuleTypes = try:
