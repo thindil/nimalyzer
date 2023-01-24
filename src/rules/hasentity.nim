@@ -44,6 +44,10 @@
 ##   search for the selected entity type which name starts with entityName.
 ##   For example, if entityType is set to nkProcDef and entityName is set to
 ##   *myProc* the rule will find procedures named *myProc* but also *myProcedure*.
+##
+## To look only for global entities, add `*` to the end of the entityName
+## parameter. Setting it to *MyProc\** will look only for global entities
+## which full name is MyProc.
 
 # Standard library imports
 import std/[logging, strutils]
