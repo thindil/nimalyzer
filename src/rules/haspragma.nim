@@ -165,5 +165,4 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             lvlNotice: "D" else: options.fileName & ": d") &
                 "eclared procedures with selected pragmas found: " & $result,
                 returnValue = result, level = lvlNotice)
-        result.inc
-        return
+        return 1

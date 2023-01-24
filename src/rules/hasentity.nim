@@ -92,8 +92,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             lvlNotice: "D" else: options.fileName & ": d") & "eclared " &
             options.options[0] & " with name '" & options.options[1] &
             "' found: " & $result, returnValue = result, level = lvlNotice)
-        result.inc
-        return
+        return 1
       if result < 1:
         if options.negation:
           if options.ruleType == check:
