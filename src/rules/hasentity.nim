@@ -31,7 +31,11 @@
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search* and *count*. For more information about the types of
-##   rules, please refer to the program's documentation.
+##   rules, please refer to the program's documentation. Check type will raise
+##   an error if the selected type of entity with the selected name was not
+##   found in the module. Search type will list all entities of the selected
+##   type with the selected name and raise error if nothing was found. Count
+##   type will simply list the amount of the selected entities.
 ## * optional word *not* means negation for the rule. For example, if rule is
 ##   set to check for procedures named myProc, adding word *not* will change
 ##   to inform only about modules without the procedure with that name.
