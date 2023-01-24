@@ -27,7 +27,7 @@
 ## procedures, constants, etc with the selected names. The syntax in a
 ## configuration file is::
 ##
-##   [ruleType] ?not? haspragma [entityType] [entityName]
+##   [ruleType] ?not? hasentity [entityType] [entityName]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search* and *count*. For more information about the types of
@@ -35,8 +35,8 @@
 ## * optional word *not* means negation for the rule. For example, if rule is
 ##   set to check for procedures named myProc, adding word *not* will change
 ##   to inform only about modules without the procedure with that name.
-## * haspragma is the name of the rule. It is case-insensitive, thus it can be
-##   set as *haspragma*, *hasPragma* or *hAsPrAgMa*.
+## * hasentity is the name of the rule. It is case-insensitive, thus it can be
+##   set as *hasentity*, *hasEntity* or *hAsEnTiTy*.
 ## * entityType is the type of entity which will be looking for. Proper values
 ##   are types used by Nim compiler, defined in file compiler/ast.nim in
 ##   enumeration TNodeKind. Examples: nkType, nkCall.
