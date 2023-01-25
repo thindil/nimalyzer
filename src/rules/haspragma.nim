@@ -66,6 +66,27 @@
 ##    or escaped like in the console line argumens: `"mypragma: [" otherPragma`
 ## 3. All other special characters must be escaped as in a console line
 ##    arguments: `stringWith\\"QuoteSign`
+##
+## Examples
+## --------
+##
+## 1. Check if all procedures have declared pragma raises. It can be empty or
+##    contains names of raised exception::
+##
+##      check hasPragma "raises: [*"
+##
+## 2. Find all procedures with have *sideEffect* pragma declared::
+##
+##      search hasPragma sideEffect
+##
+## 3. Count amount of procedures which don't have declared pragma *gcSafe*::
+##
+##    count not hasPragma gcSafe
+##
+## 4. Check if all procedures have declared pragmas *contractual* and *lock*.
+##    The *lock* pragma must have entered the level of the lock::
+##
+##      check hasPragma contractual "lock: *"
 
 # Standard library imports
 import std/[logging, strutils]
