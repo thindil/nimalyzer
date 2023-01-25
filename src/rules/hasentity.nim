@@ -43,7 +43,7 @@
 ##   set as *hasentity*, *hasEntity* or *hAsEnTiTy*.
 ## * entityType is the type of entity which will be looking for. Proper values
 ##   are types used by Nim compiler, defined in file compiler/ast.nim in
-##   enumeration TNodeKind. Examples: nkType, nkCall.
+##   enumeration *TNodeKind*. Examples: *nkType*, *nkCall*.
 ## * entityName is the name of entity which will be looking for. The rule
 ##   search for the selected entity type which name starts with entityName.
 ##   For example, if entityType is set to nkProcDef and entityName is set to
@@ -52,6 +52,25 @@
 ## To look only for global entities, add `*` to the end of the entityName
 ## parameter. Setting it to *MyProc\** will look only for global entities
 ## which full name is MyProc.
+##
+## Examples
+## --------
+##
+## 1. Check if module has declared global procedure with name *myProc*::
+##
+##     check hasEntity nkProcDef myProc*
+##
+## 2. Search for all defined global constants::
+##
+##     search hasEntity nkConstSection *
+##
+## 3. Count the amount of global enumerations::
+##
+##     count hasEntiry nkEnumTy *
+##
+## 4. Check if there is no declarations of global range types::
+##
+##    check not hasEntity nkRange *
 
 # Standard library imports
 import std/[logging, strutils]
