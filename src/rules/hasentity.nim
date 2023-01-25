@@ -68,7 +68,7 @@
 ##
 ##     count hasEntiry nkEnumTy *
 ##
-## 4. Check if there is no declarations of global range types::
+## 4. Check if there are no declarations of global range types::
 ##
 ##    check not hasEntity nkRange *
 
