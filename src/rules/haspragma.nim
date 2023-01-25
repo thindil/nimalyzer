@@ -23,7 +23,35 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## The rule to check if the selected procedure has the selected pragma
+## The rule to check if the selected procedure has the selected pragma. The
+## syntax in a configuration file is::
+##
+##   [ruleType] ?not? haspragma [listOfPragmas]
+##
+## * ruleType is the type of rule which will be executed. Proper values are:
+##   *check*, *search* and *count*. For more information about the types of
+##   rules, please refer to the program's documentation. Check rule will
+##   looking for procedures with declared the selected list of pragmas and
+##   list all of them which doesn't have them, raising error either. Search
+##   rule will looking for the procedures with the selected pragmas and list
+##   all of them which have the selected pragmas, raising error if nothing is
+##   found.  Count type will simply list the amount of the procedures with the
+##   selected pragmas.
+## * optional word *not* means negation for the rule. For example, if rule is
+##   set to check for pragma SideEffect, adding word *not* will change
+##   to inform only about procedures with that pragma.
+## * haspragma is the name of the rule. It is case-insensitive, thus it can be
+##   set as *haspragma*, *hasPragma* or *hAsPrAgMa*.
+## * listOfPragmas is the list of pragmas for which the rule will be looking
+##   for. Each pragma must be separated with whitespace, like::
+##
+##     SideEffect gcSafe
+##
+##   It is possible to use shell's like globbing in setting the names of the
+##   pragmas. If sign `\*` is at the start of the pragma name, it will means to
+##   look for procedures which have pragmas ending with that string. For example,
+##   `\*Effect` will find procedures with pragma *SideEffect* but not
+##   *sideeffect* or *effectPragma*.
 
 # Standard library imports
 import std/[logging, strutils]
