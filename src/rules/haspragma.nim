@@ -33,7 +33,7 @@
 ##   rules, please refer to the program's documentation. Check rule will
 ##   looking for procedures with declared the selected list of pragmas and
 ##   list all of them which doesn't have them, raising error either. Search
-##   rule will looking for the procedures with the selected pragmas and list
+##   rule will look for the procedures with the selected pragmas and list
 ##   all of them which have the selected pragmas, raising error if nothing is
 ##   found.  Count type will simply list the amount of the procedures with the
 ##   selected pragmas.
