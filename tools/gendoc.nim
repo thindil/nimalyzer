@@ -1,4 +1,3 @@
-#!/usr/bin/env -S nim --hints:Off
 # Copyright © 2023 Bartek Jasicki
 # All rights reserved.
 #
@@ -27,26 +26,28 @@
 import std/[os, strutils]
 
 # Check if we are in the main directory of the project
-if not fileExists("nimalyzer.nimble"):
-  quit "Please run the script from the main directory of the project"
+if not fileExists(filename = "nimalyzer.nimble"):
+  quit(errormsg = "Please run the script from the main directory of the project")
 
 # Create documentation directory if not exists
-mkDir("docs")
+createDir(dir = "docs")
 
 # Delete old documentation if exists
-for file in listFiles("docs"):
-  rmFile(file)
+for file in walkFiles(pattern = "docs/*"):
+  removeFile(file = file)
 
 # Get the documentation of the program's rules
-for file in listFiles(getCurrentDir() & DirSep & "src" & DirSep & "rules"):
-  var startDoc = false
-  let sourceFile = staticRead(file)
-  for line in sourceFile.splitLines:
+for file in walkFiles(pattern = "src/rules/*.nim"):
+  var
+    startDoc = false
+    docString = ""
+  for line in file.lines:
     if line.startsWith("##") and not startDoc:
       startDoc = true
-      exec "echo \"" & line.escape & "\" >> docs/nimalyzer.rst"
+      docString.add(y = line)
     elif line.startsWith("##"):
-      exec "echo \"" & line.escape & "\" >> docs/nimalyzer.rst"
+      docString.add(y = line)
     elif not line.startsWith("##") and startDoc:
       startDoc = false
       break
+  writeFile(filename = "docs" & DirSep & "nimalyzer.rst", content = docString)
