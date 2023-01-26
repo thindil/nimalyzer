@@ -81,7 +81,7 @@
 ##
 ## 3. Count amount of procedures which don't have declared pragma *gcSafe*::
 ##
-##    count not hasPragma gcSafe
+##      count not hasPragma gcSafe
 ##
 ## 4. Check if all procedures have declared pragmas *contractual* and *lock*.
 ##    The *lock* pragma must have entered the level of the lock::
