@@ -28,8 +28,7 @@ import std/[os, strutils]
 
 # Check if we are in the main directory of the project
 if not fileExists("nimalyzer.nimble"):
-  echo "Please run the script from the main directory of the project"
-  quit QuitFailure
+  quit "Please run the script from the main directory of the project"
 
 # Create documentation directory if not exists
 mkDir("docs")
@@ -45,9 +44,9 @@ for file in listFiles(getCurrentDir() & DirSep & "src" & DirSep & "rules"):
   for line in sourceFile.splitLines:
     if line.startsWith("##") and not startDoc:
       startDoc = true
-      echo line
+      exec "echo \"" & line.escape & "\" >> docs/nimalyzer.rst"
     elif line.startsWith("##"):
-      echo line
+      exec "echo \"" & line.escape & "\" >> docs/nimalyzer.rst"
     elif not line.startsWith("##") and startDoc:
       startDoc = false
       break
