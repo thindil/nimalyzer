@@ -35,3 +35,7 @@ task releasewindows, "builds the project in release mode for Windows 64-bit":
   exec "nimble install -d -y"
   exec "nim c -d:mingw --os:windows --cpu:amd64 --amd64.windows.gcc.exe:x86_64-w64-mingw32-gcc -d:release --passc:-flto --passl:-s --outdir:" &
       binDir & " " & srcDir & DirSep & "nimalyzer.nim"
+
+task tools, "builds the project's tools":
+  exec "nim c -d:release --passc:-flto --passl:-s --styleCheck:hint --spellSuggest:auto --errorMax:0 --outdir:" &
+      binDir & " tools" & DirSep & "gendoc.nim"
