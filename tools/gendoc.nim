@@ -28,17 +28,21 @@ import std/[os, strutils]
 proc main() =
   # Check if we are in the main directory of the project
   if not fileExists(filename = "nimalyzer.nimble"):
-    quit(errormsg = "Please run the script from the main directory of the project")
+    quit(errormsg = "Please run the tool from the main directory of the project.")
 
   # Create documentation directory if not exists
   createDir(dir = "docs")
 
-  # Delete old documentation if exists
-  for file in walkFiles(pattern = "docs/*"):
-    removeFile(file = file)
+  # Open or create a help file for rule to write
+  let rulesFile = open(filename = "docs" & DirSep & "rules.rst", mode = fmWrite)
 
-  # Open help file to write
-  let helpFile = open(filename = "docs" & DirSep & "nimalyzer.rst", mode = fmWrite)
+  # Create the file header
+  rulesFile.writeLine(x = repeat(c = '=', count = 20))
+  rulesFile.writeLine(x = "Nimalyzer rules info")
+  rulesFile.writeLine(x = repeat(c = '=', count = 20))
+  rulesFile.writeLine(x = "")
+  rulesFile.writeLine(x = ".. default-role:: code")
+  rulesFile.writeLine(x = ".. contents::")
 
   # Get the documentation of the program's rules
   for file in walkFiles(pattern = "src/rules/*.nim"):
@@ -47,18 +51,18 @@ proc main() =
     for line in file.lines:
       if line.startsWith("##") and not startDoc:
         startDoc = true
-        helpFile.writeLine(x = line[2..^1].strip)
+        rulesFile.writeLine(x = line[2..^1].strip)
       elif line.startsWith("##"):
-        helpFile.writeLine(x = line[2..^1].strip)
+        rulesFile.writeLine(x = line[2..^1].strip)
       elif not line.startsWith("##") and startDoc:
         startDoc = false
-        helpFile.writeLine(x = "")
-        helpFile.writeLine(x = repeat(c = '-', count = 5))
-        helpFile.writeLine(x = "")
+        rulesFile.writeLine(x = "")
+        rulesFile.writeLine(x = repeat(c = '-', count = 5))
+        rulesFile.writeLine(x = "")
         break
 
-  # Close the help file
-  helpFile.close
+  # Close the help file for rules
+  rulesFile.close
 
 when isMainModule:
   main()
