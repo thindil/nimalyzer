@@ -44,7 +44,8 @@ type
     amount*: int
 
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
-    decrease: bool = true) {.raises: [], tags: [RootEffect], contractual.} =
+    decrease: bool = true) {.gcsafe, raises: [], tags: [RootEffect],
+    contractual.} =
   require:
     text.len > 0
   body:
