@@ -52,9 +52,15 @@ proc main() =
     for line in file.lines:
       if line.startsWith("##") and not startDoc:
         startDoc = true
-        rulesFile.writeLine(x = line[2..^1].strip)
+        if line.len > 3:
+          rulesFile.writeLine(x = line[3..^1])
+        else:
+          rulesFile.writeLine(x = "")
       elif line.startsWith("##"):
-        rulesFile.writeLine(x = line[2..^1].strip)
+        if line.len > 3:
+          rulesFile.writeLine(x = line[3..^1])
+        else:
+          rulesFile.writeLine(x = "")
       elif not line.startsWith("##") and startDoc:
         startDoc = false
         rulesFile.writeLine(x = "")
