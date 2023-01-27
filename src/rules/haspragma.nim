@@ -31,8 +31,8 @@
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search* and *count*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check rule will
-##   looking for procedures with declared the selected list of pragmas and
-##   list all of them which doesn't have them, raising error either. Search
+##   looking for procedures with declaration of the selected list of pragmas
+##   and list all of them which doesn't have them, raising error either. Search
 ##   rule will look for the procedures with the selected pragmas and list
 ##   all of them which have the selected pragmas, raising error if nothing is
 ##   found.  Count type will simply list the amount of the procedures with the
@@ -47,8 +47,8 @@
 ##
 ##     SideEffect gcSafe
 ##
-## It is possible to use shell's like globbing in setting the names of the
-## pragmas. If sign `\*` is at the start of the pragma name, it means to
+## It is possible to use shell's like globing in setting the names of the
+## pragmas. If the sign `\*` is at the start of the pragma name, it means to
 ## look for procedures which have pragmas ending with that string. For example,
 ## `\*Effect` will find procedures with pragma *SideEffect* but not
 ## *sideeffect* or *effectPragma*. If sign `\*` is at the end of the pragma
@@ -59,11 +59,11 @@
 ## for procedures which have pragmas containing the string. For example, `\*Exception\*`
 ## will find `raises: [MyException]` or `myCustomExceptionRaise`.
 ##
-## The list of pragmas must be in form of console line arguments:
+## The list of pragmas must be in the form of console line arguments:
 ##
 ## 1. Each pragma name must be separated with whitespace: `myPragma otherPragma`
 ## 2. If the search string contains whitespace, it must be enclosed in quotes
-##    or escaped like in the console line argumens: `"mypragma: [" otherPragma`
+##    or escaped, like in the console line arguments: `"mypragma: [" otherPragma`
 ## 3. All other special characters must be escaped as in a console line
 ##    arguments: `stringWith\\"QuoteSign`
 ##
