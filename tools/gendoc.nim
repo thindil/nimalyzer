@@ -31,10 +31,10 @@ proc main() =
     quit(errormsg = "Please run the tool from the main directory of the project.")
 
   # Create documentation directory if not exists
-  createDir(dir = "docs")
+  createDir(dir = "doc")
 
   # Open or create a help file for rule to write
-  let rulesFile = open(filename = "docs" & DirSep & "rules.rst", mode = fmWrite)
+  let rulesFile = open(filename = "doc" & DirSep & "rules.rst", mode = fmWrite)
 
   # Create the file header
   rulesFile.writeLine(x = repeat(c = '=', count = 20))
@@ -43,6 +43,7 @@ proc main() =
   rulesFile.writeLine(x = "")
   rulesFile.writeLine(x = ".. default-role:: code")
   rulesFile.writeLine(x = ".. contents::")
+  rulesFile.writeLine(x = "")
 
   # Get the documentation of the program's rules
   for file in walkFiles(pattern = "src/rules/*.nim"):
