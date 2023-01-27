@@ -25,29 +25,40 @@
 
 import std/[os, strutils]
 
-# Check if we are in the main directory of the project
-if not fileExists(filename = "nimalyzer.nimble"):
-  quit(errormsg = "Please run the script from the main directory of the project")
+proc main() =
+  # Check if we are in the main directory of the project
+  if not fileExists(filename = "nimalyzer.nimble"):
+    quit(errormsg = "Please run the script from the main directory of the project")
 
-# Create documentation directory if not exists
-createDir(dir = "docs")
+  # Create documentation directory if not exists
+  createDir(dir = "docs")
 
-# Delete old documentation if exists
-for file in walkFiles(pattern = "docs/*"):
-  removeFile(file = file)
+  # Delete old documentation if exists
+  for file in walkFiles(pattern = "docs/*"):
+    removeFile(file = file)
 
-# Get the documentation of the program's rules
-for file in walkFiles(pattern = "src/rules/*.nim"):
-  var
-    startDoc = false
-    docString = ""
-  for line in file.lines:
-    if line.startsWith("##") and not startDoc:
-      startDoc = true
-      docString.add(y = line)
-    elif line.startsWith("##"):
-      docString.add(y = line)
-    elif not line.startsWith("##") and startDoc:
+  # Open help file to write
+  let helpFile = open(filename = "docs" & DirSep & "nimalyzer.rst", mode = fmWrite)
+
+  # Get the documentation of the program's rules
+  for file in walkFiles(pattern = "src/rules/*.nim"):
+    var
       startDoc = false
-      break
-  writeFile(filename = "docs" & DirSep & "nimalyzer.rst", content = docString)
+    for line in file.lines:
+      if line.startsWith("##") and not startDoc:
+        startDoc = true
+        helpFile.writeLine(x = line[2..^1].strip)
+      elif line.startsWith("##"):
+        helpFile.writeLine(x = line[2..^1].strip)
+      elif not line.startsWith("##") and startDoc:
+        startDoc = false
+        helpFile.writeLine(x = "")
+        helpFile.writeLine(x = repeat(c = '-', count = 5))
+        helpFile.writeLine(x = "")
+        break
+
+  # Close the help file
+  helpFile.close
+
+when isMainModule:
+  main()
