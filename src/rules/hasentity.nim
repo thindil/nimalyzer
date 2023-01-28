@@ -70,7 +70,7 @@
 ##
 ## 4. Check if there are no declarations of global range types::
 ##
-##    check not hasEntity nkRange *
+##     check not hasEntity nkRange *
 
 # Standard library imports
 import std/[logging, strutils]
