@@ -48,15 +48,15 @@
 ##     SideEffect gcSafe
 ##
 ## It is possible to use shell's like globing in setting the names of the
-## pragmas. If the sign `\*` is at the start of the pragma name, it means to
+## pragmas. If the sign `*` is at the start of the pragma name, it means to
 ## look for procedures which have pragmas ending with that string. For example,
-## `\*Effect` will find procedures with pragma *SideEffect* but not
-## *sideeffect* or *effectPragma*. If sign `\*` is at the end of the pragma
+## `*Effect` will find procedures with pragma *SideEffect* but not
+## *sideeffect* or *effectPragma*. If sign `*` is at the end of the pragma
 ## name, it means to look for procedures which have pragmas starting
-## with that string. For example, `raises: [\*` will find procedures with
+## with that string. For example, `raises: [*` will find procedures with
 ## pragma *raises: []* or *raises: [Exception]* but not `myCustomraises: [custom]`.
-## If the name of the pragma starts and ends with sign `\*`, it means to look
-## for procedures which have pragmas containing the string. For example, `\*Exception\*`
+## If the name of the pragma starts and ends with sign `*`, it means to look
+## for procedures which have pragmas containing the string. For example, `*Exception*`
 ## will find `raises: [MyException]` or `myCustomExceptionRaise`.
 ##
 ## The list of pragmas must be in the form of console line arguments:
@@ -65,7 +65,7 @@
 ## 2. If the search string contains whitespace, it must be enclosed in quotes
 ##    or escaped, like in the console line arguments: `"mypragma: [" otherPragma`
 ## 3. All other special characters must be escaped as in a console line
-##    arguments: `stringWith\\"QuoteSign`
+##    arguments: `stringWith\"QuoteSign`
 ##
 ## Examples
 ## --------
