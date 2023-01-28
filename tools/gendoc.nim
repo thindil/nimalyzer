@@ -30,9 +30,6 @@ proc main() =
   if not fileExists(filename = "nimalyzer.nimble"):
     quit(errormsg = "Please run the tool from the main directory of the project.")
 
-  # Create documentation directory if not exists
-  createDir(dir = "doc")
-
   # Open or create a help file for rule to write
   let rulesFile = open(filename = "doc" & DirSep & "rules.rst", mode = fmWrite)
 
@@ -43,15 +40,17 @@ proc main() =
   rulesFile.writeLine(x = "")
   rulesFile.writeLine(x = ".. default-role:: code")
   rulesFile.writeLine(x = ".. contents::")
-  rulesFile.writeLine(x = "")
 
   # Get the documentation of the program's rules
   for file in walkFiles(pattern = "src/rules/*.nim"):
-    var
-      startDoc = false
+    var startDoc = false
+    let (_, ruleName, _) = splitFile(file)
     for line in file.lines:
       if line.startsWith("##") and not startDoc:
         startDoc = true
+        rulesFile.writeLine(x = "")
+        rulesFile.writeLine(x = ruleName.capitalizeAscii & " rule")
+        rulesFile.writeLine(x = repeat(c = '=', count = ruleName.len + 5))
         if line.len > 3:
           rulesFile.writeLine(x = line[3..^1])
         else:
@@ -63,9 +62,6 @@ proc main() =
           rulesFile.writeLine(x = "")
       elif not line.startsWith("##") and startDoc:
         startDoc = false
-        rulesFile.writeLine(x = "")
-        rulesFile.writeLine(x = repeat(c = '-', count = 5))
-        rulesFile.writeLine(x = "")
         break
 
   # Close the help file for rules
