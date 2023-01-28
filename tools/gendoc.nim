@@ -30,13 +30,13 @@ proc main() =
   if not fileExists(filename = "nimalyzer.nimble"):
     quit(errormsg = "Please run the tool from the main directory of the project.")
 
-  # Open or create a help file for rule to write
+  # Open or create a help file for rules to write
   let rulesFile = open(filename = "doc" & DirSep & "rules.rst", mode = fmWrite)
 
   # Create the file header
-  rulesFile.writeLine(x = repeat(c = '=', count = 20))
-  rulesFile.writeLine(x = "Nimalyzer rules info")
-  rulesFile.writeLine(x = repeat(c = '=', count = 20))
+  rulesFile.writeLine(x = repeat(c = '=', count = 15))
+  rulesFile.writeLine(x = "Available rules")
+  rulesFile.writeLine(x = repeat(c = '=', count = 15))
   rulesFile.writeLine(x = "")
   rulesFile.writeLine(x = ".. default-role:: code")
   rulesFile.writeLine(x = ".. contents::")
@@ -66,6 +66,31 @@ proc main() =
 
   # Close the help file for rules
   rulesFile.close
+
+  # Open or create a help file for configuration to write
+  let configdocFile = open(filename = "doc" & DirSep & "config.rst", mode = fmWrite)
+
+  # Create the file header
+  configdocFile.writeLine(x = repeat(c = '=', count = 25))
+  configdocFile.writeLine(x = "Configuration file syntax")
+  configdocFile.writeLine(x = repeat(c = '=', count = 25))
+  configdocFile.writeLine(x = "")
+  configdocFile.writeLine(x = ".. default-role:: code")
+  configdocFile.writeLine(x = ".. contents::")
+  configdocFile.writeLine(x = "")
+
+  # Get the documentation of the program's rules
+  let configFile = open(filename = "config" & DirSep & "nimalyzer.cfg")
+  for line in configFile.lines:
+    if line.len > 0:
+      var newLine = line
+      newLine.removePrefix(chars = {'#', ' '})
+      configdocFile.writeLine(x = newLine)
+    else:
+      configdocFile.writeLine(x = "")
+
+  # Close the help file for rules
+  configdocFile.close
 
 when isMainModule:
   main()
