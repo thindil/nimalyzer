@@ -35,7 +35,8 @@ proc main() {.contractual.} =
       quit(errormsg = "Please run the tool from the main directory of the project.")
 
     # Open or create a help file for rules to write
-    let rulesFile = open(filename = "doc" & DirSep & "rules.rst", mode = fmWrite)
+    let rulesFile = open(filename = "doc" & DirSep & "rules.rst",
+        mode = fmWrite)
 
     # Create the file header
     rulesFile.writeLine(x = repeat(c = '=', count = 15))
@@ -72,7 +73,8 @@ proc main() {.contractual.} =
     rulesFile.close
 
     # Open or create a help file for configuration to write
-    let configdocFile = open(filename = "doc" & DirSep & "config.rst", mode = fmWrite)
+    let configdocFile = open(filename = "doc" & DirSep & "config.rst",
+        mode = fmWrite)
 
     # Create the file header
     configdocFile.writeLine(x = repeat(c = '=', count = 25))
@@ -85,7 +87,8 @@ proc main() {.contractual.} =
 
     # Get the documentation of the program's rules
     let configFile = open(filename = "config" & DirSep & "nimalyzer.cfg")
-    const settings = ["verbosity", "output", "source", "files", "directory", "check", "search", "count"]
+    const settings = ["verbosity", "output", "source", "files", "directory",
+        "check", "search", "count"]
     for line in configFile.lines:
       var newLine = line
       newLine.removePrefix(chars = {'#', ' '})
