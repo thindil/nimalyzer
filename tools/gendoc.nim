@@ -23,75 +23,79 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Standard library imports
 import std/[os, strutils]
+# External modules imports
+import contracts
 
-proc main() =
-  # Check if we are in the main directory of the project
-  if not fileExists(filename = "nimalyzer.nimble"):
-    quit(errormsg = "Please run the tool from the main directory of the project.")
+proc main() {.contractual.} =
+  body:
+    # Check if we are in the main directory of the project
+    if not fileExists(filename = "nimalyzer.nimble"):
+      quit(errormsg = "Please run the tool from the main directory of the project.")
 
-  # Open or create a help file for rules to write
-  let rulesFile = open(filename = "doc" & DirSep & "rules.rst", mode = fmWrite)
+    # Open or create a help file for rules to write
+    let rulesFile = open(filename = "doc" & DirSep & "rules.rst", mode = fmWrite)
 
-  # Create the file header
-  rulesFile.writeLine(x = repeat(c = '=', count = 15))
-  rulesFile.writeLine(x = "Available rules")
-  rulesFile.writeLine(x = repeat(c = '=', count = 15))
-  rulesFile.writeLine(x = "")
-  rulesFile.writeLine(x = ".. default-role:: code")
-  rulesFile.writeLine(x = ".. contents::")
+    # Create the file header
+    rulesFile.writeLine(x = repeat(c = '=', count = 15))
+    rulesFile.writeLine(x = "Available rules")
+    rulesFile.writeLine(x = repeat(c = '=', count = 15))
+    rulesFile.writeLine(x = "")
+    rulesFile.writeLine(x = ".. default-role:: code")
+    rulesFile.writeLine(x = ".. contents::")
 
-  # Get the documentation of the program's rules
-  for file in walkFiles(pattern = "src/rules/*.nim"):
-    var startDoc = false
-    let (_, ruleName, _) = splitFile(file)
-    for line in file.lines:
-      if line.startsWith("##") and not startDoc:
-        startDoc = true
-        rulesFile.writeLine(x = "")
-        rulesFile.writeLine(x = ruleName.capitalizeAscii & " rule")
-        rulesFile.writeLine(x = repeat(c = '=', count = ruleName.len + 5))
-        if line.len > 3:
-          rulesFile.writeLine(x = line[3..^1])
-        else:
+    # Get the documentation of the program's rules
+    for file in walkFiles(pattern = "src/rules/*.nim"):
+      var startDoc = false
+      let (_, ruleName, _) = splitFile(file)
+      for line in file.lines:
+        if line.startsWith("##") and not startDoc:
+          startDoc = true
           rulesFile.writeLine(x = "")
-      elif line.startsWith("##"):
-        if line.len > 3:
-          rulesFile.writeLine(x = line[3..^1])
-        else:
-          rulesFile.writeLine(x = "")
-      elif not line.startsWith("##") and startDoc:
-        startDoc = false
-        break
+          rulesFile.writeLine(x = ruleName.capitalizeAscii & " rule")
+          rulesFile.writeLine(x = repeat(c = '=', count = ruleName.len + 5))
+          if line.len > 3:
+            rulesFile.writeLine(x = line[3..^1])
+          else:
+            rulesFile.writeLine(x = "")
+        elif line.startsWith("##"):
+          if line.len > 3:
+            rulesFile.writeLine(x = line[3..^1])
+          else:
+            rulesFile.writeLine(x = "")
+        elif not line.startsWith("##") and startDoc:
+          startDoc = false
+          break
 
-  # Close the help file for rules
-  rulesFile.close
+    # Close the help file for rules
+    rulesFile.close
 
-  # Open or create a help file for configuration to write
-  let configdocFile = open(filename = "doc" & DirSep & "config.rst", mode = fmWrite)
+    # Open or create a help file for configuration to write
+    let configdocFile = open(filename = "doc" & DirSep & "config.rst", mode = fmWrite)
 
-  # Create the file header
-  configdocFile.writeLine(x = repeat(c = '=', count = 25))
-  configdocFile.writeLine(x = "Configuration file syntax")
-  configdocFile.writeLine(x = repeat(c = '=', count = 25))
-  configdocFile.writeLine(x = "")
-  configdocFile.writeLine(x = ".. default-role:: code")
-  configdocFile.writeLine(x = ".. contents::")
-  configdocFile.writeLine(x = "")
+    # Create the file header
+    configdocFile.writeLine(x = repeat(c = '=', count = 25))
+    configdocFile.writeLine(x = "Configuration file syntax")
+    configdocFile.writeLine(x = repeat(c = '=', count = 25))
+    configdocFile.writeLine(x = "")
+    configdocFile.writeLine(x = ".. default-role:: code")
+    configdocFile.writeLine(x = ".. contents::")
+    configdocFile.writeLine(x = "")
 
-  # Get the documentation of the program's rules
-  let configFile = open(filename = "config" & DirSep & "nimalyzer.cfg")
-  const settings = ["verbosity", "output", "source", "files", "directory", "check", "search", "count"]
-  for line in configFile.lines:
-    var newLine = line
-    newLine.removePrefix(chars = {'#', ' '})
-    for prefix in settings:
-      if newLine.startsWith(prefix = prefix):
-        newLine = newLine.indent(count = 4)
-    configdocFile.writeLine(x = newLine)
+    # Get the documentation of the program's rules
+    let configFile = open(filename = "config" & DirSep & "nimalyzer.cfg")
+    const settings = ["verbosity", "output", "source", "files", "directory", "check", "search", "count"]
+    for line in configFile.lines:
+      var newLine = line
+      newLine.removePrefix(chars = {'#', ' '})
+      for prefix in settings:
+        if newLine.startsWith(prefix = prefix):
+          newLine = newLine.indent(count = 4)
+      configdocFile.writeLine(x = newLine)
 
-  # Close the help file for rules
-  configdocFile.close
+    # Close the help file for rules
+    configdocFile.close
 
 when isMainModule:
   main()
