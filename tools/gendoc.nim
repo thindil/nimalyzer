@@ -28,7 +28,8 @@ import std/[os, strutils]
 # External modules imports
 import contracts
 
-proc main() {.contractual, raises: [].} =
+proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
+    ReadIOEffect].} =
   body:
     # Check if we are in the main directory of the project
     if not fileExists(filename = "nimalyzer.nimble"):
