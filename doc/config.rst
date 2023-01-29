@@ -54,6 +54,7 @@ executed (working directory).
 ::
     source src/nimalyzer.nim
     source src/rules.nim
+    source tools/gendoc.nim
 
 Files
 -----
