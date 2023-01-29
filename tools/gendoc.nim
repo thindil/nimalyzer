@@ -81,13 +81,14 @@ proc main() =
 
   # Get the documentation of the program's rules
   let configFile = open(filename = "config" & DirSep & "nimalyzer.cfg")
+  const settings = ["verbosity", "output", "source", "files", "directory", "check", "search", "count"]
   for line in configFile.lines:
-    if line.len > 0:
-      var newLine = line
-      newLine.removePrefix(chars = {'#', ' '})
-      configdocFile.writeLine(x = newLine)
-    else:
-      configdocFile.writeLine(x = "")
+    var newLine = line
+    newLine.removePrefix(chars = {'#', ' '})
+    for prefix in settings:
+      if newLine.startsWith(prefix = prefix):
+        newLine = newLine.indent(count = 4)
+    configdocFile.writeLine(x = newLine)
 
   # Close the help file for rules
   configdocFile.close
