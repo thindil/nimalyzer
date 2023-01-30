@@ -1,4 +1,4 @@
-import os
+import std/os
 
 # Package
 
@@ -39,3 +39,8 @@ task releasewindows, "builds the project in release mode for Windows 64-bit":
 task tools, "builds the project's tools":
   exec "nim c -d:release --passc:-flto --passl:-s --styleCheck:hint --spellSuggest:auto --errorMax:0 --outdir:" &
       binDir & " tools" & DirSep & "gendoc.nim"
+
+task docs, "builds the project's documentation":
+  for file in ["config", "index", "available_rules"]:
+    exec "nim rst2html --index:on --outdir:htmldocs doc" & DirSep & file & ".rst"
+  exec "nim doc --project --outdir:htmldocs src/nimalyzer.nim"
