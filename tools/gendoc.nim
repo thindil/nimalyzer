@@ -37,7 +37,7 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
     # Open or create a help file for rules to write
     try:
-      let rulesFile = open(filename = "doc" & DirSep & "rules.rst",
+      let rulesFile = open(filename = "doc" & DirSep & "available_rules.rst",
           mode = fmWrite)
 
       # Create the file header
