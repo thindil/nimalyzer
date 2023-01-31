@@ -94,13 +94,18 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       for child in node[3]:
         if child.kind == nkEmpty:
           continue
+        var index = -1
         for i in 0..child.len - 3:
           try:
-            result = find(s = $node[6], sub = $child[i])
-            if result == -1 and options.ruleType == check:
-              message(messagePrefix & "procedure " & procName & " line: " &
-                $node.info.line & " doesn't use parameter '" & $child[i] & "'.",
-                returnValue = result)
+            index = find(s = $node[6], sub = $child[i])
+            if index == -1:
+              if options.ruleType == check and not options.negation:
+                message(messagePrefix & "procedure " & procName & " line: " &
+                  $node.info.line & " doesn't use parameter '" & $child[i] & "'.",
+                  returnValue = result)
+              if options.ruleType == RuleTypes.count and options.negation:
+                result.inc
+                break
           except KeyError, Exception:
             echo getCurrentExceptionMsg()
     return 1
