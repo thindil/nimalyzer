@@ -99,16 +99,33 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           try:
             index = find(s = $node[6], sub = $child[i])
             if index == -1:
-              if options.ruleType == check and not options.negation:
-                message(messagePrefix & "procedure " & procName & " line: " &
-                  $node.info.line & " doesn't use parameter '" & $child[i] &
-                  "'.", returnValue = result)
-              if options.ruleType == RuleTypes.count and options.negation:
-                result.inc
+              if not options.negation:
+                if options.ruleType == check:
+                  message(messagePrefix & "procedure " & procName & " line: " &
+                    $node.info.line & " doesn't use parameter '" & $child[i] &
+                    "'.", returnValue = result)
+              else:
+                if options.ruleType == search:
+                  message(messagePrefix & "procedure " & procName & " line: " &
+                    $node.info.line & " doesn't use all parameters.",
+                    returnValue = result, decrease = false)
+                elif options.ruleType == RuleTypes.count:
+                  result.inc
                 break
           except KeyError, Exception:
             message(messagePrefix & "can't check parameters of procedure " &
                 procName & " line: " & $node.info.line & ". Reason: " &
                 getCurrentExceptionMsg(), returnValue = result)
             result.inc
-    return 1
+        if index > -1:
+          if options.negation:
+            if options.ruleType == check:
+              message(messagePrefix & "procedure " & procName & " line: " &
+                $node.info.line & " use all parameters.", returnValue = result)
+          else:
+            if options.ruleType == search:
+              message(messagePrefix & "procedure " & procName & " line: " &
+                $node.info.line & " use all parameters.",
+                returnValue = result, decrease = false)
+            elif options.ruleType == check:
+              result.inc
