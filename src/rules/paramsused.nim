@@ -79,5 +79,28 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             ruleType: options.ruleType, amount: result))
       if node.kind notin routineDefs:
         continue
-      # node[0] = name, node[3] = params, node[6] = body
+      let procName = try:
+            $node[0]
+          except KeyError, Exception:
+            ""
+      if procName.len == 0:
+        message(text = "Can't get the name of the procedure.", level = lvlFatal,
+            returnValue = result)
+        result.inc
+        return
+      # No parameters, skip
+      if node[3].len < 2:
+        continue
+      for child in node[3]:
+        if child.kind == nkEmpty:
+          continue
+        for i in 0..child.len - 3:
+          try:
+            result = find(s = $node[6], sub = $child[i])
+            if result == -1 and options.ruleType == check:
+              message(messagePrefix & "procedure " & procName & " line: " &
+                $node.info.line & " doesn't use parameter '" & $child[i] & "'.",
+                returnValue = result)
+          except KeyError, Exception:
+            echo getCurrentExceptionMsg()
     return 1
