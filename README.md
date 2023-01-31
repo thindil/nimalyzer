@@ -7,9 +7,11 @@ Nimalyzer can be used to enforce some design patterns or ensure that some
 language constructs are present in a code, or not. For example, it can check if
 all procedures have defined proper pragmas. Additionally, it can be used as an
 advanced search through a code tool, for example find all public variables type
-of *int* with name which starts with *newVar*. At this moment, the project is in
-early [SNAFU](https://en.wikipedia.org/wiki/SNAFU), which means is not ready
-yet to use with a production code. If you read this file on GitHub:
+of *int* with name which starts with *newVar*. It is controlled by
+configuration files containing a set of rules, their parameters and options
+related to the program behavior. At this moment, the project is in early alpha
+stage, it doesn't offer too much, its configuration syntax can change and
+should have a nice amount of bugs. If you read this file on GitHub:
 **please don't send pull requests here**. All will be automatically closed. Any
 code propositions should go to the [Fossil](https://www.laeran.pl/repositories/nimalyzer) repository.
 
@@ -40,7 +42,7 @@ You will need:
 
 You can install them manually or by using [Nimble](https://github.com/nim-lang/nimble).
 In that second option, type `nimble install https://github.com/thindil/nimalyzer` to
-install the shell and all dependencies. Generally it is recommended to use
+install the program and all dependencies. Generally it is recommended to use
 `nimble release` to build the project in release (optimized) mode or
 `nimble debug` to build it in the debug mode.
 
