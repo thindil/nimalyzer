@@ -91,10 +91,11 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       # No parameters, skip
       if node[3].len < 2:
         continue
+      var index = -1
       for child in node[3]:
         if child.kind == nkEmpty:
           continue
-        var index = -1
+        index = -1
         for i in 0..child.len - 3:
           try:
             index = find(s = $node[6], sub = $child[i])
@@ -117,15 +118,16 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 procName & " line: " & $node.info.line & ". Reason: " &
                 getCurrentExceptionMsg(), returnValue = result)
             result.inc
-        if index > -1:
-          if options.negation:
-            if options.ruleType == check:
-              message(messagePrefix & "procedure " & procName & " line: " &
-                $node.info.line & " use all parameters.", returnValue = result)
-          else:
-            if options.ruleType == search:
-              message(messagePrefix & "procedure " & procName & " line: " &
-                $node.info.line & " use all parameters.",
-                returnValue = result, decrease = false)
-            elif options.ruleType == check:
-              result.inc
+      if index > -1:
+        if options.negation:
+          if options.ruleType == check:
+            message(messagePrefix & "procedure " & procName & " line: " &
+              $node.info.line & " use all parameters.", returnValue = result)
+        else:
+          if options.ruleType == search:
+            message(messagePrefix & "procedure " & procName & " line: " &
+              $node.info.line & " use all parameters.",
+              returnValue = result, decrease = false)
+          elif options.ruleType == check:
+            result.inc
+    return 1
