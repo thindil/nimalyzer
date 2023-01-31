@@ -101,11 +101,14 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             if index == -1:
               if options.ruleType == check and not options.negation:
                 message(messagePrefix & "procedure " & procName & " line: " &
-                  $node.info.line & " doesn't use parameter '" & $child[i] & "'.",
-                  returnValue = result)
+                  $node.info.line & " doesn't use parameter '" & $child[i] &
+                  "'.", returnValue = result)
               if options.ruleType == RuleTypes.count and options.negation:
                 result.inc
                 break
           except KeyError, Exception:
-            echo getCurrentExceptionMsg()
+            message(messagePrefix & "can't check parameters of procedure " &
+                procName & " line: " & $node.info.line & ". Reason: " &
+                getCurrentExceptionMsg(), returnValue = result)
+            result.inc
     return 1
