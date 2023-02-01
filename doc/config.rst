@@ -95,7 +95,8 @@ hasPragma will check if procedures doesn't have the selected pragmas. The
 message's level for info about the line of code which violates the rule is
 lvlError. The setting below checks if all procedures in the source code have
 pragma "contractual", "raises" and "tags". The last two can be empty or have
-listed values.
+listed values. The second rule checks if all parameters of all procedures are
+used in the code.
 ::
     check hasPragma contractual "raises: [*" "tags: [*"
     check paramsUsed
