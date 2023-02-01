@@ -98,6 +98,7 @@ pragma "contractual", "raises" and "tags". The last two can be empty or have
 listed values.
 ::
     check hasPragma contractual "raises: [*" "tags: [*"
+    check paramsUsed
 
 Search rules
 ------------

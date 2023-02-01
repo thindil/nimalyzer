@@ -122,3 +122,32 @@ Examples
    The *lock* pragma must have entered the level of the lock::
 
      check hasPragma contractual "lock: *"
+
+Paramsused rule
+===============
+The rule to check if the selected procedure uses all its parameter
+The syntax in a configuration file is::
+
+  [ruleType] ?not? parametersUsed
+
+* ruleType is the type of rule which will be executed. Proper values are:
+  *check*, *search* and *count*. For more information about the types of
+  rules, please refer to the program's documentation. Check type will raise
+  an error if there is a procedure which doesn't use all its parameters.
+  Search type will list all procedures which uses their all parameters and
+  raise error if nothing was found. Count type will simply list the amount
+  of procedures which uses all their parameters.
+* optional word *not* means negation for the rule. Adding word *not* will
+  change to inform only about procedures which have all parameters used.
+  Probably useable only with search and count type of rule.
+
+Examples
+--------
+
+1. Check if all procedures in module uses their parameters::
+
+    check parametersUsed
+
+2. Search for all procedures which don't use their all parameters::
+
+    search not parametersUsed
