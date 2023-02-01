@@ -109,7 +109,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 if options.ruleType == search:
                   message(messagePrefix & "procedure " & procName & " line: " &
                     $node.info.line & " doesn't use all parameters.",
-                    returnValue = result, decrease = false)
+                    returnValue = result, level = lvlNotice, decrease = false)
                 elif options.ruleType == RuleTypes.count:
                   result.inc
                 break
@@ -127,7 +127,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           if options.ruleType == search:
             message(messagePrefix & "procedure " & procName & " line: " &
               $node.info.line & " use all parameters.",
-              returnValue = result, decrease = false)
+              returnValue = result, level = lvlNotice, decrease = false)
           elif options.ruleType == check:
             result.inc
     return 1
