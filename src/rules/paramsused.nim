@@ -90,7 +90,10 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         return
       # No parameters, skip
       if node[3].len < 2:
-        result.inc
+        if options.negation:
+          result.dec
+        else:
+          result.inc
         continue
       var index = -1
       for child in node[3]:
@@ -124,17 +127,22 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           if options.ruleType == check:
             message(messagePrefix & "procedure " & procName & " line: " &
               $node.info.line & " use all parameters.", returnValue = result)
+          elif options.ruleType == RuleTypes.count:
+            result.dec
         else:
           if options.ruleType == search:
             message(messagePrefix & "procedure " & procName & " line: " &
               $node.info.line & " use all parameters.",
               returnValue = result, level = lvlNotice, decrease = false)
-          elif options.ruleType == check:
+          else:
             result.inc
     if options.parent:
       if options.ruleType == RuleTypes.count:
+        if result < 0:
+          result = 0
         message(text = (if getLogFilter() <
             lvlNotice: "P" else: options.fileName & ": p") &
-                "rocedures which uses all pramaters found: " & $result,
-                returnValue = result, level = lvlNotice)
+            "rocedures which " & (if options.negation: "not" else: "") &
+            " uses all pramaters found: " & $result, returnValue = result,
+            level = lvlNotice)
         return 1
