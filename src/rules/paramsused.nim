@@ -90,6 +90,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         return
       # No parameters, skip
       if node[3].len < 2:
+        result.inc
         continue
       var index = -1
       for child in node[3]:
@@ -130,4 +131,10 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
               returnValue = result, level = lvlNotice, decrease = false)
           elif options.ruleType == check:
             result.inc
-    return 1
+    if options.parent:
+      if options.ruleType == RuleTypes.count:
+        message(text = (if getLogFilter() <
+            lvlNotice: "P" else: options.fileName & ": p") &
+                "rocedures which uses all pramaters found: " & $result,
+                returnValue = result, level = lvlNotice)
+        return 1
