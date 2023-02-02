@@ -128,7 +128,7 @@ Paramsused rule
 The rule to check if the selected procedure uses all its parameter
 The syntax in a configuration file is::
 
-  [ruleType] ?not? parametersUsed
+  [ruleType] ?not? paramsUsed
 
 * ruleType is the type of rule which will be executed. Proper values are:
   *check*, *search* and *count*. For more information about the types of
@@ -146,8 +146,8 @@ Examples
 
 1. Check if all procedures in module uses their parameters::
 
-    check parametersUsed
+    check paramsUsed
 
 2. Search for all procedures which don't use their all parameters::
 
-    search not parametersUsed
+    search not paramsUsed
