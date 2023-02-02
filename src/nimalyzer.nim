@@ -33,7 +33,7 @@ import contracts
 # Internal modules imports
 import rules
 # Nimalyzer rules imports
-import rules/[haspragma, hasentity, paramsused]
+import rules/[haspragma, hasentity, namedparams, paramsused]
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     contractual.} =
@@ -74,7 +74,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       abortProgram("No configuration file specified. Please run the program with path to the config file as an argument.")
     const rulesList = {haspragma.ruleName: haspragma.ruleCheck,
         hasentity.ruleName: hasentity.ruleCheck,
-        paramsused.ruleName: paramsused.ruleCheck}.toTable
+        paramsused.ruleName: paramsused.ruleCheck,
+        namedparams.ruleName: namedparams.ruleCheck}.toTable
     # Read the configuration file and set the program
     let configFile = paramStr(i = 1)
     type RuleData = object
