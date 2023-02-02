@@ -23,10 +23,11 @@ that information, please refer to the README.md file included into the release.
 ### Usage
 
 1. To use Nimalyzer with your project, first you have to create a configuration
-   file for it. At this moment, the whole documentation is in the configuration
-   file used by the project itself (*config/nimalyzer.cfg*). In your
-   configuration file you have to set at least one source file to check and at
-   least one rule to use.
+   file for it. For the configuration file syntax, and the list of available
+   rules, please refer to the project's documentation, available as
+   reStructuredText in [doc](doc) directory. In your configuration file you
+   will have to set at least one source file to check and at least one rule to
+   use.
 
 2. Run Nimanalyzer with path to your configuration file as the argument. For example:
    `nimalyzer config/nimalyzer.cfg` and just read its output. ;)
@@ -45,6 +46,22 @@ In that second option, type `nimble install https://github.com/thindil/nimalyzer
 install the program and all dependencies. Generally it is recommended to use
 `nimble release` to build the project in release (optimized) mode or
 `nimble debug` to build it in the debug mode.
+
+#### Build the project's documentation
+
+To create HTML version of the project's documentation run command `nimble docs`
+in the main project directory.
+
+If you want to update the project's documentation, usually not needed, you have
+to use *gendoc* tool included into the project.
+
+1. Build the tool *gendoc*. In the main project's directory, execute command
+   `nimble tools`. It will create needed tools and put them into *bin*
+   directory.
+
+2. In the man project's directory execute command `bin/gendoc`. It will update
+   the project's documentation from the default configuration file and from the
+   project's source code.
 
 ### License
 
