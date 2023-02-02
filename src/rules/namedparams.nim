@@ -76,4 +76,36 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
+      if node.kind != nkCall or node.sons.len == 1 or node.sons[1].kind == nkStmtList:
+        continue
+      let callName = try:
+            $node[0]
+          except KeyError, Exception:
+            ""
+      if callName.len == 0:
+        message(text = "Can't get the name of the call.", level = lvlFatal,
+            returnValue = result)
+        result.inc
+        return
+      try:
+        for i in 1..<node.sons.len:
+          if node[i].kind != nkExprEqExpr:
+            if not options.negation:
+              if options.ruleType == check:
+                message(messagePrefix & "call " & callName & " line: " &
+                  $node.info.line & " doesn't have named parameter '" & $node[i] &
+                  "'.", returnValue = result)
+            else:
+              if options.ruleType == search:
+                message(messagePrefix & "call " & callName & " line: " &
+                  $node.info.line & " have named parameter '" & $node[i] &
+                  "'.", returnValue = result, level = lvlNotice, decrease = false)
+              elif options.ruleType == RuleTypes.count:
+                result.inc
+              break
+      except KeyError, Exception:
+        message(messagePrefix & "can't check parameters of call " &
+            callName & " line: " & $node.info.line & ". Reason: " &
+            getCurrentExceptionMsg(), returnValue = result)
+        result.inc
     return 1
