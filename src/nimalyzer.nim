@@ -49,7 +49,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         text.len > 0
       body:
         try:
-          log(level, text)
+          log(level = level, args = text)
         except Exception:
           echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
           echo "Stopping nimalyzer"
@@ -65,13 +65,13 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         quit QuitFailure
 
     try:
-      info("Starting nimalyzer ver 0.1.0")
+      info(args = "Starting nimalyzer ver 0.1.0")
     except Exception:
-      abortProgram("Can't log messages.")
+      abortProgram(message = "Can't log messages.")
 
     # No configuration file specified, quit from the program
     if paramCount() == 0:
-      abortProgram("No configuration file specified. Please run the program with path to the config file as an argument.")
+      abortProgram(message = "No configuration file specified. Please run the program with path to the config file as an argument.")
     const rulesList = {haspragma.ruleName: haspragma.ruleCheck,
         hasentity.ruleName: hasentity.ruleCheck,
         paramsused.ruleName: paramsused.ruleCheck,
@@ -107,7 +107,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             message(text = "Setting the program verbosity to '" & line[10..^1] &
                 "'.", level = lvlDebug)
           except ValueError:
-            abortProgram("Invalid value set in configuration file for the program verbosity level.")
+            abortProgram(message = "Invalid value set in configuration file for the program verbosity level.")
         elif line.startsWith(prefix = "output"):
           let fileName = unixToNativePath(line[7..^1])
           addHandler(handler = newFileLogger(filename = fileName,
@@ -125,7 +125,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             for fileName in walkDirRec(dir = line[10..^1]):
               addFile(fileName = fileName, sources = sources)
           except OSError:
-            abortProgram("Can't add files to check. Reason: " &
+            abortProgram(message = "Can't add files to check. Reason: " &
                 getCurrentExceptionMsg())
         elif line.startsWith(prefix = "check") or line.startsWith(
             prefix = "search") or line.startsWith(prefix = "count"):
@@ -136,7 +136,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             except ValueError:
               none
           if ruleType == none:
-            abortProgram("Unknown type of rule: '" & configRule.key & "'.")
+            abortProgram(message = "Unknown type of rule: '" & configRule.key & "'.")
           configRule.next
           var newRule = RuleData(name: configRule.key.toLowerAscii, options: @[
             ], negation: false, ruleType: ruleType)
@@ -145,7 +145,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             configRule.next
             newRule.name = configRule.key.toLowerAscii
           if not rulesList.hasKey(key = newRule.name):
-            abortProgram("No rule named '" & newRule.name & "' available.")
+            abortProgram(message = "No rule named '" & newRule.name & "' available.")
           while true:
             configRule.next()
             if configRule.kind == cmdEnd:
@@ -158,16 +158,16 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               ^1].options.join(", ") & "' to the list of rules to check.",
               level = lvlDebug)
     except IOError:
-      abortProgram("The specified configuration file '" & configFile & "' doesn't exist.")
+      abortProgram(message = "The specified configuration file '" & configFile & "' doesn't exist.")
     # Check if the lists of source code files and rules is set
     if sources.len == 0:
-      abortProgram("No files specified to check. Please enter any files names to the configuration file.")
+      abortProgram(message = "No files specified to check. Please enter any files names to the configuration file.")
     if rules.len == 0:
-      abortProgram("No rules specified to check. Please enter any rule configuration to the configuration file.")
+      abortProgram(message = "No rules specified to check. Please enter any rule configuration to the configuration file.")
     let
       nimCache = newIdentCache()
       nimConfig = newConfigRef()
-    nimConfig.options.excl(optHints)
+    nimConfig.options.excl(y = optHints)
     var resultCode = QuitSuccess
     # Check source code files with the selected rules
     for i, source in sources.pairs:
@@ -178,8 +178,9 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         let fileName = toAbsolute(file = source, base = toAbsoluteDir(
             path = getCurrentDir()))
         try:
-          openParser(p = codeParser, filename = fileName, llStreamOpen(
-              filename = fileName, mode = fmRead), cache = nimCache,
+          openParser(p = codeParser, filename = fileName,
+              inputStream = llStreamOpen(filename = fileName, mode = fmRead),
+                  cache = nimCache,
               config = nimConfig)
         except IOError, ValueError, KeyError, Exception:
           abortProgram("Can't open file '" & source &
@@ -192,7 +193,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
                 "]" & (if rule.negation: " negation " else: " ") &
                 $rule.ruleType & " rule '" & rule.name & "' with options: '" &
-                rule.options.join(", ") & "'.", level = lvlDebug)
+                rule.options.join(sep = ", ") & "'.", level = lvlDebug)
             options.options = rule.options
             options.negation = rule.negation
             options.ruleType = rule.ruleType
@@ -200,10 +201,10 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             if rulesList[rule.name](astTree = astTree, options = options) < 1:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
-          abortProgram("The file '" & source &
+          abortProgram(message = "The file '" & source &
               "' can't be parsed to AST. Reason: " & getCurrentExceptionMsg())
       except OSError:
-        abortProgram("Can't parse file '" & source & "'. Reason: " &
+        abortProgram(message = "Can't parse file '" & source & "'. Reason: " &
             getCurrentExceptionMsg())
     message(text = "Stopping nimalyzer.")
     quit resultCode
