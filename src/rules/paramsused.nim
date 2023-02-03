@@ -142,7 +142,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           result = 0
         message(text = (if getLogFilter() <
             lvlNotice: "P" else: options.fileName & ": p") &
-            "rocedures which " & (if options.negation: "not" else: "") &
-            " uses all pramaters found: " & $result, returnValue = result,
+            "rocedures which" & (if options.negation: " not" else: "") &
+            " uses all parameters found: " & $result, returnValue = result,
             level = lvlNotice)
         return 1
