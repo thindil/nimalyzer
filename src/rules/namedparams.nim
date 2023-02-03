@@ -50,7 +50,7 @@
 ##     search not namedParams
 
 # Standard library imports
-import std/[logging, strutils]
+import std/logging
 # External modules imports
 import compiler/[ast, renderer]
 import contracts
@@ -98,14 +98,38 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             else:
               if options.ruleType == search:
                 message(messagePrefix & "call " & callName & " line: " &
-                  $node.info.line & " have named parameter '" & $node[i] &
+                  $node.info.line & " doesn't have named parameter '" & $node[i] &
                   "'.", returnValue = result, level = lvlNotice, decrease = false)
               elif options.ruleType == RuleTypes.count:
                 result.inc
               break
+          else:
+            if options.negation:
+              if options.ruleType == check:
+                message(messagePrefix & "call " & callName & " line: " &
+                  $node.info.line & " has named parameter '" & $node[i] &
+                  "'.", returnValue = result)
+              elif options.ruleType == RuleTypes.count:
+                result.dec
+            else:
+              if options.ruleType == search:
+                message(messagePrefix & "procedure " & callName & " line: " &
+                  $node.info.line & " has named parameter '" & $node[i] &
+                  "'.", returnValue = result, level = lvlNotice, decrease = false)
+              else:
+                result.inc
       except KeyError, Exception:
         message(messagePrefix & "can't check parameters of call " &
             callName & " line: " & $node.info.line & ". Reason: " &
             getCurrentExceptionMsg(), returnValue = result)
         result.inc
-    return 1
+    if options.parent:
+      if options.ruleType == RuleTypes.count:
+        if result < 0:
+          result = 0
+        message(text = (if getLogFilter() <
+            lvlNotice: "C" else: options.fileName & ": c") &
+            "alls which" & (if options.negation: " not" else: "") &
+            " have all named parameters found: " & $result, returnValue = result,
+            level = lvlNotice)
+        return 1
