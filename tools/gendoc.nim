@@ -51,9 +51,9 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
       # Get the documentation of the program's rules
       for file in walkFiles(pattern = "src/rules/*.nim"):
         var startDoc = false
-        let (_, ruleName, _) = splitFile(file)
+        let (_, ruleName, _) = splitFile(path = file)
         for line in file.lines:
-          if line.startsWith("##") and not startDoc:
+          if line.startsWith(prefix = "##") and not startDoc:
             startDoc = true
             rulesFile.writeLine(x = "")
             rulesFile.writeLine(x = ruleName.capitalizeAscii & " rule")
@@ -62,12 +62,12 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
               rulesFile.writeLine(x = line[3..^1])
             else:
               rulesFile.writeLine(x = "")
-          elif line.startsWith("##"):
+          elif line.startsWith(prefix = "##"):
             if line.len > 3:
               rulesFile.writeLine(x = line[3..^1])
             else:
               rulesFile.writeLine(x = "")
-          elif not line.startsWith("##") and startDoc:
+          elif not line.startsWith(prefix = "##") and startDoc:
             startDoc = false
             break
 
