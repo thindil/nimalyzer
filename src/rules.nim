@@ -54,6 +54,6 @@ proc message*(text: string; returnValue: var int; level: Level = lvlError;
     else:
       returnValue.inc
     try:
-      log(level, text)
+      log(level = level, args = text)
     except Exception:
       echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
