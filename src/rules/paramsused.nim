@@ -106,32 +106,32 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             if index == -1:
               if not options.negation:
                 if options.ruleType == check:
-                  message(messagePrefix & "procedure " & procName & " line: " &
+                  message(text = messagePrefix & "procedure " & procName & " line: " &
                     $node.info.line & " doesn't use parameter '" & $child[i] &
                     "'.", returnValue = result)
               else:
                 if options.ruleType == search:
-                  message(messagePrefix & "procedure " & procName & " line: " &
+                  message(text = messagePrefix & "procedure " & procName & " line: " &
                     $node.info.line & " doesn't use all parameters.",
                     returnValue = result, level = lvlNotice, decrease = false)
                 elif options.ruleType == RuleTypes.count:
                   result.inc
                 break
           except KeyError, Exception:
-            message(messagePrefix & "can't check parameters of procedure " &
+            message(text = messagePrefix & "can't check parameters of procedure " &
                 procName & " line: " & $node.info.line & ". Reason: " &
                 getCurrentExceptionMsg(), returnValue = result)
             result.inc
       if index > -1:
         if options.negation:
           if options.ruleType == check:
-            message(messagePrefix & "procedure " & procName & " line: " &
+            message(text = messagePrefix & "procedure " & procName & " line: " &
               $node.info.line & " use all parameters.", returnValue = result)
           elif options.ruleType == RuleTypes.count:
             result.dec
         else:
           if options.ruleType == search:
-            message(messagePrefix & "procedure " & procName & " line: " &
+            message(text = messagePrefix & "procedure " & procName & " line: " &
               $node.info.line & " use all parameters.",
               returnValue = result, level = lvlNotice, decrease = false)
           else:
