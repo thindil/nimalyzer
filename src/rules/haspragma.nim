@@ -168,14 +168,14 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       if pragmas == nil:
         if not options.negation:
           if options.ruleType == check:
-            message(messagePrefix & "procedure " & procName & " line: " &
+            message(text = messagePrefix & "procedure " & procName & " line: " &
                 $node.info.line & " doesn't have declared any pragmas.",
                 returnValue = result)
           else:
             result.dec
         else:
           if options.ruleType == search:
-            message(messagePrefix & "procedure " & procName & " line: " &
+            message(text = messagePrefix & "procedure " & procName & " line: " &
                 $node.info.line & " doesn't have declared any pragmas.",
                 returnValue = result, level = lvlNotice, decrease = false)
           else:
