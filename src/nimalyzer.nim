@@ -109,13 +109,13 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           except ValueError:
             abortProgram(message = "Invalid value set in configuration file for the program verbosity level.")
         elif line.startsWith(prefix = "output"):
-          let fileName = unixToNativePath(line[7..^1])
+          let fileName = unixToNativePath(path = line[7..^1])
           addHandler(handler = newFileLogger(filename = fileName,
               fmtStr = "[$time] - $levelname: "))
           message(text = "Added file '" & fileName & "' as log file.",
               level = lvlDebug)
         elif line.startsWith(prefix = "source"):
-          let fileName = unixToNativePath(line[7..^1])
+          let fileName = unixToNativePath(path = line[7..^1])
           addFile(fileName = fileName, sources = sources)
         elif line.startsWith(prefix = "files"):
           for fileName in walkFiles(pattern = line[6..^1]):
@@ -183,7 +183,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
                   cache = nimCache,
               config = nimConfig)
         except IOError, ValueError, KeyError, Exception:
-          abortProgram("Can't open file '" & source &
+          abortProgram(message = "Can't open file '" & source &
               "' to parse. Reason: " & getCurrentExceptionMsg())
         try:
           let astTree = codeParser.parseAll
