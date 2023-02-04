@@ -97,7 +97,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         continue
       var index = -1
       for child in node[3]:
-        if child.kind == nkEmpty:
+        if child.kind in {nkEmpty, nkIdent}:
           continue
         index = -1
         for i in 0..child.len - 3:
