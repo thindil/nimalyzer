@@ -65,11 +65,69 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     astTree != nil
     options.fileName.len > 0
   body:
+
+    proc check(node: PNode; oldResult: var int) {.contractual, raises: [], tags: [RootEffect].} =
+      require:
+        node != nil
+      body:
+        let messagePrefix = if getLogFilter() < lvlNotice:
+            ""
+          else:
+            options.fileName & ": "
+        let callName = try:
+              $node[0]
+            except KeyError, Exception:
+              ""
+        if callName.len == 0:
+          message(text = "Can't get the name of the call.", level = lvlFatal,
+              returnValue = oldResult)
+          oldResult.inc
+          return
+        try:
+          for i in 1..<node.sons.len:
+            if node[i].kind != nkExprEqExpr:
+              if not options.negation:
+                if options.ruleType == check:
+                  message(messagePrefix & "call " & callName & " line: " &
+                    $node.info.line & " doesn't have named parameter '" & $node[
+                        i] &
+                    "'.", returnValue = oldResult)
+              else:
+                if options.ruleType == search:
+                  message(messagePrefix & "call " & callName & " line: " &
+                    $node.info.line & " doesn't have named parameter '" & $node[
+                        i] &
+                    "'.", returnValue = oldResult, level = lvlNotice,
+                        decrease = false)
+                elif options.ruleType == RuleTypes.count:
+                  oldResult.inc
+                break
+            else:
+              if options.negation:
+                if options.ruleType == check:
+                  message(messagePrefix & "call " & callName & " line: " &
+                    $node.info.line & " has named parameter '" & $node[i] &
+                    "'.", returnValue = oldResult)
+                elif options.ruleType == RuleTypes.count:
+                  oldResult.dec
+              else:
+                if options.ruleType == search:
+                  message(messagePrefix & "procedure " & callName & " line: " &
+                    $node.info.line & " has named parameter '" & $node[i] &
+                    "'.", returnValue = oldResult, level = lvlNotice,
+                        decrease = false)
+                else:
+                  oldResult.inc
+        except KeyError, Exception:
+          message(messagePrefix & "can't check parameters of call " &
+              callName & " line: " & $node.info.line & ". Reason: " &
+              getCurrentExceptionMsg(), returnValue = oldResult)
+          oldResult.inc
+
     result = options.amount
-    let messagePrefix = if getLogFilter() < lvlNotice:
-        ""
-      else:
-        options.fileName & ": "
+    if astTree.kind == nkCall:
+      check(node = astTree, oldResult = result)
+      return
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
@@ -78,51 +136,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             ruleType: options.ruleType, amount: result))
       if node.kind != nkCall or node.sons.len == 1 or node.sons[1].kind == nkStmtList:
         continue
-      let callName = try:
-            $node[0]
-          except KeyError, Exception:
-            ""
-      if callName.len == 0:
-        message(text = "Can't get the name of the call.", level = lvlFatal,
-            returnValue = result)
-        result.inc
-        return
-      try:
-        for i in 1..<node.sons.len:
-          if node[i].kind != nkExprEqExpr:
-            if not options.negation:
-              if options.ruleType == check:
-                message(messagePrefix & "call " & callName & " line: " &
-                  $node.info.line & " doesn't have named parameter '" & $node[i] &
-                  "'.", returnValue = result)
-            else:
-              if options.ruleType == search:
-                message(messagePrefix & "call " & callName & " line: " &
-                  $node.info.line & " doesn't have named parameter '" & $node[i] &
-                  "'.", returnValue = result, level = lvlNotice, decrease = false)
-              elif options.ruleType == RuleTypes.count:
-                result.inc
-              break
-          else:
-            if options.negation:
-              if options.ruleType == check:
-                message(messagePrefix & "call " & callName & " line: " &
-                  $node.info.line & " has named parameter '" & $node[i] &
-                  "'.", returnValue = result)
-              elif options.ruleType == RuleTypes.count:
-                result.dec
-            else:
-              if options.ruleType == search:
-                message(messagePrefix & "procedure " & callName & " line: " &
-                  $node.info.line & " has named parameter '" & $node[i] &
-                  "'.", returnValue = result, level = lvlNotice, decrease = false)
-              else:
-                result.inc
-      except KeyError, Exception:
-        message(messagePrefix & "can't check parameters of call " &
-            callName & " line: " & $node.info.line & ". Reason: " &
-            getCurrentExceptionMsg(), returnValue = result)
-        result.inc
+      check(node = node, oldResult = result)
     if options.parent:
       if options.ruleType == RuleTypes.count:
         if result < 0:
@@ -130,6 +144,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         message(text = (if getLogFilter() <
             lvlNotice: "C" else: options.fileName & ": c") &
             "alls which" & (if options.negation: " not" else: "") &
-            " have all named parameters found: " & $result, returnValue = result,
+            " have all named parameters found: " & $result,
+                returnValue = result,
             level = lvlNotice)
         return 1
