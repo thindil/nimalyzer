@@ -88,13 +88,13 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             if node[i].kind != nkExprEqExpr:
               if not options.negation:
                 if options.ruleType == check:
-                  message(messagePrefix & "call " & callName & " line: " &
+                  message(text = messagePrefix & "call " & callName & " line: " &
                     $node.info.line & " doesn't have named parameter '" & $node[
                         i] &
                     "'.", returnValue = oldResult)
               else:
                 if options.ruleType == search:
-                  message(messagePrefix & "call " & callName & " line: " &
+                  message(text = messagePrefix & "call " & callName & " line: " &
                     $node.info.line & " doesn't have named parameter '" & $node[
                         i] &
                     "'.", returnValue = oldResult, level = lvlNotice,
@@ -105,21 +105,21 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             else:
               if options.negation:
                 if options.ruleType == check:
-                  message(messagePrefix & "call " & callName & " line: " &
+                  message(text = messagePrefix & "call " & callName & " line: " &
                     $node.info.line & " has named parameter '" & $node[i] &
                     "'.", returnValue = oldResult)
                 elif options.ruleType == RuleTypes.count:
                   oldResult.dec
               else:
                 if options.ruleType == search:
-                  message(messagePrefix & "procedure " & callName & " line: " &
+                  message(text = messagePrefix & "procedure " & callName & " line: " &
                     $node.info.line & " has named parameter '" & $node[i] &
                     "'.", returnValue = oldResult, level = lvlNotice,
                         decrease = false)
                 else:
                   oldResult.inc
         except KeyError, Exception:
-          message(messagePrefix & "can't check parameters of call " &
+          message(text = messagePrefix & "can't check parameters of call " &
               callName & " line: " & $node.info.line & ". Reason: " &
               getCurrentExceptionMsg(), returnValue = oldResult)
           oldResult.inc
