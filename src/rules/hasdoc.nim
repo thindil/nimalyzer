@@ -72,27 +72,44 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         ""
       else:
         options.fileName & ": "
-    if options.parent:
-      if not astTree.hasSubnodeWith(kind = nkCommentStmt):
-        if options.ruleType == check:
-          message(text = messagePrefix & "module doesn't have documentation.",
-              returnValue = result)
+
+    proc setResult(entityName, line: string; hasDoc: bool;
+        oldResult: var int) {.raises: [], tags: [RootEffect], contractual.} =
+      require:
+        entityName.len > 0
+      body:
+        if not hasDoc:
+          if options.negation and options.ruleType == check:
+            return
+          if options.ruleType == check:
+            message(text = messagePrefix & entityName & (if line.len >
+                0: " line: " & line else: "") & " doesn't have documentation.",
+                returnValue = oldResult)
+          else:
+            if options.negation:
+              message(text = messagePrefix & entityName & (if line.len >
+                  0: " line: " & line else: "") &
+                  " doesn't have documentation.", returnValue = oldResult,
+                  level = lvlNotice, decrease = false)
         else:
           if options.negation:
-            message(text = messagePrefix & "module doesn't have documentation.",
-                returnValue = result, level = lvlNotice, decrease = false)
-      else:
-        if options.negation:
-          if options.ruleType == check:
-            message(text = messagePrefix & "module has documentation.",
-                returnValue = result)
+            if options.ruleType == check:
+              message(text = messagePrefix & entityName & (if line.len >
+                  0: " line: " & line else: "") & " has documentation.",
+                  returnValue = oldResult)
+            else:
+              oldResult.dec
+          if options.ruleType == search:
+            message(text = messagePrefix & entityName & (if line.len >
+                0: " line: " & line else: "") & " has documentation.",
+                returnValue = oldResult, level = lvlNotice, decrease = false)
           else:
-            result.dec
-        if options.ruleType == search:
-          message(text = messagePrefix & "module has documentation.",
-              returnValue = result, level = lvlNotice, decrease = false)
-        else:
-          result.inc
+            oldResult.inc
+
+    if options.parent:
+      setResult(entityName = "Module", line = "",
+          hasDoc = astTree.hasSubnodeWith(kind = nkCommentStmt),
+          oldResult = result)
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
@@ -114,33 +131,14 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       if not declName.endsWith(suffix = "*") and node.kind notin callableDefs:
         continue
       try:
-        if not astTree.hasSubnodeWith(kind = nkCommentStmt):
-          if options.ruleType == check:
-            message(text = messagePrefix & "declaration of " & $node[0] &
-                " doesn't have documentation.", returnValue = result)
-          else:
-            if options.negation:
-              message(text = messagePrefix & "declaration of " & $node[0] &
-                  " doesn't have documentation.", returnValue = result,
-                  level = lvlNotice, decrease = false)
-        else:
-          if options.negation:
-            if options.ruleType == check:
-              message(text = messagePrefix & "declaration of " & $node[0] &
-                  " has documentation.", returnValue = result)
-            else:
-              result.dec
-          if options.ruleType == search:
-            message(text = messagePrefix & "declaration of " & $node[0] &
-                " has documentation.", returnValue = result, level = lvlNotice,
-                decrease = false)
-          else:
-            result.inc
+        setResult(entityName = "Declaration of " & $node[0],
+            line = $node.info.line, hasDoc = node.hasSubnodeWith(
+            kind = nkCommentStmt), oldResult = result)
       except KeyError, Exception:
         discard
     if options.parent:
       if result == 0 and options.ruleType == search:
-        message(text = "The documentation not found.",  returnValue = result)
+        message(text = "The documentation not found.", returnValue = result)
         return 0
       if options.ruleType == RuleTypes.count:
         message(text = (if getLogFilter() <
