@@ -72,6 +72,27 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         ""
       else:
         options.fileName & ": "
+    if options.parent:
+      if not astTree.hasSubnodeWith(kind = nkCommentStmt):
+        if options.ruleType == check:
+          message(text = messagePrefix & "module doesn't have documentation.",
+              returnValue = result)
+        else:
+          if options.negation:
+            message(text = messagePrefix & "module doesn't have documentation.",
+                returnValue = result, level = lvlNotice, decrease = false)
+      else:
+        if options.negation:
+          if options.ruleType == check:
+            message(text = messagePrefix & "module has documentation.",
+                returnValue = result)
+          else:
+            result.dec
+        if options.ruleType == search:
+          message(text = messagePrefix & "module has documentation.",
+              returnValue = result, level = lvlNotice, decrease = false)
+        else:
+          result.inc
     for node in astTree.items:
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
