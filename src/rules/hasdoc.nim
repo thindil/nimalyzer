@@ -90,6 +90,10 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             level = lvlFatal, returnValue = result)
         result.inc
         return
-      if not declName.endsWith(suffix = "*"):
+      if not declName.endsWith(suffix = "*") and node.kind notin callableDefs:
         continue
+      try:
+        echo node[0]
+      except:
+        discard
     return 1
