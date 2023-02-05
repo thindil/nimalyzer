@@ -66,7 +66,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     options.fileName.len > 0
   body:
 
-    proc check(node: PNode; oldResult: var int) {.contractual, raises: [], tags: [RootEffect].} =
+    proc check(node: PNode; oldResult: var int) {.contractual, raises: [],
+        tags: [RootEffect].} =
       require:
         node != nil
       body:
@@ -88,34 +89,36 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             if node[i].kind != nkExprEqExpr:
               if not options.negation:
                 if options.ruleType == check:
-                  message(text = messagePrefix & "call " & callName & " line: " &
-                    $node.info.line & " doesn't have named parameter '" & $node[
-                        i] &
-                    "'.", returnValue = oldResult)
+                  message(text = messagePrefix & "call " & callName &
+                      " line: " & $node.info.line &
+                      " doesn't have named parameter number: " & $i & "'.",
+                      returnValue = oldResult)
               else:
                 if options.ruleType == search:
-                  message(text = messagePrefix & "call " & callName & " line: " &
-                    $node.info.line & " doesn't have named parameter '" & $node[
-                        i] &
-                    "'.", returnValue = oldResult, level = lvlNotice,
-                        decrease = false)
+                  message(text = messagePrefix & "call " & callName &
+                      " line: " & $node.info.line &
+                      " doesn't have named parameter number: " & $i & "'.",
+                      returnValue = oldResult, level = lvlNotice,
+                      decrease = false)
                 elif options.ruleType == RuleTypes.count:
                   oldResult.inc
                 break
             else:
               if options.negation:
                 if options.ruleType == check:
-                  message(text = messagePrefix & "call " & callName & " line: " &
-                    $node.info.line & " has named parameter '" & $node[i] &
-                    "'.", returnValue = oldResult)
+                  message(text = messagePrefix & "call " & callName &
+                      " line: " & $node.info.line &
+                      " has named parameter number: " & $i & ".",
+                      returnValue = oldResult)
                 elif options.ruleType == RuleTypes.count:
                   oldResult.dec
               else:
                 if options.ruleType == search:
-                  message(text = messagePrefix & "procedure " & callName & " line: " &
-                    $node.info.line & " has named parameter '" & $node[i] &
-                    "'.", returnValue = oldResult, level = lvlNotice,
-                        decrease = false)
+                  message(text = messagePrefix & "procedure " & callName &
+                      " line: " & $node.info.line &
+                      " has named parameter number: " & $i & ".",
+                      returnValue = oldResult, level = lvlNotice,
+                      decrease = false)
                 else:
                   oldResult.inc
         except KeyError, Exception:
