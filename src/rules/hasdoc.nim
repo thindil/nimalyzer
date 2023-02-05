@@ -114,7 +114,37 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       if not declName.endsWith(suffix = "*") and node.kind notin callableDefs:
         continue
       try:
-        echo node[0]
-      except:
+        if not astTree.hasSubnodeWith(kind = nkCommentStmt):
+          if options.ruleType == check:
+            message(text = messagePrefix & "declaration of " & $node[0] &
+                " doesn't have documentation.", returnValue = result)
+          else:
+            if options.negation:
+              message(text = messagePrefix & "declaration of " & $node[0] &
+                  " doesn't have documentation.", returnValue = result,
+                  level = lvlNotice, decrease = false)
+        else:
+          if options.negation:
+            if options.ruleType == check:
+              message(text = messagePrefix & "declaration of " & $node[0] &
+                  " has documentation.", returnValue = result)
+            else:
+              result.dec
+          if options.ruleType == search:
+            message(text = messagePrefix & "declaration of " & $node[0] &
+                " has documentation.", returnValue = result, level = lvlNotice,
+                decrease = false)
+          else:
+            result.inc
+      except KeyError, Exception:
         discard
-    return 1
+    if options.parent:
+      if result == 0 and options.ruleType == search:
+        message(text = "The documentation not found.",  returnValue = result)
+        return 0
+      if options.ruleType == RuleTypes.count:
+        message(text = (if getLogFilter() <
+            lvlNotice: "D" else: options.fileName & ": d") &
+                "eclared public items with documentation found: " & $result,
+                returnValue = result, level = lvlNotice)
+        return 1
