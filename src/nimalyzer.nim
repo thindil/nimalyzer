@@ -37,6 +37,7 @@ import rules/[hasdoc, hasentity, haspragma, namedparams, paramsused]
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     contractual.} =
+  ## The main procedure of the program
   # Set the logger, where the program output will be send
   body:
     let logger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
