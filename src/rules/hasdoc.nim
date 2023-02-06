@@ -117,10 +117,15 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
       if node.kind notin {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
-          nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef}:
+          nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef, nkEnumTy}:
         continue
-      let declName = try:
+      var declName = try:
             $node[0]
+          except KeyError, Exception:
+            ""
+      if declName.len == 0:
+        declName = try:
+            $astTree[0]
           except KeyError, Exception:
             ""
       if declName.len == 0:
@@ -130,12 +135,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         return
       if not declName.endsWith(suffix = "*") and node.kind notin callableDefs:
         continue
-      try:
-        setResult(entityName = "Declaration of " & $node[0],
-            line = $node.info.line, hasDoc = node.hasSubnodeWith(
-            kind = nkCommentStmt), oldResult = result)
-      except KeyError, Exception:
-        discard
+      setResult(entityName = "Declaration of " & declName,
+          line = $node.info.line, hasDoc = node.hasSubnodeWith(
+          kind = nkCommentStmt), oldResult = result)
     if options.parent:
       if result == 0 and options.ruleType == search:
         message(text = "The documentation not found.", returnValue = result)
