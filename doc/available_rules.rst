@@ -5,6 +5,36 @@ Available rules
 .. default-role:: code
 .. contents::
 
+Hasdoc rule
+===========
+The rule to check if all public declarations (variables, procedures, etc)
+have documentation comments
+The syntax in a configuration file is::
+
+  [ruleType] ?not? hasDoc
+
+* ruleType is the type of rule which will be executed. Proper values are:
+  *check*, *search* and *count*. For more information about the types of
+  rules, please refer to the program's documentation. Check type will raise
+  an error if there is a public declarations which doesn't have documentation.
+  Search type will list all public declarations which have documentation and
+  raise error if nothing was found. Count type will simply list the amount
+  of public declarations which have documentation.
+* optional word *not* means negation for the rule. Adding word *not* will
+  change to inform only about public declaration which have documentation.
+  Probably useable only with search and count type of rule.
+
+Examples
+--------
+
+1. Check if all public declarations in module have documentation::
+
+    check hasDoc
+
+2. Search for all public declarations which don't have documentation::
+
+    search not hasDoc
+
 Hasentity rule
 ==============
 The rule to check if the selected procedure has the selected entities, like
@@ -122,6 +152,34 @@ Examples
    The *lock* pragma must have entered the level of the lock::
 
      check hasPragma contractual "lock: *"
+
+Namedparams rule
+================
+The rule to check if all calls in the code uses named parameters
+The syntax in a configuration file is::
+
+  [ruleType] ?not? namedParams
+
+* ruleType is the type of rule which will be executed. Proper values are:
+  *check*, *search* and *count*. For more information about the types of
+  rules, please refer to the program's documentation. Check type will raise
+  an error if there is a call which doesn't have all parameters named.
+  Search type will list all calls which set all their parameters as named
+  and raise error if nothing was found. Count type will simply list the
+  amount of calls which set all their parameters as named.
+* optional word *not* means negation for the rule. Adding word *not* will
+  change to inform only about calls which have some parameters not named.
+
+Examples
+--------
+
+1. Check if all calls in module set their parameters as named::
+
+    check namedParams
+
+2. Search for all calls which don't set their parameters as named::
+
+    search not namedParams
 
 Paramsused rule
 ===============

@@ -96,10 +96,14 @@ message's level for info about the line of code which violates the rule is
 lvlError. The setting below checks if all procedures in the source code have
 pragma "contractual", "raises" and "tags". The last two can be empty or have
 listed values. The second rule checks if all parameters of all procedures are
-used in the code.
+used in the code. The third rule checks if all calls in the code uses named
+parameters. The fourth rule checks if all public declarations have
+documentation.
 ::
     check hasPragma contractual "raises: [*" "tags: [*"
     check paramsUsed
+    check namedParams
+    check hasDoc
 
 Search rules
 ------------
