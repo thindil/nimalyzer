@@ -46,6 +46,11 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
 
     proc message(text: string; level: Level = lvlInfo) {.raises: [], tags: [
         RootEffect], contractual.} =
+      ## Log the selected message. If error happens during logging, print the
+      ## error message and quit the program
+      ##
+      ## * text  - the message to log
+      ## * level - the log level of the message. Default value is lvlInfo
       require:
         text.len > 0
       body:
@@ -58,6 +63,9 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
 
     proc abortProgram(message: string) {.gcsafe, raises: [], tags: [RootEffect],
         contractual.} =
+      ## Log the message and stop the program
+      ##
+      ## * message - the message to log
       require:
         message.len > 0
       body:
@@ -91,6 +99,12 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
 
     proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [
         ], tags: [RootEffect], contractual.} =
+      ## Add the selected file as a source code to check for the program
+      ##
+      ## * fileName - the path to the file which will be added
+      ## * sources  - the list of source code files to check
+      ##
+      ## Returns the updated parameter sources
       require:
         fileName.len > 0
       body:
