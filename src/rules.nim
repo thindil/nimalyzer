@@ -33,10 +33,11 @@ import contracts
 type
 
   RuleTypes* = enum
+    ## the types of the program's rules
     none, check, search, count
 
-  RuleOptions* = object
-    options*: seq[string]
+  RuleOptions* = object ## Contains information for the program's rules
+    options*: seq[string] ## The list of the program's rule
     parent*: bool
     fileName*: string
     negation*: bool
