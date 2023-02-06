@@ -135,9 +135,18 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         return
       if not declName.endsWith(suffix = "*") and node.kind notin callableDefs:
         continue
-      setResult(entityName = "Declaration of " & declName,
-          line = $node.info.line, hasDoc = node.hasSubnodeWith(
-          kind = nkCommentStmt), oldResult = result)
+      try:
+        let hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs}:
+            if node.comment.len > 0: true else: false
+          else:
+            node.hasSubnodeWith(kind = nkCommentStmt)
+        setResult(entityName = "Declaration of " & declName,
+            line = $node.info.line, hasDoc = hasDoc, oldResult = result)
+      except KeyError:
+        message(text = "Can't check the declared entity '" & declName & "'.",
+            level = lvlFatal, returnValue = result)
+        result.inc
+        return
     if options.parent:
       if result == 0 and options.ruleType == search:
         message(text = "The documentation not found.", returnValue = result)
