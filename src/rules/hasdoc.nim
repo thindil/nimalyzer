@@ -63,6 +63,15 @@ const ruleName* = "hasdoc" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
+  ## Check recursively if the source code has the documentation in the proper
+  ## locactions
+  ##
+  ## * astTree - The AST tree representation of the Nim code to check
+  ## * options - The rule options set by the user and the previous iterations
+  ##             of the procedure
+  ##
+  ## The amount of result how many times the various elements of the Nim code
+  ## has the documentation comments
   require:
     astTree != nil
     options.fileName.len > 0
@@ -75,6 +84,17 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
 
     proc setResult(entityName, line: string; hasDoc: bool;
         oldResult: var int) {.raises: [], tags: [RootEffect], contractual.} =
+      ## Update the amount of documentation found and log the message if needed
+      ##
+      ## * entityName - the name of the Nim's code entity which was checked for
+      ##                the documentation comment
+      ## * line       - the line in which the Nim's entity is in the source code
+      ## * hasDoc     - if true, the entity has the documentation
+      ## * oldResult  - the current amount of the Nim's entities found with the
+      ##                documentation
+      ##
+      ## Updated parameter oldResult. It will be increased or decreased,
+      ## depending on the rule settings.
       require:
         entityName.len > 0
       body:
