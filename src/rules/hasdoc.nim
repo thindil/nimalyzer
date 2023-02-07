@@ -143,7 +143,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       if not declName.endsWith(suffix = "*") and node.kind notin callableDefs:
         continue
       try:
-        let hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs}:
+        let hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
             if node.comment.len > 0: true else: false
           else:
             node.hasSubnodeWith(kind = nkCommentStmt)
