@@ -38,15 +38,24 @@ type
 
   RuleOptions* = object ## Contains information for the program's rules
     options*: seq[string] ## The list of the program's rule
-    parent*: bool
-    fileName*: string
-    negation*: bool
-    ruleType*: RuleTypes
-    amount*: int
+    parent*: bool ## If true, check is currently make in the parent (usualy module) entity
+    fileName*: string ## The path to the file which is checked
+    negation*: bool ## If true, the rule show return oposite result
+    ruleType*: RuleTypes ## The type of rule
+    amount*: int ## The amount of results found by the rule
 
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
     decrease: bool = true) {.gcsafe, raises: [], tags: [RootEffect],
     contractual.} =
+  ## Log the rule's selected message
+  ##
+  ## * text        - the messages which will be logged
+  ## * returnValue - the value returned by the rule, increased or decreased
+  ## * level       - the log level of the message. Default value is lvlError
+  ## * decrease    - if true, decrease returnValue, otherwise increase it. The
+  ##                 default value is true
+  ##
+  ## Returns the updated parameter returnValue
   require:
     text.len > 0
   body:
