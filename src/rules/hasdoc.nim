@@ -59,7 +59,7 @@ import contracts
 # Internal modules imports
 import ../rules
 
-const ruleName* = "hasdoc"
+const ruleName* = "hasdoc" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -117,7 +117,14 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
       if node.kind notin {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
-          nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef, nkEnumTy}:
+          nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
+          nkEnumTy, nkConstSection, nkConstTy}:
+        continue
+      if node.kind == nkConstSection:
+        result = ruleCheck(astTree = node, options = RuleOptions(
+            options: options.options, parent: false,
+            fileName: options.fileName, negation: options.negation,
+            ruleType: options.ruleType, amount: result))
         continue
       var declName = try:
             $node[0]
