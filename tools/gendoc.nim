@@ -23,6 +23,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+## Simple program to get the project's documentation from the default
+## configuration file and the project's source code and convert it to the
+## project's reStructuredText documentation. The program works only when it is
+## started from the main directory of the project
+
 # Standard library imports
 import std/[os, strutils]
 # External modules imports
@@ -30,6 +35,7 @@ import contracts
 
 proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
     ReadIOEffect].} =
+  ## The program's main procedure
   body:
     # Check if we are in the main directory of the project
     if not fileExists(filename = "nimalyzer.nimble"):
