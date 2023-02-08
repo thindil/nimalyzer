@@ -96,10 +96,18 @@ import contracts
 # Internal modules imports
 import ../rules
 
-const ruleName* = "haspragma"
+const ruleName* = "haspragma" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
+  ## Check recursively if the Nim code entities have proper pragmas.
+  ##
+  ## * astTree - The AST tree representation of the Nim code to check
+  ## * options - The rule options set by the user and the previous iterations
+  ##             of the procedure
+  ##
+  ## The amount of result how many times the various elements of the Nim code
+  ## has the proper pragmas
   require:
     astTree != nil
     options.options.len > 0
@@ -113,6 +121,17 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
 
     proc setResult(procName, line, pragma: string; hasPragma: bool;
         oldResult: var int) {.raises: [], tags: [RootEffect], contractual.} =
+      ## Update the amount of pragmas found and log the message if needed
+      ##
+      ## * entityName - the name of the Nim's code entity which was checked for
+      ##                the pragma
+      ## * line       - the line in which the Nim's entity is in the source code
+      ## * hasDoc     - if true, the entity has the pragma
+      ## * oldResult  - the current amount of the Nim's entities found with the
+      ##                pragma
+      ##
+      ## Updated parameter oldResult. It will be increased or decreased,
+      ## depending on the rule settings.
       require:
         procName.len > 0
         line.len > 0
