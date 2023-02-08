@@ -58,10 +58,18 @@ import contracts
 # Internal modules imports
 import ../rules
 
-const ruleName* = "paramsused"
+const ruleName* = "paramsused" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
+  ## Check recursively if all procedures in the Nim code use all of their
+  ## parameters
+  ##
+  ## * astTree - The AST tree representation of the Nim code to check
+  ## * options - The rule options set by the user and the previous iterations
+  ##             of the procedure
+  ##
+  ## The amount of result how many procedures uses their all parameters
   require:
     astTree != nil
     options.fileName.len > 0
