@@ -23,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## The rule to check if the selected procedure has the selected entities, like
+## The rule to check if the selected module has the selected entities, like
 ## procedures, constants, etc. with the selected names. The syntax in a
 ## configuration file is::
 ##
