@@ -80,10 +80,18 @@ import contracts
 # Internal modules imports
 import ../rules
 
-const ruleName* = "hasentity"
+const ruleName* = "hasentity" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
+  ## Check recursively if the source code has the selected entity
+  ##
+  ## * astTree - The AST tree representation of the Nim code to check
+  ## * options - The rule options set by the user and the previous iterations
+  ##             of the procedure
+  ##
+  ## The amount of result how many times the selected elements of the Nim code
+  ## were found
   require:
     astTree != nil
     options.options.len == 2
