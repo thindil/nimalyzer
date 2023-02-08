@@ -57,10 +57,17 @@ import contracts
 # Internal modules imports
 import ../rules
 
-const ruleName* = "namedparams"
+const ruleName* = "namedparams" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
+  ## Check recursively if calls in the source code use named paramters.
+  ##
+  ## * astTree - The AST tree representation of the Nim code to check
+  ## * options - The rule options set by the user and the previous iterations
+  ##             of the procedure
+  ##
+  ## The amount of result how many calls in the source code use named parameters.
   require:
     astTree != nil
     options.fileName.len > 0
@@ -68,6 +75,13 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
 
     proc check(node: PNode; oldResult: var int) {.contractual, raises: [],
         tags: [RootEffect].} =
+      ## Check the call if it uses named parameters
+      ##
+      ## * node      - the AST node representing the call to check
+      ## * oldResult - the amount of previously found calls with named parameters
+      ##
+      ## The updated parameter oldResult, increased or decreased, depending on
+      ## the rule settings.
       require:
         node != nil
       body:
