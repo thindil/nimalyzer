@@ -164,3 +164,27 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             if options.ruleType == check: lvlError else: lvlNotice),
             decrease = (
             if options.ruleType == check: false else: true))
+
+proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
+    tags: [RootEffect].} =
+  ## Validate the options entered from a configuration for the rule
+  ##
+  ## * options - the list of options entered from a configuration file
+  ##
+  ## Returns true if options are valid otherwise false.
+  body:
+    var tmpResult = 0
+    if options.len < 2:
+      message(text = "The rule hasEntity accepts exactly two options, but not enough of them are supplied: '" &
+          options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
+      return false
+    if options.len > 2:
+      message(text = "The rule hasEntity accepts exactly two options, but too much of the are supplied: '" &
+          options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
+      return false
+    let entityType = parseEnum[TNodeKind](s = options[0], default = nkNone)
+    if entityType == nkNone:
+      message(text = "The rule hasEntity the entity type has invalid value: '" &
+          options[0] & "'.", returnValue = tmpResult, level = lvlFatal)
+      return false
+    return true
