@@ -50,7 +50,7 @@
 ##     search not namedParams
 
 # Standard library imports
-import std/logging
+import std/[logging, strutils]
 # External modules imports
 import compiler/[ast, renderer]
 import contracts
@@ -165,3 +165,18 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 returnValue = result,
             level = lvlNotice)
         return 1
+
+proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
+    tags: [RootEffect].} =
+  ## Validate the options entered from a configuration for the rule
+  ##
+  ## * options - the list of options entered from a configuration file
+  ##
+  ## Returns true if options are valid otherwise false.
+  body:
+    if options.len > 0:
+      var tmpResult = 0
+      message(text = "The rule namedParams doesn't accept any options, but options suplied: '" &
+          options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
+      return false
+    return true
