@@ -5,9 +5,9 @@ Nimalyzer documentation
 General information
 ===================
 
-Nimalyzer is a static code analyzer for [Nim](https://github.com/nim-lang/Nim)
+Nimalyzer is a static code analyzer for `Nim <https://github.com/nim-lang/Nim>`_
 programming language. It allows checking a Nim source code against predefined
-rules. Its design is inspired by [AdaControl](https://www.adalog.fr/en/adacontrol.html).
+rules. Its design is inspired by `AdaControl <https://www.adalog.fr/en/adacontrol.html>`_.
 Nimalyzer can be used to enforce some design patterns or ensure that some
 language constructs are present in a code, or not. For example, it can check if
 all procedures have defined proper pragmas. Additionally, it can be used as an
@@ -24,8 +24,8 @@ Usage
 =====
 
 1. To use Nimalyzer with your project, first you have to create a configuration
-   file for it. Please check documentation for [configuration syntax](config.html)
-   and list of [available rules](available_rules.html) for more details. In your
+   file for it. Please check documentation for `configuration syntax <config.html>`_
+   and list of `available rules <available_rules.html>`_ for more details. In your
    configuration file you have to set at least one source file to check and at
    least one rule to use.
 
