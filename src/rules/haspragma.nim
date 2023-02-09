@@ -248,3 +248,22 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 "eclared procedures with selected pragmas found: " & $result,
                 returnValue = result, level = lvlNotice)
         return 1
+
+proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
+    tags: [RootEffect].} =
+  ## Validate the options entered from a configuration for the rule
+  ##
+  ## * options - the list of options entered from a configuration file
+  ##
+  ## Returns true if options are valid otherwise false.
+  body:
+    var tmpResult = 0
+    if options.len < 1:
+      message(text = "The rule hasPragma require name(s) of pragma(s) as the option, but nothing was supplied.",
+          returnValue = tmpResult, level = lvlFatal)
+      return false
+    if options.len > 1:
+      message(text = "The rule hasPragma accepts exactly one option, but too much of the are supplied: '" &
+          options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
+      return false
+    return true
