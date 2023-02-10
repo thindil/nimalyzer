@@ -262,8 +262,4 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
       message(text = "The rule hasPragma require name(s) of pragma(s) as the option, but nothing was supplied.",
           returnValue = tmpResult, level = lvlFatal)
       return false
-    if options.len > 1:
-      message(text = "The rule hasPragma accepts exactly one option, but too much of the are supplied: '" &
-          options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
-      return false
     return true
