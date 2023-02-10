@@ -81,11 +81,12 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     # No configuration file specified, quit from the program
     if paramCount() == 0:
       abortProgram(message = "No configuration file specified. Please run the program with path to the config file as an argument.")
-    const rulesList = {haspragma.ruleName: haspragma.ruleCheck,
-        hasentity.ruleName: hasentity.ruleCheck,
-        paramsused.ruleName: paramsused.ruleCheck,
-        namedparams.ruleName: namedparams.ruleCheck,
-        hasdoc.ruleName: hasdoc.ruleCheck}.toTable
+    const rulesList = {haspragma.ruleName: (haspragma.ruleCheck,
+        haspragma.validateOptions), hasentity.ruleName: (hasentity.ruleCheck,
+        hasentity.validateOptions), paramsused.ruleName: (paramsused.ruleCheck,
+        paramsused.validateOptions), namedparams.ruleName: (
+        namedparams.ruleCheck, namedparams.validateOptions), hasdoc.ruleName: (
+        hasdoc.ruleCheck, hasdoc.validateOptions)}.toTable
     # Read the configuration file and set the program
     let configFile = paramStr(i = 1)
     type RuleData = object
@@ -167,6 +168,13 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             if configRule.kind == cmdEnd:
               break
             newRule.options.add(y = configRule.key)
+          try:
+            if not rulesList[newRule.name][1](options = newRule.options):
+              abortProgram(message = "Invalid options for rule '" &
+                  newRule.name & "'.")
+          except KeyError:
+            abortProgram(message = "Can't validate rule parameters. Reason: " &
+                getCurrentExceptionMsg())
           rules.add(y = newRule)
           message(text = "Added" & (if rules[
               ^1].negation: " negation " else: " ") & $rules[^1].ruleType &
@@ -214,7 +222,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             options.negation = rule.negation
             options.ruleType = rule.ruleType
             options.amount = 0
-            if rulesList[rule.name](astTree = astTree, options = options) < 1:
+            if rulesList[rule.name][0](astTree = astTree, options = options) < 1:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
           abortProgram(message = "The file '" & source &
