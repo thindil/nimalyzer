@@ -38,8 +38,8 @@ jobs:
         bin/nimalyzer config/nimalyzer.cfg
         bin/nimalyzer config/rules.cfg
 
-#    - name: Run tests
-#      run: nimble tests
+    - name: Run tests
+      run: nimble tests
 
     - name: Upload the log
       uses: actions/upload-artifact@v3
