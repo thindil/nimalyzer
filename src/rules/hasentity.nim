@@ -161,9 +161,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             lvlNotice: "D" else: options.fileName & ": d") &
             "oesn't have declared " & options.options[0] & " with name '" &
             options.options[1] & "'.", returnValue = result, level = (
-            if options.ruleType == check: lvlError else: lvlNotice),
-            decrease = (
-            if options.ruleType == check: false else: true))
+            if options.ruleType == check: lvlError else: lvlNotice))
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
