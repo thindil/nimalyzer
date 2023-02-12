@@ -137,6 +137,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         line.len > 0
         pragma.len > 0
       body:
+        # The selected pragma not found
         if not hasPragma:
           if options.negation and options.ruleType == check:
             return
@@ -150,6 +151,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                   " line: " & line & " doesn't have declared pragma: " &
                   pragma & ".", returnValue = oldResult, level = lvlNotice,
                   decrease = false)
+        # The selected pragma found
         else:
           if options.negation:
             if options.ruleType == check:
@@ -166,13 +168,16 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             oldResult.inc
 
     for node in astTree.items:
+      # Check the node's children with the rule
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
+      # The node can't have pragma, skip it
       if node.kind notin routineDefs:
         continue
+      # Set the name of the procedure to check
       let
         pragmas = getDeclPragma(n = node)
         procName = try:
@@ -206,6 +211,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           strPragmas.add(y = $pragma)
         except KeyError, Exception:
           discard
+      # Check the node for each selected pragma
       for pragma in options.options:
         if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
           setResult(procName = procName, line = $node.info.line,
