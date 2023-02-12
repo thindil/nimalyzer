@@ -98,6 +98,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       require:
         entityName.len > 0
       body:
+        # Documentation not found
         if not hasDoc:
           if options.negation and options.ruleType == check:
             return
@@ -111,6 +112,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                   0: " line: " & line else: "") &
                   " doesn't have documentation.", returnValue = oldResult,
                   level = lvlNotice, decrease = false)
+        # Documentation found
         else:
           if options.negation:
             if options.ruleType == check:
@@ -131,21 +133,25 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           hasDoc = astTree.hasSubnodeWith(kind = nkCommentStmt),
           oldResult = result)
     for node in astTree.items:
+      # Check each children of the current AST node with the rule
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
+      # Ignore elements which can't have documentation
       if node.kind notin {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
           nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
           nkEnumTy, nkConstSection, nkConstTy}:
         continue
+      # Special check for constant declaration section
       if node.kind == nkConstSection:
         result = ruleCheck(astTree = node, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
         continue
+      # Set the name of the declared entity which is checked for documentation
       var declName = try:
             $node[0]
           except KeyError, Exception:
