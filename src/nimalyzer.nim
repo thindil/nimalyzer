@@ -115,9 +115,12 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               "' to the list of files to check.", level = lvlDebug)
 
     try:
+      # Read the program's configuration
       for line in configFile.lines:
+        # Comment line, skip
         if line.startsWith(prefix = '#') or line.len == 0:
           continue
+        # Set the program's verbosity
         elif line.startsWith(prefix = "verbosity"):
           try:
             setLogFilter(lvl = parseEnum[Level](s = line[10..^1]))
@@ -125,18 +128,22 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
                 "'.", level = lvlDebug)
           except ValueError:
             abortProgram(message = "Invalid value set in configuration file for the program verbosity level.")
+        # Set the file to which the program's output will be logged
         elif line.startsWith(prefix = "output"):
           let fileName = unixToNativePath(path = line[7..^1])
           addHandler(handler = newFileLogger(filename = fileName,
               fmtStr = "[$time] - $levelname: "))
           message(text = "Added file '" & fileName & "' as log file.",
               level = lvlDebug)
+        # Set the source code file to check
         elif line.startsWith(prefix = "source"):
           let fileName = unixToNativePath(path = line[7..^1])
           addFile(fileName = fileName, sources = sources)
+        # Set the source code files to check
         elif line.startsWith(prefix = "files"):
           for fileName in walkFiles(pattern = line[6..^1]):
             addFile(fileName = fileName, sources = sources)
+        # Set the source code files to check, the second option
         elif line.startsWith(prefix = "directory"):
           try:
             for fileName in walkDirRec(dir = line[10..^1]):
@@ -144,6 +151,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           except OSError:
             abortProgram(message = "Can't add files to check. Reason: " &
                 getCurrentExceptionMsg())
+        # Set the program's rule to test the code
         elif line.startsWith(prefix = "check") or line.startsWith(
             prefix = "search") or line.startsWith(prefix = "count"):
           var configRule = initOptParser(cmdline = line)
@@ -199,6 +207,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           source & "'")
       var codeParser: Parser
       try:
+        # Try to convert the source code file to AST
         let fileName = toAbsolute(file = source, base = toAbsoluteDir(
             path = getCurrentDir()))
         try:
@@ -213,6 +222,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           let astTree = codeParser.parseAll
           codeParser.closeParser
           var options = RuleOptions(parent: true, fileName: source)
+          # Check the converted source code with each selected rule
           for index, rule in rules.pairs:
             message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
                 "]" & (if rule.negation: " negation " else: " ") &
