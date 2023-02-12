@@ -97,6 +97,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     options.options.len == 2
     options.fileName.len > 0
   body:
+    # Set the type of the node to check
     let nodeKind = try:
           parseEnum[TNodeKind](s = options.options[0])
         except ValueError:
@@ -107,14 +108,17 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       return
     result = options.amount
     for node in astTree.items:
+      # Check all children of the node with the rule
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false, fileName: options.fileName,
             negation: options.negation, ruleType: options.ruleType,
             amount: result))
+      # Ignore nodes of different type
       if node.kind != nodeKind:
         continue
       try:
+        # The selected entity found in the node
         if startsWith(s = $node[0], prefix = options.options[1]):
           if options.negation:
             if options.ruleType == check:
