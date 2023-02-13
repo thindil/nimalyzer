@@ -15,6 +15,7 @@ binDir = "bin"
 
 requires "nim >= 1.6.10"
 requires "contracts >= 0.2.2"
+requires "compiler >= 1.6.10"
 
 # Tasks
 
