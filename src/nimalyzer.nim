@@ -74,7 +74,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         quit QuitFailure
 
     try:
-      info(args = "Starting nimalyzer ver 0.1.0")
+      info(args = "Starting nimalyzer ver 0.2.0")
     except Exception:
       abortProgram(message = "Can't log messages.")
 
