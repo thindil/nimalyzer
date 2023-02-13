@@ -100,6 +100,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           return
         try:
           for i in 1..<node.sons.len:
+            # Call doesn't have set the parameter as named
             if node[i].kind != nkExprEqExpr:
               if not options.negation:
                 if options.ruleType == check:
@@ -117,6 +118,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 elif options.ruleType == RuleTypes.count:
                   oldResult.inc
                 break
+            # Call has set the parameter as named
             else:
               if options.negation:
                 if options.ruleType == check:
@@ -146,11 +148,13 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       check(node = astTree, oldResult = result)
       return
     for node in astTree.items:
+      # Check the node's children with the rule
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
+      # Node isn't call, or don't have parameters, skip
       if node.kind != nkCall or node.sons.len == 1 or node.sons[1].kind == nkStmtList:
         continue
       check(node = node, oldResult = result)
