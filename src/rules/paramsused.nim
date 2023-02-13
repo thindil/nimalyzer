@@ -80,13 +80,16 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       else:
         options.fileName & ": "
     for node in astTree.items:
+      # Check the node's children with the rule
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
+      # Node isn't rountine, skip it
       if node.kind notin routineDefs:
         continue
+      # Get the procedure's name
       let procName = try:
             $node[0]
           except KeyError, Exception:
@@ -104,6 +107,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           result.inc
         continue
       var index = -1
+      # Check each parameter
       for child in node[3]:
         if child.kind in {nkEmpty, nkIdent}:
           continue
@@ -111,6 +115,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         for i in 0..child.len - 3:
           try:
             index = find(s = $node[6], sub = $child[i])
+            # The node doesn't use one of its parameters
             if index == -1:
               if not options.negation:
                 if options.ruleType == check:
@@ -130,6 +135,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 procName & " line: " & $node.info.line & ". Reason: " &
                 getCurrentExceptionMsg(), returnValue = result)
             result.inc
+      # The node uses all of its parameters
       if index > -1:
         if options.negation:
           if options.ruleType == check:
