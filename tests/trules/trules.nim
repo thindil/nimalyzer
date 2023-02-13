@@ -1,5 +1,6 @@
 discard """
   exitcode: 0
+  outputsub: "Decrease value"
 """
 
 import std/logging
