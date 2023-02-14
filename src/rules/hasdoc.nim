@@ -106,6 +106,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             message(text = messagePrefix & entityName & (if line.len >
                 0: " line: " & line else: "") & " doesn't have documentation.",
                 returnValue = oldResult)
+            oldResult = 0
           else:
             if options.negation:
               message(text = messagePrefix & entityName & (if line.len >
@@ -119,6 +120,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
               message(text = messagePrefix & entityName & (if line.len >
                   0: " line: " & line else: "") & " has documentation.",
                   returnValue = oldResult)
+              oldResult = 0
             else:
               oldResult.dec
           if options.ruleType == search:
