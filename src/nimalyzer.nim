@@ -141,8 +141,11 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           addFile(fileName = fileName, sources = sources)
         # Set the source code files to check
         elif line.startsWith(prefix = "files"):
-          for fileName in walkFiles(pattern = line[6..^1]):
-            addFile(fileName = fileName, sources = sources)
+          try:
+            for fileName in walkFiles(pattern = line[6..^1]):
+              addFile(fileName = fileName, sources = sources)
+          except OSError:
+            abortProgram(message = "Can't parse setting: '" & line & "'.")
         # Set the source code files to check, the second option
         elif line.startsWith(prefix = "directory"):
           try:
