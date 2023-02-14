@@ -30,7 +30,6 @@ jobs:
 
     - name: Debug build
       run: |
-        nimble install -y compiler
         nimble debug
 
     - name: Check with Nimalyzer
