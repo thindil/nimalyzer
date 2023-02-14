@@ -19,10 +19,10 @@ let
   nimCache = newIdentCache()
   nimConfig = newConfigRef()
 nimConfig.options.excl(y = optHints)
-var
-  code = parseString("quit", nimCache, nimConfig)
-  ruleOptions = RuleOptions(parent: true, fileName: "test.nim", negation: false,
+let
+  invalidCode = parseString("quit", nimCache, nimConfig)
+  validCode = parseString("## Doc", nimCache, nimConfig)
+var ruleOptions = RuleOptions(parent: true, fileName: "test.nim", negation: false,
       ruleType: check, options: @[], amount: 0)
-assert ruleCheck(code, ruleOptions) == -1
-code = parseString("## Doc", nimCache, nimConfig)
-assert ruleCheck(code, ruleOptions) == 1
+assert ruleCheck(invalidCode, ruleOptions) == 0
+assert ruleCheck(validCode, ruleOptions) == 1
