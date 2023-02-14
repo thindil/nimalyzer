@@ -15,12 +15,14 @@ binDir = "bin"
 
 requires "nim >= 1.6.10"
 requires "contracts >= 0.2.2"
-requires "compiler >= 1.6.10"
+when not defined(freebsd):
+  requires "compiler >= 1.6.10"
 
 # Tasks
 
 task debug, "builds the project in debug mode":
-  exec "nimble install -d -y"
+  if not fileExists(bindir & DirSep & "nimalyzer" & ExeExt):
+    exec "nimble install -d -y"
   exec "nim c -d:debug --styleCheck:hint --spellSuggest:auto --errorMax:0 --outdir:" &
       binDir & " " & srcDir & DirSep & "nimalyzer.nim"
 
@@ -30,6 +32,8 @@ task release, "builds the project in release mode":
       srcDir & DirSep & "nimalyzer.nim"
 
 task tests, "run the project unit tests":
+  if not fileExists(bindir & DirSep & "nimalyzer" & ExeExt):
+    exec "nimble install -d -y"
   exec "testament all"
 
 task releasewindows, "builds the project in release mode for Windows 64-bit":
@@ -38,6 +42,8 @@ task releasewindows, "builds the project in release mode for Windows 64-bit":
       binDir & " " & srcDir & DirSep & "nimalyzer.nim"
 
 task tools, "builds the project's tools":
+  if not fileExists(bindir & DirSep & "nimalyzer" & ExeExt):
+    exec "nimble install -d -y"
   exec "nim c -d:release --passc:-flto --passl:-s --styleCheck:hint --spellSuggest:auto --errorMax:0 --outdir:" &
       binDir & " tools" & DirSep & "gendoc.nim"
 
