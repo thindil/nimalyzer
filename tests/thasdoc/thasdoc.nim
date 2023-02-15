@@ -31,3 +31,4 @@ assert ruleCheck(validCode, ruleOptions) == 1
 # negative check rule tests
 ruleOptions.negation = true
 assert ruleCheck(invalidCode, ruleOptions) == 1
+assert ruleCheck(validCode, ruleOptions) == 0
