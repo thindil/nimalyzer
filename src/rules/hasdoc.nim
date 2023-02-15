@@ -186,7 +186,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         result = 0
       if result == 0 and options.ruleType == search:
         message(text = "The documentation not found.", returnValue = result)
-        return
+        return 0
       if options.ruleType == RuleTypes.count:
         message(text = (if getLogFilter() <
             lvlNotice: "D" else: options.fileName & ": d") &
