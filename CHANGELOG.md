@@ -6,5 +6,8 @@ of the program.
 
 ## [Unreleased]
 
+### Fixed
+- Result for negative check for hasDoc rule
+
 ## [0.1.0] - 2023-02-13
 - Initial release
