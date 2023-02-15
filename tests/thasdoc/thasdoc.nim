@@ -24,5 +24,10 @@ let
   validCode = parseString("## Doc", nimCache, nimConfig)
 var ruleOptions = RuleOptions(parent: true, fileName: "test.nim", negation: false,
       ruleType: check, options: @[], amount: 0)
+
+# check rule tests
 assert ruleCheck(invalidCode, ruleOptions) == 0
 assert ruleCheck(validCode, ruleOptions) == 1
+# negative check rule tests
+ruleOptions.negation = true
+assert ruleCheck(invalidCode, ruleOptions) == 1
