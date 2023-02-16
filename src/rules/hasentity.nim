@@ -154,18 +154,19 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       if result < 1:
         if options.negation:
           if options.ruleType == check:
-            return
+            return 0
           message(text = (if getLogFilter() <
               lvlNotice: "D" else: options.fileName & ": d") &
               "oesn't have declared " & options.options[0] & " with name '" &
               options.options[1] & "'.", returnValue = result,
                   level = lvlNotice, decrease = false)
-          return
+          return 0
         message(text = (if getLogFilter() <
             lvlNotice: "D" else: options.fileName & ": d") &
             "oesn't have declared " & options.options[0] & " with name '" &
             options.options[1] & "'.", returnValue = result, level = (
             if options.ruleType == check: lvlError else: lvlNotice))
+        return 0
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
