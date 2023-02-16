@@ -26,5 +26,5 @@ var ruleOptions = RuleOptions(parent: true, fileName: "test.nim", negation: fals
       ruleType: check, options: @["nkProcDef", "MyProc"], amount: 0)
 
 # check rule tests
-assert ruleCheck(invalidCode, ruleOptions) == -1
+assert ruleCheck(invalidCode, ruleOptions) == 0
 assert ruleCheck(validCode, ruleOptions) == 1
