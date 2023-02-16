@@ -107,6 +107,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           returnValue = result, level = lvlFatal)
       return
     result = options.amount
+    if options.negation and options.parent:
+      result.inc
     for node in astTree.items:
       # Check all children of the node with the rule
       for child in node.items:
@@ -126,7 +128,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                   lvlNotice: "H" else: options.fileName & ": h") &
                   "as declared " & options.options[0] & " with name '" &
                   options.options[1] & "' at line: " & $node.info.line & ".",
-                  returnValue = result, decrease = false)
+                  returnValue = result)
             else:
               result.inc
           else:
