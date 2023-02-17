@@ -33,3 +33,13 @@ ruleOptions.negation = true
 assert ruleCheck(invalidCode, ruleOptions) == 1
 echo ruleCheck(validCode, ruleOptions)
 assert ruleCheck(validCode, ruleOptions) == 0
+# search rule tests
+ruleOptions.ruleType = search
+ruleOptions.negation = false
+assert ruleCheck(invalidCode, ruleOptions) == 0
+assert ruleCheck(validCode, ruleOptions) == 1
+# negative search rule tests
+ruleOptions.negation = true
+assert ruleCheck(invalidCode, ruleOptions) == 1
+echo ruleCheck(validCode, ruleOptions)
+assert ruleCheck(validCode, ruleOptions) == 0
