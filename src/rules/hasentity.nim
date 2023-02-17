@@ -130,7 +130,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                   options.options[1] & "' at line: " & $node.info.line & ".",
                   returnValue = result)
             else:
-              result.inc
+              result.dec
           else:
             if options.ruleType != search:
               result.inc
