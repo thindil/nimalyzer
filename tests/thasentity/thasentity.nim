@@ -43,3 +43,12 @@ ruleOptions.negation = true
 assert ruleCheck(invalidCode, ruleOptions) == 1
 echo ruleCheck(validCode, ruleOptions)
 assert ruleCheck(validCode, ruleOptions) == 0
+# count rule tests
+ruleOptions.ruleType = count
+ruleOptions.negation = false
+assert ruleCheck(invalidCode, ruleOptions) == 1
+assert ruleCheck(validCode, ruleOptions) == 1
+# negative count rule tests
+ruleOptions.negation = true
+assert ruleCheck(invalidCode, ruleOptions) == 1
+assert ruleCheck(validCode, ruleOptions) == 1
