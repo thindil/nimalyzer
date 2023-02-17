@@ -7,7 +7,7 @@ of the program.
 ## [Unreleased]
 
 ### Fixed
-- Result for negative check for hasDoc rule
+- Result for negative check for hasDoc and hasEntity rules
 
 ## [0.1.0] - 2023-02-13
 - Initial release
