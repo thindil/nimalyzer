@@ -31,7 +31,6 @@ assert ruleCheck(validCode, ruleOptions) == 1
 # negative check rule tests
 ruleOptions.negation = true
 assert ruleCheck(invalidCode, ruleOptions) == 1
-echo ruleCheck(validCode, ruleOptions)
 assert ruleCheck(validCode, ruleOptions) == 0
 # search rule tests
 ruleOptions.ruleType = search
@@ -41,7 +40,6 @@ assert ruleCheck(validCode, ruleOptions) == 1
 # negative search rule tests
 ruleOptions.negation = true
 assert ruleCheck(invalidCode, ruleOptions) == 1
-echo ruleCheck(validCode, ruleOptions)
 assert ruleCheck(validCode, ruleOptions) == 0
 # count rule tests
 ruleOptions.ruleType = count
