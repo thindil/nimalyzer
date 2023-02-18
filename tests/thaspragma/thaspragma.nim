@@ -20,7 +20,7 @@ let
   nimConfig = newConfigRef()
 nimConfig.options.excl(y = optHints)
 let
-  invalidCode = parseString("quit", nimCache, nimConfig)
+  invalidCode = parseString("proc MyProc() = discard", nimCache, nimConfig)
   validCode = parseString("proc MyProc() {.raises: [].} = discard", nimCache, nimConfig)
 var ruleOptions = RuleOptions(parent: true, fileName: "test.nim", negation: false,
       ruleType: check, options: @["raises: [*"], amount: 0)
@@ -28,3 +28,7 @@ var ruleOptions = RuleOptions(parent: true, fileName: "test.nim", negation: fals
 # check rule tests
 assert ruleCheck(invalidCode, ruleOptions) == 0
 assert ruleCheck(validCode, ruleOptions) == 1
+# negative check rule tests
+ruleOptions.negation = true
+assert ruleCheck(invalidCode, ruleOptions) == 1
+assert ruleCheck(validCode, ruleOptions) == 0
