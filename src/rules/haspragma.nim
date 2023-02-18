@@ -244,6 +244,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           setResult(procName = procName, line = $node.info.line,
               pragma = pragma, hasPragma = true, oldResult = result)
     if options.parent:
+      if result < 0:
+        result = 0
       if result == 0 and options.ruleType == search:
         message(text = "The selected pragma(s) not found.",
             returnValue = result)
