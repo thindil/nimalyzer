@@ -19,10 +19,13 @@ let
   nimCache = newIdentCache()
   nimConfig = newConfigRef()
 nimConfig.options.excl(y = optHints)
+let
+  invalidCode = parseString("quit(QuitSuccess)", nimCache, nimConfig)
+  validCode = parseString("myProc(named = true)", nimCache, nimConfig)
 var
-  code = parseString("quit(QuitSuccess)", nimCache, nimConfig)
   ruleOptions = RuleOptions(parent: true, fileName: "test.nim", negation: false,
       ruleType: check, options: @[], amount: 0)
-assert ruleCheck(code, ruleOptions) == -1
-code = parseString("myProc(named = true)", nimCache, nimConfig)
-assert ruleCheck(code, ruleOptions) == 1
+
+# check rule tests
+assert ruleCheck(invalidCode, ruleOptions) == -1
+assert ruleCheck(validCode, ruleOptions) == 1
