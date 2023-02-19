@@ -159,9 +159,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         continue
       check(node = node, oldResult = result)
     if options.parent:
+      if result < 0:
+        result = 0
       if options.ruleType == RuleTypes.count:
-        if result < 0:
-          result = 0
         message(text = (if getLogFilter() <
             lvlNotice: "C" else: options.fileName & ": c") &
             "alls which" & (if options.negation: " not" else: "") &
