@@ -33,3 +33,21 @@ assert ruleCheck(validCode, ruleOptions) == 1
 ruleOptions.negation = true
 assert ruleCheck(invalidCode, ruleOptions) == 1
 assert ruleCheck(validCode, ruleOptions) == 0
+# search rule tests
+ruleOptions.ruleType = search
+ruleOptions.negation = false
+assert ruleCheck(invalidCode, ruleOptions) == 0
+assert ruleCheck(validCode, ruleOptions) == 1
+# negative search rule tests
+ruleOptions.negation = true
+assert ruleCheck(invalidCode, ruleOptions) == 1
+assert ruleCheck(validCode, ruleOptions) == 0
+# count rule tests
+ruleOptions.ruleType = count
+ruleOptions.negation = false
+assert ruleCheck(invalidCode, ruleOptions) == 1
+assert ruleCheck(validCode, ruleOptions) == 1
+# negative count rule tests
+ruleOptions.negation = true
+assert ruleCheck(invalidCode, ruleOptions) == 1
+assert ruleCheck(validCode, ruleOptions) == 1
