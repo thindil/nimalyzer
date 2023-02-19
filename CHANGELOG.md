@@ -7,7 +7,7 @@ of the program.
 ## [Unreleased]
 
 ### Fixed
-- Result for negative check for hasDoc and hasEntity rules
+- Result for negative check for hasDoc, hasEntity and namedParams rules
 - Result for negative search for hasEntiry rule
 
 ## [0.1.0] - 2023-02-13
