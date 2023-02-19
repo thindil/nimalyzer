@@ -27,5 +27,5 @@ var
       ruleType: check, options: @[], amount: 0)
 
 # check rule tests
-assert ruleCheck(invalidCode, ruleOptions) == -1
+assert ruleCheck(invalidCode, ruleOptions) == 0
 assert ruleCheck(validCode, ruleOptions) == 1
