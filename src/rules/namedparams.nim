@@ -115,7 +115,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                       " doesn't have named parameter number: " & $i & "'.",
                       returnValue = oldResult, level = lvlNotice,
                       decrease = false)
-                elif options.ruleType == RuleTypes.count:
+                else:
                   oldResult.inc
                 break
             # Call has set the parameter as named
