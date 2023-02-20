@@ -29,3 +29,8 @@ var
 # check rule tests
 assert ruleCheck(invalidCode, ruleOptions) == 0
 assert ruleCheck(validCode, ruleOptions) == 1
+# negative check rule tests
+ruleOptions.negation = true
+echo "test"
+assert ruleCheck(invalidCode, ruleOptions) == 1
+assert ruleCheck(validCode, ruleOptions) == 0
