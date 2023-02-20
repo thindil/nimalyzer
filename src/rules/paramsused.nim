@@ -127,7 +127,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                   message(text = messagePrefix & "procedure " & procName & " line: " &
                     $node.info.line & " doesn't use all parameters.",
                     returnValue = result, level = lvlNotice, decrease = false)
-                elif options.ruleType == RuleTypes.count:
+                else:
                   result.inc
                 break
           except KeyError, Exception:
