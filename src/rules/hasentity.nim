@@ -127,7 +127,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
               message(text = (if getLogFilter() <
                   lvlNotice: "H" else: options.fileName & ": h") &
                   "as declared " & options.options[0] & " with name '" &
-                  options.options[1] & "' at line: " & $node.info.line & ".",
+                  $node[0] & "' at line: " & $node.info.line & ".",
                   returnValue = result)
             else:
               result.dec
@@ -138,7 +138,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
               message(text = (if getLogFilter() <
                   lvlNotice: "H" else: options.fileName & ": h") &
                   "as declared " & options.options[0] & " with name '" &
-                  options.options[1] & "' at line: " & $node.info.line & ".",
+                  $node[0] & "' at line: " & $node.info.line & ".",
                   returnValue = result, level = lvlNotice, decrease = false)
       except KeyError:
         continue
