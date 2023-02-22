@@ -6,6 +6,9 @@ of the program.
 
 ## [Unreleased]
 
+### Changed
+- Updated the project's documentation
+
 ### Fixed
 - Result for negative check for hasDoc, hasEntity, namedParams and paramsUsed
   rules
