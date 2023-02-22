@@ -13,6 +13,8 @@ of the program.
 - Result for negative check for hasDoc, hasEntity, namedParams and paramsUsed
   rules
 - Result for negative search for hasEntiry rule
+- Show the name of the entity when search for entity with any name in hasEntity
+  rule
 
 ## [0.1.0] - 2023-02-13
 - Initial release
