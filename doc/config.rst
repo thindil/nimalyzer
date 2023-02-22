@@ -68,6 +68,7 @@ executed (working directory). The setting below do exactly the same what the
 settings above.
 ::
     files src/*.nim
+    files tools/*.nim
 
 Directory
 ---------
