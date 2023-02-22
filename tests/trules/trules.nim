@@ -5,10 +5,9 @@ discard """
 
 import std/logging
 import ../../src/rules
+import ../helpers
 
-let logger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
-addHandler(handler = logger)
-setLogFilter(lvl = lvlInfo)
+setLogger()
 
 var resultValue: int = 0
 
