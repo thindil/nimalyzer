@@ -1,6 +1,6 @@
 discard """
   exitcode: 0
-  outputsub: "two options"
+  outputsub: "two or three options"
 """
 
 import compiler/[idents, options, parser]
