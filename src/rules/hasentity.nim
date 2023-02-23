@@ -94,7 +94,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
   ## were found
   require:
     astTree != nil
-    options.options.len == 2
+    options.options.len > 1
     options.fileName.len > 0
   body:
     # Set the type of the node to check
@@ -110,34 +110,28 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     if options.negation and options.parent:
       result.inc
 
-    proc checkEntity(node: PNode; oldResult: var int) {.raises: [], tags: [
-        RootEffect], contractual.} =
-      try:
-        # The selected entity found in the node
-        if startsWith(s = $node[0], prefix = options.options[1]):
-          if options.negation:
-            if options.ruleType == check:
-              message(text = (if getLogFilter() <
-                  lvlNotice: "H" else: options.fileName & ": h") &
-                  "as declared " & options.options[0] & " with name '" &
-                  $node[0] & "' at line: " & $node.info.line & ".",
-                  returnValue = oldResult)
-            else:
-              oldResult.dec
+    proc checkEntity(nodeName, line: string; oldResult: var int) {.raises: [],
+        tags: [RootEffect], contractual.} =
+      # The selected entity found in the node
+      if startsWith(s = nodeName, prefix = options.options[1]):
+        if options.negation:
+          if options.ruleType == check:
+            message(text = (if getLogFilter() <
+                lvlNotice: "H" else: options.fileName & ": h") &
+                "as declared " & options.options[0] & " with name '" &
+                nodeName & "' at line: " & line & ".",
+                returnValue = oldResult)
           else:
-            if options.ruleType != search:
-              oldResult.inc
-            else:
-              message(text = (if getLogFilter() <
-                  lvlNotice: "H" else: options.fileName & ": h") &
-                  "as declared " & options.options[0] & " with name '" &
-                  $node[0] & "' at line: " & $node.info.line & ".",
-                  returnValue = oldResult, level = lvlNotice, decrease = false)
-      except KeyError:
-        discard
-      except Exception:
-        message(text = "Error during checking hasEntity rule: " &
-            getCurrentExceptionMsg(), returnValue = oldResult, level = lvlFatal)
+            oldResult.dec
+        else:
+          if options.ruleType != search:
+            oldResult.inc
+          else:
+            message(text = (if getLogFilter() <
+                lvlNotice: "H" else: options.fileName & ": h") &
+                "as declared " & options.options[0] & " with name '" &
+                nodeName & "' at line: " & line & ".",
+                returnValue = oldResult, level = lvlNotice, decrease = false)
 
     for node in astTree.items:
       # Check all children of the node with the rule
@@ -149,7 +143,28 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       # Ignore nodes of different type
       if node.kind != nodeKind:
         continue
-      checkEntity(node = node, oldResult = result)
+      # If parent node specified and the current node is the same kind as
+      # the parent node, check its children instead of the node
+      try:
+        if options.options.len > 2:
+          let parentKind = try:
+                parseEnum[TNodeKind](s = options.options[2])
+              except ValueError:
+                nkNone
+          if node.kind == parentKind:
+            for child in node.items:
+              if child.kind != nodeKind:
+                continue
+              checkEntity(nodeName = $node[0], line = $node.info.line,
+                  oldResult = result)
+            continue
+        checkEntity(nodeName = $node[0], line = $node.info.line,
+            oldResult = result)
+      except KeyError:
+        discard
+      except Exception:
+        message(text = "Error during checking hasEntity rule: " &
+            getCurrentExceptionMsg(), returnValue = result, level = lvlFatal)
     if options.parent:
       if options.ruleType == RuleTypes.count:
         message(text = (if getLogFilter() <
