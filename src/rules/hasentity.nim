@@ -112,6 +112,14 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
 
     proc checkEntity(nodeName, line: string; oldResult: var int) {.raises: [],
         tags: [RootEffect], contractual.} =
+      ## Check if the selected entity's name fulfill the rule requirements and
+      ## log the message if needed.
+      ##
+      ## * nodeName  - the name of the entity which will be checked
+      ## * line      - the line of code in which the entity is declared
+      ## * oldResult - the previous amount of the rule result value
+      ##
+      ## Returns the updated oldResult parameter
       # The selected entity found in the node
       if startsWith(s = nodeName, prefix = options.options[1]):
         if options.negation:
@@ -155,7 +163,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             for child in node.items:
               if child.kind != nodeKind:
                 continue
-              checkEntity(nodeName = $node[0], line = $node.info.line,
+              checkEntity(nodeName = $child[0], line = $child.info.line,
                   oldResult = result)
             continue
         checkEntity(nodeName = $node[0], line = $node.info.line,
