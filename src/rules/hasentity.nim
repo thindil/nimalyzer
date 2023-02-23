@@ -109,6 +109,36 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     result = options.amount
     if options.negation and options.parent:
       result.inc
+
+    proc checkEntity(node: PNode; oldResult: var int) {.raises: [], tags: [
+        RootEffect], contractual.} =
+      try:
+        # The selected entity found in the node
+        if startsWith(s = $node[0], prefix = options.options[1]):
+          if options.negation:
+            if options.ruleType == check:
+              message(text = (if getLogFilter() <
+                  lvlNotice: "H" else: options.fileName & ": h") &
+                  "as declared " & options.options[0] & " with name '" &
+                  $node[0] & "' at line: " & $node.info.line & ".",
+                  returnValue = oldResult)
+            else:
+              oldResult.dec
+          else:
+            if options.ruleType != search:
+              oldResult.inc
+            else:
+              message(text = (if getLogFilter() <
+                  lvlNotice: "H" else: options.fileName & ": h") &
+                  "as declared " & options.options[0] & " with name '" &
+                  $node[0] & "' at line: " & $node.info.line & ".",
+                  returnValue = oldResult, level = lvlNotice, decrease = false)
+      except KeyError:
+        discard
+      except Exception:
+        message(text = "Error during checking hasEntity rule: " &
+            getCurrentExceptionMsg(), returnValue = oldResult, level = lvlFatal)
+
     for node in astTree.items:
       # Check all children of the node with the rule
       for child in node.items:
@@ -119,33 +149,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       # Ignore nodes of different type
       if node.kind != nodeKind:
         continue
-      try:
-        # The selected entity found in the node
-        if startsWith(s = $node[0], prefix = options.options[1]):
-          if options.negation:
-            if options.ruleType == check:
-              message(text = (if getLogFilter() <
-                  lvlNotice: "H" else: options.fileName & ": h") &
-                  "as declared " & options.options[0] & " with name '" &
-                  $node[0] & "' at line: " & $node.info.line & ".",
-                  returnValue = result)
-            else:
-              result.dec
-          else:
-            if options.ruleType != search:
-              result.inc
-            else:
-              message(text = (if getLogFilter() <
-                  lvlNotice: "H" else: options.fileName & ": h") &
-                  "as declared " & options.options[0] & " with name '" &
-                  $node[0] & "' at line: " & $node.info.line & ".",
-                  returnValue = result, level = lvlNotice, decrease = false)
-      except KeyError:
-        continue
-      except Exception:
-        message(text = "Error during checking hasEntity rule: " &
-            getCurrentExceptionMsg(), returnValue = result, level = lvlFatal)
-        return
+      checkEntity(node = node, oldResult = result)
     if options.parent:
       if options.ruleType == RuleTypes.count:
         message(text = (if getLogFilter() <
