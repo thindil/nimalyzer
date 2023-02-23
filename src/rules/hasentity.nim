@@ -188,7 +188,7 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
           options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
       return false
     if options.len > 3:
-      message(text = "The rule hasEntity accepts two or options, but too much of the are supplied: '" &
+      message(text = "The rule hasEntity accepts two or three options, but too much of the are supplied: '" &
           options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
       return false
     let entityType = parseEnum[TNodeKind](s = options[0], default = nkNone)
