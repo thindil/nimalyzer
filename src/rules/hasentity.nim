@@ -148,7 +148,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     for node in astTree.items:
       # Check all children of the node with the rule
       if node.kind in {nkCharLit .. nkUInt64Lit, nkFloatLit .. nkFloat128Lit,
-          nkStrLit .. nkTripleStrLit, nkSym, nkIdent}:
+          nkStrLit .. nkTripleStrLit, nkSym, nkIdent, nkEmpty, nkCommentStmt}:
         continue
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
