@@ -147,6 +147,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
 
     for node in astTree.items:
       # Check all children of the node with the rule
+      if node.kind == nkEmpty:
+        continue
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false, fileName: options.fileName,
