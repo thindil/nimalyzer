@@ -6,6 +6,9 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- Ability to set parent entity for rule hasEntity
+
 ### Changed
 - Updated the project's documentation
 
