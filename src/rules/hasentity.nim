@@ -147,7 +147,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
 
     for node in astTree.items:
       # Check all children of the node with the rule
-      if node.kind == nkEmpty:
+      if node.kind in {nkCharLit .. nkUInt64Lit, nkFloatLit .. nkFloat128Lit,
+          nkStrLit .. nkTripleStrLit, nkSym, nkIdent}:
         continue
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
@@ -155,7 +156,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             negation: options.negation, ruleType: options.ruleType,
             amount: result))
       # Ignore nodes of different type
-      if node.kind != nodeKind:
+      if options.options.len == 2 and node.kind != nodeKind:
         continue
       # If parent node specified and the current node is the same kind as
       # the parent node, check its children instead of the node
