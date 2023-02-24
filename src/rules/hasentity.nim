@@ -27,7 +27,7 @@
 ## procedures, constants, etc. with the selected names. The syntax in a
 ## configuration file is::
 ##
-##   [ruleType] ?not? hasentity [entityType] [entityName]
+##   [ruleType] ?not? hasentity [entityType] [entityName] ?parentEntity?
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search* and *count*. For more information about the types of
@@ -48,6 +48,10 @@
 ##   search for the selected entity type, which name starts with entityName.
 ##   For example, if entityType is set to nkProcDef and entityName is set to
 ##   *myProc* the rule will find procedures named *myProc*, but also *myProcedure*.
+## * if optional parameter *parentEntity* is set then the entity will be searched
+##   only as a child of the selected type of entities. For example setting
+##   entityType to nkProcDef, entityName to myProc and parentEntity to nkStmtList
+##   will find all nested procedures with name *myProc* or *myProcedure*.
 ##
 ## To look only for global entities, add `*` to the end of the entityName
 ## parameter. Setting it to *MyProc\** will look only for global entities
