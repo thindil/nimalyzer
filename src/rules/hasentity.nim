@@ -236,7 +236,7 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
       message(text = "The rule hasEntity accepts two, three or four options, but not enough of them are supplied: '" &
           options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
       return false
-    if options.len > 3:
+    if options.len > 4:
       message(text = "The rule hasEntity accepts two, three or four options, but too much of the are supplied: '" &
           options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
       return false
@@ -253,11 +253,11 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
         return false
     if options.len > 3:
       let childIndex = try:
-          options[2].parseInt()
+          options[3].parseInt()
         except ValueError:
           -1
       if childIndex < 0:
         message(text = "The rule hasEntity the child index has invalid value: '" &
-            options[2] & "'.", returnValue = tmpResult, level = lvlFatal)
+            options[3] & "'.", returnValue = tmpResult, level = lvlFatal)
         return false
     return true
