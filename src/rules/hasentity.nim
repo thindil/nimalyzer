@@ -125,7 +125,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       ##
       ## Returns the updated oldResult parameter
       # The selected entity found in the node
-      if startsWith(s = nodeName, prefix = options.options[1]):
+      if options.options[1].len == 0 or startsWith(s = nodeName,
+          prefix = options.options[1]):
         if options.negation:
           if options.ruleType == check:
             message(text = (if getLogFilter() <
@@ -147,7 +148,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
 
     for node in astTree.items:
       # Check all children of the node with the rule
-      if node.kind in {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit, nkCommentStmt}:
+      if node.kind in {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
+          nkCommentStmt}:
         continue
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
@@ -169,7 +171,11 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             for child in node.items:
               if child.kind != nodeKind:
                 continue
-              checkEntity(nodeName = $child[0], line = $child.info.line,
+              let childName = try:
+                  $child[0]
+                except KeyError, Exception:
+                  ""
+              checkEntity(nodeName = childName, line = $child.info.line,
                   oldResult = result)
             continue
         checkEntity(nodeName = $node[0], line = $node.info.line,
