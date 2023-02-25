@@ -167,15 +167,29 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 parseEnum[TNodeKind](s = options.options[2])
               except ValueError:
                 nkNone
+          var childIndex = -1
+          if options.options.len == 4:
+            childIndex = try:
+                options.options[3].parseInt()
+              except ValueError:
+                -1
           if node.kind == parentKind:
-            for child in node.items:
-              if child.kind != nodeKind:
-                continue
+            if childIndex == -1:
+              for child in node.items:
+                if child.kind != nodeKind:
+                  continue
+                let childName = try:
+                    $child[0]
+                  except KeyError, Exception:
+                    ""
+                checkEntity(nodeName = childName, line = $child.info.line,
+                    oldResult = result)
+            elif childIndex <= node.sons.high:
               let childName = try:
-                  $child[0]
+                  $node[childIndex]
                 except KeyError, Exception:
                   ""
-              checkEntity(nodeName = childName, line = $child.info.line,
+              checkEntity(nodeName = childName, line = $node.info.line,
                   oldResult = result)
             continue
         checkEntity(nodeName = $node[0], line = $node.info.line,
