@@ -27,7 +27,7 @@
 ## procedures, constants, etc. with the selected names. The syntax in a
 ## configuration file is::
 ##
-##   [ruleType] ?not? hasentity [entityType] [entityName] ?parentEntity?
+##   [ruleType] ?not? hasentity [entityType] [entityName] ?parentEntity? ?childIndex?
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search* and *count*. For more information about the types of
@@ -56,6 +56,14 @@
 ## To look only for global entities, add `*` to the end of the entityName
 ## parameter. Setting it to *MyProc\** will look only for global entities
 ## which full name is MyProc.
+##
+## Note
+## ----
+##
+## hasEntity rule is considered as a low level rule. It requires a
+## knowledge about Nim compiler, especially names of the Nim code nodes and the
+## generated source code tree to use. It is recommended to use other rules
+## instead of this one.
 ##
 ## Examples
 ## --------
