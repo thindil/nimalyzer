@@ -159,9 +159,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       # Ignore nodes of different type
       if options.options.len == 2 and node.kind != nodeKind:
         continue
-      # If parent node specified and the current node is the same kind as
-      # the parent node, check its children instead of the node
       try:
+        # If parent node specified and the current node is the same kind as
+        # the parent node, check its children instead of the node
         if options.options.len > 2:
           let parentKind = try:
                 parseEnum[TNodeKind](s = options.options[2])
@@ -191,7 +191,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                   ""
               checkEntity(nodeName = childName, line = $node.info.line,
                   oldResult = result)
-            continue
+          continue
+        # Check the node itself
         checkEntity(nodeName = $node[0], line = $node.info.line,
             oldResult = result)
       except KeyError:
