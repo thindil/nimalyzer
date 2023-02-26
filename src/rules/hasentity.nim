@@ -52,6 +52,13 @@
 ##   only as a child of the selected type of entities. For example setting
 ##   entityType to nkProcDef, entityName to myProc and parentEntity to nkStmtList
 ##   will find all nested procedures with name *myProc* or *myProcedure*.
+## * if optional parameter *childIndex* is set then the entity will be searched
+##   only as the selected child of the selected parent. In order for
+##   `*childIndex` parameter to work, the parameter *parentEntity* must be set
+##   too. If the value of the *childIndex* is natural number, it is the index of
+##   the child counted from the beginning of the list of childs. If the value is
+##   negative, it is the index of the child counted from the end of the list of
+##   childs.
 ##
 ## To look only for global entities, add `*` to the end of the entityName
 ## parameter. Setting it to *MyProc\** will look only for global entities
