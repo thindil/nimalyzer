@@ -172,9 +172,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             childIndex = try:
                 options.options[3].parseInt()
               except ValueError:
-                -1
+                int.low
           if node.kind == parentKind:
-            if childIndex == -1:
+            if childIndex == int.low:
               for child in node.items:
                 if child.kind != nodeKind:
                   continue
@@ -186,7 +186,10 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                     oldResult = result)
             elif childIndex <= node.sons.high:
               let childName = try:
-                  $node[childIndex]
+                  if childIndex > -1:
+                    $node[childIndex]
+                  else:
+                    $node[^childIndex]
                 except KeyError, Exception:
                   ""
               checkEntity(nodeName = childName, line = $node.info.line,
