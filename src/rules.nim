@@ -70,6 +70,13 @@ proc message*(text: string; returnValue: var int; level: Level = lvlError;
 
 proc errorMessage*(text: string; e: ref Exception = nil): int {.gcsafe,
     raises: [], tags: [RootEffect], contractual.} =
+  ## Log the error message in the rule
+  ##
+  ## * text - the message which will be logged
+  ## * e    - the exception which occured in a rule. Used to add information
+  ##          to the message. Can be nil.
+  ##
+  ## The procedure always returns 0
   require:
     text.len > 0
   body:
