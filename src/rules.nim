@@ -68,14 +68,16 @@ proc message*(text: string; returnValue: var int; level: Level = lvlError;
     except Exception:
       echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
 
-proc errorMessage*(text: string; e: ref Exception): int {.gcsafe, raises: [],
-    tags: [RootEffect], contractual.} =
+proc errorMessage*(text: string; e: ref Exception = nil): int {.gcsafe,
+    raises: [], tags: [RootEffect], contractual.} =
   require:
     text.len > 0
   body:
-    var message = text & getCurrentExceptionMsg()
-    when defined(debug):
-      message.add(y = getStackTrace(e = e))
+    var message = text
+    if e != nil:
+      message.add(y = getCurrentExceptionMsg())
+      when defined(debug):
+        message.add(y = getStackTrace(e = e))
     try:
       log(level = lvlFatal, args = message)
     except Exception:
