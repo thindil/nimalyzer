@@ -36,13 +36,13 @@ type
     ## the types of the program's rules
     none, check, search, count
 
-  RuleOptions* = object ## Contains information for the program's rules
+  RuleOptions* = object   ## Contains information for the program's rules
     options*: seq[string] ## The list of the program's rule
     parent*: bool ## If true, check is currently make in the parent (usualy module) entity
-    fileName*: string ## The path to the file which is checked
-    negation*: bool ## If true, the rule show return oposite result
-    ruleType*: RuleTypes ## The type of rule
-    amount*: int ## The amount of results found by the rule
+    fileName*: string     ## The path to the file which is checked
+    negation*: bool       ## If true, the rule show return oposite result
+    ruleType*: RuleTypes  ## The type of rule
+    amount*: int          ## The amount of results found by the rule
 
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
     decrease: bool = true) {.gcsafe, raises: [], tags: [RootEffect],
@@ -67,3 +67,17 @@ proc message*(text: string; returnValue: var int; level: Level = lvlError;
       log(level = level, args = text)
     except Exception:
       echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
+
+proc errorMessage*(text: string; e: ref Exception): int {.gcsafe, raises: [],
+    tags: [RootEffect], contractual.} =
+  require:
+    text.len > 0
+  body:
+    var message = text & getCurrentExceptionMsg()
+    when defined(debug):
+      message.add(y = getStackTrace(e = e))
+    try:
+      log(level = lvlFatal, args = message)
+    except Exception:
+      echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
+    return 0
