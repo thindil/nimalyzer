@@ -138,10 +138,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 else:
                   oldResult.inc
         except KeyError, Exception:
-          message(text = messagePrefix & "can't check parameters of call " &
-              callName & " line: " & $node.info.line & ". Reason: " &
-              getCurrentExceptionMsg(), returnValue = oldResult)
-          oldResult.inc
+          oldResult = errorMessage(text = messagePrefix &
+              "can't check parameters of call " & callName & " line: " &
+              $node.info.line & ". Reason: ", e = getCurrentException())
 
     result = options.amount
     if astTree.kind == nkCall:
