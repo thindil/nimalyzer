@@ -163,10 +163,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           except KeyError, Exception:
             ""
       if declName.len == 0:
-        message(text = "Can't get the name of the declared entity.",
-            level = lvlFatal, returnValue = result)
-        result.inc
-        return
+        return errorMessage(text = "Can't get the name of the declared entity.")
       if not declName.endsWith(suffix = "*") and node.kind notin callableDefs:
         continue
       try:
@@ -176,11 +173,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             node.hasSubnodeWith(kind = nkCommentStmt)
         setResult(entityName = "Declaration of " & declName,
             line = $node.info.line, hasDoc = hasDoc, oldResult = result)
-      except KeyError:
-        message(text = "Can't check the declared entity '" & declName & "'.",
-            level = lvlFatal, returnValue = result)
-        result.inc
-        return
+      except KeyError as e:
+        return errorMessage(text = "Can't check the declared entity '" &
+            declName & "'.", e = e)
     if options.parent:
       if result < 0:
         result = 0
