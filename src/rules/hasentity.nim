@@ -122,9 +122,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         except ValueError:
           nkNone
     if nodeKind == nkNone:
-      message(text = "Invalid type of entity: " & options.options[0],
-          returnValue = result, level = lvlFatal)
-      return
+      return errorMessage(text = "Invalid type of entity: " & options.options[0])
     result = options.amount
     if options.negation and options.parent:
       result.inc
@@ -213,11 +211,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         # Check the node itself
         checkEntity(nodeName = $node[0], line = $node.info.line,
             oldResult = result)
-      except KeyError:
-        discard
-      except Exception:
-        message(text = "Error during checking hasEntity rule: " &
-            getCurrentExceptionMsg(), returnValue = result, level = lvlFatal)
+      except KeyError, Exception:
+        return errorMessage(text = "Error during checking hasEntity rule: ",
+            e = getCurrentException())
     if options.parent:
       if options.ruleType == RuleTypes.count:
         message(text = (if getLogFilter() <
