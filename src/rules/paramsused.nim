@@ -95,10 +95,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           except KeyError, Exception:
             ""
       if procName.len == 0:
-        message(text = "Can't get the name of the procedure.", level = lvlFatal,
-            returnValue = result)
-        result.inc
-        return
+        return errorMessage(text = "Can't get the name of the procedure.")
       # No parameters, skip
       if node[3].len < 2:
         if options.negation:
@@ -119,22 +116,22 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             if index == -1:
               if not options.negation:
                 if options.ruleType == check:
-                  message(text = messagePrefix & "procedure " & procName & " line: " &
-                    $node.info.line & " doesn't use parameter '" & $child[i] &
-                    "'.", returnValue = result)
+                  message(text = messagePrefix & "procedure " & procName &
+                    " line: " & $node.info.line & " doesn't use parameter '" &
+                    $child[i] & "'.", returnValue = result)
               else:
                 if options.ruleType == search:
-                  message(text = messagePrefix & "procedure " & procName & " line: " &
-                    $node.info.line & " doesn't use all parameters.",
+                  message(text = messagePrefix & "procedure " & procName &
+                    " line: " & $node.info.line &
+                    " doesn't use all parameters.",
                     returnValue = result, level = lvlNotice, decrease = false)
                 else:
                   result.inc
                 break
           except KeyError, Exception:
-            message(text = messagePrefix & "can't check parameters of procedure " &
-                procName & " line: " & $node.info.line & ". Reason: " &
-                getCurrentExceptionMsg(), returnValue = result)
-            result.inc
+            result = errorMessage(text = messagePrefix &
+                "can't check parameters of procedure " & procName & " line: " &
+                $node.info.line & ". Reason: ", e = getCurrentException())
       # The node uses all of its parameters
       if index > -1:
         if options.negation:
