@@ -185,10 +185,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           except KeyError, Exception:
             ""
       if procName.len == 0:
-        message(text = "Can't get the name of the procedure.", level = lvlFatal,
-            returnValue = result)
-        result.inc
-        return
+        return errorMessage(text = "Can't get the name of the procedure.")
       if pragmas == nil:
         if not options.negation:
           if options.ruleType == check:
