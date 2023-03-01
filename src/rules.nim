@@ -29,6 +29,8 @@
 import std/logging
 # External modules imports
 import contracts
+# Nimalyzer pragmas imports
+import pragmas
 
 type
 
@@ -83,7 +85,9 @@ proc errorMessage*(text: string; e: ref Exception = nil): int {.gcsafe,
     var message = text
     if e != nil:
       message.add(y = getCurrentExceptionMsg())
+      {.ruleOff: "namedParams".}
       when defined(debug):
+        {.ruleOn: "namedParams".}
         message.add(y = getStackTrace(e = e))
     try:
       log(level = lvlFatal, args = message)
