@@ -148,7 +148,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
 
     if options.parent:
       ruleEnabled = true
-    ruleEnabled = setRuleState(node = astTree, ruleName = ruleName)
+    setRuleState(node = astTree, ruleName = ruleName, oldState = ruleEnabled)
     result = options.amount
     if astTree.kind == nkCall:
       check(node = astTree, oldResult = result)
@@ -160,7 +160,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
-      ruleEnabled = setRuleState(node = node, ruleName = ruleName)
+      setRuleState(node = node, ruleName = ruleName, oldState = ruleEnabled)
       # Node isn't call, or don't have parameters, skip
       if node.kind != nkCall or node.sons.len == 1 or node.sons[1].kind == nkStmtList:
         continue

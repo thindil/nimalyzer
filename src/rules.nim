@@ -96,8 +96,8 @@ proc errorMessage*(text: string; e: ref Exception = nil): int {.gcsafe,
       echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
     return 0
 
-proc setRuleState*(node: PNode; ruleName: string): bool {.raises: [], tags: [
-    RootEffect], contractual.} =
+proc setRuleState*(node: PNode; ruleName: string;
+    oldState: var bool) {.raises: [], tags: [RootEffect], contractual.} =
   ## Disable or enable again the rule for the selected Nim module if needed
   ##
   ## * node - the AST node to check for the state of the rule
@@ -111,8 +111,8 @@ proc setRuleState*(node: PNode; ruleName: string): bool {.raises: [], tags: [
           if pragma.len == 2 and pragma[1].toLowerAscii == "\"" &
               ruleName.toLowerAscii & "\"":
             if pragma[0].toLowerAscii == "ruleoff":
-              return false
+              oldState = false
             else:
-              return true
+              oldState = true
         except KeyError, Exception:
-          return true
+          discard
