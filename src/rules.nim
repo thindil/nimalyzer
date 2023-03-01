@@ -26,8 +26,9 @@
 ## Provides various things for the program rules
 
 # Standard library imports
-import std/logging
+import std/[logging, strutils]
 # External modules imports
+import compiler/[ast, renderer]
 import contracts
 # Nimalyzer pragmas imports
 import pragmas
@@ -94,3 +95,19 @@ proc errorMessage*(text: string; e: ref Exception = nil): int {.gcsafe,
     except Exception:
       echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
     return 0
+
+proc setRuleState*(node: PNode): bool =
+  ## Disable or enable again the rule for the selected Nim module if needed
+  ##
+  ## * node - the AST node to check for the state of the rule
+  if node.kind == nkPragma:
+    for child in node.items:
+      try:
+        let pragma = split(s = $node[0], sep = ": ")
+        if pragma.len == 2 and pragma[1].toLowerAscii == "\"namedparams\"":
+          if pragma[0].toLowerAscii == "ruleoff":
+            return false
+          else:
+            return true
+      except KeyError, Exception:
+        return true
