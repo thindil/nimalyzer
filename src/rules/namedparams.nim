@@ -146,25 +146,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
               "can't check parameters of call " & callName & " line: " &
               $node.info.line & ". Reason: ", e = getCurrentException())
 
-    proc setRuleState(node: PNode) =
-      ## Disable or enable again the rule for the selected Nim module if needed
-      ##
-      ## * node - the AST node to check for the state of the rule
-      if node.kind == nkPragma:
-        for child in astTree.items:
-          try:
-            let pragma = split(s = $node[0], sep = ": ")
-            if pragma.len == 2 and pragma[1].toLowerAscii == "\"namedparams\"":
-              if pragma[0].toLowerAscii == "ruleoff":
-                ruleEnabled = false
-              else:
-                ruleEnabled = true
-          except KeyError, Exception:
-            discard
-
     if options.parent:
       ruleEnabled = true
-    setRuleState(node = astTree)
+    ruleEnabled = setRuleState(node = astTree)
     result = options.amount
     if astTree.kind == nkCall:
       check(node = astTree, oldResult = result)
@@ -176,7 +160,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
-      setRuleState(node = node)
+      ruleEnabled = setRuleState(node = node)
       # Node isn't call, or don't have parameters, skip
       if node.kind != nkCall or node.sons.len == 1 or node.sons[1].kind == nkStmtList:
         continue
