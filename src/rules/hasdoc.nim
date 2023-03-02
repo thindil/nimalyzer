@@ -178,6 +178,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             if node.comment.len > 0: true else: false
           else:
             node.hasSubnodeWith(kind = nkCommentStmt)
+        setRuleState(node = node, ruleName = ruleName, oldState = ruleEnabled)
         setResult(entityName = "Declaration of " & declName,
             line = $node.info.line, hasDoc = hasDoc, oldResult = result)
       except KeyError as e:
