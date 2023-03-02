@@ -98,8 +98,13 @@ import compiler/[ast, renderer]
 import contracts
 # Internal modules imports
 import ../rules
+import ../pragmas
+
+{.push ruleOff: "hasEntity".}
 
 const ruleName* = "hasentity" ## The name of the rule used in a configuration file
+
+var ruleEnabled = true ## If false, checking rule is temporary disabled in the code
 
 proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -123,6 +128,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           nkNone
     if nodeKind == nkNone:
       return errorMessage(text = "Invalid type of entity: " & options.options[0])
+    if options.parent:
+      ruleEnabled = true
     result = options.amount
     if options.negation and options.parent:
       result.inc
@@ -160,6 +167,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 returnValue = oldResult, level = lvlNotice, decrease = false)
 
     for node in astTree.items:
+      setRuleState(node = node, ruleName = ruleName, oldState = ruleEnabled)
       # Check all children of the node with the rule
       if node.kind in {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
           nkCommentStmt}:
