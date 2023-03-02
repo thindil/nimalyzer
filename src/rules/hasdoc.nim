@@ -80,7 +80,6 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
   body:
     if options.parent:
       ruleEnabled = true
-    setRuleState(node = astTree, ruleName = ruleName, oldState = ruleEnabled)
     result = options.amount
     let messagePrefix = if getLogFilter() < lvlNotice:
         ""
@@ -143,6 +142,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     for node in astTree.items:
       # Check each children of the current AST node with the rule
       for child in node.items:
+        setRuleState(node = child, ruleName = ruleName, oldState = ruleEnabled)
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
@@ -178,7 +178,6 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             if node.comment.len > 0: true else: false
           else:
             node.hasSubnodeWith(kind = nkCommentStmt)
-        setRuleState(node = node, ruleName = ruleName, oldState = ruleEnabled)
         setResult(entityName = "Declaration of " & declName,
             line = $node.info.line, hasDoc = hasDoc, oldResult = result)
       except KeyError as e:
