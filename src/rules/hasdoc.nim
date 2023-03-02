@@ -61,6 +61,8 @@ import ../rules
 
 const ruleName* = "hasdoc" ## The name of the rule used in a configuration file
 
+var ruleEnabled = true ## If false, checking rule is temporary disabled in the code
+
 proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the source code has the documentation in the proper
@@ -76,6 +78,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     astTree != nil
     options.fileName.len > 0
   body:
+    if options.parent:
+      ruleEnabled = true
+    setRuleState(node = astTree, ruleName = ruleName, oldState = ruleEnabled)
     result = options.amount
     let messagePrefix = if getLogFilter() < lvlNotice:
         ""
@@ -98,6 +103,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       require:
         entityName.len > 0
       body:
+        if not ruleEnabled:
+          return
         # Documentation not found
         if not hasDoc:
           if options.negation and options.ruleType == check:
