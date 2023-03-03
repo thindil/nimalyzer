@@ -60,6 +60,8 @@ import ../rules
 
 const ruleName* = "paramsused" ## The name of the rule used in a configuration file
 
+var ruleEnabled = true ## If false, checking rule is temporary disabled in the code
+
 proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if all procedures in the Nim code use all of their
@@ -82,10 +84,13 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     for node in astTree.items:
       # Check the node's children with the rule
       for child in node.items:
+        setRuleState(node = child, ruleName = ruleName, oldState = ruleEnabled)
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
+      if not ruleEnabled:
+        continue
       # Node isn't rountine, skip it
       if node.kind notin routineDefs:
         continue
