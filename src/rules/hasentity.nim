@@ -98,9 +98,6 @@ import compiler/[ast, renderer]
 import contracts
 # Internal modules imports
 import ../rules
-import ../pragmas
-
-{.push ruleOff: "hasEntity".}
 
 const ruleName* = "hasentity" ## The name of the rule used in a configuration file
 
@@ -144,6 +141,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       ## * oldResult - the previous amount of the rule result value
       ##
       ## Returns the updated oldResult parameter
+      if not ruleEnabled:
+        return
       # The selected entity found in the node
       if options.options[1].len == 0 or startsWith(s = nodeName,
           prefix = options.options[1]):
@@ -230,6 +229,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
             "' found: " & $result, returnValue = result, level = lvlNotice)
         return 1
       if result < 1:
+        if not ruleEnabled and result == 0:
+          return 1
         if options.negation:
           if options.ruleType == check:
             return 0
