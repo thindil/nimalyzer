@@ -98,6 +98,8 @@ import ../rules
 
 const ruleName* = "haspragma" ## The name of the rule used in a configuration file
 
+var ruleEnabled = true ## If false, checking rule is temporary disabled in the code
+
 proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the Nim code entities have proper pragmas.
@@ -113,6 +115,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     options.options.len > 0
     options.fileName.len > 0
   body:
+    if options.parent:
+      ruleEnabled = true
     result = options.amount
     let messagePrefix = if getLogFilter() < lvlNotice:
         ""
@@ -137,6 +141,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         line.len > 0
         pragma.len > 0
       body:
+        if not ruleEnabled:
+          return
         # The selected pragma not found
         if not hasPragma:
           if options.negation and options.ruleType == check:
@@ -170,6 +176,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     for node in astTree.items:
       # Check the node's children with the rule
       for child in node.items:
+        setRuleState(node = child, ruleName = ruleName, oldState = ruleEnabled)
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
@@ -241,6 +248,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           setResult(procName = procName, line = $node.info.line,
               pragma = pragma, hasPragma = true, oldResult = result)
     if options.parent:
+      if not ruleEnabled and result == 0:
+        return 1
       if result < 0:
         result = 0
       if result == 0 and options.ruleType == search:
