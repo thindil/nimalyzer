@@ -8,6 +8,8 @@ of the program.
 
 ### Added
 - Ability to set parent entity and index of child for rule hasEntity
+- Ability to disable and reenable the program's rules with pragmas `ruleOn`
+  and `ruleOff`
 
 ### Changed
 - Updated the project's documentation
