@@ -72,6 +72,15 @@
 ## generated source code tree to use. It is recommended to use other rules
 ## instead of this one.
 ##
+## Disabling the rule
+## ------------------
+## It is possible to disable the rule for a selected part of the checked code
+## by using pragma *ruleOff: "hasEntity"* before the code's fragment which
+## shouldn't be checked.
+##
+## To enable the rule again, the pragma *ruleOn: "hasEntity"* should be added
+## before the code which should be checked.
+##
 ## Examples
 ## --------
 ##
