@@ -45,12 +45,15 @@
 ## It is possible to disable the rule for a selected part of the checked code
 ## by using pragma *ruleOff: "hasDoc"* in the element from which the rule
 ## should be disabled. For example, if the rule should be disabled for procedure
-## `main()`, the full declaration of it should be: `main () {.ruleOff: "hasDoc".}`.
+## `proc main()`, the full declaration of it should be::
+##
+##     proc main () {.ruleOff: "hasDoc".}
 ##
 ## To enable the rule again, the pragma *ruleOn: "hasDoc"* should be added in
 ## the element which should be checked. For example, if the rule should be
-## re-enabled for `const a = 1`, the full declaration should be:
-## `const a = 1 {.ruleOn: "hasDoc".}`
+## re-enabled for `const a = 1`, the full declaration should be::
+##
+##     const a = 1 {.ruleOn: "hasDoc".}
 ##
 ## Examples
 ## --------
