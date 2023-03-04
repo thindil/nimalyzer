@@ -38,6 +38,15 @@
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about calls which have some parameters not named.
 ##
+## Disabling the rule
+## ------------------
+## It is possible to disable the rule for a selected part of the checked code
+## by using pragma *ruleOff: "namedParams"* before the code's fragment which
+## shouldn't be checked.
+##
+## To enable the rule again, the pragma *ruleOn: "namedParams"* should be added
+## before the code which should be checked.
+##
 ## Examples
 ## --------
 ##
