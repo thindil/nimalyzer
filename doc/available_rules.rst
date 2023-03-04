@@ -24,6 +24,21 @@ The syntax in a configuration file is::
   change to inform only about public declaration which have documentation.
   Probably useable only with search and count type of rule.
 
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "hasDoc"* in the element from which the rule
+should be disabled. For example, if the rule should be disabled for procedure
+`proc main()`, the full declaration of it should be::
+
+    proc main () {.ruleOff: "hasDoc".}
+
+To enable the rule again, the pragma *ruleOn: "hasDoc"* should be added in
+the element which should be checked. For example, if the rule should be
+re-enabled for `const a = 1`, the full declaration should be::
+
+    const a = 1 {.ruleOn: "hasDoc".}
+
 Examples
 --------
 
@@ -85,6 +100,15 @@ hasEntity rule is considered as a low level rule. It requires a
 knowledge about Nim compiler, especially names of the Nim code nodes and the
 generated source code tree to use. It is recommended to use other rules
 instead of this one.
+
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "hasEntity"* before the code's fragment which
+shouldn't be checked.
+
+To enable the rule again, the pragma *ruleOn: "hasEntity"* should be added
+before the code which should be checked.
 
 Examples
 --------
@@ -151,6 +175,21 @@ The list of pragmas must be in the form of console line arguments:
 3. All other special characters must be escaped as in a console line
    arguments: `stringWith\"QuoteSign`
 
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "hasPragma"* in the element from which the rule
+should be disabled. For example, if the rule should be disabled for procedure
+`main()`, the full declaration of it should be::
+
+     proc main() {.ruleOff: "hasPragma".}
+
+To enable the rule again, the pragma *ruleOn: "hasPragma"* should be added in
+the element which should be checked. For example, if the rule should be
+re-enabled for `const a = 1`, the full declaration should be::
+
+     const a = 1 {.ruleOn: "hasPragma".}
+
 Examples
 --------
 
@@ -189,6 +228,15 @@ The syntax in a configuration file is::
 * optional word *not* means negation for the rule. Adding word *not* will
   change to inform only about calls which have some parameters not named.
 
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "namedParams"* before the code's fragment which
+shouldn't be checked.
+
+To enable the rule again, the pragma *ruleOn: "namedParams"* should be added
+before the code which should be checked.
+
 Examples
 --------
 
@@ -217,6 +265,21 @@ The syntax in a configuration file is::
 * optional word *not* means negation for the rule. Adding word *not* will
   change to inform only about procedures which have all parameters used.
   Probably useable only with search and count type of rule.
+
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "paramsUsed"* in the declaration from which the rule
+should be disabled. For example, if the rule should be disabled for procedure
+`main()`, the full declaration of it should be::
+
+     proc main() {.ruleOff: "paramsUsed".}
+
+To enable the rule again, the pragma *ruleOn: "paramsUsed"* should be added in
+the element which should be checked. For example, if the rule should be
+re-enabled for function `myFunc(a: int)`, the full declaration should be::
+
+     func myFunc(a: int) {.ruleOn: "paramsUsed".}
 
 Examples
 --------
