@@ -61,15 +61,16 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           echo "Stopping nimalyzer"
           quit QuitFailure
 
-    proc abortProgram(message: string) {.gcsafe, raises: [], tags: [RootEffect],
-        contractual.} =
+    proc abortProgram(message: string; e: ref Exception = nil) {.gcsafe,
+        raises: [], tags: [RootEffect], contractual.} =
       ## Log the message and stop the program
       ##
       ## * message - the message to log
+      ## * e       - the exception which occured if any.
       require:
         message.len > 0
       body:
-        message(text = message, level = lvlFatal)
+        discard errorMessage(text = message, e = e)
         message(text = "Stopping nimalyzer.")
         quit QuitFailure
 
@@ -145,15 +146,16 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             for fileName in walkFiles(pattern = line[6..^1]):
               addFile(fileName = fileName, sources = sources)
           except OSError:
-            abortProgram(message = "Can't parse setting: '" & line & "'.")
+            abortProgram(message = "Can't parse setting: '" & line &
+                "'. Reason: ", e = getCurrentException())
         # Set the source code files to check, the second option
         elif line.startsWith(prefix = "directory"):
           try:
             for fileName in walkDirRec(dir = line[10..^1]):
               addFile(fileName = fileName, sources = sources)
           except OSError:
-            abortProgram(message = "Can't add files to check. Reason: " &
-                getCurrentExceptionMsg())
+            abortProgram(message = "Can't add files to check. Reason: ",
+                e = getCurrentException())
         # Set the program's rule to test the code
         elif line.startsWith(prefix = "check") or line.startsWith(
             prefix = "search") or line.startsWith(prefix = "count"):
@@ -184,8 +186,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               abortProgram(message = "Invalid options for rule '" &
                   newRule.name & "'.")
           except KeyError:
-            abortProgram(message = "Can't validate rule parameters. Reason: " &
-                getCurrentExceptionMsg())
+            abortProgram(message = "Can't validate rule parameters. Reason: ",
+                e = getCurrentException())
           rules.add(y = newRule)
           message(text = "Added" & (if rules[
               ^1].negation: " negation " else: " ") & $rules[^1].ruleType &
@@ -239,10 +241,10 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
           abortProgram(message = "The file '" & source &
-              "' can't be parsed to AST. Reason: " & getCurrentExceptionMsg())
+              "' can't be parsed to AST. Reason: ", e = getCurrentException())
       except OSError:
-        abortProgram(message = "Can't parse file '" & source & "'. Reason: " &
-            getCurrentExceptionMsg())
+        abortProgram(message = "Can't parse file '" & source & "'. Reason: ",
+            e = getCurrentException())
     message(text = "Stopping nimalyzer.")
     quit resultCode
 
