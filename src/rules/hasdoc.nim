@@ -155,49 +155,51 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           hasDoc = astTree.hasSubnodeWith(kind = nkCommentStmt),
           oldResult = result)
     for node in astTree.items:
+      # Ignore elements which can't have documentation
+      if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
+          nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
+          nkEnumTy, nkConstSection, nkConstTy}:
+        for child in node.items:
+          if child.kind == nkPragma:
+            setRuleState(node = child, ruleName = ruleName,
+                oldState = ruleEnabled)
+            break
+        # Special check for constant declaration section
+        if node.kind == nkConstSection:
+          result = ruleCheck(astTree = node, options = RuleOptions(
+              options: options.options, parent: false,
+              fileName: options.fileName, negation: options.negation,
+              ruleType: options.ruleType, amount: result))
+        else:
+          # Set the name of the declared entity which is checked for documentation
+          var declName = try:
+                $node[0]
+              except KeyError, Exception:
+                ""
+          if declName.len == 0:
+            declName = try:
+                $astTree[0]
+              except KeyError, Exception:
+                ""
+          if declName.len == 0:
+            return errorMessage(text = "Can't get the name of the declared entity.")
+          if declName.endsWith(suffix = "*") or node.kind in callableDefs:
+            try:
+              let hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
+                  if node.comment.len > 0: true else: false
+                else:
+                  node.hasSubnodeWith(kind = nkCommentStmt)
+              setResult(entityName = "Declaration of " & declName,
+                  line = $node.info.line, hasDoc = hasDoc, oldResult = result)
+            except KeyError as e:
+              return errorMessage(text = "Can't check the declared entity '" &
+                  declName & "'.", e = e)
       # Check each children of the current AST node with the rule
       for child in node.items:
-        setRuleState(node = child, ruleName = ruleName, oldState = ruleEnabled)
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
-      # Ignore elements which can't have documentation
-      if node.kind notin {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
-          nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
-          nkEnumTy, nkConstSection, nkConstTy}:
-        continue
-      # Special check for constant declaration section
-      if node.kind == nkConstSection:
-        result = ruleCheck(astTree = node, options = RuleOptions(
-            options: options.options, parent: false,
-            fileName: options.fileName, negation: options.negation,
-            ruleType: options.ruleType, amount: result))
-        continue
-      # Set the name of the declared entity which is checked for documentation
-      var declName = try:
-            $node[0]
-          except KeyError, Exception:
-            ""
-      if declName.len == 0:
-        declName = try:
-            $astTree[0]
-          except KeyError, Exception:
-            ""
-      if declName.len == 0:
-        return errorMessage(text = "Can't get the name of the declared entity.")
-      if not declName.endsWith(suffix = "*") and node.kind notin callableDefs:
-        continue
-      try:
-        let hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
-            if node.comment.len > 0: true else: false
-          else:
-            node.hasSubnodeWith(kind = nkCommentStmt)
-        setResult(entityName = "Declaration of " & declName,
-            line = $node.info.line, hasDoc = hasDoc, oldResult = result)
-      except KeyError as e:
-        return errorMessage(text = "Can't check the declared entity '" &
-            declName & "'.", e = e)
     if options.parent:
       if result < 0:
         result = 0
