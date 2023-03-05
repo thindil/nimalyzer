@@ -190,78 +190,82 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
 
     for node in astTree.items:
       # Check the node's children with the rule
+      # The node can have pragma, check it
+      if node.kind in routineDefs:
+        for child in node.items:
+          if child.kind == nkPragma:
+            setRuleState(node = child, ruleName = ruleName,
+                oldState = ruleEnabled)
+            break
+        # Set the name of the procedure to check
+        let
+          pragmas = getDeclPragma(n = node)
+          procName = try:
+              $node[0]
+            except KeyError, Exception:
+              ""
+        if procName.len == 0:
+          return errorMessage(text = "Can't get the name of the procedure.")
+        # The node doesn't have any pragmas
+        if pragmas == nil:
+          if not options.negation:
+            if options.ruleType == check:
+              message(text = messagePrefix & "procedure " & procName & " line: " &
+                  $node.info.line & " doesn't have declared any pragmas.",
+                  returnValue = result)
+            else:
+              result.dec
+          else:
+            if options.ruleType == search:
+              message(text = messagePrefix & "procedure " & procName & " line: " &
+                  $node.info.line & " doesn't have declared any pragmas.",
+                  returnValue = result, level = lvlNotice, decrease = false)
+            else:
+              result.inc
+        else:
+          var strPragmas: seq[string]
+          for pragma in pragmas:
+            try:
+              strPragmas.add(y = $pragma)
+            except KeyError, Exception:
+              discard
+          # Check the node for each selected pragma
+          for pragma in options.options:
+            if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
+              setResult(procName = procName, line = $node.info.line,
+                  pragma = pragma, hasPragma = false, oldResult = result)
+            elif pragma[^1] == '*' and pragma[0] != '*':
+              var hasPragma = false
+              for procPragma in strPragmas:
+                if procPragma.startsWith(prefix = pragma[0..^2]):
+                  hasPragma = true
+                  break
+              setResult(procName = procName, line = $node.info.line,
+                  pragma = pragma, hasPragma = hasPragma, oldResult = result)
+            elif pragma[0] == '*' and pragma[^1] != '*':
+              var hasPragma = false
+              for procPragma in strPragmas:
+                if procPragma.endsWith(suffix = pragma[1..^1]):
+                  hasPragma = true
+                  break
+              setResult(procName = procName, line = $node.info.line,
+                  pragma = pragma, hasPragma = hasPragma, oldResult = result)
+            elif '*' in [pragma[0], pragma[^1]]:
+              var hasPragma = false
+              for procPragma in strPragmas:
+                if procPragma.contains(sub = pragma[1..^2]):
+                  hasPragma = true
+                  break
+              setResult(procName = procName, line = $node.info.line,
+                  pragma = pragma, hasPragma = hasPragma, oldResult = result)
+            else:
+              setResult(procName = procName, line = $node.info.line,
+                  pragma = pragma, hasPragma = true, oldResult = result)
       for child in node.items:
-        setRuleState(node = child, ruleName = ruleName, oldState = ruleEnabled)
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
-      # The node can't have pragma, skip it
-      if node.kind notin routineDefs:
-        continue
-      # Set the name of the procedure to check
-      let
-        pragmas = getDeclPragma(n = node)
-        procName = try:
-            $node[0]
-          except KeyError, Exception:
-            ""
-      if procName.len == 0:
-        return errorMessage(text = "Can't get the name of the procedure.")
-      if pragmas == nil:
-        if not options.negation:
-          if options.ruleType == check:
-            message(text = messagePrefix & "procedure " & procName & " line: " &
-                $node.info.line & " doesn't have declared any pragmas.",
-                returnValue = result)
-          else:
-            result.dec
-        else:
-          if options.ruleType == search:
-            message(text = messagePrefix & "procedure " & procName & " line: " &
-                $node.info.line & " doesn't have declared any pragmas.",
-                returnValue = result, level = lvlNotice, decrease = false)
-          else:
-            result.inc
-        continue
-      var strPragmas: seq[string]
-      for pragma in pragmas:
-        try:
-          strPragmas.add(y = $pragma)
-        except KeyError, Exception:
-          discard
-      # Check the node for each selected pragma
-      for pragma in options.options:
-        if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
-          setResult(procName = procName, line = $node.info.line,
-              pragma = pragma, hasPragma = false, oldResult = result)
-        elif pragma[^1] == '*' and pragma[0] != '*':
-          var hasPragma = false
-          for procPragma in strPragmas:
-            if procPragma.startsWith(prefix = pragma[0..^2]):
-              hasPragma = true
-              break
-          setResult(procName = procName, line = $node.info.line,
-              pragma = pragma, hasPragma = hasPragma, oldResult = result)
-        elif pragma[0] == '*' and pragma[^1] != '*':
-          var hasPragma = false
-          for procPragma in strPragmas:
-            if procPragma.endsWith(suffix = pragma[1..^1]):
-              hasPragma = true
-              break
-          setResult(procName = procName, line = $node.info.line,
-              pragma = pragma, hasPragma = hasPragma, oldResult = result)
-        elif '*' in [pragma[0], pragma[^1]]:
-          var hasPragma = false
-          for procPragma in strPragmas:
-            if procPragma.contains(sub = pragma[1..^2]):
-              hasPragma = true
-              break
-          setResult(procName = procName, line = $node.info.line,
-              pragma = pragma, hasPragma = hasPragma, oldResult = result)
-        else:
-          setResult(procName = procName, line = $node.info.line,
-              pragma = pragma, hasPragma = true, oldResult = result)
     if options.parent:
       if not ruleEnabled and result == 0:
         return 1
