@@ -59,6 +59,12 @@ with additional extensions:
 * All subprograms must have a corresponding unit test, even if it is a very simple
   test.
 * All subprograms must have written contracts, even it they are very simple.
+* All subprograms must use their parameters.
+* All subprograms and public declarations (variables, constants too) must have
+  documentation.
+* The code must be validated with the *nimalyzer* itself, by running it with
+  configuration files *config/nimalyzer.cfg* for the program's code and
+  *config/rules.cfg* for the program's rules' code.
 
 ### Code submission
 
