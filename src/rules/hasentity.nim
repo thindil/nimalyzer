@@ -176,60 +176,57 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
 
     for node in astTree.items:
       setRuleState(node = node, ruleName = ruleName, oldState = ruleEnabled)
-      # Check all children of the node with the rule
-      if node.kind in {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
+      if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
           nkCommentStmt}:
-        continue
-      for child in node.items:
-        result = ruleCheck(astTree = child, options = RuleOptions(
-            options: options.options, parent: false, fileName: options.fileName,
-            negation: options.negation, ruleType: options.ruleType,
-            amount: result))
-      # Ignore nodes of different type
-      if options.options.len == 2 and node.kind != nodeKind:
-        continue
-      try:
-        # If parent node specified and the current node is the same kind as
-        # the parent node, check its children instead of the node
-        if options.options.len > 2:
-          let parentKind = try:
-                parseEnum[TNodeKind](s = options.options[2])
-              except ValueError:
-                nkNone
-          var childIndex = -1
-          if options.options.len == 4:
-            childIndex = try:
-                options.options[3].parseInt()
-              except ValueError:
-                int.low
-          if node.kind == parentKind:
-            if childIndex == int.low:
-              for child in node.items:
-                if child.kind != nodeKind:
-                  continue
+        try:
+          # If parent node specified and the current node is the same kind as
+          # the parent node, check its children instead of the node
+          if options.options.len > 2:
+            let parentKind = try:
+                  parseEnum[TNodeKind](s = options.options[2])
+                except ValueError:
+                  nkNone
+            var childIndex = -1
+            if options.options.len == 4:
+              childIndex = try:
+                  options.options[3].parseInt()
+                except ValueError:
+                  int.low
+            if node.kind == parentKind:
+              if childIndex == int.low:
+                for child in node.items:
+                  if child.kind != nodeKind:
+                    continue
+                  let childName = try:
+                      $child[0]
+                    except KeyError, Exception:
+                      ""
+                  checkEntity(nodeName = childName, line = $child.info.line,
+                      oldResult = result)
+              elif childIndex <= node.sons.high:
                 let childName = try:
-                    $child[0]
+                    if childIndex > -1:
+                      $node[childIndex]
+                    else:
+                      $node[^childIndex]
                   except KeyError, Exception:
                     ""
-                checkEntity(nodeName = childName, line = $child.info.line,
+                checkEntity(nodeName = childName, line = $node.info.line,
                     oldResult = result)
-            elif childIndex <= node.sons.high:
-              let childName = try:
-                  if childIndex > -1:
-                    $node[childIndex]
-                  else:
-                    $node[^childIndex]
-                except KeyError, Exception:
-                  ""
-              checkEntity(nodeName = childName, line = $node.info.line,
-                  oldResult = result)
-          continue
-        # Check the node itself
-        checkEntity(nodeName = $node[0], line = $node.info.line,
-            oldResult = result)
-      except KeyError, Exception:
-        return errorMessage(text = "Error during checking hasEntity rule: ",
-            e = getCurrentException())
+          # Check the node itself
+          elif node.kind == nodeKind:
+            checkEntity(nodeName = $node[0], line = $node.info.line,
+                oldResult = result)
+        except KeyError, Exception:
+          return errorMessage(text = "Error during checking hasEntity rule: ",
+              e = getCurrentException())
+        # Check all children of the node with the rule
+        for child in node.items:
+          result = ruleCheck(astTree = child, options = RuleOptions(
+              options: options.options, parent: false,
+              fileName: options.fileName,
+              negation: options.negation, ruleType: options.ruleType,
+              amount: result))
     if options.parent:
       if options.ruleType == RuleTypes.count:
         message(text = (if getLogFilter() <
