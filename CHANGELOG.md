@@ -13,6 +13,7 @@ of the program.
 
 ### Changed
 - Updated the project's documentation
+- Updated contributing guide
 
 ### Fixed
 - Result for negative check for hasDoc, hasEntity, namedParams and paramsUsed
