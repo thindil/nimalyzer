@@ -37,12 +37,12 @@ jobs:
         bin/nimalyzer config/nimalyzer.cfg
         bin/nimalyzer config/rules.cfg
 
-    - name: Run tests
-      run: nimble tests
-
     - name: Upload the log
       uses: actions/upload-artifact@v3
       if: failure()
       with:
          name: nimalyzer.log
          path: nimalyzer.log
+
+    - name: Run tests
+      run: nimble tests
