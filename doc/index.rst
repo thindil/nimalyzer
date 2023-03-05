@@ -32,3 +32,34 @@ Usage
 2. Run Nimanalyzer with path to your configuration file as the argument. For example:
    `nimalyzer config/nimalyzer.cfg` and read its output.
 
+Disabling rules
+===============
+
+It is possible to disable a selected rule for a part of a module with the pragma
+*ruleOff: [name of pragma]* and re-enable it later with the pragma *ruleOn:
+[name of pragma]*. To do it you have to:
+
+1. Import the module *pragmas* from *nimalyzer*: `import nimalyzer/pragmas`
+
+2. Insert in the desired place in the code the pragma to disable rule. For
+   example: `{.ruleOff: "hasDoc".}`. Please refer to the rules' documentation to
+   check where the pragma should be placed. Some rules allow it in any place in
+   a code, others require it in the specific place. For example, rule *hasDoc*
+   require that pragma in a declaration.
+
+3. If you want to re-enable a rule in a code later, insert pragma ruleOn. For
+   example: `{.ruleOn: "hasDoc".}`. Same as with disabling, please refer to the
+   rules' documentation where to place the pragma. Usually, rules require it in
+   the same location where pragma *ruleOff* should be placed.
+
+Notes
+-----
+
+* Names of the rules used for pragmas are case-insensitive, thus "hasDoc" can
+  be also "hasdoc", "HasDoc" or "HASDOC".
+* Names of the rules used for pragmas are strings, compared to the value of
+  `ruleName` constants defined in the rules.
+* Disabling the rule in the code cause to disable all checks of that type in
+  the code. For example if you used `{.ruleOff: hasEntity.}` and your
+  configuration file contains several settings for that rule, all of them will
+  be disabled from this point in the code.
