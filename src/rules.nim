@@ -46,6 +46,7 @@ type
     negation*: bool       ## If true, the rule show return oposite result
     ruleType*: RuleTypes  ## The type of rule
     amount*: int          ## The amount of results found by the rule
+    enabled*: bool        ## If false, the rule is temporary disabled by pragmas
 
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
     decrease: bool = true) {.gcsafe, raises: [], tags: [RootEffect],
