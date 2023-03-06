@@ -155,7 +155,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
           hasDoc = astTree.hasSubnodeWith(kind = nkCommentStmt),
           oldResult = result)
     for node in astTree.items:
-      # Ignore elements which can't have documentation
+      # Check only elements which can have documentation
       if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
           nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
           nkEnumTy, nkConstSection, nkConstTy}:
