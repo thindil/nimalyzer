@@ -226,7 +226,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         try:
           let astTree = codeParser.parseAll
           codeParser.closeParser
-          var options = RuleOptions(parent: true, fileName: source)
+          var options = RuleOptions(fileName: source)
           # Check the converted source code with each selected rule
           for index, rule in rules.pairs:
             message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
@@ -237,6 +237,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             options.negation = rule.negation
             options.ruleType = rule.ruleType
             options.amount = 0
+            options.enabled = true
+            options.parent = true
             if rulesList[rule.name][0](astTree = astTree, options = options) < 1:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
