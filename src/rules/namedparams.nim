@@ -163,17 +163,16 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       check(node = astTree, oldResult = result)
       return
     for node in astTree.items:
+      setRuleState(node = node, ruleName = ruleName, oldState = ruleEnabled)
+      # Node is a call, and have parameters, check it
+      if node.kind == nkCall and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
+        check(node = node, oldResult = result)
       # Check the node's children with the rule
       for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
-      setRuleState(node = node, ruleName = ruleName, oldState = ruleEnabled)
-      # Node isn't call, or don't have parameters, skip
-      if node.kind != nkCall or node.sons.len == 1 or node.sons[1].kind == nkStmtList:
-        continue
-      check(node = node, oldResult = result)
     if options.parent:
       if result < 0:
         result = 0
