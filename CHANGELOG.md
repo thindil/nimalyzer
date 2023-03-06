@@ -10,6 +10,8 @@ of the program.
 - Ability to set parent entity and index of child for rule hasEntity
 - Ability to disable and reenable the program's rules with pragmas `ruleOn`
   and `ruleOff`
+- Better reporting of the program's errors, especially when the program is
+  built in debug mode
 
 ### Changed
 - Updated the project's documentation
