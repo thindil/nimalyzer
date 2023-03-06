@@ -97,76 +97,80 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       else:
         options.fileName & ": "
     for node in astTree.items:
-      # Check the node's children with the rule
+      # Check the node's children if rule is enabled
       for child in node.items:
         setRuleState(node = child, ruleName = ruleName, oldState = ruleEnabled)
+      if ruleEnabled and node.kind in routineDefs:
+        # Get the procedure's name
+        let procName = try:
+              $node[0]
+            except KeyError, Exception:
+              ""
+        if procName.len == 0:
+          return errorMessage(text = "Can't get the name of the procedure.")
+        # No parameters, skip
+        if node[3].len < 2:
+          if options.negation:
+            result.dec
+          else:
+            result.inc
+        else:
+          var index = -1
+          # Check each parameter
+          for child in node[3]:
+            if child.kind in {nkEmpty, nkIdent}:
+              continue
+            index = -1
+            for i in 0..child.len - 3:
+              try:
+                index = find(s = $node[6], sub = $child[i])
+                # The node doesn't use one of its parameters
+                if index == -1:
+                  if not options.negation:
+                    if options.ruleType == check:
+                      message(text = messagePrefix & "procedure " & procName &
+                        " line: " & $node.info.line &
+                        " doesn't use parameter '" &
+                        $child[i] & "'.", returnValue = result)
+                  else:
+                    if options.ruleType == search:
+                      message(text = messagePrefix & "procedure " & procName &
+                        " line: " & $node.info.line &
+                        " doesn't use all parameters.",
+                        returnValue = result, level = lvlNotice,
+                        decrease = false)
+                    else:
+                      result.inc
+                    break
+              except KeyError, Exception:
+                result = errorMessage(text = messagePrefix &
+                    "can't check parameters of procedure " & procName &
+                    " line: " &
+                    $node.info.line & ". Reason: ", e = getCurrentException())
+          # The node uses all of its parameters
+          if index > -1:
+            if options.negation:
+              if options.ruleType == check:
+                message(text = messagePrefix & "procedure " & procName &
+                  " line: " &
+                  $node.info.line & " use all parameters.",
+                  returnValue = result)
+              elif options.ruleType == RuleTypes.count:
+                result.dec
+            else:
+              if options.ruleType == search:
+                message(text = messagePrefix & "procedure " & procName &
+                  " line: " &
+                  $node.info.line & " use all parameters.",
+                  returnValue = result, level = lvlNotice, decrease = false)
+              else:
+                result.inc
+      # Check the node's children with the rule
+      for child in node.items:
         result = ruleCheck(astTree = child, options = RuleOptions(
             options: options.options, parent: false,
             fileName: options.fileName, negation: options.negation,
             ruleType: options.ruleType, amount: result))
-      if not ruleEnabled:
-        continue
-      # Node isn't rountine, skip it
-      if node.kind notin routineDefs:
-        continue
-      # Get the procedure's name
-      let procName = try:
-            $node[0]
-          except KeyError, Exception:
-            ""
-      if procName.len == 0:
-        return errorMessage(text = "Can't get the name of the procedure.")
-      # No parameters, skip
-      if node[3].len < 2:
-        if options.negation:
-          result.dec
-        else:
-          result.inc
-        continue
-      var index = -1
-      # Check each parameter
-      for child in node[3]:
-        if child.kind in {nkEmpty, nkIdent}:
-          continue
-        index = -1
-        for i in 0..child.len - 3:
-          try:
-            index = find(s = $node[6], sub = $child[i])
-            # The node doesn't use one of its parameters
-            if index == -1:
-              if not options.negation:
-                if options.ruleType == check:
-                  message(text = messagePrefix & "procedure " & procName &
-                    " line: " & $node.info.line & " doesn't use parameter '" &
-                    $child[i] & "'.", returnValue = result)
-              else:
-                if options.ruleType == search:
-                  message(text = messagePrefix & "procedure " & procName &
-                    " line: " & $node.info.line &
-                    " doesn't use all parameters.",
-                    returnValue = result, level = lvlNotice, decrease = false)
-                else:
-                  result.inc
-                break
-          except KeyError, Exception:
-            result = errorMessage(text = messagePrefix &
-                "can't check parameters of procedure " & procName & " line: " &
-                $node.info.line & ". Reason: ", e = getCurrentException())
-      # The node uses all of its parameters
-      if index > -1:
-        if options.negation:
-          if options.ruleType == check:
-            message(text = messagePrefix & "procedure " & procName & " line: " &
-              $node.info.line & " use all parameters.", returnValue = result)
-          elif options.ruleType == RuleTypes.count:
-            result.dec
-        else:
-          if options.ruleType == search:
-            message(text = messagePrefix & "procedure " & procName & " line: " &
-              $node.info.line & " use all parameters.",
-              returnValue = result, level = lvlNotice, decrease = false)
-          else:
-            result.inc
     if options.parent:
       if result < 0:
         result = 0
