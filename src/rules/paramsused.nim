@@ -75,9 +75,7 @@ import ../rules
 
 const ruleName* = "paramsused" ## The name of the rule used in a configuration file
 
-var ruleEnabled = true ## If false, checking rule is temporary disabled in the code
-
-proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
+proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if all procedures in the Nim code use all of their
   ## parameters
@@ -91,7 +89,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     astTree != nil
     options.fileName.len > 0
   body:
-    result = options.amount
+    let isParent = options.parent
+    if isParent:
+      options.parent = false
     let messagePrefix = if getLogFilter() < lvlNotice:
         ""
       else:
@@ -99,21 +99,22 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     for node in astTree.items:
       # Check the node's children if rule is enabled
       for child in node.items:
-        setRuleState(node = child, ruleName = ruleName, oldState = ruleEnabled)
-      if ruleEnabled and node.kind in routineDefs:
+        setRuleState(node = child, ruleName = ruleName, oldState = options.enabled)
+      if options.enabled and node.kind in routineDefs:
         # Get the procedure's name
         let procName = try:
               $node[0]
             except KeyError, Exception:
               ""
         if procName.len == 0:
-          return errorMessage(text = "Can't get the name of the procedure.")
+          options.amount = errorMessage(text = "Can't get the name of the procedure.")
+          return
         # No parameters, skip
         if node[3].len < 2:
           if options.negation:
-            result.dec
+            options.amount.dec
           else:
-            result.inc
+            options.amount.inc
         else:
           var index = -1
           # Check each parameter
@@ -131,19 +132,19 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                       message(text = messagePrefix & "procedure " & procName &
                         " line: " & $node.info.line &
                         " doesn't use parameter '" &
-                        $child[i] & "'.", returnValue = result)
+                        $child[i] & "'.", returnValue = options.amount)
                   else:
                     if options.ruleType == search:
                       message(text = messagePrefix & "procedure " & procName &
                         " line: " & $node.info.line &
                         " doesn't use all parameters.",
-                        returnValue = result, level = lvlNotice,
+                        returnValue = options.amount, level = lvlNotice,
                         decrease = false)
                     else:
-                      result.inc
+                      options.amount.inc
                     break
               except KeyError, Exception:
-                result = errorMessage(text = messagePrefix &
+                options.amount = errorMessage(text = messagePrefix &
                     "can't check parameters of procedure " & procName &
                     " line: " &
                     $node.info.line & ". Reason: ", e = getCurrentException())
@@ -154,33 +155,29 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 message(text = messagePrefix & "procedure " & procName &
                   " line: " &
                   $node.info.line & " use all parameters.",
-                  returnValue = result)
+                  returnValue = options.amount)
               elif options.ruleType == RuleTypes.count:
-                result.dec
+                options.amount.dec
             else:
               if options.ruleType == search:
                 message(text = messagePrefix & "procedure " & procName &
                   " line: " &
                   $node.info.line & " use all parameters.",
-                  returnValue = result, level = lvlNotice, decrease = false)
+                  returnValue = options.amount, level = lvlNotice, decrease = false)
               else:
-                result.inc
+                options.amount.inc
       # Check the node's children with the rule
       for child in node.items:
-        result = ruleCheck(astTree = child, options = RuleOptions(
-            options: options.options, parent: false,
-            fileName: options.fileName, negation: options.negation,
-            ruleType: options.ruleType, amount: result))
-    if options.parent:
-      if result < 0:
-        result = 0
+        ruleCheck(astTree = child, options = options)
+    if isParent:
+      if options.amount < 0:
+        options.amount = 0
       if options.ruleType == RuleTypes.count:
         message(text = (if getLogFilter() <
             lvlNotice: "P" else: options.fileName & ": p") &
             "rocedures which" & (if options.negation: " not" else: "") &
-            " uses all parameters found: " & $result, returnValue = result,
+            " uses all parameters found: " & $options.amount, returnValue = options.amount,
             level = lvlNotice)
-        return 1
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
