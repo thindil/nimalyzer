@@ -68,9 +68,7 @@ import ../rules
 
 const ruleName* = "namedparams" ## The name of the rule used in a configuration file
 
-var ruleEnabled = true ## If false, checking rule is temporary disabled in the code
-
-proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
+proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if calls in the source code use named paramters.
   ##
@@ -84,8 +82,8 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     options.fileName.len > 0
   body:
 
-    proc check(node: PNode; oldResult: var int) {.contractual, raises: [],
-        tags: [RootEffect].} =
+    proc check(node: PNode; options: RuleOptions;
+        oldResult: var int) {.contractual, raises: [], tags: [RootEffect].} =
       ## Check the call if it uses named parameters
       ##
       ## * node      - the AST node representing the call to check
@@ -96,7 +94,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       require:
         node != nil
       body:
-        if not ruleEnabled:
+        if not options.enabled:
           return
         let messagePrefix = if getLogFilter() < lvlNotice:
             ""
@@ -155,35 +153,33 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
               "can't check parameters of call " & callName & " line: " &
               $node.info.line & ". Reason: ", e = getCurrentException())
 
-    if options.parent:
-      ruleEnabled = true
-    setRuleState(node = astTree, ruleName = ruleName, oldState = ruleEnabled)
-    result = options.amount
+    let isParent = options.parent
+    if isParent:
+      options.parent = false
+    setRuleState(node = astTree, ruleName = ruleName,
+        oldState = options.enabled)
     if astTree.kind == nkCall:
-      check(node = astTree, oldResult = result)
+      check(node = astTree, options = options, oldResult = options.amount)
       return
     for node in astTree.items:
-      setRuleState(node = node, ruleName = ruleName, oldState = ruleEnabled)
+      setRuleState(node = node, ruleName = ruleName, oldState = options.enabled)
       # Node is a call, and have parameters, check it
       if node.kind == nkCall and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
-        check(node = node, oldResult = result)
+        check(node = node, options = options, oldResult = options.amount)
       # Check the node's children with the rule
       for child in node.items:
-        result = ruleCheck(astTree = child, options = RuleOptions(
-            options: options.options, parent: false,
-            fileName: options.fileName, negation: options.negation,
-            ruleType: options.ruleType, amount: result))
-    if options.parent:
-      if result < 0:
-        result = 0
+        ruleCheck(astTree = child, options = options)
+    if isParent:
+      if options.amount < 0:
+        options.amount = 0
       if options.ruleType == RuleTypes.count:
         message(text = (if getLogFilter() <
             lvlNotice: "C" else: options.fileName & ": c") &
             "alls which" & (if options.negation: " not" else: "") &
-            " have all named parameters found: " & $result,
-                returnValue = result,
+            " have all named parameters found: " & $options.amount,
+                returnValue = options.amount,
             level = lvlNotice)
-        return 1
+        options.amount = 1
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
