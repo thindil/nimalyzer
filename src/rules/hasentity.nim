@@ -110,9 +110,7 @@ import ../rules
 
 const ruleName* = "hasentity" ## The name of the rule used in a configuration file
 
-var ruleEnabled = true ## If false, checking rule is temporary disabled in the code
-
-proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
+proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the source code has the selected entity
   ##
@@ -133,15 +131,17 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         except ValueError:
           nkNone
     if nodeKind == nkNone:
-      return errorMessage(text = "Invalid type of entity: " & options.options[0])
-    if options.parent:
-      ruleEnabled = true
-    result = options.amount
-    if options.negation and options.parent:
-      result.inc
+      options.amount = errorMessage(text = "Invalid type of entity: " &
+          options.options[0])
+      return
+    let isParent = options.parent
+    if isParent:
+      options.parent = false
+    if options.negation and isParent:
+      options.amount.inc
 
-    proc checkEntity(nodeName, line: string; oldResult: var int) {.raises: [],
-        tags: [RootEffect], contractual.} =
+    proc checkEntity(nodeName, line: string; options: RuleOptions;
+        oldResult: var int) {.raises: [], tags: [RootEffect], contractual.} =
       ## Check if the selected entity's name fulfill the rule requirements and
       ## log the message if needed.
       ##
@@ -150,7 +150,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       ## * oldResult - the previous amount of the rule result value
       ##
       ## Returns the updated oldResult parameter
-      if not ruleEnabled:
+      if not options.enabled:
         return
       # The selected entity found in the node
       if options.options[1].len == 0 or startsWith(s = nodeName,
@@ -175,7 +175,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 returnValue = oldResult, level = lvlNotice, decrease = false)
 
     for node in astTree.items:
-      setRuleState(node = node, ruleName = ruleName, oldState = ruleEnabled)
+      setRuleState(node = node, ruleName = ruleName, oldState = options.enabled)
       if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
           nkCommentStmt}:
         try:
@@ -202,7 +202,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                     except KeyError, Exception:
                       ""
                   checkEntity(nodeName = childName, line = $child.info.line,
-                      oldResult = result)
+                      options = options, oldResult = options.amount)
               elif childIndex <= node.sons.high:
                 let childName = try:
                     if childIndex > -1:
@@ -212,46 +212,48 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                   except KeyError, Exception:
                     ""
                 checkEntity(nodeName = childName, line = $node.info.line,
-                    oldResult = result)
+                    options = options, oldResult = options.amount)
           # Check the node itself
           elif node.kind == nodeKind:
             checkEntity(nodeName = $node[0], line = $node.info.line,
-                oldResult = result)
+                options = options, oldResult = options.amount)
         except KeyError, Exception:
-          return errorMessage(text = "Error during checking hasEntity rule: ",
-              e = getCurrentException())
+          options.amount = errorMessage(
+              text = "Error during checking hasEntity rule: ",
+
+e = getCurrentException())
+          return
         # Check all children of the node with the rule
         for child in node.items:
-          result = ruleCheck(astTree = child, options = RuleOptions(
-              options: options.options, parent: false,
-              fileName: options.fileName,
-              negation: options.negation, ruleType: options.ruleType,
-              amount: result))
-    if options.parent:
+          ruleCheck(astTree = child, options = options)
+    if isParent:
       if options.ruleType == RuleTypes.count:
         message(text = (if getLogFilter() <
             lvlNotice: "D" else: options.fileName & ": d") & "eclared " &
             options.options[0] & " with name '" & options.options[1] &
-            "' found: " & $result, returnValue = result, level = lvlNotice)
-        return 1
-      if result < 1:
-        if not ruleEnabled and result == 0:
-          return 1
-        if options.negation:
+            "' found: " & $options.amount, returnValue = options.amount,
+                level = lvlNotice)
+        options.amount = 1
+      elif options.amount < 1:
+        if not options.enabled and options.amount == 0:
+          options.amount = 1
+        elif options.negation:
           if options.ruleType == check:
-            return 0
+            options.amount = 0
+          else:
+            message(text = (if getLogFilter() <
+                lvlNotice: "D" else: options.fileName & ": d") &
+                "oesn't have declared " & options.options[0] & " with name '" &
+                options.options[1] & "'.", returnValue = options.amount,
+                    level = lvlNotice, decrease = false)
+            options.amount = 0
+        else:
           message(text = (if getLogFilter() <
               lvlNotice: "D" else: options.fileName & ": d") &
               "oesn't have declared " & options.options[0] & " with name '" &
-              options.options[1] & "'.", returnValue = result,
-                  level = lvlNotice, decrease = false)
-          return 0
-        message(text = (if getLogFilter() <
-            lvlNotice: "D" else: options.fileName & ": d") &
-            "oesn't have declared " & options.options[0] & " with name '" &
-            options.options[1] & "'.", returnValue = result, level = (
-            if options.ruleType == check: lvlError else: lvlNotice))
-        return 0
+              options.options[1] & "'.", returnValue = options.amount, level = (
+              if options.ruleType == check: lvlError else: lvlNotice))
+          options.amount = 0
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
