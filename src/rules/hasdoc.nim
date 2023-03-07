@@ -76,9 +76,7 @@ import ../rules
 
 const ruleName* = "hasdoc" ## The name of the rule used in a configuration file
 
-var ruleEnabled = true ## If false, checking rule is temporary disabled in the code
-
-proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
+proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the source code has the documentation in the proper
   ## locactions
@@ -93,15 +91,15 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     astTree != nil
     options.fileName.len > 0
   body:
-    if options.parent:
-      ruleEnabled = true
-    result = options.amount
+    let isParent = options.parent
+    if isParent:
+      options.parent = false
     let messagePrefix = if getLogFilter() < lvlNotice:
         ""
       else:
         options.fileName & ": "
 
-    proc setResult(entityName, line: string; hasDoc: bool;
+    proc setResult(entityName, line: string; hasDoc: bool; options: RuleOptions;
         oldResult: var int) {.raises: [], tags: [RootEffect], contractual.} =
       ## Update the amount of documentation found and log the message if needed
       ##
@@ -117,7 +115,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
       require:
         entityName.len > 0
       body:
-        if not ruleEnabled:
+        if not options.enabled:
           return
         # Documentation not found
         if not hasDoc:
@@ -153,7 +151,7 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
     if options.parent:
       setResult(entityName = "Module", line = "",
           hasDoc = astTree.hasSubnodeWith(kind = nkCommentStmt),
-          oldResult = result)
+          options = options, oldResult = options.amount)
     for node in astTree.items:
       # Check only elements which can have documentation
       if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
@@ -162,14 +160,11 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
         for child in node.items:
           if child.kind == nkPragma:
             setRuleState(node = child, ruleName = ruleName,
-                oldState = ruleEnabled)
+                oldState = options.enabled)
             break
         # Special check for constant declaration section
         if node.kind == nkConstSection:
-          result = ruleCheck(astTree = node, options = RuleOptions(
-              options: options.options, parent: false,
-              fileName: options.fileName, negation: options.negation,
-              ruleType: options.ruleType, amount: result))
+          ruleCheck(astTree = node, options = options)
         else:
           # Set the name of the declared entity which is checked for documentation
           var declName = try:
@@ -182,7 +177,9 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
               except KeyError, Exception:
                 ""
           if declName.len == 0:
-            return errorMessage(text = "Can't get the name of the declared entity.")
+            options.amount = errorMessage(
+                text = "Can't get the name of the declared entity.")
+            return
           if declName.endsWith(suffix = "*") or node.kind in callableDefs:
             try:
               let hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
@@ -190,28 +187,29 @@ proc ruleCheck*(astTree: PNode; options: RuleOptions): int {.contractual,
                 else:
                   node.hasSubnodeWith(kind = nkCommentStmt)
               setResult(entityName = "Declaration of " & declName,
-                  line = $node.info.line, hasDoc = hasDoc, oldResult = result)
+                  line = $node.info.line, hasDoc = hasDoc, options = options,
+                  oldResult = options.amount)
             except KeyError as e:
-              return errorMessage(text = "Can't check the declared entity '" &
-                  declName & "'.", e = e)
+              options.amount = errorMessage(
+                  text = "Can't check the declared entity '" & declName & "'.", e = e)
+              return
       # Check each children of the current AST node with the rule
       for child in node.items:
-        result = ruleCheck(astTree = child, options = RuleOptions(
-            options: options.options, parent: false,
-            fileName: options.fileName, negation: options.negation,
-            ruleType: options.ruleType, amount: result))
-    if options.parent:
-      if result < 0:
-        result = 0
-      if result == 0 and options.ruleType == search:
-        message(text = "The documentation not found.", returnValue = result)
-        return 0
-      if options.ruleType == RuleTypes.count:
+        ruleCheck(astTree = child, options = options)
+    if isParent:
+      if options.amount < 0:
+        options.amount = 0
+      if options.amount == 0 and options.ruleType == search:
+        message(text = "The documentation not found.",
+            returnValue = options.amount)
+        options.amount = 0
+      elif options.ruleType == RuleTypes.count:
         message(text = (if getLogFilter() <
             lvlNotice: "D" else: options.fileName & ": d") &
-                "eclared public items with documentation found: " & $result,
-                returnValue = result, level = lvlNotice)
-        return 1
+                "eclared public items with documentation found: " &
+                    $options.amount,
+                returnValue = options.amount, level = lvlNotice)
+        options.amount = 1
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
