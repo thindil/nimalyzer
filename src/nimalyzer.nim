@@ -239,7 +239,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             options.amount = 0
             options.enabled = true
             options.parent = true
-            if rulesList[rule.name][0](astTree = astTree, options = options) < 1:
+            rulesList[rule.name][0](astTree = astTree, options = options)
+            if options.amount < 1:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
           abortProgram(message = "The file '" & source &
