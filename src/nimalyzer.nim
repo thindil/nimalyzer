@@ -33,7 +33,7 @@ import contracts
 # Internal modules imports
 import rules
 # Nimalyzer rules imports
-import rules/[hasdoc, hasentity, haspragma, namedparams, paramsused]
+import rules/[hasdoc, hasentity, haspragma, namedparams, paramsused, vardeclared]
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     contractual.} =
@@ -87,7 +87,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         hasentity.validateOptions), paramsused.ruleName: (paramsused.ruleCheck,
         paramsused.validateOptions), namedparams.ruleName: (
         namedparams.ruleCheck, namedparams.validateOptions), hasdoc.ruleName: (
-        hasdoc.ruleCheck, hasdoc.validateOptions)}.toTable
+        hasdoc.ruleCheck, hasdoc.validateOptions), varDeclared.ruleName: (
+        varDeclared.ruleCheck, varDeclared.validateOptions)}.toTable
     # Read the configuration file and set the program
     let configFile = paramStr(i = 1)
     type RuleData = object
