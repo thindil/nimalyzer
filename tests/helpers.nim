@@ -22,30 +22,60 @@ template runRuleTest*() =
     invalidCode = parseString(invalidNimCode, nimCache, nimConfig)
     validCode = parseString(validNimCode, nimCache, nimConfig)
   var ruleOptions = RuleOptions(parent: true, fileName: "test.nim", negation: false,
-        ruleType: check, options: validOptions, amount: 0)
+        ruleType: check, options: validOptions, amount: 0, enabled: true)
 
   # check rule tests
-  assert ruleCheck(invalidCode, ruleOptions) == 0
-  assert ruleCheck(validCode, ruleOptions) == 1
+  ruleCheck(invalidCode, ruleOptions)
+  assert ruleOptions.amount == 0
+  ruleOptions.parent = true
+  ruleCheck(validCode, ruleOptions)
+  assert ruleOptions.amount == 1
   # negative check rule tests
+  ruleOptions.parent = true
   ruleOptions.negation = true
-  assert ruleCheck(invalidCode, ruleOptions) == 1
-  assert ruleCheck(validCode, ruleOptions) == 0
+  ruleOptions.amount = 0
+  ruleCheck(validCode, ruleOptions)
+  assert ruleOptions.amount == 0
+  ruleOptions.parent = true
+  ruleCheck(invalidCode, ruleOptions)
+  assert ruleOptions.amount == 1
   # search rule tests
+  ruleOptions.parent = true
   ruleOptions.ruleType = search
   ruleOptions.negation = false
-  assert ruleCheck(invalidCode, ruleOptions) == 0
-  assert ruleCheck(validCode, ruleOptions) == 1
+  ruleOptions.amount = 0
+  ruleCheck(invalidCode, ruleOptions)
+  assert ruleOptions.amount == 0
+  ruleOptions.parent = true
+  ruleCheck(validCode, ruleOptions)
+  assert ruleOptions.amount == 1
   # negative search rule tests
+  ruleOptions.parent = true
   ruleOptions.negation = true
-  assert ruleCheck(invalidCode, ruleOptions) == 1
-  assert ruleCheck(validCode, ruleOptions) == 0
+  ruleOptions.amount = 0
+  ruleCheck(validCode, ruleOptions)
+  assert ruleOptions.amount == 0
+  ruleOptions.parent = true
+  ruleCheck(invalidCode, ruleOptions)
+  assert ruleOptions.amount == 1
   # count rule tests
+  ruleOptions.parent = true
   ruleOptions.ruleType = count
   ruleOptions.negation = false
-  assert ruleCheck(invalidCode, ruleOptions) == 1
-  assert ruleCheck(validCode, ruleOptions) == 1
+  ruleOptions.amount = 0
+  ruleCheck(invalidCode, ruleOptions)
+  assert ruleOptions.amount == 1
+  ruleOptions.parent = true
+  ruleOptions.amount = 0
+  ruleCheck(validCode, ruleOptions)
+  assert ruleOptions.amount == 1
   # negative count rule tests
+  ruleOptions.parent = true
   ruleOptions.negation = true
-  assert ruleCheck(invalidCode, ruleOptions) == 1
-  assert ruleCheck(validCode, ruleOptions) == 1
+  ruleOptions.amount = 0
+  ruleCheck(invalidCode, ruleOptions)
+  assert ruleOptions.amount == 1
+  ruleOptions.parent = true
+  ruleOptions.amount = 0
+  ruleCheck(validCode, ruleOptions)
+  assert ruleOptions.amount == 1
