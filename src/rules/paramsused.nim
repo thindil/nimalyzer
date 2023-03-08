@@ -178,6 +178,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             "rocedures which" & (if options.negation: " not" else: "") &
             " uses all parameters found: " & $options.amount, returnValue = options.amount,
             level = lvlNotice)
+        options.amount = 1
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
