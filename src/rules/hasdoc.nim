@@ -99,19 +99,19 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       else:
         options.fileName & ": "
 
-    proc setResult(entityName, line: string; hasDoc: bool; options: RuleOptions;
-        oldResult: var int) {.raises: [], tags: [RootEffect], contractual.} =
+    proc setResult(entityName, line: string; hasDoc: bool;
+        options: var RuleOptions) {.raises: [], tags: [RootEffect],
+        contractual.} =
       ## Update the amount of documentation found and log the message if needed
       ##
       ## * entityName - the name of the Nim's code entity which was checked for
       ##                the documentation comment
       ## * line       - the line in which the Nim's entity is in the source code
       ## * hasDoc     - if true, the entity has the documentation
-      ## * oldResult  - the current amount of the Nim's entities found with the
-      ##                documentation
+      ## * options    - the options supplied to the rule
       ##
-      ## Updated parameter oldResult. It will be increased or decreased,
-      ## depending on the rule settings.
+      ## Returns updated amount of documentation found. It will be increased
+      ## or decreased, depending on the rule settings.
       require:
         entityName.len > 0
       body:
@@ -120,17 +120,17 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         # Documentation not found
         if not hasDoc:
           if options.negation and options.ruleType == check:
-            oldResult.inc
+            options.amount.inc
             return
           if options.ruleType == check:
             message(text = messagePrefix & entityName & (if line.len >
                 0: " line: " & line else: "") & " doesn't have documentation.",
-                returnValue = oldResult)
+                returnValue = options.amount)
           else:
             if options.negation:
               message(text = messagePrefix & entityName & (if line.len >
                   0: " line: " & line else: "") &
-                  " doesn't have documentation.", returnValue = oldResult,
+                  " doesn't have documentation.", returnValue = options.amount,
                   level = lvlNotice, decrease = false)
         # Documentation found
         else:
@@ -138,20 +138,21 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             if options.ruleType == check:
               message(text = messagePrefix & entityName & (if line.len >
                   0: " line: " & line else: "") & " has documentation.",
-                  returnValue = oldResult)
+                  returnValue = options.amount)
             else:
-              oldResult.dec
+              options.amount.dec
           if options.ruleType == search:
             message(text = messagePrefix & entityName & (if line.len >
                 0: " line: " & line else: "") & " has documentation.",
-                returnValue = oldResult, level = lvlNotice, decrease = false)
+                returnValue = options.amount, level = lvlNotice,
+                decrease = false)
           else:
-            oldResult.inc
+            options.amount.inc
 
-    if options.parent:
+    if isParent:
       setResult(entityName = "Module", line = "",
           hasDoc = astTree.hasSubnodeWith(kind = nkCommentStmt),
-          options = options, oldResult = options.amount)
+          options = options)
     for node in astTree.items:
       # Check only elements which can have documentation
       if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
@@ -187,8 +188,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                 else:
                   node.hasSubnodeWith(kind = nkCommentStmt)
               setResult(entityName = "Declaration of " & declName,
-                  line = $node.info.line, hasDoc = hasDoc, options = options,
-                  oldResult = options.amount)
+                  line = $node.info.line, hasDoc = hasDoc, options = options)
             except KeyError as e:
               options.amount = errorMessage(
                   text = "Can't check the declared entity '" & declName & "'.", e = e)
