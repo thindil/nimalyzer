@@ -12,6 +12,8 @@ of the program.
   and `ruleOff`
 - Better reporting of the program's errors, especially when the program is
   built in debug mode
+- New rule `varDeclared` to check if variables declared in a module have
+  declared types or values
 
 ### Changed
 - Updated the project's documentation
