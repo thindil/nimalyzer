@@ -291,3 +291,53 @@ Examples
 2. Search for all procedures which don't use their all parameters::
 
     search not paramsUsed
+
+Vardeclared rule
+================
+The rule to check if the selected variable declaration (var, let and const)
+has declared type and or value
+The syntax in a configuration file is::
+
+  [ruleType] ?not? varDeclared [declarationType]
+
+* ruleType is the type of rule which will be executed. Proper values are:
+  *check*, *search* and *count*. For more information about the types of
+  rules, please refer to the program's documentation. Check type will raise
+  an error if there is a declaration isn't in desired pattern. Search type
+  will list all declarations with desired pattern and raise error if
+  nothing was found. Count type will simply list the amount of declarations
+  with the desired pattern.
+* optional word *not* means negation for the rule. Adding word *not* will
+  change to inform only about procedures without desired pattern.
+  Probably useable only with search and count type of rule.
+* declarationType is the desired type of variable's declaration to check.
+  Possible values are: full - the declaration must have declared type and
+  value for the variable, type - the declaration must have declared type for
+  the variable, value - the declaration must have declared value for the
+  variable.
+
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "varDeclared"* in the declaration from which the rule
+should be disabled. For example, if the rule should be disabled for variable
+`var a: int`, the full declaration of it should be::
+
+     var a: int {.ruleOff: "varDeclared".}
+
+To enable the rule again, the pragma *ruleOn: "varDeclared"* should be added in
+the element which should be checked. For example, if the rule should be
+re-enabled for variable `let b = 2`, the full declaration should be::
+
+     let b = 2 {.ruleOn: "varDeclared".}
+
+Examples
+--------
+
+1. Check if all declarations have set type and value for them::
+
+    check varDeclared full
+
+2. Search for all declarations which don't set type for them::
+
+    search not varDeclared type
