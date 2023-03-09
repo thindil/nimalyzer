@@ -103,6 +103,74 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         ""
       else:
         options.fileName & ": "
+
+    proc checkDeclaration(declaration: PNode; options: var RuleOptions;
+        index: Positive; identType: string) {.contractual, raises: [], tags: [RootEffect].} =
+      ## Check if the declaration of a variable has defined the selected
+      ## part: type or value.
+      ##
+      ## * declaration - the declaration of a variable to check
+      ## * options     - the options supplied to the rule
+      ## * index       - the index of the declaration's element to check, 1 for
+      ##                 type, 2 for value
+      ## * identType   - the name of the declaration's element to check, "type"
+      ##                 or "value"
+      ##
+      ## Returns updated amount of declarations which fullfil the rule. It will
+      ## be increased or decreased, depending on the rule settings.
+      require:
+        declaration != nil
+        options.options.len > 0
+      body:
+        try:
+          if declaration[index].kind == nkEmpty:
+            if not options.negation:
+              if options.ruleType == check:
+                message(text = messagePrefix & "declaration of '" &
+                    $declaration[0] &
+                  "' line: " & $declaration.info.line &
+                  " doesn't set " & identType & " for the variable.",
+                      returnValue = options.amount)
+            else:
+              if options.ruleType == search:
+                message(text = messagePrefix & "declaration of '" &
+                    $declaration[0] &
+                  "' line: " & $declaration.info.line &
+                  " doesn't set " & identType & " for the variable.",
+                  returnValue = options.amount, level = lvlNotice,
+                  decrease = false)
+              else:
+                options.amount.inc
+          else:
+            if options.negation:
+              if options.ruleType == check:
+                message(text = messagePrefix & "declaration of " &
+                    $declaration[0] &
+                  " line: " &
+                  $declaration.info.line & " sets the " & identType & " '" &
+                      $declaration[index] & "' as the " & identType &
+                          " of the variable.",
+                  returnValue = options.amount)
+              elif options.ruleType == RuleTypes.count:
+                options.amount.dec
+            else:
+              if options.ruleType == search:
+                message(text = messagePrefix & "declaration of " &
+                    $declaration[0] &
+                  " line: " &
+                  $declaration.info.line & " sets the " & identType & " '" &
+                      $declaration[index] & "' as the " & identType &
+                          " of the variable.",
+                  returnValue = options.amount, level = lvlNotice,
+                      decrease = false)
+              else:
+                options.amount.inc
+        except KeyError, Exception:
+          options.amount = errorMessage(text = messagePrefix &
+              "can't check declaration of variable " &
+              " line: " &
+              $declaration.info.line & ". Reason: ", e = getCurrentException())
+
     for node in astTree.items:
       # Check the node's children if rule is enabled
       for child in node.items:
@@ -112,54 +180,10 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           nkConstSection}:
         # Check each variable declaration if meet the rule requirements
         for declaration in node.items:
-          try:
-            # Check if declaration of variable sets its type
-            if options.options[0] in ["full", "type"]:
-              if declaration[1].kind == nkEmpty:
-                if not options.negation:
-                  if options.ruleType == check:
-                    message(text = messagePrefix & "declaration of ''" &
-                        $declaration[0] &
-                      "' line: " & $declaration.info.line &
-                      " doesn't set type for the variable.",
-                          returnValue = options.amount)
-                else:
-                  if options.ruleType == search:
-                    message(text = messagePrefix & "declaration of '" &
-                        $declaration[0] &
-                      "' line: " & $declaration.info.line &
-                      " doesn't set type for the variable.",
-                      returnValue = options.amount, level = lvlNotice,
-                      decrease = false)
-                  else:
-                    options.amount.inc
-              else:
-                if options.negation:
-                  if options.ruleType == check:
-                    message(text = messagePrefix & "declaration of " &
-                        $declaration[0] &
-                      " line: " &
-                      $declaration.info.line & " sets the type '" &
-                          $declaration[1] & "' as the type of the variable.",
-                      returnValue = options.amount)
-                  elif options.ruleType == RuleTypes.count:
-                    options.amount.dec
-                else:
-                  if options.ruleType == search:
-                    message(text = messagePrefix & "declaration of " &
-                        $declaration[0] &
-                      " line: " &
-                      $declaration.info.line & " sets the type '" &
-                          $declaration[1] & "' as the type of the variable.",
-                      returnValue = options.amount, level = lvlNotice,
-                          decrease = false)
-                  else:
-                    options.amount.inc
-          except KeyError, Exception:
-            options.amount = errorMessage(text = messagePrefix &
-                "can't check declaration of variable " &
-                " line: " &
-                $declaration.info.line & ". Reason: ", e = getCurrentException())
+          # Check if declaration of variable sets its type
+          if options.options[0] in ["full", "type"]:
+            checkDeclaration(declaration = declaration, options = options,
+                index = 1, identType = "type")
       # Check the node's children with the rule
       for child in node.items:
         ruleCheck(astTree = child, options = options)
