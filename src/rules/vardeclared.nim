@@ -184,6 +184,9 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           if options.options[0] in ["full", "type"]:
             checkDeclaration(declaration = declaration, options = options,
                 index = 1, identType = "type")
+          if options.options[0] in ["full", "value"]:
+            checkDeclaration(declaration = declaration, options = options,
+                index = 2, identType = "value")
       # Check the node's children with the rule
       for child in node.items:
         ruleCheck(astTree = child, options = options)
