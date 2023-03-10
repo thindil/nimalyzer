@@ -174,10 +174,9 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
               $declaration.info.line & ". Reason: ", e = getCurrentException())
 
     for node in astTree.items:
-      # Check the node's children if rule is enabled
-      for child in node.items:
-        setRuleState(node = child, ruleName = ruleName,
-            oldState = options.enabled)
+      # Check the node if rule is enabled
+      setRuleState(node = node, ruleName = ruleName,
+          oldState = options.enabled)
       if options.enabled and node.kind in {nkVarSection, nkLetSection,
           nkConstSection}:
         # Check each variable declaration if meet the rule requirements
