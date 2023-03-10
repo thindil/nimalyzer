@@ -165,6 +165,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             message(text = messagePrefix & "procedure " & procName & " line: " &
                 line & " doesn't have declared pragma: " & pragma & ".",
                 returnValue = oldResult)
+            oldResult = int.low
           else:
             if options.negation:
               message(text = messagePrefix & "procedure " & procName &
@@ -178,6 +179,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
               message(text = messagePrefix & "procedure " & procName &
                   " line: " & line & " has declared pragma: " & pragma & ".",
                   returnValue = oldResult)
+              oldResult = int.low
             else:
               oldResult.dec
           if options.ruleType == search:

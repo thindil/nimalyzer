@@ -162,6 +162,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                 "as declared " & options.options[0] & " with name '" &
                 nodeName & "' at line: " & line & ".",
                 returnValue = oldResult)
+            oldResult = int.low
           else:
             oldResult.dec
         else:

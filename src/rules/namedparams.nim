@@ -119,6 +119,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                       " line: " & $node.info.line &
                       " doesn't have named parameter number: " & $i & "'.",
                       returnValue = oldResult)
+                  oldResult = int.low
               else:
                 if options.ruleType == search:
                   message(text = messagePrefix & "call " & callName &

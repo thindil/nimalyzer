@@ -131,6 +131,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   "' line: " & $declaration.info.line &
                   " doesn't set " & identType & " for the variable.",
                       returnValue = options.amount)
+                options.amount = int.low
             else:
               if options.ruleType == search:
                 message(text = messagePrefix & "declaration of '" &
@@ -151,6 +152,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                       $declaration[index] & "' as the " & identType &
                           " of the variable.",
                   returnValue = options.amount)
+                options.amount = int.low
               elif options.ruleType == RuleTypes.count:
                 options.amount.dec
             else:

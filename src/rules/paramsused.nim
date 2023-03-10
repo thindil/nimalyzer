@@ -133,6 +133,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                         " line: " & $node.info.line &
                         " doesn't use parameter '" &
                         $child[i] & "'.", returnValue = options.amount)
+                      options.amount = int.low
                   else:
                     if options.ruleType == search:
                       message(text = messagePrefix & "procedure " & procName &
@@ -156,6 +157,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   " line: " &
                   $node.info.line & " use all parameters.",
                   returnValue = options.amount)
+                options.amount = int.low
               elif options.ruleType == RuleTypes.count:
                 options.amount.dec
             else:
