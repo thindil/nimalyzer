@@ -84,7 +84,7 @@ proc errorMessage*(text: string; e: ref Exception = nil): int {.gcsafe,
   require:
     text.len > 0
   body:
-    var message = text
+    var message: string = text
     if e != nil:
       message.add(y = getCurrentExceptionMsg())
       {.ruleOff: "namedParams".}
