@@ -28,7 +28,7 @@
 # Standard library imports
 import std/[logging, os, parseopt, strutils, tables]
 # External modules imports
-import compiler/[idents, llstream, options, parser, pathutils]
+import compiler/[ast, idents, llstream, options, parser, pathutils]
 import contracts
 # Internal modules imports
 import rules
@@ -40,7 +40,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
   ## The main procedure of the program
   # Set the logger, where the program output will be send
   body:
-    let logger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
+    let logger: ConsoleLogger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
 
@@ -90,7 +90,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         hasdoc.ruleCheck, hasdoc.validateOptions), varDeclared.ruleName: (
         varDeclared.ruleCheck, varDeclared.validateOptions)}.toTable
     # Read the configuration file and set the program
-    let configFile = paramStr(i = 1)
+    let configFile: string = paramStr(i = 1)
     type RuleData = object
       name: string
       options: seq[string]
@@ -203,10 +203,10 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     if rules.len == 0:
       abortProgram(message = "No rules specified to check. Please enter any rule configuration to the configuration file.")
     let
-      nimCache = newIdentCache()
-      nimConfig = newConfigRef()
+      nimCache: IdentCache = newIdentCache()
+      nimConfig: ConfigRef = newConfigRef()
     nimConfig.options.excl(y = optHints)
-    var resultCode = QuitSuccess
+    var resultCode: int = QuitSuccess
     # Check source code files with the selected rules
     for i, source in sources.pairs:
       message(text = "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
@@ -214,7 +214,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       var codeParser: Parser
       try:
         # Try to convert the source code file to AST
-        let fileName = toAbsolute(file = source, base = toAbsoluteDir(
+        let fileName: AbsoluteFile = toAbsolute(file = source, base = toAbsoluteDir(
             path = getCurrentDir()))
         try:
           openParser(p = codeParser, filename = fileName,
@@ -225,9 +225,9 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           abortProgram(message = "Can't open file '" & source &
               "' to parse. Reason: " & getCurrentExceptionMsg())
         try:
-          let astTree = codeParser.parseAll
+          let astTree: PNode = codeParser.parseAll
           codeParser.closeParser
-          var options = RuleOptions(fileName: source)
+          var options: RuleOptions = RuleOptions(fileName: source)
           # Check the converted source code with each selected rule
           for index, rule in rules.pairs:
             message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
