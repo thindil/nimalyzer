@@ -43,8 +43,8 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
     # Open or create a help file for rules to write
     try:
-      let rulesFile = open(filename = "doc" & DirSep & "available_rules.rst",
-          mode = fmWrite)
+      let rulesFile: File = open(filename = "doc" & DirSep &
+          "available_rules.rst", mode = fmWrite)
 
       # Create the file header
       rulesFile.writeLine(x = repeat(c = '=', count = 15))
@@ -56,7 +56,7 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
       # Get the documentation of the program's rules
       for file in walkFiles(pattern = "src/rules/*.nim"):
-        var startDoc = false
+        var startDoc: bool = false
         let (_, ruleName, _) = splitFile(path = file)
         for line in file.lines:
           if line.startsWith(prefix = "##") and not startDoc:
@@ -85,7 +85,7 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
     try:
       # Open or create a help file for configuration to write
-      let configdocFile = open(filename = "doc" & DirSep & "config.rst",
+      let configdocFile: File = open(filename = "doc" & DirSep & "config.rst",
           mode = fmWrite)
 
       # Create the file header
@@ -98,11 +98,11 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
       configdocFile.writeLine(x = "")
 
       # Get the documentation of the program's rules
-      let configFile = open(filename = "config" & DirSep & "nimalyzer.cfg")
-      const settings = ["verbosity", "output", "source", "files", "directory",
-          "check", "search", "count"]
+      let configFile: File = open(filename = "config" & DirSep & "nimalyzer.cfg")
+      const settings: array[8, string] = ["verbosity", "output", "source",
+          "files", "directory", "check", "search", "count"]
       for line in configFile.lines:
-        var newLine = line
+        var newLine: string = line
         newLine.removePrefix(chars = {'#', ' '})
         for prefix in settings:
           if newLine.startsWith(prefix = prefix):
