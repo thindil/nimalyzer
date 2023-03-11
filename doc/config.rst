@@ -100,13 +100,13 @@ listed values. The second rule checks if all parameters of all procedures are
 used in the code. The third rule checks if all calls in the code uses named
 parameters. The fourth rule checks if all public declarations have
 documentation. The fifth rule checks if all variables' declarations have
-declared type for them.
+declared type and value for them.
 ::
     check hasPragma contractual "raises: [*" "tags: [*"
     check paramsUsed
     check namedParams
     check hasDoc
-    check varDeclared type
+    check varDeclared full
 
 Search rules
 ------------
