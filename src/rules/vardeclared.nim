@@ -48,17 +48,20 @@
 ## Disabling the rule
 ## ------------------
 ## It is possible to disable the rule for a selected part of the checked code
-## by using pragma *ruleOff: "varDeclared"* in the declaration from which the rule
-## should be disabled. For example, if the rule should be disabled for variable
-## `var a: int`, the full declaration of it should be::
+## by using pragma *ruleOff: "varDeclared"* before the block of code from which
+## the rule should be disabled. For example, if the rule should be disabled for
+## variable## `var a: int`, the full declaration of it should be::
 ##
-##      var a: int {.ruleOff: "varDeclared".}
+##      {.ruleOff: "varDeclared".}
+##      var a: int
 ##
-## To enable the rule again, the pragma *ruleOn: "varDeclared"* should be added in
-## the element which should be checked. For example, if the rule should be
-## re-enabled for variable `let b = 2`, the full declaration should be::
+## To enable the rule again, the pragma *ruleOn: "varDeclared"* should be added
+## before the declaration which should be checked. For example, if the rule
+## should be re-enabled for variable `let b = 2`, the full declaration should
+## be::
 ##
-##      let b = 2 {.ruleOn: "varDeclared".}
+##      {.ruleOn: "varDeclared".}
+##      let b = 2
 ##
 ## Examples
 ## --------
