@@ -64,7 +64,8 @@ proc message*(text: string; returnValue: var int; level: Level = lvlError;
     text.len > 0
   body:
     if decrease:
-      returnValue.dec
+      if returnValue > int.low:
+        returnValue.dec
     else:
       returnValue.inc
     try:
