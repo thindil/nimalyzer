@@ -73,7 +73,7 @@ import contracts
 # Internal modules imports
 import ../rules
 
-const ruleName* = "paramsused" ## The name of the rule used in a configuration file
+const ruleName*: string = "paramsused" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -89,10 +89,10 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     astTree != nil
     options.fileName.len > 0
   body:
-    let isParent = options.parent
+    let isParent: bool = options.parent
     if isParent:
       options.parent = false
-    let messagePrefix = if getLogFilter() < lvlNotice:
+    let messagePrefix: string = if getLogFilter() < lvlNotice:
         ""
       else:
         options.fileName & ": "
@@ -116,7 +116,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           else:
             options.amount.inc
         else:
-          var index = -1
+          var index: int = -1
           # Check each parameter
           for child in node[3]:
             if child.kind in {nkEmpty, nkIdent}:
