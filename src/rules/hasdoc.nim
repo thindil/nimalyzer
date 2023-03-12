@@ -74,7 +74,7 @@ import contracts
 # Internal modules imports
 import ../rules
 
-const ruleName* = "hasdoc" ## The name of the rule used in a configuration file
+const ruleName*: string = "hasdoc" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -91,10 +91,10 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     astTree != nil
     options.fileName.len > 0
   body:
-    let isParent = options.parent
+    let isParent: bool = options.parent
     if isParent:
       options.parent = false
-    let messagePrefix = if getLogFilter() < lvlNotice:
+    let messagePrefix: string = if getLogFilter() < lvlNotice:
         ""
       else:
         options.fileName & ": "
@@ -169,7 +169,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           ruleCheck(astTree = node, options = options)
         else:
           # Set the name of the declared entity which is checked for documentation
-          var declName = try:
+          var declName: string = try:
                 $node[0]
               except KeyError, Exception:
                 ""
