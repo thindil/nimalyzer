@@ -111,7 +111,7 @@ import contracts
 # Internal modules imports
 import ../rules
 
-const ruleName* = "haspragma" ## The name of the rule used in a configuration file
+const ruleName*: string = "haspragma" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -128,10 +128,10 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     options.options.len > 0
     options.fileName.len > 0
   body:
-    let isParent = options.parent
+    let isParent: bool = options.parent
     if isParent:
       options.parent = false
-    let messagePrefix = if getLogFilter() < lvlNotice:
+    let messagePrefix: string = if getLogFilter() < lvlNotice:
         ""
       else:
         options.fileName & ": "
@@ -300,7 +300,7 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
   ##
   ## Returns true if options are valid otherwise false.
   body:
-    var tmpResult = 0
+    var tmpResult: int = 0
     if options.len < 1:
       message(text = "The rule hasPragma require name(s) of pragma(s) as the option, but nothing was supplied.",
           returnValue = tmpResult, level = lvlFatal)
