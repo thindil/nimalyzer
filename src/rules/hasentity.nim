@@ -108,7 +108,7 @@ import contracts
 # Internal modules imports
 import ../rules
 
-const ruleName* = "hasentity" ## The name of the rule used in a configuration file
+const ruleName*: string = "hasentity" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -126,7 +126,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     options.fileName.len > 0
   body:
     # Set the type of the node to check
-    let nodeKind = try:
+    let nodeKind: TNodeKind = try:
           parseEnum[TNodeKind](s = options.options[0])
         except ValueError:
           nkNone
@@ -134,7 +134,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       options.amount = errorMessage(text = "Invalid type of entity: " &
           options.options[0])
       return
-    let isParent = options.parent
+    let isParent: bool = options.parent
     if isParent:
       options.parent = false
     if options.negation and isParent:
@@ -183,11 +183,11 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           # If parent node specified and the current node is the same kind as
           # the parent node, check its children instead of the node
           if options.options.len > 2:
-            let parentKind = try:
+            let parentKind: TNodeKind = try:
                   parseEnum[TNodeKind](s = options.options[2])
                 except ValueError:
                   nkNone
-            var childIndex = -1
+            var childIndex: int = -1
             if options.options.len == 4:
               childIndex = try:
                   options.options[3].parseInt()
@@ -198,14 +198,14 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                 for child in node.items:
                   if child.kind != nodeKind:
                     continue
-                  let childName = try:
+                  let childName: string = try:
                       $child[0]
                     except KeyError, Exception:
                       ""
                   checkEntity(nodeName = childName, line = $child.info.line,
                       options = options, oldResult = options.amount)
               elif childIndex <= node.sons.high:
-                let childName = try:
+                let childName: string = try:
                     if childIndex > -1:
                       $node[childIndex]
                     else:
@@ -221,8 +221,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         except KeyError, Exception:
           options.amount = errorMessage(
               text = "Error during checking hasEntity rule: ",
-
-e = getCurrentException())
+              e = getCurrentException())
           return
         # Check all children of the node with the rule
         for child in node.items:
@@ -264,7 +263,7 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
   ##
   ## Returns true if options are valid otherwise false.
   body:
-    var tmpResult = 0
+    var tmpResult: int = 0
     if options.len < 2:
       message(text = "The rule hasEntity accepts two, three or four options, but not enough of them are supplied: '" &
           options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
@@ -273,7 +272,7 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
       message(text = "The rule hasEntity accepts two, three or four options, but too much of the are supplied: '" &
           options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
       return false
-    let entityType = parseEnum[TNodeKind](s = options[0], default = nkNone)
+    let entityType: TNodeKind = parseEnum[TNodeKind](s = options[0], default = nkNone)
     if entityType == nkNone:
       message(text = "The rule hasEntity the entity type has invalid value: '" &
           options[0] & "'.", returnValue = tmpResult, level = lvlFatal)
