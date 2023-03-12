@@ -99,8 +99,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       negation: bool
       ruleType: RuleTypes
     var
-      sources: seq[string]
-      rules: seq[RuleData]
+      sources: seq[string] = @[]
+      rules: seq[RuleData] = @[]
 
     proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [
         ], tags: [RootEffect], contractual.} =
@@ -213,7 +213,9 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     for i, source in sources.pairs:
       message(text = "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
           source & "'")
+      {.ruleOff: "varDeclared".}
       var codeParser: Parser
+      {.ruleOn: "varDeclared".}
       try:
         # Try to convert the source code file to AST
         let fileName: AbsoluteFile = toAbsolute(file = source, base = toAbsoluteDir(
