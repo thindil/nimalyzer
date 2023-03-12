@@ -66,7 +66,7 @@ import contracts
 # Internal modules imports
 import ../rules
 
-const ruleName* = "namedparams" ## The name of the rule used in a configuration file
+const ruleName*: string = "namedparams" ## The name of the rule used in a configuration file
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -96,11 +96,11 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       body:
         if not options.enabled:
           return
-        let messagePrefix = if getLogFilter() < lvlNotice:
+        let messagePrefix: string = if getLogFilter() < lvlNotice:
             ""
           else:
             options.fileName & ": "
-        let callName = try:
+        let callName: string = try:
               $node[0]
             except KeyError, Exception:
               ""
@@ -154,7 +154,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
               "can't check parameters of call " & callName & " line: " &
               $node.info.line & ". Reason: ", e = getCurrentException())
 
-    let isParent = options.parent
+    let isParent: bool = options.parent
     if isParent:
       options.parent = false
     setRuleState(node = astTree, ruleName = ruleName,
