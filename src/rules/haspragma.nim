@@ -229,7 +229,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             else:
               options.amount.inc
         else:
-          var strPragmas: seq[string]
+          var strPragmas: seq[string] = @[]
           for pragma in pragmas:
             try:
               strPragmas.add(y = $pragma)
