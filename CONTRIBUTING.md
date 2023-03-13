@@ -29,7 +29,7 @@ Body:
 If you want to talk/propose changes in any existing the program feature or
 mechanic, feel free to contact me via options available at [contact page](https://www.laeran.pl/repositories/nimalyzer/wiki?name=Contact).
 General rule about propositions is same as for bugs reports - please,
-try to write that much information as possible. This help us all better
+try to write that much information as possible. This helps us all better
 understand purpose of your changes.
 
 ## Code propositions
@@ -62,6 +62,7 @@ with additional extensions:
 * All subprograms must use their parameters.
 * All subprograms and public declarations (variables, constants too) must have
   documentation.
+* All variables must have declared type and initial value for them.
 * The code must be validated with the *nimalyzer* itself, by running it with
   configuration files *config/nimalyzer.cfg* for the program's code and
   *config/rules.cfg* for the program's rules' code.
