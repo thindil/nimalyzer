@@ -109,7 +109,7 @@ proc setRuleState*(node: PNode; ruleName: string;
     if node.kind == nkPragma:
       for child in node.items:
         try:
-          let pragma = split(s = $child, sep = ": ")
+          let pragma: seq[string] = split(s = $child, sep = ": ")
           if pragma.len == 2 and pragma[1].toLowerAscii == "\"" &
               ruleName.toLowerAscii & "\"":
             if pragma[0].toLowerAscii == "ruleoff":
