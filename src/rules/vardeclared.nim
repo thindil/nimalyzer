@@ -180,16 +180,29 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       # Check the node if rule is enabled
       setRuleState(node = node, ruleName = ruleName,
           oldState = options.enabled)
-      if options.enabled and node.kind in {nkVarSection, nkLetSection,
-          nkConstSection}:
-        # Check each variable declaration if meet the rule requirements
-        for declaration in node.items:
+      if options.enabled:
+        # Sometimes the compiler detects declarations as children of the node
+        if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
+          # Check each variable declaration if meet the rule requirements
+          for declaration in node.items:
+            # Check if declaration of variable sets its type
+            if options.options[0] in ["full", "type"]:
+              checkDeclaration(declaration = declaration, options = options,
+                  index = 1, identType = "type")
+            # Check if declaration of variable sets its value
+            if options.options[0] in ["full", "value"]:
+              checkDeclaration(declaration = declaration, options = options,
+                  index = 2, identType = "value")
+        # And sometimes the compiler detects declarations as the node
+        elif node.kind == nkIdentDefs and astTree.kind in {nkVarSection,
+            nkLetSection, nkConstSection}:
           # Check if declaration of variable sets its type
           if options.options[0] in ["full", "type"]:
-            checkDeclaration(declaration = declaration, options = options,
+            checkDeclaration(declaration = node, options = options,
                 index = 1, identType = "type")
+          # Check if declaration of variable sets its value
           if options.options[0] in ["full", "value"]:
-            checkDeclaration(declaration = declaration, options = options,
+            checkDeclaration(declaration = node, options = options,
                 index = 2, identType = "value")
       # Check the node's children with the rule
       for child in node.items:
