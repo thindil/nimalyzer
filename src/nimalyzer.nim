@@ -40,7 +40,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
   ## The main procedure of the program
   # Set the logger, where the program output will be send
   body:
-    let logger: ConsoleLogger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
+    let logger: ConsoleLogger = newConsoleLogger(
+        fmtStr = "[$time] - $levelname: ")
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
 
@@ -134,14 +135,14 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             abortProgram(message = "Invalid value set in configuration file for the program verbosity level.")
         # Set the file to which the program's output will be logged
         elif line.startsWith(prefix = "output"):
-          let fileName = unixToNativePath(path = line[7..^1])
+          let fileName: string = unixToNativePath(path = line[7..^1])
           addHandler(handler = newFileLogger(filename = fileName,
               fmtStr = "[$time] - $levelname: "))
           message(text = "Added file '" & fileName & "' as log file.",
               level = lvlDebug)
         # Set the source code file to check
         elif line.startsWith(prefix = "source"):
-          let fileName = unixToNativePath(path = line[7..^1])
+          let fileName: string = unixToNativePath(path = line[7..^1])
           addFile(fileName = fileName, sources = sources)
         # Set the source code files to check
         elif line.startsWith(prefix = "files"):
@@ -162,7 +163,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         # Set the program's rule to test the code
         elif line.startsWith(prefix = "check") or line.startsWith(
             prefix = "search") or line.startsWith(prefix = "count"):
-          var configRule = initOptParser(cmdline = line)
+          var configRule: OptParser = initOptParser(cmdline = line)
           configRule.next
           let ruleType: RuleTypes = try:
               parseEnum[RuleTypes](s = configRule.key)
@@ -171,8 +172,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           if ruleType == none:
             abortProgram(message = "Unknown type of rule: '" & configRule.key & "'.")
           configRule.next
-          var newRule = RuleData(name: configRule.key.toLowerAscii, options: @[
-            ], negation: false, ruleType: ruleType)
+          var newRule: RuleData = RuleData(name: configRule.key.toLowerAscii,
+              options: @[], negation: false, ruleType: ruleType)
           if newRule.name == "not":
             newRule.negation = true
             configRule.next
@@ -218,8 +219,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       {.ruleOn: "varDeclared".}
       try:
         # Try to convert the source code file to AST
-        let fileName: AbsoluteFile = toAbsolute(file = source, base = toAbsoluteDir(
-            path = getCurrentDir()))
+        let fileName: AbsoluteFile = toAbsolute(file = source,
+            base = toAbsoluteDir(path = getCurrentDir()))
         try:
           openParser(p = codeParser, filename = fileName,
               inputStream = llStreamOpen(filename = fileName, mode = fmRead),
