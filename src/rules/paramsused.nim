@@ -102,7 +102,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         setRuleState(node = child, ruleName = ruleName, oldState = options.enabled)
       if options.enabled and node.kind in routineDefs:
         # Get the procedure's name
-        let procName = try:
+        let procName: string = try:
               $node[0]
             except KeyError, Exception:
               ""
@@ -191,7 +191,7 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
   ## Returns true if options are valid otherwise false.
   body:
     if options.len > 0:
-      var tmpResult = 0
+      var tmpResult: int = 0
       message(text = "The rule paramsUsed doesn't accept any options, but options suplied: '" &
           options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
       return false
