@@ -278,13 +278,13 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
           options[0] & "'.", returnValue = tmpResult, level = lvlFatal)
       return false
     if options.len > 2:
-      let parentType = parseEnum[TNodeKind](s = options[2], default = nkEmpty)
+      let parentType: TNodeKind = parseEnum[TNodeKind](s = options[2], default = nkEmpty)
       if parentType == nkEmpty:
         message(text = "The rule hasEntity the parent type has invalid value: '" &
             options[2] & "'.", returnValue = tmpResult, level = lvlFatal)
         return false
     if options.len > 3:
-      let childIndex = try:
+      let childIndex: int = try:
           options[3].parseInt()
         except ValueError:
           -1
