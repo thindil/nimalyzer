@@ -200,8 +200,8 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             break
         # Set the name of the procedure to check
         let
-          pragmas = getDeclPragma(n = node)
-          procName = try:
+          pragmas: PNode = getDeclPragma(n = node)
+          procName: string = try:
               $node[0]
             except KeyError, Exception:
               ""
@@ -242,7 +242,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   pragma = pragma, hasPragma = false, options = options,
                   oldResult = options.amount)
             elif pragma[^1] == '*' and pragma[0] != '*':
-              var hasPragma = false
+              var hasPragma: bool = false
               for procPragma in strPragmas:
                 if procPragma.startsWith(prefix = pragma[0..^2]):
                   hasPragma = true
@@ -251,7 +251,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   pragma = pragma, hasPragma = hasPragma, options = options,
                   oldResult = options.amount)
             elif pragma[0] == '*' and pragma[^1] != '*':
-              var hasPragma = false
+              var hasPragma: bool = false
               for procPragma in strPragmas:
                 if procPragma.endsWith(suffix = pragma[1..^1]):
                   hasPragma = true
@@ -260,7 +260,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   pragma = pragma, hasPragma = hasPragma, options = options,
                   oldResult = options.amount)
             elif '*' in [pragma[0], pragma[^1]]:
-              var hasPragma = false
+              var hasPragma: bool = false
               for procPragma in strPragmas:
                 if procPragma.contains(sub = pragma[1..^2]):
                   hasPragma = true
