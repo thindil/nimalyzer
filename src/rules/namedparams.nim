@@ -191,7 +191,7 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
   ## Returns true if options are valid otherwise false.
   body:
     if options.len > 0:
-      var tmpResult = 0
+      var tmpResult: int = 0
       message(text = "The rule namedParams doesn't accept any options, but options suplied: '" &
           options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
       return false
