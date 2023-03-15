@@ -131,10 +131,20 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     let isParent: bool = options.parent
     if isParent:
       options.parent = false
-    let messagePrefix: string = if getLogFilter() < lvlNotice:
+    let
+      messagePrefix: string = if getLogFilter() < lvlNotice:
         ""
       else:
         options.fileName & ": "
+      nodesToCheck: set[TNodeKind] = case options.options[0]
+        of "all":
+          routineDefs
+        of "procedures":
+          {nkProcDef, nkFuncDef, nkMethodDef}
+        of "templates":
+          {nkTemplateDef}
+        else:
+          {}
 
     proc setResult(procName, line, pragma: string; hasPragma: bool;
         options: RuleOptions; oldResult: var int) {.raises: [], tags: [
@@ -192,7 +202,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     for node in astTree.items:
       # Check the node's children with the rule
       # The node can have pragma, check it
-      if node.kind in routineDefs:
+      if node.kind in nodesToCheck:
         for child in node.items:
           if child.kind == nkPragma:
             setRuleState(node = child, ruleName = ruleName,
@@ -236,7 +246,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             except KeyError, Exception:
               discard
           # Check the node for each selected pragma
-          for pragma in options.options:
+          for pragma in options.options[1 .. ^1]:
             if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
               setResult(procName = procName, line = $node.info.line,
                   pragma = pragma, hasPragma = false, options = options,
@@ -302,7 +312,15 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
   body:
     var tmpResult: int = 0
     if options.len < 1:
-      message(text = "The rule hasPragma require name(s) of pragma(s) as the option, but nothing was supplied.",
+      message(text = "The rule hasPragma require type of entities to check and name(s) of pragma(s) as the option, but nothing was supplied.",
           returnValue = tmpResult, level = lvlFatal)
+      return false
+    if options.len == 1:
+      message(text = "The rule hasPragma require type of entities to check and name(s) of pragma(s) as the option, but only one option was supplied.",
+          returnValue = tmpResult, level = lvlFatal)
+      return false
+    if options[0] notin ["procedures", "templates", "all"]:
+      message(text = "The first option of the rule hasPragma must be type of enties to check, but got: '" &
+          options[0] & "'.", returnValue = tmpResult, level = lvlFatal)
       return false
     return true
