@@ -103,7 +103,7 @@ parameters. The fourth rule checks if all public declarations have
 documentation. The fifth rule checks if all variables' declarations have
 declared type and value for them.
 ::
-    check hasPragma contractual "raises: [*" "tags: [*"
+    check hasPragma procedures contractual "raises: [*" "tags: [*"
     check paramsUsed
     check namedParams
     check hasDoc

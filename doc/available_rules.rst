@@ -134,7 +134,7 @@ Haspragma rule
 The rule to check if the selected procedure has the selected pragma. The
 syntax in a configuration file is::
 
-  [ruleType] ?not? haspragma [listOfPragmas]
+  [ruleType] ?not? haspragma [entityType] [listOfPragmas]
 
 * ruleType is the type of rule which will be executed. Proper values are:
   *check*, *search* and *count*. For more information about the types of
@@ -150,6 +150,10 @@ syntax in a configuration file is::
   to inform only about procedures with that pragma.
 * haspragma is the name of the rule. It is case-insensitive, thus it can be
   set as *haspragma*, *hasPragma* or *hAsPrAgMa*.
+* entityType is the type of code's entity which will be checked for the
+  selected pragmas. Possible values: `procedures`: check all procedures,
+  functions and methods. `templates`: check templates only. `all`: check
+  all routines declarations (procedures, functions, templates, macros, etc.).
 * listOfPragmas is the list of pragmas for which the rule will be looking
   for. Each pragma must be separated with whitespace, like::
 
@@ -196,20 +200,20 @@ Examples
 1. Check if all procedures have declared pragma raises. It can be empty or
    contains names of raised exception::
 
-     check hasPragma "raises: [*"
+     check hasPragma procedures "raises: [*"
 
-2. Find all procedures with have *sideEffect* pragma declared::
+2. Find all declarations with have *sideEffect* pragma declared::
 
-     search hasPragma sideEffect
+     search hasPragma all sideEffect
 
 3. Count amount of procedures which don't have declared pragma *gcSafe*::
 
-     count not hasPragma gcSafe
+     count not hasPragma procedures gcSafe
 
 4. Check if all procedures have declared pragmas *contractual* and *lock*.
    The *lock* pragma must have entered the level of the lock::
 
-     check hasPragma contractual "lock: *"
+     check hasPragma procedures contractual "lock: *"
 
 Namedparams rule
 ================
