@@ -53,6 +53,7 @@ form, the path must be relative to the place from which nimalyzer is
 executed (working directory).
 ::
     source src/nimalyzer.nim
+    source src/pragmas.nim
     source src/rules.nim
     source tools/gendoc.nim
 
