@@ -104,7 +104,7 @@ documentation. The fifth rule checks if all variables' declarations have
 declared type and value for them.
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
-    check paramsUsed
+    check paramsUsed procedures
     check namedParams
     check hasDoc
     check varDeclared full
