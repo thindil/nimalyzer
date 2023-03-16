@@ -14,6 +14,8 @@ of the program.
   built in debug mode
 - New rule `varDeclared` to check if variables declared in a module have
   declared types or values
+- **BREAKING**: Ability to set the type of declaration which will be checked
+  for pragmas for rule `hasPragma`.
 
 ### Changed
 - Updated the project's documentation
