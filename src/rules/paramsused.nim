@@ -26,7 +26,7 @@
 ## The rule to check if the selected procedure uses all its parameter
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? paramsUsed
+##   [ruleType] ?not? paramsUsed [declarationType]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search* and *count*. For more information about the types of
@@ -38,6 +38,12 @@
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about procedures which have all parameters used.
 ##   Probably useable only with search and count type of rule.
+## * paramsUsed is the name of the rule. It is case-insensitive, thus it can be
+##   set as *paramsUsed*, *paramsUsed* or *pArAmSuSeD*.
+## * declarationType is the type of declaration which will be checked for the
+##   parameters usage. Possible values: `procedures`: check all procedures,
+##   functions and methods. `templates`: check templates only. `all`: check
+##   all routines declarations (procedures, functions, templates, macros, etc.).
 ##
 ## Disabling the rule
 ## ------------------
@@ -59,11 +65,11 @@
 ##
 ## 1. Check if all procedures in module uses their parameters::
 ##
-##     check paramsUsed
+##     check paramsUsed procedures
 ##
-## 2. Search for all procedures which don't use their all parameters::
+## 2. Search for all declarations which don't use their all parameters::
 ##
-##     search not paramsUsed
+##     search not paramsUsed all
 
 # Standard library imports
 import std/[logging, strutils]
