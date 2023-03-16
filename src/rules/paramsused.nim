@@ -92,15 +92,25 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     let isParent: bool = options.parent
     if isParent:
       options.parent = false
-    let messagePrefix: string = if getLogFilter() < lvlNotice:
-        ""
-      else:
-        options.fileName & ": "
+    let
+      messagePrefix: string = if getLogFilter() < lvlNotice:
+          ""
+        else:
+          options.fileName & ": "
+      nodesToCheck: set[TNodeKind] = case options.options[0]
+        of "all":
+          routineDefs
+        of "procedures":
+          {nkProcDef, nkFuncDef, nkMethodDef}
+        of "templates":
+          {nkTemplateDef}
+        else:
+          {}
     for node in astTree.items:
       # Check the node's children if rule is enabled
       for child in node.items:
         setRuleState(node = child, ruleName = ruleName, oldState = options.enabled)
-      if options.enabled and node.kind in routineDefs:
+      if options.enabled and node.kind in nodesToCheck:
         # Get the procedure's name
         let procName: string = try:
               $node[0]
@@ -190,9 +200,13 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
   ##
   ## Returns true if options are valid otherwise false.
   body:
-    if options.len > 0:
-      var tmpResult: int = 0
-      message(text = "The rule paramsUsed doesn't accept any options, but options suplied: '" &
-          options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
+    var tmpResult: int = 0
+    if options.len < 1:
+      message(text = "The rule paramsUsed require type of entities to check, but nothing was supplied.",
+          returnValue = tmpResult, level = lvlFatal)
+      return false
+    if options[0] notin ["procedures", "templates", "all"]:
+      message(text = "The option for the rule paramsUsed must be type of enties to check, but got: '" &
+          options[0] & "'.", returnValue = tmpResult, level = lvlFatal)
       return false
     return true
