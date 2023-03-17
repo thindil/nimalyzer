@@ -15,9 +15,9 @@ of the program.
 - New rule `varDeclared` to check if variables declared in a module have
   declared types or values
 - **BREAKING**: Ability to set the type of declaration which will be checked
-  for pragmas for rule `hasPragma`.
+  for pragmas for rule `hasPragma`
 - **BREAKING**: Ability to set the type of declaration which will be checked
-  for the paramters usage for rule `paramsUsed`.
+  for the paramters usage for rule `paramsUsed`
 
 ### Changed
 - Updated the project's documentation
@@ -29,6 +29,7 @@ of the program.
 - Result for negative search for hasEntiry rule
 - Show the name of the entity when search for entity with any name in hasEntity
   rule
+- Detecting documentation of templates with `hasDoc` rule
 
 ## [0.1.0] - 2023-02-13
 - Initial release
