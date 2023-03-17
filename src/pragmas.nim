@@ -29,13 +29,13 @@
 template ruleOff*(name: string) {.pragma.}
   ## The pragma used to disable checking the selected rule. The syntax is::
   ##
-  ## {.ruleOff: [nameOfRule].}
+  ##     {.ruleOff: [nameOfRule].}
   ##
   ## Where nameOfRule is the name of the rule to disable.
 template ruleOn*(name: string) {.pragma.}
   ## The pragma used to enable checking the previously disabled rule. The
   ## syntax is::
   ##
-  ## {.ruleOn: [nameOfRule].}
+  ##     {.ruleOn: [nameOfRule].}
   ##
   ## Where nameOfRule is the name of the rule to enable.
