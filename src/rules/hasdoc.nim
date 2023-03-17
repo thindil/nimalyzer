@@ -186,7 +186,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             try:
               let hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs,
                   nkConstDef, nkTemplateDef}:
-                  if node.comment.len > 0: true else: false
+                  node.comment.len > 0
                 else:
                   node.hasSubnodeWith(kind = nkCommentStmt)
               setResult(entityName = "Declaration of " & declName,
