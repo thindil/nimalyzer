@@ -242,7 +242,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             options.options = rule.options
             options.negation = rule.negation
             options.ruleType = rule.ruleType
-            options.amount = 0
+            options.amount = (if rule.ruleType == RuleTypes.check: 1 else: 0)
             options.enabled = true
             options.parent = true
             rulesList[rule.name][0](astTree = astTree, options = options)
