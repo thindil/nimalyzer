@@ -16,6 +16,8 @@ of the program.
   declared types or values
 - **BREAKING**: Ability to set the type of declaration which will be checked
   for pragmas for rule `hasPragma`.
+- **BREAKING**: Ability to set the type of declaration which will be checked
+  for the paramters usage for rule `paramsUsed`.
 
 ### Changed
 - Updated the project's documentation
