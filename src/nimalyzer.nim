@@ -31,7 +31,7 @@ import std/[logging, os, parseopt, strutils, tables]
 import compiler/[ast, idents, llstream, options, parser, pathutils]
 import contracts
 # Internal modules imports
-import rules, pragmas
+import rules, pragmas, utils
 # Nimalyzer rules imports
 import rules/[hasdoc, hasentity, haspragma, namedparams, paramsused, vardeclared]
 
@@ -44,36 +44,6 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         fmtStr = "[$time] - $levelname: ")
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
-
-    proc message(text: string; level: Level = lvlInfo) {.raises: [], tags: [
-        RootEffect], contractual.} =
-      ## Log the selected message. If error happens during logging, print the
-      ## error message and quit the program
-      ##
-      ## * text  - the message to log
-      ## * level - the log level of the message. Default value is lvlInfo
-      require:
-        text.len > 0
-      body:
-        try:
-          log(level = level, args = text)
-        except Exception:
-          echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
-          echo "Stopping nimalyzer"
-          quit QuitFailure
-
-    proc abortProgram(message: string; e: ref Exception = nil) {.gcsafe,
-        raises: [], tags: [RootEffect], contractual.} =
-      ## Log the message and stop the program
-      ##
-      ## * message - the message to log
-      ## * e       - the exception which occured if any.
-      require:
-        message.len > 0
-      body:
-        discard errorMessage(text = message, e = e)
-        message(text = "Stopping nimalyzer.")
-        quit QuitFailure
 
     try:
       info(args = "Starting nimalyzer ver 0.2.0")
