@@ -26,11 +26,23 @@
 ## Provides various code used in other modules
 
 # Standard library imports
-import std/logging
+import std/[logging, tables]
 # External modules imports
 import contracts
 # Internal modules imports
-import rules
+import rules, pragmas
+# Nimalyzer rules imports
+import rules/[hasdoc, hasentity, haspragma, namedparams, paramsused, vardeclared]
+
+{.push ruleOff: "varDeclared".}
+const rulesList* = {haspragma.ruleName: (haspragma.ruleCheck,
+    haspragma.validateOptions), hasentity.ruleName: (hasentity.ruleCheck,
+    hasentity.validateOptions), paramsused.ruleName: (paramsused.ruleCheck,
+    paramsused.validateOptions), namedparams.ruleName: (
+    namedparams.ruleCheck, namedparams.validateOptions), hasdoc.ruleName: (
+    hasdoc.ruleCheck, hasdoc.validateOptions), varDeclared.ruleName: (
+    varDeclared.ruleCheck, varDeclared.validateOptions)}.toTable
+{.push ruleOn: "varDeclared".}
 
 proc message*(text: string; level: Level = lvlInfo) {.raises: [], tags: [
     RootEffect], contractual.} =

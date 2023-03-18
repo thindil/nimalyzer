@@ -31,9 +31,7 @@ import std/[logging, os, parseopt, strutils, tables]
 import compiler/[ast, idents, llstream, options, parser, pathutils]
 import contracts
 # Internal modules imports
-import rules, pragmas, utils
-# Nimalyzer rules imports
-import rules/[hasdoc, hasentity, haspragma, namedparams, paramsused, vardeclared]
+import config, rules, pragmas, utils
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     contractual.} =
@@ -53,22 +51,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     # No configuration file specified, quit from the program
     if paramCount() == 0:
       abortProgram(message = "No configuration file specified. Please run the program with path to the config file as an argument.")
-    {.ruleOff: "varDeclared".}
-    const rulesList = {haspragma.ruleName: (haspragma.ruleCheck,
-        haspragma.validateOptions), hasentity.ruleName: (hasentity.ruleCheck,
-        hasentity.validateOptions), paramsused.ruleName: (paramsused.ruleCheck,
-        paramsused.validateOptions), namedparams.ruleName: (
-        namedparams.ruleCheck, namedparams.validateOptions), hasdoc.ruleName: (
-        hasdoc.ruleCheck, hasdoc.validateOptions), varDeclared.ruleName: (
-        varDeclared.ruleCheck, varDeclared.validateOptions)}.toTable
-    {.ruleOn: "varDeclared".}
     # Read the configuration file and set the program
     let configFile: string = paramStr(i = 1)
-    type RuleData = object
-      name: string
-      options: seq[string]
-      negation: bool
-      ruleType: RuleTypes
     var
       sources: seq[string] = @[]
       rules: seq[RuleData] = @[]
