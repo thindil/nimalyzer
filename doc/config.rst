@@ -55,6 +55,7 @@ executed (working directory).
     source src/nimalyzer.nim
     source src/pragmas.nim
     source src/rules.nim
+    source src/utils.nim
     source tools/gendoc.nim
 
 Files
