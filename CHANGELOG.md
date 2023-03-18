@@ -30,6 +30,7 @@ of the program.
 - Show the name of the entity when search for entity with any name in hasEntity
   rule
 - Detecting documentation of templates with `hasDoc` rule
+- Return value for check type of rules when nothing was found in a code
 
 ## [0.1.0] - 2023-02-13
 - Initial release
