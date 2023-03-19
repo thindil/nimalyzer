@@ -42,6 +42,8 @@ const rulesList* = {haspragma.ruleName: (haspragma.ruleCheck,
     namedparams.ruleCheck, namedparams.validateOptions), hasdoc.ruleName: (
     hasdoc.ruleCheck, hasdoc.validateOptions), varDeclared.ruleName: (
     varDeclared.ruleCheck, varDeclared.validateOptions)}.toTable
+    ## The list of available the program's rules with their names as keys and
+    ## check code plus validate options code as data
 {.push ruleOn: "varDeclared".}
 
 proc message*(text: string; level: Level = lvlInfo) {.raises: [], tags: [
