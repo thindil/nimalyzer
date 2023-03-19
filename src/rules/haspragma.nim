@@ -314,17 +314,11 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
   ##
   ## Returns true if options are valid otherwise false.
   body:
-    var tmpResult: int = 0
     if options.len < 1:
-      message(text = "The rule hasPragma require type of entities to check and name(s) of pragma(s) as the option, but nothing was supplied.",
-          returnValue = tmpResult, level = lvlFatal)
-      return false
+      return errorMessage(text = "The rule hasPragma require type of entities to check and name(s) of pragma(s) as the option, but nothing was supplied.").bool
     if options.len == 1:
-      message(text = "The rule hasPragma require type of entities to check and name(s) of pragma(s) as the option, but only one option was supplied.",
-          returnValue = tmpResult, level = lvlFatal)
-      return false
+      return errorMessage(text = "The rule hasPragma require type of entities to check and name(s) of pragma(s) as the option, but only one option was supplied.").bool
     if options[0] notin ["procedures", "templates", "all"]:
-      message(text = "The first option of the rule hasPragma must be type of enties to check, but got: '" &
-          options[0] & "'.", returnValue = tmpResult, level = lvlFatal)
-      return false
+      return errorMessage(text = "The first option of the rule hasPragma must be type of enties to check, but got: '" &
+          options[0] & "'.").bool
     return true
