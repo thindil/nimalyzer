@@ -115,7 +115,8 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     for node in astTree.items:
       # Check the node's children if rule is enabled
       for child in node.items:
-        setRuleState(node = child, ruleName = ruleName, oldState = options.enabled)
+        setRuleState(node = child, ruleName = ruleName,
+            oldState = options.enabled)
       if options.enabled and node.kind in nodesToCheck:
         # Get the procedure's name
         let procName: string = try:
@@ -123,7 +124,8 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             except KeyError, Exception:
               ""
         if procName.len == 0:
-          options.amount = errorMessage(text = "Can't get the name of the procedure.")
+          options.amount = errorMessage(
+              text = "Can't get the name of the procedure.")
           return
         # No parameters, skip
         if node[3].len < 2:
@@ -181,7 +183,8 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                 message(text = messagePrefix & "procedure " & procName &
                   " line: " &
                   $node.info.line & " use all parameters.",
-                  returnValue = options.amount, level = lvlNotice, decrease = false)
+                  returnValue = options.amount, level = lvlNotice,
+                  decrease = false)
               else:
                 options.amount.inc
       # Check the node's children with the rule
@@ -194,8 +197,8 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         message(text = (if getLogFilter() <
             lvlNotice: "P" else: options.fileName & ": p") &
             "rocedures which" & (if options.negation: " not" else: "") &
-            " uses all parameters found: " & $options.amount, returnValue = options.amount,
-            level = lvlNotice)
+            " uses all parameters found: " & $options.amount,
+            returnValue = options.amount, level = lvlNotice)
         options.amount = 1
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
@@ -206,13 +209,9 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
   ##
   ## Returns true if options are valid otherwise false.
   body:
-    var tmpResult: int = 0
     if options.len < 1:
-      message(text = "The rule paramsUsed require type of entities to check, but nothing was supplied.",
-          returnValue = tmpResult, level = lvlFatal)
-      return false
+      return errorMessage(text = "The rule paramsUsed require type of entities to check, but nothing was supplied.").bool
     if options[0] notin ["procedures", "templates", "all"]:
-      message(text = "The option for the rule paramsUsed must be type of enties to check, but got: '" &
-          options[0] & "'.", returnValue = tmpResult, level = lvlFatal)
-      return false
+      return errorMessage(text = "The option for the rule paramsUsed must be type of enties to check, but got: '" &
+          options[0] & "'.").bool
     return true
