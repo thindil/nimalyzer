@@ -26,7 +26,7 @@
 ## This is the main module of the program.
 
 # Standard library imports
-import std/[logging, os, parseopt, strutils, tables]
+import std/[logging, os, strutils, tables]
 # External modules imports
 import compiler/[ast, idents, llstream, options, parser, pathutils]
 import contracts
@@ -42,118 +42,17 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         fmtStr = "[$time] - $levelname: ")
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
-
     try:
       info(args = "Starting nimalyzer ver 0.2.0")
     except Exception:
       abortProgram(message = "Can't log messages.")
-
     # No configuration file specified, quit from the program
     if paramCount() == 0:
       abortProgram(message = "No configuration file specified. Please run the program with path to the config file as an argument.")
     # Read the configuration file and set the program
-    let configFile: string = paramStr(i = 1)
-    var
-      sources: seq[string] = @[]
-      rules: seq[RuleData] = @[]
-
-    proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [
-        ], tags: [RootEffect], contractual.} =
-      ## Add the selected file as a source code to check for the program
-      ##
-      ## * fileName - the path to the file which will be added
-      ## * sources  - the list of source code files to check
-      ##
-      ## Returns the updated parameter sources
-      require:
-        fileName.len > 0
-      body:
-        if fileName notin sources:
-          sources.add(y = fileName)
-          message(text = "Added file '" & fileName &
-              "' to the list of files to check.", level = lvlDebug)
-
-    try:
-      # Read the program's configuration
-      for line in configFile.lines:
-        # Comment line, skip
-        if line.startsWith(prefix = '#') or line.len == 0:
-          continue
-        # Set the program's verbosity
-        elif line.startsWith(prefix = "verbosity"):
-          try:
-            setLogFilter(lvl = parseEnum[Level](s = line[10..^1]))
-            message(text = "Setting the program verbosity to '" & line[10..^1] &
-                "'.", level = lvlDebug)
-          except ValueError:
-            abortProgram(message = "Invalid value set in configuration file for the program verbosity level.")
-        # Set the file to which the program's output will be logged
-        elif line.startsWith(prefix = "output"):
-          let fileName: string = unixToNativePath(path = line[7..^1])
-          addHandler(handler = newFileLogger(filename = fileName,
-              fmtStr = "[$time] - $levelname: "))
-          message(text = "Added file '" & fileName & "' as log file.",
-              level = lvlDebug)
-        # Set the source code file to check
-        elif line.startsWith(prefix = "source"):
-          let fileName: string = unixToNativePath(path = line[7..^1])
-          addFile(fileName = fileName, sources = sources)
-        # Set the source code files to check
-        elif line.startsWith(prefix = "files"):
-          try:
-            for fileName in walkFiles(pattern = line[6..^1]):
-              addFile(fileName = fileName, sources = sources)
-          except OSError:
-            abortProgram(message = "Can't parse setting: '" & line &
-                "'. Reason: ", e = getCurrentException())
-        # Set the source code files to check, the second option
-        elif line.startsWith(prefix = "directory"):
-          try:
-            for fileName in walkDirRec(dir = line[10..^1]):
-              addFile(fileName = fileName, sources = sources)
-          except OSError:
-            abortProgram(message = "Can't add files to check. Reason: ",
-                e = getCurrentException())
-        # Set the program's rule to test the code
-        elif line.startsWith(prefix = "check") or line.startsWith(
-            prefix = "search") or line.startsWith(prefix = "count"):
-          var configRule: OptParser = initOptParser(cmdline = line)
-          configRule.next
-          let ruleType: RuleTypes = try:
-              parseEnum[RuleTypes](s = configRule.key)
-            except ValueError:
-              none
-          if ruleType == none:
-            abortProgram(message = "Unknown type of rule: '" & configRule.key & "'.")
-          configRule.next
-          var newRule: RuleData = RuleData(name: configRule.key.toLowerAscii,
-              options: @[], negation: false, ruleType: ruleType)
-          if newRule.name == "not":
-            newRule.negation = true
-            configRule.next
-            newRule.name = configRule.key.toLowerAscii
-          if not rulesList.hasKey(key = newRule.name):
-            abortProgram(message = "No rule named '" & newRule.name & "' available.")
-          while true:
-            configRule.next()
-            if configRule.kind == cmdEnd:
-              break
-            newRule.options.add(y = configRule.key)
-          try:
-            if not rulesList[newRule.name][1](options = newRule.options):
-              abortProgram(message = "Invalid options for rule '" &
-                  newRule.name & "'.")
-          except KeyError:
-            abortProgram(message = "Can't validate rule parameters. Reason: ",
-                e = getCurrentException())
-          rules.add(y = newRule)
-          message(text = "Added" & (if rules[
-              ^1].negation: " negation " else: " ") & $rules[^1].ruleType &
-              " rule '" & rules[^1].name & "' with options: '" & rules[
-              ^1].options.join(", ") & "' to the list of rules to check.",
-              level = lvlDebug)
-    except IOError:
-      abortProgram(message = "The specified configuration file '" & configFile & "' doesn't exist.")
+    {.ruleOff: "varDeclared".}
+    let (sources, rules) = parseConfig(configFile = paramStr(i = 1))
+    {.ruleOn: "varDeclared".}
     # Check if the lists of source code files and rules is set
     if sources.len == 0:
       abortProgram(message = "No files specified to check. Please enter any files names to the configuration file.")
