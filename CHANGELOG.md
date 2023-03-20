@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 Tag **BREAKING** means the change break compatibility with a previous version
 of the program.
 
-## [Unreleased]
+## [0.2.0] - 2023-03-20
 
 ### Added
 - Ability to set parent entity and index of child for rule hasEntity
