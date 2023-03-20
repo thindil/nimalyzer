@@ -48,6 +48,6 @@ task tools, "builds the project's tools":
       binDir & " tools" & DirSep & "gendoc.nim"
 
 task docs, "builds the project's documentation":
-  for file in ["config", "index", "available_rules"]:
+  for file in ["configuration", "index", "available_rules"]:
     exec "nim rst2html --index:on --outdir:htmldocs doc" & DirSep & file & ".rst"
   exec "nim doc --project --outdir:htmldocs src/nimalyzer.nim"

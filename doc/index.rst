@@ -24,7 +24,7 @@ Usage
 =====
 
 1. To use Nimalyzer with your project, first you have to create a configuration
-   file for it. Please check documentation for `configuration syntax <config.html>`_
+   file for it. Please check documentation for `configuration syntax <configuration.html>`_
    and list of `available rules <available_rules.html>`_ for more details. In your
    configuration file you have to set at least one source file to check and at
    least one rule to use.
