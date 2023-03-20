@@ -227,17 +227,12 @@ proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
   ##
   ## Returns true if options are valid otherwise false.
   body:
-    var tmpResult: int = 0
     if options.len == 0:
-      message(text = "The rule varDeclared require type of declaration as the option, but nothing was supplied.",
-          returnValue = tmpResult, level = lvlFatal)
-      return false
+      return errorMessage(text = "The rule varDeclared require type of declaration as the option, but nothing was supplied.").bool
     elif options.len == 1 and options[0] notin ["full", "type", "value"]:
-      message(text = "The rule varDeclared require 'full', 'type' or 'value' as option, but suplied option was: '" &
-          options[0] & "'.", returnValue = tmpResult, level = lvlFatal)
-      return false
+      return errorMessage(text = "The rule varDeclared require 'full', 'type' or 'value' as option, but suplied option was: '" &
+          options[0] & "'.").bool
     elif options.len > 1:
-      message(text = "The rule varDeclared require exactly one option, but more options suplied: '" &
-          options.join(", ") & "'.", returnValue = tmpResult, level = lvlFatal)
-      return false
+      return errorMessage(text = "The rule varDeclared require exactly one option, but more options suplied: '" &
+          options.join(", ") & "'.").bool
     return true
