@@ -7,8 +7,8 @@ of the program.
 ## [0.2.0] - 2023-03-20
 
 ### Added
-- Ability to set parent entity and index of child for rule hasEntity
-- Ability to disable and reenable the program's rules with pragmas `ruleOn`
+- Ability to set parent entity and index of child for rule `hasEntity`
+- Ability to disable and re-enable the program's rules with pragmas `ruleOn`
   and `ruleOff`
 - Better reporting of the program's errors, especially when the program is
   built in debug mode
@@ -17,18 +17,18 @@ of the program.
 - **BREAKING**: Ability to set the type of declaration which will be checked
   for pragmas for rule `hasPragma`
 - **BREAKING**: Ability to set the type of declaration which will be checked
-  for the paramters usage for rule `paramsUsed`
+  for the parameters' usage for rule `paramsUsed`
 
 ### Changed
 - Updated the project's documentation
 - Updated contributing guide
 
 ### Fixed
-- Result for negative check for hasDoc, hasEntity, namedParams and paramsUsed
-  rules
-- Result for negative search for hasEntiry rule
-- Show the name of the entity when search for entity with any name in hasEntity
-  rule
+- Result for negative check for `hasDoc`, `hasEntity`, `namedParams` and 
+  `paramsUsed` rules
+- Result for negative search for `hasEntiry` rule
+- Show the name of the entity when search for entity with any name in
+  `hasEntity` rule
 - Detecting documentation of templates with `hasDoc` rule
 - Return value for check type of rules when nothing was found in a code
 
