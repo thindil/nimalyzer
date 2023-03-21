@@ -11,6 +11,8 @@ of the program.
 
 ### Fixed
 - Typos in Changelog
+- `hasPragma` rule doesn't return error if a declaration doesn't have any
+  pragmas
 
 ## [0.2.0] - 2023-03-20
 
@@ -32,7 +34,7 @@ of the program.
 - Updated contributing guide
 
 ### Fixed
-- Result for negative check for `hasDoc`, `hasEntity`, `namedParams` and 
+- Result for negative check for `hasDoc`, `hasEntity`, `namedParams` and
   `paramsUsed` rules
 - Result for negative search for `hasEntiry` rule
 - Show the name of the entity when search for entity with any name in
