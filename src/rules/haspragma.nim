@@ -231,6 +231,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   " line: " & $node.info.line &
                   " doesn't have declared any pragmas.",
                   returnValue = options.amount)
+              options.amount = int.low
             else:
               options.amount.dec
           else:
