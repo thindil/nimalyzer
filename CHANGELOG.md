@@ -6,6 +6,9 @@ of the program.
 
 ## [Unreleased]
 
+### Changed
+- Updated the project's documentation
+
 ### Fixed
 - Typos in Changelog
 
