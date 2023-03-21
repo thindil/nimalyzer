@@ -34,6 +34,12 @@ that information, please refer to the README.md file included into the release.
 
 ### How to install
 
+#### Standalone binaries
+
+Standalone binaries are available for FreeBSD, Linux and Windows in 64-bit
+versions. They are available on the Download page. Just download and extract
+them to the selected directory.
+
 #### Build from the source
 
 You will need:
@@ -42,10 +48,10 @@ You will need:
 * [Contracts package](https://github.com/Udiknedormin/NimContracts)
 
 You can install them manually or by using [Nimble](https://github.com/nim-lang/nimble).
-In that second option, type `nimble install https://github.com/thindil/nimalyzer` to
-install the program and all dependencies. Generally it is recommended to use
-`nimble release` to build the project in release (optimized) mode or
-`nimble debug` to build it in the debug mode.
+In that second option, type `nimble install nimalyzer` to install the program
+and all dependencies. Generally it is recommended to use `nimble release` to
+build the project in release (optimized) mode or `nimble debug` to build it
+in the debug mode.
 
 #### Build the project's documentation
 
