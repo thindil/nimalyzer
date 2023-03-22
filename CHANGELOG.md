@@ -8,6 +8,7 @@ of the program.
 
 ### Changed
 - Updated the project's documentation
+- Updated README.md
 
 ### Fixed
 - Typos in Changelog
