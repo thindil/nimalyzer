@@ -107,12 +107,7 @@
 ##
 ##      check hasPragma procedures contractual "lock: *"
 
-# Standard library imports
-import std/[logging, strutils]
-# External modules imports
-import compiler/[ast, renderer]
-import contracts
-# Internal modules imports
+# Import default rules' modules
 import ../rules
 
 const ruleName*: string = "haspragma" ## The name of the rule used in a configuration file
