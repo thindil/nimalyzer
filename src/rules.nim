@@ -49,7 +49,7 @@ type
     enabled*: bool        ## If false, the rule is temporary disabled by pragmas
 
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
-    decrease: bool = true) {.gcsafe, raises: [], tags: [RootEffect],
+    decrease: bool = true) {.sideEffect, gcsafe, raises: [], tags: [RootEffect],
     contractual.} =
   ## Log the rule's selected message
   ##
@@ -73,8 +73,8 @@ proc message*(text: string; returnValue: var int; level: Level = lvlError;
     except Exception:
       echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
 
-proc errorMessage*(text: string; e: ref Exception = nil): int {.gcsafe,
-    raises: [], tags: [RootEffect], contractual.} =
+proc errorMessage*(text: string; e: ref Exception = nil): int {.sideEffect,
+    gcsafe, raises: [], tags: [RootEffect], contractual.} =
   ## Log the error message in the rule
   ##
   ## * text - the message which will be logged
@@ -99,7 +99,8 @@ proc errorMessage*(text: string; e: ref Exception = nil): int {.gcsafe,
     return 0
 
 proc setRuleState*(node: PNode; ruleName: string;
-    oldState: var bool) {.raises: [], tags: [RootEffect], contractual.} =
+    oldState: var bool) {.sideEffect, raises: [], tags: [RootEffect],
+    contractual.} =
   ## Disable or enable again the rule for the selected Nim module if needed
   ##
   ## * node - the AST node to check for the state of the rule
