@@ -3,7 +3,6 @@ discard """
   outputsub: "randomoption"
 """
 
-import compiler/[idents, options, parser]
 import ../../src/rules/hasdoc
 import ../helpers.nim
 

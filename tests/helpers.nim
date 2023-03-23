@@ -1,4 +1,5 @@
 import std/logging
+import compiler/[idents, options, parser]
 import ../src/rules
 
 proc setLogger*() =

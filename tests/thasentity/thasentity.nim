@@ -3,7 +3,6 @@ discard """
   outputsub: "two, three or four options"
 """
 
-import compiler/[idents, options, parser]
 import ../../src/rules/hasentity
 import ../helpers.nim
 

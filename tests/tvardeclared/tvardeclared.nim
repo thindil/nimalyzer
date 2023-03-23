@@ -3,7 +3,6 @@ discard """
   outputsub: "require type"
 """
 
-import compiler/[idents, options, parser]
 import ../../src/rules/vardeclared
 import ../helpers.nim
 
