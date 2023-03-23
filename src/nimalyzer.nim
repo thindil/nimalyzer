@@ -26,12 +26,11 @@
 ## This is the main module of the program.
 
 # Standard library imports
-import std/[logging, os, strutils, tables]
+import std/[os, tables]
 # External modules imports
-import compiler/[ast, idents, llstream, options, parser, pathutils]
-import contracts
+import compiler/[idents, llstream, options, parser, pathutils]
 # Internal modules imports
-import config, rules, pragmas, utils
+import config, rules, utils
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     contractual.} =

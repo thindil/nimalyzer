@@ -26,9 +26,7 @@
 ## Provides code for parse the program's configuration file
 
 # Standard library imports
-import std/[logging, os, parseopt, strutils, tables]
-# External modules imports
-import contracts
+import std/[os, parseopt, tables]
 # Internal modules imports
 import rules, utils
 

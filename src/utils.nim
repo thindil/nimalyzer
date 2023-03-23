@@ -26,11 +26,9 @@
 ## Provides various code used in other modules
 
 # Standard library imports
-import std/[logging, tables]
-# External modules imports
-import contracts
+import std/tables
 # Internal modules imports
-import rules, pragmas
+import rules
 # Nimalyzer rules imports
 import rules/[hasdoc, hasentity, haspragma, namedparams, paramsused, vardeclared]
 
