@@ -4,7 +4,6 @@ discard """
 """
 
 import compiler/[idents, options, parser]
-import ../../src/rules
 import ../../src/rules/paramsused
 import ../helpers.nim
 

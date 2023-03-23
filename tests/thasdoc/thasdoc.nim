@@ -5,7 +5,6 @@ discard """
 
 import compiler/[idents, options, parser]
 import ../../src/rules/hasdoc
-import ../../src/rules
 import ../helpers.nim
 
 const

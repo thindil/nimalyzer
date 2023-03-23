@@ -5,7 +5,6 @@ discard """
 
 import compiler/[idents, options, parser]
 import ../../src/rules/hasentity
-import ../../src/rules
 import ../helpers.nim
 
 const

@@ -1,4 +1,5 @@
 import std/logging
+import ../src/rules
 
 proc setLogger*() =
   if getHandlers().len > 0:
