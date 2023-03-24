@@ -288,19 +288,8 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       if not options.enabled and options.amount == 0:
         options.amount = 1
         return
-      if options.amount < 0:
-        options.amount = 0
-      if options.amount == 0 and options.ruleType == search:
-        message(text = "The selected pragma(s) not found.",
-            returnValue = options.amount)
-        options.amount = 0
-      elif options.ruleType == RuleTypes.count:
-        message(text = (if getLogFilter() <
-            lvlNotice: "D" else: options.fileName & ": d") &
-                "eclared procedures with selected pragmas found: " &
-                    $options.amount,
-                returnValue = options.amount, level = lvlNotice)
-        options.amount = 1
+      showSummary(options = options, foundMessage = "declared procedures with selected pragmas",
+          notFoundMessage = "The selected pragma(s) not found.")
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
