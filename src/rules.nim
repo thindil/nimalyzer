@@ -126,3 +126,45 @@ proc setRuleState*(node: PNode; ruleName: string;
                   "' at line: " & $node.info.line & ".")
         except KeyError, Exception:
           discard
+
+proc showSummary*(options: var RuleOptions; foundMessage,
+    notFoundMessage: string) {.sideEffect, raises: [], tags: [RootEffect],
+    contractual.} =
+  ## Show the rule summary info and update the rule result if needed
+  ##
+  ## * options         - the rule options set by the user and updated during
+  ##                     checking the rule
+  ## * foundMessage    - the message shown when rule type is count and the rule
+  ##                     found something
+  ## * notFoundMessage - the message shown when the rule doesn't found anything
+  ##
+  ## Returns the updated parameter options
+  require:
+    foundMessage.len > 0
+    notFoundMessage.len > 0
+  body:
+    if options.amount < 0:
+      options.amount = 0
+    if options.ruleType == RuleTypes.count:
+      message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
+          s = foundMessage) else: foundMessage) & " found: " & $options.amount,
+          returnValue = options.amount, level = lvlNotice)
+      options.amount = 1
+    elif options.amount < 1:
+      if not options.enabled and options.amount == 0:
+        options.amount = 1
+      elif options.negation:
+        if options.ruleType == check:
+          options.amount = 0
+        else:
+          message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
+              s = notFoundMessage) else: notFoundMessage),
+              returnValue = options.amount,
+              level = lvlNotice, decrease = false)
+          options.amount = 0
+      else:
+        message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
+            s = notFoundMessage) else: notFoundMessage),
+            returnValue = options.amount,
+            level = lvlNotice, decrease = false)
+        options.amount = 0
