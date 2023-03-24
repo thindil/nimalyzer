@@ -21,3 +21,8 @@ try:
   i.inc
 except:
   assert errorMessage("Reason: ", getCurrentException()) == 0
+
+var options = RuleOptions(options: @[], parent: true, fileName: "",
+    negation: false, ruleType: check, amount: -1, enabled: true)
+showSummary(options, "Things found:", "Things not found.")
+assert options.amount == 0
