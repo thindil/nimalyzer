@@ -222,33 +222,10 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         for child in node.items:
           ruleCheck(astTree = child, options = options)
     if isParent:
-      if options.ruleType == RuleTypes.count:
-        message(text = (if getLogFilter() <
-            lvlNotice: "D" else: options.fileName & ": d") & "eclared " &
-            options.options[0] & " with name '" & options.options[1] &
-            "' found: " & $options.amount, returnValue = options.amount,
-                level = lvlNotice)
-        options.amount = 1
-      elif options.amount < 1:
-        if not options.enabled and options.amount == 0:
-          options.amount = 1
-        elif options.negation:
-          if options.ruleType == check:
-            options.amount = 0
-          else:
-            message(text = (if getLogFilter() <
-                lvlNotice: "D" else: options.fileName & ": d") &
-                "oesn't have declared " & options.options[0] & " with name '" &
-                options.options[1] & "'.", returnValue = options.amount,
-                    level = lvlNotice, decrease = false)
-            options.amount = 0
-        else:
-          message(text = (if getLogFilter() <
-              lvlNotice: "D" else: options.fileName & ": d") &
-              "oesn't have declared " & options.options[0] & " with name '" &
-              options.options[1] & "'.", returnValue = options.amount, level = (
-              if options.ruleType == check: lvlError else: lvlNotice))
-          options.amount = 0
+      showSummary(options = options, foundMessage = "declared " &
+          options.options[0] & " with name '" & options.options[1] & "'",
+          notFoundMessage = "doesn't have declared " & options.options[0] &
+          " with name '" & options.options[1] & "'.")
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
