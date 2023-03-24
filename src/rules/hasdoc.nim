@@ -194,19 +194,8 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       for child in node.items:
         ruleCheck(astTree = child, options = options)
     if isParent:
-      if options.amount < 0:
-        options.amount = 0
-      if options.amount == 0 and options.ruleType == search:
-        message(text = "The documentation not found.",
-            returnValue = options.amount)
-        options.amount = 0
-      elif options.ruleType == RuleTypes.count:
-        message(text = (if getLogFilter() <
-            lvlNotice: "D" else: options.fileName & ": d") &
-                "eclared public items with documentation found: " &
-                    $options.amount,
-                returnValue = options.amount, level = lvlNotice)
-        options.amount = 1
+      showSummary(options = options, foundMessage = "declared public items with documentation",
+          notFoundMessage = "The documentation not found.")
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
