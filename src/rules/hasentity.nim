@@ -132,6 +132,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     let isParent: bool = options.parent
     if isParent:
       options.parent = false
+      options.amount = 0
     if options.negation and isParent:
       options.amount.inc
 
