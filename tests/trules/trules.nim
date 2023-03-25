@@ -26,3 +26,6 @@ var options = RuleOptions(options: @[], parent: true, fileName: "",
     negation: false, ruleType: check, amount: -1, enabled: true)
 showSummary(options, "Things found:", "Things not found.")
 assert options.amount == 0
+
+setResult("myProc", "10", true, options, "found", "not found", "Proc")
+assert options.amount == 1
