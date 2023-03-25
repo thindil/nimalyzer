@@ -14,6 +14,7 @@ of the program.
 - Typos in Changelog
 - `hasPragma` rule doesn't return error if a declaration doesn't have any
   pragmas
+- `hasEntity` rule doesn't check properly for entities, regression
 
 ## [0.2.0] - 2023-03-20
 
