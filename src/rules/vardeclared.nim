@@ -203,16 +203,10 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       for child in node.items:
         ruleCheck(astTree = child, options = options)
     if isParent:
-      if options.amount < 0:
-        options.amount = 0
-      if options.ruleType == RuleTypes.count:
-        message(text = (if getLogFilter() <
-            lvlNotice: "D" else: options.fileName & ": d") &
-            "eclarations with" & (if options.negation: "out" else: "") &
-            " " & options.options[0] & " declaration found: " & $options.amount,
-                returnValue = options.amount,
-            level = lvlNotice)
-        options.amount = 1
+      showSummary(options = options, foundMessage = "declarations with" & (
+          if options.negation: "out" else: "") & options.options[0] & " declaration",
+          notFoundMessage = "declarations with" & (
+          if options.negation: "out" else: "") & options.options[0] & " declaration not found.")
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
