@@ -186,15 +186,10 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       for child in node.items:
         ruleCheck(astTree = child, options = options)
     if isParent:
-      if options.amount < 0:
-        options.amount = 0
-      if options.ruleType == RuleTypes.count:
-        message(text = (if getLogFilter() <
-            lvlNotice: "P" else: options.fileName & ": p") &
-            "rocedures which" & (if options.negation: " not" else: "") &
-            " uses all parameters found: " & $options.amount,
-            returnValue = options.amount, level = lvlNotice)
-        options.amount = 1
+      showSummary(options = options, foundMessage = "procedures which" & (
+          if options.negation: " not" else: "") & " uses all parameters",
+          notFoundMessage = "procedures which" & (
+          if options.negation: " not" else: "") & " uses all parameters not found.")
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =
