@@ -93,62 +93,10 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         ""
       else:
         options.fileName & ": "
-
-    proc setResult(entityName, line: string; hasDoc: bool;
-        options: var RuleOptions) {.raises: [], tags: [RootEffect],
-        contractual.} =
-      ## Update the amount of documentation found and log the message if needed
-      ##
-      ## * entityName - the name of the Nim's code entity which was checked for
-      ##                the documentation comment
-      ## * line       - the line in which the Nim's entity is in the source code
-      ## * hasDoc     - if true, the entity has the documentation
-      ## * options    - the options supplied to the rule
-      ##
-      ## Returns updated amount of documentation found. It will be increased
-      ## or decreased, depending on the rule settings.
-      require:
-        entityName.len > 0
-      body:
-        if not options.enabled:
-          return
-        # Documentation not found
-        if not hasDoc:
-          if options.negation and options.ruleType == check:
-            options.amount.inc
-            return
-          if options.ruleType == check:
-            message(text = messagePrefix & entityName & (if line.len >
-                0: " line: " & line else: "") & " doesn't have documentation.",
-                returnValue = options.amount)
-            options.amount = int.low
-          else:
-            if options.negation:
-              message(text = messagePrefix & entityName & (if line.len >
-                  0: " line: " & line else: "") &
-                  " doesn't have documentation.", returnValue = options.amount,
-                  level = lvlNotice, decrease = false)
-        # Documentation found
-        else:
-          if options.negation:
-            if options.ruleType == check:
-              message(text = messagePrefix & entityName & (if line.len >
-                  0: " line: " & line else: "") & " has documentation.",
-                  returnValue = options.amount)
-            else:
-              options.amount.dec
-          if options.ruleType == search:
-            message(text = messagePrefix & entityName & (if line.len >
-                0: " line: " & line else: "") & " has documentation.",
-                returnValue = options.amount, level = lvlNotice,
-                decrease = false)
-          else:
-            options.amount.inc
-
-    if isParent:
-      setResult(entityName = "Module", line = "",
-          hasDoc = astTree.hasSubnodeWith(kind = nkCommentStmt),
-          options = options)
+    if options.enabled and isParent:
+      setResult(checkResult = astTree.hasSubnodeWith(kind = nkCommentStmt),
+          options = options, positiveMessage = messagePrefix &
+          "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
     for node in astTree.items:
       # Check only elements which can have documentation
       if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
@@ -177,15 +125,19 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             options.amount = errorMessage(
                 text = "Can't get the name of the declared entity.")
             return
-          if declName.endsWith(suffix = "*") or node.kind in callableDefs:
+          if options.enabled and (declName.endsWith(suffix = "*") or
+              node.kind in callableDefs):
             try:
               let hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs,
                   nkConstDef, nkTemplateDef}:
                   node.comment.len > 0
                 else:
                   node.hasSubnodeWith(kind = nkCommentStmt)
-              setResult(entityName = "Declaration of " & declName,
-                  line = $node.info.line, hasDoc = hasDoc, options = options)
+              setResult(checkResult = hasDoc, options = options,
+                  positiveMessage = messagePrefix & "Declaration of " &
+                  declName & " " & $node.info.line & " has documentation.",
+                  negativeMessage = messagePrefix & "Declaration of " &
+                  declName & " " & $node.info.line & " doesn't have documentation.")
             except KeyError as e:
               options.amount = errorMessage(
                   text = "Can't check the declared entity '" & declName & "'.", e = e)
