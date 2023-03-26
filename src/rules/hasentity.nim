@@ -136,40 +136,30 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     if options.negation and isParent:
       options.amount.inc
 
-    proc checkEntity(nodeName, line: string; options: RuleOptions;
-        oldResult: var int) {.raises: [], tags: [RootEffect], contractual.} =
+    proc checkEntity(nodeName, line: string;
+        options: var RuleOptions) {.raises: [], tags: [RootEffect],
+        contractual.} =
       ## Check if the selected entity's name fulfill the rule requirements and
       ## log the message if needed.
       ##
       ## * nodeName  - the name of the entity which will be checked
       ## * line      - the line of code in which the entity is declared
-      ## * oldResult - the previous amount of the rule result value
+      ## * options   - the rule options set by the user and the previous iterations
+      ##                of the procedure
       ##
-      ## Returns the updated oldResult parameter
+      ## Returns the updated options parameter
       if not options.enabled:
         return
       # The selected entity found in the node
       if options.options[1].len == 0 or startsWith(s = nodeName,
           prefix = options.options[1]):
-        if options.negation:
-          if options.ruleType == check:
-            message(text = (if getLogFilter() <
-                lvlNotice: "H" else: options.fileName & ": h") &
-                "as declared " & options.options[0] & " with name '" &
-                nodeName & "' at line: " & line & ".",
-                returnValue = oldResult)
-            oldResult = int.low
-          else:
-            oldResult.dec
-        else:
-          if options.ruleType != search:
-            oldResult.inc
-          else:
-            message(text = (if getLogFilter() <
-                lvlNotice: "H" else: options.fileName & ": h") &
-                "as declared " & options.options[0] & " with name '" &
-                nodeName & "' at line: " & line & ".",
-                returnValue = oldResult, level = lvlNotice, decrease = false)
+        setResult(checkResult = true, options = options, positiveMessage = (
+            if getLogFilter() < lvlNotice: "H" else: options.fileName & ": h") &
+            "as declared " & options.options[0] & " with name '" & nodeName &
+            "' at line: " & line & ".", negativeMessage = (if getLogFilter() <
+            lvlNotice: "H" else: options.fileName & ": h") & "as declared " &
+            options.options[0] & " with name '" & nodeName & "' at line: " &
+            line & ".")
 
     for node in astTree.items:
       setRuleState(node = node, ruleName = ruleName, oldState = options.enabled)
@@ -199,7 +189,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                     except KeyError, Exception:
                       ""
                   checkEntity(nodeName = childName, line = $child.info.line,
-                      options = options, oldResult = options.amount)
+                      options = options)
               elif childIndex <= node.sons.high:
                 let childName: string = try:
                     if childIndex > -1:
@@ -209,11 +199,11 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   except KeyError, Exception:
                     ""
                 checkEntity(nodeName = childName, line = $node.info.line,
-                    options = options, oldResult = options.amount)
+                    options = options)
           # Check the node itself
           elif node.kind == nodeKind:
             checkEntity(nodeName = $node[0], line = $node.info.line,
-                options = options, oldResult = options.amount)
+                options = options)
         except KeyError, Exception:
           options.amount = errorMessage(
               text = "Error during checking hasEntity rule: ",
