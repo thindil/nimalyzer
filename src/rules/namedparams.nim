@@ -77,15 +77,14 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     options.fileName.len > 0
   body:
 
-    proc check(node: PNode; options: RuleOptions;
-        oldResult: var int) {.contractual, raises: [], tags: [RootEffect].} =
+    proc check(node: PNode; options: var RuleOptions) {.contractual, raises: [], tags: [RootEffect].} =
       ## Check the call if it uses named parameters
       ##
       ## * node      - the AST node representing the call to check
-      ## * oldResult - the amount of previously found calls with named parameters
+      ## * options   - the rule options set by the user and the previous iterations
+      ##               of the procedure
       ##
-      ## The updated parameter oldResult, increased or decreased, depending on
-      ## the rule settings.
+      ## Returns the updated parameter options.
       require:
         node != nil
       body:
@@ -101,51 +100,20 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
               ""
         if callName.len == 0:
           message(text = "Can't get the name of the call.", level = lvlFatal,
-              returnValue = oldResult)
-          oldResult.inc
+              returnValue = options.amount)
+          options.amount.inc
           return
         try:
           for i in 1..<node.sons.len:
-            # Call doesn't have set the parameter as named
-            if node[i].kind != nkExprEqExpr:
-              if not options.negation:
-                if options.ruleType == check:
-                  message(text = messagePrefix & "call " & callName &
-                      " line: " & $node.info.line &
-                      " doesn't have named parameter number: " & $i & "'.",
-                      returnValue = oldResult)
-                  oldResult = int.low
-              else:
-                if options.ruleType == search:
-                  message(text = messagePrefix & "call " & callName &
-                      " line: " & $node.info.line &
-                      " doesn't have named parameter number: " & $i & "'.",
-                      returnValue = oldResult, level = lvlNotice,
-                      decrease = false)
-                else:
-                  oldResult.inc
-                break
-            # Call has set the parameter as named
-            else:
-              if options.negation:
-                if options.ruleType == check:
-                  message(text = messagePrefix & "call " & callName &
-                      " line: " & $node.info.line &
-                      " has named parameter number: " & $i & ".",
-                      returnValue = oldResult)
-                elif options.ruleType == RuleTypes.count:
-                  oldResult.dec
-              else:
-                if options.ruleType == search:
-                  message(text = messagePrefix & "procedure " & callName &
-                      " line: " & $node.info.line &
-                      " has named parameter number: " & $i & ".",
-                      returnValue = oldResult, level = lvlNotice,
-                      decrease = false)
-                else:
-                  oldResult.inc
+            setResult(checkResult = node[i].kind == nkExprEqExpr,
+                options = options, positiveMessage = messagePrefix & "call " &
+                callName & " line: " & $node.info.line &
+                " doesn't have named parameter number: " & $i & "'.",
+                negativeMessage = messagePrefix & "call " & callName &
+                " line: " & $node.info.line &
+                " doesn't have named parameter number: " & $i & "'.")
         except KeyError, Exception:
-          oldResult = errorMessage(text = messagePrefix &
+          options.amount = errorMessage(text = messagePrefix &
               "can't check parameters of call " & callName & " line: " &
               $node.info.line & ". Reason: ", e = getCurrentException())
 
@@ -155,13 +123,13 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     setRuleState(node = astTree, ruleName = ruleName,
         oldState = options.enabled)
     if astTree.kind == nkCall:
-      check(node = astTree, options = options, oldResult = options.amount)
+      check(node = astTree, options = options)
       return
     for node in astTree.items:
       setRuleState(node = node, ruleName = ruleName, oldState = options.enabled)
       # Node is a call, and have parameters, check it
       if node.kind == nkCall and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
-        check(node = node, options = options, oldResult = options.amount)
+        check(node = node, options = options)
       # Check the node's children with the rule
       for child in node.items:
         ruleCheck(astTree = child, options = options)
