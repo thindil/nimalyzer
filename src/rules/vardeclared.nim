@@ -101,111 +101,71 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         ""
       else:
         options.fileName & ": "
-
-    proc checkDeclaration(declaration: PNode; options: var RuleOptions;
-        index: Positive; identType: string) {.contractual, raises: [], tags: [RootEffect].} =
-      ## Check if the declaration of a variable has defined the selected
-      ## part: type or value.
-      ##
-      ## * declaration - the declaration of a variable to check
-      ## * options     - the options supplied to the rule
-      ## * index       - the index of the declaration's element to check, 1 for
-      ##                 type, 2 for value
-      ## * identType   - the name of the declaration's element to check, "type"
-      ##                 or "value"
-      ##
-      ## Returns updated amount of declarations which fullfil the rule. It will
-      ## be increased or decreased, depending on the rule settings.
-      require:
-        declaration != nil
-        options.options.len > 0
-      body:
-        try:
-          if declaration[index].kind == nkEmpty:
-            if not options.negation:
-              if options.ruleType == check:
-                message(text = messagePrefix & "declaration of '" &
-                    $declaration[0] &
-                  "' line: " & $declaration.info.line &
-                  " doesn't set " & identType & " for the variable.",
-                      returnValue = options.amount)
-                options.amount = int.low
-            else:
-              if options.ruleType == search:
-                message(text = messagePrefix & "declaration of '" &
-                    $declaration[0] &
-                  "' line: " & $declaration.info.line &
-                  " doesn't set " & identType & " for the variable.",
-                  returnValue = options.amount, level = lvlNotice,
-                  decrease = false)
-              else:
-                options.amount.inc
-          else:
-            if options.negation:
-              if options.ruleType == check:
-                message(text = messagePrefix & "declaration of " &
-                    $declaration[0] &
-                  " line: " &
-                  $declaration.info.line & " sets the " & identType & " '" &
-                      $declaration[index] & "' as the " & identType &
-                          " of the variable.",
-                  returnValue = options.amount)
-                options.amount = int.low
-              elif options.ruleType == RuleTypes.count:
-                options.amount.dec
-            else:
-              if options.ruleType == search:
-                message(text = messagePrefix & "declaration of " &
-                    $declaration[0] &
-                  " line: " &
-                  $declaration.info.line & " sets the " & identType & " '" &
-                      $declaration[index] & "' as the " & identType &
-                          " of the variable.",
-                  returnValue = options.amount, level = lvlNotice,
-                      decrease = false)
-              else:
-                options.amount.inc
-        except KeyError, Exception:
-          options.amount = errorMessage(text = messagePrefix &
-              "can't check declaration of variable " &
-              " line: " &
-              $declaration.info.line & ". Reason: ", e = getCurrentException())
-
     for node in astTree.items:
       # Check the node if rule is enabled
       setRuleState(node = node, ruleName = ruleName,
           oldState = options.enabled)
       if options.enabled:
-        # Sometimes the compiler detects declarations as children of the node
-        if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
-          # Check each variable declaration if meet the rule requirements
-          for declaration in node.items:
+        try:
+          # Sometimes the compiler detects declarations as children of the node
+          if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
+            # Check each variable declaration if meet the rule requirements
+            for declaration in node.items:
+              # Check if declaration of variable sets its type
+              if options.options[0] in ["full", "type"]:
+                setResult(checkResult = declaration[1].kind != nkEmpty,
+                    options = options, positiveMessage = messagePrefix &
+                    "declaration of " & $declaration[0] & " line: " &
+                    $declaration.info.line & " sets the type '" &
+                    $declaration[1] & "' as the type of the variable.",
+                        negativeMessage = messagePrefix &
+                    "declaration of '" & $declaration[0] & "' line: " &
+                    $declaration.info.line & " doesn't set type for the variable.")
+              # Check if declaration of variable sets its value
+              if options.options[0] in ["full", "value"]:
+                setResult(checkResult = declaration[2].kind != nkEmpty,
+                    options = options, positiveMessage = messagePrefix &
+                    "declaration of " & $declaration[0] & " line: " &
+                    $declaration.info.line & " sets the value '" &
+                    $declaration[2] & "' as the value of the variable.",
+                        negativeMessage = messagePrefix &
+                    "declaration of '" & $declaration[0] & "' line: " &
+                    $declaration.info.line & " doesn't set value for the variable.")
+          # And sometimes the compiler detects declarations as the node
+          elif node.kind == nkIdentDefs and astTree.kind in {nkVarSection,
+              nkLetSection, nkConstSection}:
             # Check if declaration of variable sets its type
             if options.options[0] in ["full", "type"]:
-              checkDeclaration(declaration = declaration, options = options,
-                  index = 1, identType = "type")
+              setResult(checkResult = node[1].kind != nkEmpty,
+                  options = options, positiveMessage = messagePrefix &
+                  "declaration of " & $node[0] & " line: " &
+                  $node.info.line & " sets the type '" &
+                  $node[1] & "' as the type of the variable.",
+                      negativeMessage = messagePrefix &
+                  "declaration of '" & $node[0] & "' line: " &
+                  $node.info.line & " doesn't set type for the variable.")
             # Check if declaration of variable sets its value
             if options.options[0] in ["full", "value"]:
-              checkDeclaration(declaration = declaration, options = options,
-                  index = 2, identType = "value")
-        # And sometimes the compiler detects declarations as the node
-        elif node.kind == nkIdentDefs and astTree.kind in {nkVarSection,
-            nkLetSection, nkConstSection}:
-          # Check if declaration of variable sets its type
-          if options.options[0] in ["full", "type"]:
-            checkDeclaration(declaration = node, options = options,
-                index = 1, identType = "type")
-          # Check if declaration of variable sets its value
-          if options.options[0] in ["full", "value"]:
-            checkDeclaration(declaration = node, options = options,
-                index = 2, identType = "value")
+              setResult(checkResult = node[1].kind != nkEmpty,
+                  options = options, positiveMessage = messagePrefix &
+                  "declaration of " & $node[0] & " line: " &
+                  $node.info.line & " sets the value '" &
+                  $node[1] & "' as the value of the variable.",
+                      negativeMessage = messagePrefix &
+                  "declaration of '" & $node[0] & "' line: " &
+                  $node.info.line & " doesn't set value for the variable.")
+        except KeyError, Exception:
+          options.amount = errorMessage(text = messagePrefix &
+              "can't check declaration of variable " &
+              " line: " &
+              $node.info.line & ". Reason: ", e = getCurrentException())
       # Check the node's children with the rule
       for child in node.items:
         ruleCheck(astTree = child, options = options)
     if isParent:
       showSummary(options = options, foundMessage = "declarations with" & (
-          if options.negation: "out" else: "") & options.options[0] & " declaration",
-          notFoundMessage = "declarations with" & (
+          if options.negation: "out" else: "") & options.options[0] &
+          " declaration", notFoundMessage = "declarations with" & (
           if options.negation: "out" else: "") & options.options[0] & " declaration not found.")
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
