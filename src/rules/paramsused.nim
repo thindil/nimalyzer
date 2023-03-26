@@ -141,21 +141,14 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                 # The node doesn't use one of its parameters
                 if index == -1:
                   if not options.negation:
-                    if options.ruleType == check:
-                      message(text = messagePrefix & "procedure " & procName &
-                        " line: " & $node.info.line &
-                        " doesn't use parameter '" &
-                        $child[i] & "'.", returnValue = options.amount)
-                      options.amount = int.low
+                    setResult(checkResult = false, options = options,
+                        positiveMessage = "", negativeMessage = messagePrefix &
+                        "procedure " & procName & " line: " & $node.info.line &
+                        " doesn't use parameter '" & $child[i] & "'.")
                   else:
-                    if options.ruleType == search:
-                      message(text = messagePrefix & "procedure " & procName &
-                        " line: " & $node.info.line &
-                        " doesn't use all parameters.",
-                        returnValue = options.amount, level = lvlNotice,
-                        decrease = false)
-                    else:
-                      options.amount.inc
+                    setResult(checkResult = false, options = options,
+                        positiveMessage = "", negativeMessage = messagePrefix &
+                        "procedure " & procName & " line: " & $node.info.line & " doesn't use all parameters.")
                     break
               except KeyError, Exception:
                 options.amount = errorMessage(text = messagePrefix &
@@ -164,24 +157,9 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                     $node.info.line & ". Reason: ", e = getCurrentException())
           # The node uses all of its parameters
           if index > -1:
-            if options.negation:
-              if options.ruleType == check:
-                message(text = messagePrefix & "procedure " & procName &
-                  " line: " &
-                  $node.info.line & " use all parameters.",
-                  returnValue = options.amount)
-                options.amount = int.low
-              elif options.ruleType == RuleTypes.count:
-                options.amount.dec
-            else:
-              if options.ruleType == search:
-                message(text = messagePrefix & "procedure " & procName &
-                  " line: " &
-                  $node.info.line & " use all parameters.",
-                  returnValue = options.amount, level = lvlNotice,
-                  decrease = false)
-              else:
-                options.amount.inc
+            setResult(checkResult = true, options = options,
+                positiveMessage = "", negativeMessage = messagePrefix &
+                "procedure " & procName & " line: " & $node.info.line & " use all parameters.")
       # Check the node's children with the rule
       for child in node.items:
         ruleCheck(astTree = child, options = options)
