@@ -169,27 +169,18 @@ proc showSummary*(options: var RuleOptions; foundMessage,
             level = lvlNotice, decrease = false)
         options.amount = 0
 
-proc setResult*(entityName, line: string; checkResult: bool;
-    options: var RuleOptions; positiveMessage, negativeMessage,
-    messagePrefix: string) {.raises: [], tags: [RootEffect], contractual.} =
+proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
+    negativeMessage: string) {.raises: [], tags: [RootEffect], contractual.} =
   ## Update the amount of the rule results
   ##
-  ## * entityName      - the name of the Nim's code entity which was checked for
-  ##                     the rule
-  ## * line            - the line in which the Nim's entity is in the source code
   ## * checkResult     - if true, the entity follow the check of the rule
   ## * options         - the options supplied to the rule
   ## * positiveMessage - the message shown when the entity meet the rule check
   ## * negativeMessage - the message shown when the entity not meet the rule check
-  ## * messagePrefix   - the start of the message, depends on the level of logging
   ##
   ## Returns updated amount of the rule results. It will be increased
   ## or decreased, depending on the rule settings.
-  require:
-    entityName.len > 0
   body:
-    if not options.enabled:
-      return
     # The entity not meet rule's requirements
     if not checkResult:
       if options.negation and options.ruleType == check:
@@ -197,29 +188,21 @@ proc setResult*(entityName, line: string; checkResult: bool;
         return
       if negativeMessage.len > 0:
         if options.ruleType == check:
-          message(text = messagePrefix & entityName & (if line.len >
-              0: " line: " & line else: "") & " " & negativeMessage,
-              returnValue = options.amount)
+          message(text = negativeMessage, returnValue = options.amount)
           options.amount = int.low
         else:
           if options.negation:
-            message(text = messagePrefix & entityName & (if line.len >
-                0: " line: " & line else: "") &
-                " " & negativeMessage, returnValue = options.amount,
+            message(text = negativeMessage, returnValue = options.amount,
                 level = lvlNotice, decrease = false)
     # The enitity meet the rule's requirements
     else:
       if options.negation:
         if options.ruleType == check and positiveMessage.len > 0:
-          message(text = messagePrefix & entityName & (if line.len >
-              0: " line: " & line else: "") & " " & positiveMessage,
-              returnValue = options.amount)
+          message(text = positiveMessage, returnValue = options.amount)
         else:
           options.amount.dec
       if options.ruleType == search and positiveMessage.len > 0:
-        message(text = messagePrefix & entityName & (if line.len >
-            0: " line: " & line else: "") & " " & positiveMessage,
-            returnValue = options.amount, level = lvlNotice,
-            decrease = false)
+        message(text = positiveMessage, returnValue = options.amount,
+            level = lvlNotice, decrease = false)
       else:
         options.amount.inc
