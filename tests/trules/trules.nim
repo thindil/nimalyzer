@@ -27,5 +27,5 @@ var options = RuleOptions(options: @[], parent: true, fileName: "",
 showSummary(options, "Things found:", "Things not found.")
 assert options.amount == 0
 
-setResult("myProc", "10", true, options, "found", "not found", "Proc")
+setResult(true, options, "Myproc line 10: found", "Myproc line 10: not found")
 assert options.amount == 1
