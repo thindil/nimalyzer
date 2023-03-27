@@ -15,6 +15,7 @@ of the program.
 - `hasPragma` rule doesn't return error if a declaration doesn't have any
   pragmas
 - `hasEntity` rule doesn't check properly for entities, regression
+- `hasDoc` rule doesn't check properly if module has documentation
 
 ## [0.2.0] - 2023-03-20
 
