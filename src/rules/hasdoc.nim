@@ -94,7 +94,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       else:
         options.fileName & ": "
     if options.enabled and isParent:
-      setResult(checkResult = astTree.hasSubnodeWith(kind = nkCommentStmt),
+      setResult(checkResult = astTree.hasSonWith(kind = nkCommentStmt),
           options = options, positiveMessage = messagePrefix &
           "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
     for node in astTree.items:
