@@ -216,7 +216,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       showSummary(options = options, foundMessage = "declared " &
           options.options[0] & " with name '" & options.options[1] & "'",
           notFoundMessage = "doesn't have declared " & options.options[0] &
-          " with name '" & options.options[1] & "'.")
+          " with name '" & options.options[1] & "'.", showForCheck = true)
 
 proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
     tags: [RootEffect].} =

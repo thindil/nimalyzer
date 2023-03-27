@@ -128,7 +128,7 @@ proc setRuleState*(node: PNode; ruleName: string;
           discard
 
 proc showSummary*(options: var RuleOptions; foundMessage,
-    notFoundMessage: string) {.sideEffect, raises: [], tags: [RootEffect],
+    notFoundMessage: string; showForCheck: bool = false) {.sideEffect, raises: [], tags: [RootEffect],
     contractual.} =
   ## Show the rule summary info and update the rule result if needed
   ##
@@ -137,6 +137,8 @@ proc showSummary*(options: var RuleOptions; foundMessage,
   ## * foundMessage    - the message shown when rule type is count and the rule
   ##                     found something
   ## * notFoundMessage - the message shown when the rule doesn't found anything
+  ## * showForCheck    - if true, show notFoundMessage for check type of rule,
+  ##                     otherwise, don't show any message
   ##
   ## Returns the updated parameter options
   require:
@@ -163,10 +165,11 @@ proc showSummary*(options: var RuleOptions; foundMessage,
               level = lvlNotice, decrease = false)
           options.amount = 0
       else:
-        message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-            s = notFoundMessage) else: notFoundMessage),
-            returnValue = options.amount,
-            level = lvlNotice, decrease = false)
+        if options.ruleType != check or showForCheck:
+          message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
+              s = notFoundMessage) else: notFoundMessage),
+              returnValue = options.amount,
+              level = lvlNotice, decrease = false)
         options.amount = 0
 
 proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
