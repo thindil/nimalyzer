@@ -5,7 +5,7 @@ import ../src/rules
 proc setLogger*() =
   if getHandlers().len > 0:
     return
-  let logger = newConsoleLogger(fmtStr = "[$time] - $levelname: ")
+  let logger = newConsoleLogger()
   addHandler(handler = logger)
   setLogFilter(lvl = lvlInfo)
 
