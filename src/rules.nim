@@ -202,9 +202,9 @@ proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
       if options.negation:
         if options.ruleType == check and positiveMessage.len > 0:
           message(text = positiveMessage, returnValue = options.amount)
-          return
         else:
           options.amount.dec
+        return
       if options.ruleType == search and positiveMessage.len > 0:
         message(text = positiveMessage, returnValue = options.amount,
             level = lvlNotice, decrease = false)
