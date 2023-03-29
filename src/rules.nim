@@ -51,6 +51,8 @@ type
     amount*: int          ## The amount of results found by the rule
     enabled*: bool        ## If false, the rule is temporary disabled by pragmas
 
+  OptionsTypesArray* = array[int, typedesc] ## The list of types of options for rules
+
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
     decrease: bool = true) {.sideEffect, gcsafe, raises: [], tags: [RootEffect],
     contractual.} =
@@ -211,8 +213,9 @@ proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
       else:
         options.amount.inc
 
-proc validateOptions*(ruleName: string; options: seq[string]; optionsTypes: seq[
-    typedesc]): bool {.raises: [], tags: [RootEffect], contractual.} =
+proc validateOptions*(ruleName: string; options: seq[string];
+    optionsTypes: OptionsTypesArray): bool {.raises: [], tags: [RootEffect],
+    contractual.} =
   body:
     if options.len < optionsTypes.len:
       return errorMessage(text = "The rule " & ruleName &
