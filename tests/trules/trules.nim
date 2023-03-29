@@ -1,6 +1,8 @@
 discard """
   exitcode: 0
-  outputsub: "Decrease value"
+  output: '''ERROR Decrease value
+INFO Increase value
+FATAL Reason: over- or underflow'''
 """
 
 import std/logging
