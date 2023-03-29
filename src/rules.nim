@@ -128,8 +128,8 @@ proc setRuleState*(node: PNode; ruleName: string;
           discard
 
 proc showSummary*(options: var RuleOptions; foundMessage,
-    notFoundMessage: string; showForCheck: bool = false) {.sideEffect, raises: [], tags: [RootEffect],
-    contractual.} =
+    notFoundMessage: string; showForCheck: bool = false) {.sideEffect, raises: [],
+    tags: [RootEffect], contractual.} =
   ## Show the rule summary info and update the rule result if needed
   ##
   ## * options         - the rule options set by the user and updated during
@@ -210,3 +210,39 @@ proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
             level = lvlNotice, decrease = false)
       else:
         options.amount.inc
+
+proc validateOptions*(ruleName: string; options: seq[string]; optionsTypes: seq[
+    typedesc]): bool {.raises: [], tags: [RootEffect], contractual.} =
+  body:
+    if options.len < optionsTypes.len:
+      return errorMessage(text = "The rule " & ruleName &
+          " requires at least " & $optionsTypes.len & " options, but only " &
+          $options.len & " provided: '" & options.join(", ") & "'").bool
+    if options.len > optionsTypes.len:
+      return errorMessage(text = "The rule " & ruleName &
+          " requires at maximum " & $optionsTypes.len & " options, but " &
+          $options.len & " provided: '" & options.join(", ") & "'").bool
+    for index, option in options.pairs:
+      case optionsTypes[index]
+      of string:
+        discard
+      of TNodeKind:
+        let nodeOption: TNodeKind = parseEnum[TNodeKind](s = option,
+            default = nkEmpty)
+        if nodeOption == nkEmpty:
+          return errorMessage(text = "The rule " & ruleName &
+              " option number " & (index + 1) & " has invalid value: '" &
+              options & "'.").bool
+      of int:
+        let intOption: int = try:
+            options[index].parseInt()
+          except ValueError:
+            -1
+        if intOption < 0:
+          return errorMessage(text = "The rule " & ruleName &
+              " option number " & (index + 1) & "has invalid value: '" &
+              options & "'.").bool
+      else:
+        return errorMessage(text = "The rule " & ruleName &
+            " has declared unknown type of option: '" & optionsTypes[index] & "'.").bool
+    return true
