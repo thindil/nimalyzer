@@ -28,9 +28,14 @@ jobs:
       with:
         nim-version: '1.6.10'
 
+    - name: Update Nimble
+      run: nimble install nimble
+
+    - name: Install compiler package
+      run: nimble install compiler@1.6.10
+
     - name: Debug build
-      run: |
-        nimble debug
+      run: nimble debug
 
     - name: Check with Nimalyzer
       run: |
