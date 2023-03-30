@@ -220,6 +220,15 @@ proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
 proc validateOptions*(ruleName: string; options: seq[string];
     optionsTypes: openArray[RuleOptionsTypes]; allowedValues: openArray[
     string] = @[]): bool {.raises: [], tags: [RootEffect], contractual.} =
+  ## Validate the options entered from a configuration for the selected rule
+  ##
+  ## * ruleName      - the name of the rule to check
+  ## * options       - the list of options entered from a configuration file
+  ## * optionsTypes  - the list of types of options allowed for the rule
+  ## * allowedValues - if the rule has option type of custom, the list of values
+  ##                   for that option. Default value is empty list.
+  ##
+  ## Returns true if the options are valid otherwise false.
   body:
     # Check if enough options entered
     if options.len < optionsTypes.len:
