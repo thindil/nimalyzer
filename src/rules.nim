@@ -234,12 +234,12 @@ proc validateOptions*(ruleName: string; options: seq[string];
     if options.len < optionsTypes.len:
       return errorMessage(text = "The rule " & ruleName &
           " requires at least " & $optionsTypes.len & " options, but only " &
-          $options.len & " provided: '" & options.join(", ") & "'").bool
+          $options.len & " provided: '" & options.join(", ") & "'.").bool
     # Check if too much options entered
     if options.len > optionsTypes.len:
       return errorMessage(text = "The rule " & ruleName &
           " requires at maximum " & $optionsTypes.len & " options, but " &
-          $options.len & " provided: '" & options.join(", ") & "'").bool
+          $options.len & " provided: '" & options.join(", ") & "'.").bool
     # Check if all options have proper values
     for index, option in options.pairs:
       case optionsTypes[index]
