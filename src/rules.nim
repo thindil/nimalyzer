@@ -214,37 +214,45 @@ proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
         options.amount.inc
 
 proc validateOptions*(ruleName: string; options: seq[string];
-    optionsTypes: OptionsTypesArray): bool {.raises: [], tags: [RootEffect],
-    contractual.} =
+    optionsTypes: openArray[string]; allowedValues: openArray[string] = @[
+        ]): bool {.raises: [], tags: [RootEffect], contractual.} =
   body:
+    # Check if enough options entered
     if options.len < optionsTypes.len:
       return errorMessage(text = "The rule " & ruleName &
           " requires at least " & $optionsTypes.len & " options, but only " &
           $options.len & " provided: '" & options.join(", ") & "'").bool
+    # Check if too much options entered
     if options.len > optionsTypes.len:
       return errorMessage(text = "The rule " & ruleName &
           " requires at maximum " & $optionsTypes.len & " options, but " &
           $options.len & " provided: '" & options.join(", ") & "'").bool
+    # Check if all options have proper values
     for index, option in options.pairs:
       case optionsTypes[index]
-      of string:
-        discard
-      of TNodeKind:
-        let nodeOption: TNodeKind = parseEnum[TNodeKind](s = option,
-            default = nkEmpty)
-        if nodeOption == nkEmpty:
-          return errorMessage(text = "The rule " & ruleName &
-              " option number " & (index + 1) & " has invalid value: '" &
-              options & "'.").bool
-      of int:
+      of "string":
+        continue
+      of "int":
         let intOption: int = try:
             options[index].parseInt()
           except ValueError:
             -1
         if intOption < 0:
           return errorMessage(text = "The rule " & ruleName &
-              " option number " & (index + 1) & "has invalid value: '" &
-              options & "'.").bool
+              " option number " & $(index + 1) & "has invalid value: '" &
+              option & "'.").bool
+      of "TNodeKind":
+        let entityType: TNodeKind = parseEnum[TNodeKind](s = option,
+            default = nkEmpty)
+        if entityType == nkEmpty:
+          return errorMessage(text = "The rule " & ruleName &
+              " option number " & $(index + 1) & "has invalid value: '" &
+              option & "'.").bool
+      of "custom":
+        if option notin allowedValues:
+          return errorMessage(text = "The rule " & ruleName &
+              " option number " & $(index + 1) & "has invalid value: '" &
+              option & "'.").bool
       else:
         return errorMessage(text = "The rule " & ruleName &
             " has declared unknown type of option: '" & optionsTypes[index] & "'.").bool
