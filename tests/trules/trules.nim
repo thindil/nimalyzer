@@ -2,7 +2,8 @@ discard """
   exitcode: 0
   output: '''ERROR Decrease value
 INFO Increase value
-FATAL Reason: over- or underflow'''
+FATAL Reason: over- or underflow
+FATAL The rule Test rule requires at least 2 options, but only 1 provided: 'a'.'''
 """
 
 import std/logging
@@ -31,3 +32,6 @@ assert options.amount == 0
 
 setResult(true, options, "Myproc line 10: found", "Myproc line 10: not found")
 assert options.amount == 1
+
+assert validateOptions("Test Rule", @["1"], [integer])
+assert not validateOptions("Test rule", @["a"], [RuleOptionsTypes.string, integer])
