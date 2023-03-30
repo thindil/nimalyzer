@@ -42,6 +42,10 @@ type
     ## the types of the program's rules
     none, check, search, count
 
+  RuleOptionsTypes* = enum
+    ## the available types of the program's rules' options
+    integer, string, node, custom
+
   RuleOptions* = object   ## Contains information for the program's rules
     options*: seq[string] ## The list of the program's rule
     parent*: bool ## If true, check is currently make in the parent (usualy module) entity
@@ -214,8 +218,8 @@ proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
         options.amount.inc
 
 proc validateOptions*(ruleName: string; options: seq[string];
-    optionsTypes: openArray[string]; allowedValues: openArray[string] = @[
-        ]): bool {.raises: [], tags: [RootEffect], contractual.} =
+    optionsTypes: openArray[RuleOptionsTypes]; allowedValues: openArray[
+    string] = @[]): bool {.raises: [], tags: [RootEffect], contractual.} =
   body:
     # Check if enough options entered
     if options.len < optionsTypes.len:
@@ -230,9 +234,9 @@ proc validateOptions*(ruleName: string; options: seq[string];
     # Check if all options have proper values
     for index, option in options.pairs:
       case optionsTypes[index]
-      of "string":
+      of string:
         continue
-      of "int":
+      of integer:
         let intOption: int = try:
             options[index].parseInt()
           except ValueError:
@@ -241,19 +245,16 @@ proc validateOptions*(ruleName: string; options: seq[string];
           return errorMessage(text = "The rule " & ruleName &
               " option number " & $(index + 1) & "has invalid value: '" &
               option & "'.").bool
-      of "TNodeKind":
+      of node:
         let entityType: TNodeKind = parseEnum[TNodeKind](s = option,
             default = nkEmpty)
         if entityType == nkEmpty:
           return errorMessage(text = "The rule " & ruleName &
               " option number " & $(index + 1) & "has invalid value: '" &
               option & "'.").bool
-      of "custom":
+      of custom:
         if option notin allowedValues:
           return errorMessage(text = "The rule " & ruleName &
               " option number " & $(index + 1) & "has invalid value: '" &
               option & "'.").bool
-      else:
-        return errorMessage(text = "The rule " & ruleName &
-            " has declared unknown type of option: '" & optionsTypes[index] & "'.").bool
     return true
