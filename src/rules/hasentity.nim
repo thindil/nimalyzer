@@ -103,7 +103,10 @@
 # Import default rules' modules
 import ../rules
 
-const ruleName*: string = "hasentity" ## The name of the rule used in a configuration file
+const
+  ruleName*: string = "hasentity" ## The name of the rule used in a configuration file
+  ruleOptions*: array[4, RuleOptionsTypes] = [node, RuleOptionsTypes.string,
+      node, integer] ## The list of options required by the rule
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
