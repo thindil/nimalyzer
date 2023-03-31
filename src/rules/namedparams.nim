@@ -61,7 +61,9 @@
 # Import default rules' modules
 import ../rules
 
-const ruleName*: string = "namedparams" ## The name of the rule used in a configuration file
+const
+  ruleName*: string = "namedparams" ## The name of the rule used in a configuration file
+  ruleOptions*: array[0, RuleOptionsTypes] = [] ## The list of options required by the rule
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
