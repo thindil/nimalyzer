@@ -74,7 +74,12 @@
 # Import default rules' modules
 import ../rules
 
-const ruleName*: string = "paramsused" ## The name of the rule used in a configuration file
+const
+  ruleName*: string = "paramsused" ## The name of the rule used in a configuration file
+  ruleOptions*: array[1, RuleOptionsTypes] = [
+    custom] ## The list of options required by the rule
+  ruleOptionValues*: array[3, string] = ["procedures", "templates",
+      "all"] ## The list of custom option values for the rule
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
