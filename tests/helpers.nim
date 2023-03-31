@@ -1,6 +1,6 @@
 import std/logging
 import compiler/[idents, options, parser]
-import ../src/rules
+import ../src/rules except validateOptions
 
 proc setLogger*() =
   if getHandlers().len > 0:
