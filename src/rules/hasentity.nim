@@ -105,8 +105,10 @@ import ../rules
 
 const
   ruleName*: string = "hasentity" ## The name of the rule used in a configuration file
-  ruleOptions*: array[4, RuleOptionsTypes] = [node, RuleOptionsTypes.string,
+  ruleOptions*: seq[RuleOptionsTypes] = @[node, RuleOptionsTypes.string,
       node, integer] ## The list of options required by the rule
+  ruleOptionValues*: seq[string] = @[] ## The list of custom option values for the rule
+  ruleMinOptions*: Natural = 2 ## The minimum amount of options required by the rule
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =

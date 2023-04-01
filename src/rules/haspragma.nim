@@ -112,12 +112,13 @@ import ../rules
 
 const
   ruleName*: string = "haspragma" ## The name of the rule used in a configuration file
-  ruleOptions*: array[9, RuleOptionsTypes] = [custom, RuleOptionsTypes.string,
+  ruleOptions*: seq[RuleOptionsTypes] = @[custom, RuleOptionsTypes.string,
       RuleOptionsTypes.string, RuleOptionsTypes.string, RuleOptionsTypes.string,
       RuleOptionsTypes.string, RuleOptionsTypes.string, RuleOptionsTypes.string,
       RuleOptionsTypes.string] ## The list of options required by the rule
-  ruleOptionValues*: array[3, string] = ["procedures", "templates",
+  ruleOptionValues*: seq[string] = @["procedures", "templates",
       "all"]                   ## The list of custom option values for the rule
+  ruleMinOptions*: Natural = 2 ## The minimum amount of options required by the rule
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =

@@ -76,10 +76,11 @@ import ../rules
 
 const
   ruleName*: string = "paramsused" ## The name of the rule used in a configuration file
-  ruleOptions*: array[1, RuleOptionsTypes] = [
+  ruleOptions*: seq[RuleOptionsTypes] = @[
     custom] ## The list of options required by the rule
-  ruleOptionValues*: array[3, string] = ["procedures", "templates",
+  ruleOptionValues*: seq[string] = @["procedures", "templates",
       "all"] ## The list of custom option values for the rule
+  ruleMinOptions*: Natural = ruleOptions.len ## The minimum amount of options required by the rule
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
