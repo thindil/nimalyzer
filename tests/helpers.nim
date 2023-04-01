@@ -1,6 +1,6 @@
 import std/logging
 import compiler/[idents, options, parser]
-import ../src/rules except validateOptions
+import ../src/rules
 
 proc setLogger*() =
   if getHandlers().len > 0:
@@ -13,8 +13,9 @@ template runRuleTest*() =
 
   setLogger()
 
-  assert not validateOptions(invalidOptions)
-  assert validateOptions(validOptions)
+  assert not validateOptions(ruleName, invalidOptions, ruleOptions,
+      ruleOptionValues, ruleMinOptions)
+  assert validateOptions(ruleName, validOptions, ruleOptions, ruleOptionValues, ruleMinOptions)
 
   let
     nimCache = newIdentCache()

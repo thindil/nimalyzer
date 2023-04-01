@@ -1,6 +1,6 @@
 discard """
   exitcode: 0
-  output: '''FATAL The rule hasPragma require type of entities to check and name(s) of pragma(s) as the option, but nothing was supplied.
+  output: '''FATAL The rule haspragma requires at least 2 options, but only 0 provided: ''.
 ERROR procedure MyProc line: 1 doesn't have declared any pragmas.
 ERROR procedure MyProc line: 1 has declared pragma: raises: [*.
 NOTICE The selected pragma(s) not found.

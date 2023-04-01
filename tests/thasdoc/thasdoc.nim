@@ -1,6 +1,6 @@
 discard """
   exitcode: 0
-  output: '''FATAL The rule hasDoc doesn't accept any options, but options suplied: 'randomoption'.
+  output: '''FATAL The rule hasdoc requires at maximum 0 options, but 1 provided: 'randomoption'.
 ERROR Module doesn't have documentation.
 ERROR Module has documentation.
 NOTICE The documentation not found.
@@ -18,7 +18,7 @@ import ../../src/rules/hasdoc
 import ../helpers.nim
 
 const
-  validOptions = @[]
+  validOptions: seq[string] = @[]
   invalidOptions = @["randomoption"]
   invalidNimCode = "quit"
   validNimCode = "## Doc"

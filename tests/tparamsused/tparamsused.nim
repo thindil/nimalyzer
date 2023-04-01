@@ -1,6 +1,6 @@
 discard """
   exitcode: 0
-  output: '''FATAL The option for the rule paramsUsed must be type of enties to check, but got: 'randomoption'.
+  output: '''FATAL The rule paramsused option number 1 has invalid value: 'randomoption'.
 ERROR procedure MyProc line: 1 doesn't use parameter 'arg'.
 NOTICE Procedures which uses all parameters not found.
 NOTICE Procedures which not uses all parameters not found.

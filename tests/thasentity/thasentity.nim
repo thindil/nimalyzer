@@ -1,6 +1,6 @@
 discard """
   exitcode: 0
-  output: '''FATAL The rule hasEntity accepts two, three or four options, but not enough of them are supplied: ''.
+  output: '''FATAL The rule hasentity requires at least 2 options, but only 1 provided: ''.
 NOTICE Doesn't have declared nkProcDef with name 'MyProc'.
 ERROR Has declared nkProcDef with name 'MyProc' at line: 1.
 NOTICE Doesn't have declared nkProcDef with name 'MyProc'.

@@ -1,6 +1,6 @@
 discard """
   exitcode: 0
-  output: '''FATAL The rule varDeclared require type of declaration as the option, but nothing was supplied.
+  output: '''FATAL The rule vardeclared requires at least 1 options, but only 0 provided: ''.
 ERROR declaration of 'i' line: 1 doesn't set type for the variable.
 ERROR declaration of i line: 1 sets the type 'int' as the type of the variable.
 NOTICE Declarations withtype declaration not found.
