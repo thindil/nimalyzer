@@ -77,7 +77,13 @@
 # Import default rules' modules
 import ../rules
 
-const ruleName*: string = "vardeclared" ## The name of the rule used in a configuration file
+const
+  ruleName*: string = "vardeclared" ## The name of the rule used in a configuration file
+  ruleOptions*: seq[RuleOptionsTypes] = @[
+    custom] ## The list of options required by the rule
+  ruleOptionValues*: seq[string] = @["full", "type",
+      "value"] ## The list of custom option values for the rule
+  ruleMinOptions*: Natural = ruleOptions.len ## The minimum amount of options required by the rule
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
