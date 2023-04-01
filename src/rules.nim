@@ -218,22 +218,23 @@ proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
         options.amount.inc
 
 proc validateOptions*(ruleName: string; options: seq[string];
-    optionsTypes: openArray[RuleOptionsTypes]; allowedValues: openArray[
-    string] = @[]): bool {.raises: [], tags: [RootEffect], contractual.} =
+    optionsTypes: seq[RuleOptionsTypes]; allowedValues: seq[
+    string]; minOptions: Natural): bool {.raises: [], tags: [RootEffect], contractual.} =
   ## Validate the options entered from a configuration for the selected rule
   ##
   ## * ruleName      - the name of the rule to check
   ## * options       - the list of options entered from a configuration file
   ## * optionsTypes  - the list of types of options allowed for the rule
   ## * allowedValues - if the rule has option type of custom, the list of values
-  ##                   for that option. Default value is empty list.
+  ##                   for that option.
+  ## * minOptions    - the minimal amount of options, required by the rule
   ##
   ## Returns true if the options are valid otherwise false.
   body:
     # Check if enough options entered
-    if options.len < optionsTypes.len:
+    if options.len < minOptions:
       return errorMessage(text = "The rule " & ruleName &
-          " requires at least " & $optionsTypes.len & " options, but only " &
+          " requires at least " & $minOptions & " options, but only " &
           $options.len & " provided: '" & options.join(", ") & "'.").bool
     # Check if too much options entered
     if options.len > optionsTypes.len:
@@ -252,18 +253,18 @@ proc validateOptions*(ruleName: string; options: seq[string];
             -1
         if intOption < 0:
           return errorMessage(text = "The rule " & ruleName &
-              " option number " & $(index + 1) & "has invalid value: '" &
+              " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
       of node:
         let entityType: TNodeKind = parseEnum[TNodeKind](s = option,
             default = nkEmpty)
         if entityType == nkEmpty:
           return errorMessage(text = "The rule " & ruleName &
-              " option number " & $(index + 1) & "has invalid value: '" &
+              " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
       of custom:
         if option notin allowedValues:
           return errorMessage(text = "The rule " & ruleName &
-              " option number " & $(index + 1) & "has invalid value: '" &
+              " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
     return true
