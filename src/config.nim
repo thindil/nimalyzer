@@ -126,7 +126,10 @@ proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
               break
             newRule.options.add(y = configRule.key)
           try:
-            if not rulesList[newRule.name][1](options = newRule.options):
+            if not validateOptions(ruleName = newRule.name,
+                options = newRule.options, optionsTypes = rulesList[
+                newRule.name][1], allowedValues = rulesList[newRule.name][2],
+                minOptions = rulesList[newRule.name][3]):
               abortProgram(message = "Invalid options for rule '" &
                   newRule.name & "'.")
           except KeyError:

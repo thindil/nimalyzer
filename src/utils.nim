@@ -34,14 +34,19 @@ import rules/[hasdoc, hasentity, haspragma, namedparams, paramsused, vardeclared
 
 {.push ruleOff: "varDeclared".}
 const rulesList* = {haspragma.ruleName: (haspragma.ruleCheck,
-    haspragma.validateOptions), hasentity.ruleName: (hasentity.ruleCheck,
-    hasentity.validateOptions), paramsused.ruleName: (paramsused.ruleCheck,
-    paramsused.validateOptions), namedparams.ruleName: (
-    namedparams.ruleCheck, namedparams.validateOptions), hasdoc.ruleName: (
-    hasdoc.ruleCheck, hasdoc.validateOptions), varDeclared.ruleName: (
-    varDeclared.ruleCheck, varDeclared.validateOptions)}.toTable
-    ## The list of available the program's rules with their names as keys and
-    ## check code plus validate options code as data
+    haspragma.ruleOptions, haspragma.ruleOptionValues,
+    haspragma.ruleMinOptions), hasentity.ruleName: (hasentity.ruleCheck,
+    hasentity.ruleOptions, hasentity.ruleOptionValues,
+    hasentity.ruleMinOptions), paramsused.ruleName: (paramsused.ruleCheck,
+    paramsused.ruleOptions, paramsused.ruleOptionValues,
+    paramsused.ruleMinOptions), namedparams.ruleName: (namedparams.ruleCheck,
+    namedparams.ruleOptions, namedparams.ruleOptionValues,
+    namedparams.ruleMinOptions), hasdoc.ruleName: (hasdoc.ruleCheck,
+    hasdoc.ruleOptions, hasdoc.ruleOptionValues, hasdoc.ruleMinOptions),
+    vardeclared.ruleName: (varDeclared.ruleCheck, vardeclared.ruleOptions,
+    vardeclared.ruleOptionValues, vardeclared.ruleMinOptions)}.toTable
+  ## The list of available the program's rules with their names as keys and
+  ## check code plus validate options code as data
 {.push ruleOn: "varDeclared".}
 
 proc message*(text: string; level: Level = lvlInfo) {.raises: [], tags: [
