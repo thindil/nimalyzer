@@ -61,12 +61,6 @@
 # Import default rules' modules
 import ../rules
 
-const
-  ruleName*: string = "namedparams" ## The name of the rule used in a configuration file
-  ruleOptions*: seq[RuleOptionsTypes] = @[] ## The list of options required by the rule
-  ruleOptionValues*: seq[string] = @[] ## The list of custom option values for the rule
-  ruleMinOptions*: Natural = ruleOptions.len ## The minimum amount of options required by the rule
-
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if calls in the source code use named paramters.
@@ -125,13 +119,14 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     let isParent: bool = options.parent
     if isParent:
       options.parent = false
-    setRuleState(node = astTree, ruleName = ruleName,
+    setRuleState(node = astTree, ruleName = "namedparams",
         oldState = options.enabled)
     if astTree.kind == nkCall:
       check(node = astTree, options = options)
       return
     for node in astTree.items:
-      setRuleState(node = node, ruleName = ruleName, oldState = options.enabled)
+      setRuleState(node = node, ruleName = "namedparams",
+          oldState = options.enabled)
       # Node is a call, and have parameters, check it
       if node.kind == nkCall and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
         check(node = node, options = options)

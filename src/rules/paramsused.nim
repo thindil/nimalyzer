@@ -74,14 +74,6 @@
 # Import default rules' modules
 import ../rules
 
-const
-  ruleName*: string = "paramsused" ## The name of the rule used in a configuration file
-  ruleOptions*: seq[RuleOptionsTypes] = @[
-    custom]  ## The list of options required by the rule
-  ruleOptionValues*: seq[string] = @["procedures", "templates",
-      "all"] ## The list of custom option values for the rule
-  ruleMinOptions*: Natural = ruleOptions.len ## The minimum amount of options required by the rule
-
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if all procedures in the Nim code use all of their
@@ -116,7 +108,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     for node in astTree.items:
       # Check the node's children if rule is enabled
       for child in node.items:
-        setRuleState(node = child, ruleName = ruleName,
+        setRuleState(node = child, ruleName = "paramsused",
             oldState = options.enabled)
       if options.enabled and node.kind in nodesToCheck:
         # Get the procedure's name

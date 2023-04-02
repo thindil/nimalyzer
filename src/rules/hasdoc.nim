@@ -69,12 +69,6 @@
 # Import default rules' modules
 import ../rules
 
-const
-  ruleName*: string = "hasdoc" ## The name of the rule used in a configuration file
-  ruleOptions*: seq[RuleOptionsTypes] = @[] ## The list of options required by the rule
-  ruleOptionValues*: seq[string] = @[] ## The list of custom option values for the rule
-  ruleMinOptions*: Natural = ruleOptions.len ## The minimum amount of options required by the rule
-
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the source code has the documentation in the proper
@@ -108,7 +102,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           nkEnumTy, nkConstSection, nkConstTy}:
         for child in node.items:
           if child.kind == nkPragma:
-            setRuleState(node = child, ruleName = ruleName,
+            setRuleState(node = child, ruleName = "hasdoc",
                 oldState = options.enabled)
             break
         # Special check for constant declaration section

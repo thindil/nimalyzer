@@ -103,13 +103,6 @@
 # Import default rules' modules
 import ../rules
 
-const
-  ruleName*: string = "hasentity" ## The name of the rule used in a configuration file
-  ruleOptions*: seq[RuleOptionsTypes] = @[node, RuleOptionsTypes.string,
-      node, integer] ## The list of options required by the rule
-  ruleOptionValues*: seq[string] = @[] ## The list of custom option values for the rule
-  ruleMinOptions*: Natural = 2 ## The minimum amount of options required by the rule
-
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the source code has the selected entity
@@ -167,7 +160,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             line & ".")
 
     for node in astTree.items:
-      setRuleState(node = node, ruleName = ruleName, oldState = options.enabled)
+      setRuleState(node = node, ruleName = "hasentity", oldState = options.enabled)
       if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
           nkCommentStmt}:
         try:

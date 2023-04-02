@@ -110,16 +110,6 @@
 # Import default rules' modules
 import ../rules
 
-const
-  ruleName*: string = "haspragma" ## The name of the rule used in a configuration file
-  ruleOptions*: seq[RuleOptionsTypes] = @[custom, RuleOptionsTypes.string,
-      RuleOptionsTypes.string, RuleOptionsTypes.string, RuleOptionsTypes.string,
-      RuleOptionsTypes.string, RuleOptionsTypes.string, RuleOptionsTypes.string,
-      RuleOptionsTypes.string] ## The list of options required by the rule
-  ruleOptionValues*: seq[string] = @["procedures", "templates",
-      "all"]                   ## The list of custom option values for the rule
-  ruleMinOptions*: Natural = 2 ## The minimum amount of options required by the rule
-
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the Nim code entities have proper pragmas.
@@ -185,7 +175,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       if node.kind in nodesToCheck:
         for child in node.items:
           if child.kind == nkPragma:
-            setRuleState(node = child, ruleName = ruleName,
+            setRuleState(node = child, ruleName = "haspragma",
                 oldState = options.enabled)
             break
         # Set the name of the procedure to check
