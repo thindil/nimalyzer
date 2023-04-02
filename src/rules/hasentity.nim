@@ -109,9 +109,6 @@ const
       node, integer] ## The list of options required by the rule
   ruleOptionValues*: seq[string] = @[] ## The list of custom option values for the rule
   ruleMinOptions*: Natural = 2 ## The minimum amount of options required by the rule
-  ruleSettings*: RuleSettings = RuleSettings(name: "hasentity", options: @[node,
-      RuleOptionsTypes.string, node, integer],
-      minOptions: 2) ## The rule settings like name, options, etc
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -225,3 +222,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           options.options[0] & " with name '" & options.options[1] & "'",
           notFoundMessage = "doesn't have declared " & options.options[0] &
           " with name '" & options.options[1] & "'.", showForCheck = true)
+
+const ruleSettings*: RuleSettings = RuleSettings(name: "hasentity",
+    checkProc: ruleCheck, options: @[node, RuleOptionsTypes.string, node,
+    integer], minOptions: 2) ## The rule settings like name, options, etc

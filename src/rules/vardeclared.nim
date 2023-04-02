@@ -84,8 +84,6 @@ const
   ruleOptionValues*: seq[string] = @["full", "type",
       "value"] ## The list of custom option values for the rule
   ruleMinOptions*: Natural = ruleOptions.len ## The minimum amount of options required by the rule
-  ruleSettings*: RuleSettings = RuleSettings(name: "vardeclared", options: @[
-      custom], optionValues: @["full", "type", "value"]) ## The rule settings like name, options, etc
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -175,3 +173,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           if options.negation: "out" else: "") & options.options[0] &
           " declaration", notFoundMessage = "declarations with" & (
           if options.negation: "out" else: "") & options.options[0] & " declaration not found.")
+
+const ruleSettings*: RuleSettings = RuleSettings(name: "vardeclared",
+    checkProc: ruleCheck, options: @[custom], optionValues: @["full", "type",
+    "value"]) ## The rule settings like name, options, etc

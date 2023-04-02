@@ -74,8 +74,6 @@ const
   ruleOptions*: seq[RuleOptionsTypes] = @[] ## The list of options required by the rule
   ruleOptionValues*: seq[string] = @[] ## The list of custom option values for the rule
   ruleMinOptions*: Natural = ruleOptions.len ## The minimum amount of options required by the rule
-  ruleSettings*: RuleSettings = RuleSettings(
-      name: "hasdoc") ## The rule settings like name, options, etc
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -154,3 +152,6 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     if isParent:
       showSummary(options = options, foundMessage = "declared public items with documentation",
           notFoundMessage = "The documentation not found.")
+
+const ruleSettings*: RuleSettings = RuleSettings(name: "hasdoc",
+    checkProc: ruleCheck) ## The rule settings like name, options, etc

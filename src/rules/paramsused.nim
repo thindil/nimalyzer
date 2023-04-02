@@ -81,9 +81,6 @@ const
   ruleOptionValues*: seq[string] = @["procedures", "templates",
       "all"] ## The list of custom option values for the rule
   ruleMinOptions*: Natural = ruleOptions.len ## The minimum amount of options required by the rule
-  ruleSettings*: RuleSettings = RuleSettings(name: "paramsused", options: @[
-      custom], optionValues: @["procedures", "templates", "all"],
-      minOptions: 1) ## The rule settings like name, options, etc
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -177,3 +174,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           if options.negation: " not" else: "") & " uses all parameters",
           notFoundMessage = "procedures which" & (
           if options.negation: " not" else: "") & " uses all parameters not found.")
+
+const ruleSettings*: RuleSettings = RuleSettings(name: "paramsused",
+    checkProc: ruleCheck, options: @[custom], optionValues: @["procedures",
+    "templates", "all"], minOptions: 1) ## The rule settings like name, options, etc
