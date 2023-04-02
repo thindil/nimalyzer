@@ -222,38 +222,3 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           options.options[0] & " with name '" & options.options[1] & "'",
           notFoundMessage = "doesn't have declared " & options.options[0] &
           " with name '" & options.options[1] & "'.", showForCheck = true)
-
-proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
-    tags: [RootEffect].} =
-  ## Validate the options entered from a configuration for the rule
-  ##
-  ## * options - the list of options entered from a configuration file
-  ##
-  ## Returns true if options are valid otherwise false.
-  body:
-    if options.len < 2:
-      return errorMessage(text = "The rule hasEntity accepts two, three or four options, but not enough of them are supplied: '" &
-          options.join(", ") & "'.").bool
-    if options.len > 4:
-      return errorMessage(text = "The rule hasEntity accepts two, three or four options, but too much of the are supplied: '" &
-          options.join(", ") & "'.").bool
-    let entityType: TNodeKind = parseEnum[TNodeKind](s = options[0],
-        default = nkNone)
-    if entityType == nkNone:
-      return errorMessage(text = "The rule hasEntity the entity type has invalid value: '" &
-          options[0] & "'.").bool
-    if options.len > 2:
-      let parentType: TNodeKind = parseEnum[TNodeKind](s = options[2],
-          default = nkEmpty)
-      if parentType == nkEmpty:
-        return errorMessage(text = "The rule hasEntity the parent type has invalid value: '" &
-            options[2] & "'.").bool
-    if options.len > 3:
-      let childIndex: int = try:
-          options[3].parseInt()
-        except ValueError:
-          -1
-      if childIndex < 0:
-        return errorMessage(text = "The rule hasEntity the child index has invalid value: '" &
-            options[3] & "'.").bool
-    return true

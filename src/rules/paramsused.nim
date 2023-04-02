@@ -174,18 +174,3 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           if options.negation: " not" else: "") & " uses all parameters",
           notFoundMessage = "procedures which" & (
           if options.negation: " not" else: "") & " uses all parameters not found.")
-
-proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
-    tags: [RootEffect].} =
-  ## Validate the options entered from a configuration for the rule
-  ##
-  ## * options - the list of options entered from a configuration file
-  ##
-  ## Returns true if options are valid otherwise false.
-  body:
-    if options.len < 1:
-      return errorMessage(text = "The rule paramsUsed require type of entities to check, but nothing was supplied.").bool
-    if options[0] notin ["procedures", "templates", "all"]:
-      return errorMessage(text = "The option for the rule paramsUsed must be type of enties to check, but got: '" &
-          options[0] & "'.").bool
-    return true

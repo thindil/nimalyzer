@@ -266,20 +266,3 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         return
       showSummary(options = options, foundMessage = "declared procedures with selected pragmas",
           notFoundMessage = "The selected pragma(s) not found.")
-
-proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
-    tags: [RootEffect].} =
-  ## Validate the options entered from a configuration for the rule
-  ##
-  ## * options - the list of options entered from a configuration file
-  ##
-  ## Returns true if options are valid otherwise false.
-  body:
-    if options.len < 1:
-      return errorMessage(text = "The rule hasPragma require type of entities to check and name(s) of pragma(s) as the option, but nothing was supplied.").bool
-    if options.len == 1:
-      return errorMessage(text = "The rule hasPragma require type of entities to check and name(s) of pragma(s) as the option, but only one option was supplied.").bool
-    if options[0] notin ["procedures", "templates", "all"]:
-      return errorMessage(text = "The first option of the rule hasPragma must be type of enties to check, but got: '" &
-          options[0] & "'.").bool
-    return true

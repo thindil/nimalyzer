@@ -173,21 +173,3 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           if options.negation: "out" else: "") & options.options[0] &
           " declaration", notFoundMessage = "declarations with" & (
           if options.negation: "out" else: "") & options.options[0] & " declaration not found.")
-
-proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
-    tags: [RootEffect].} =
-  ## Validate the options entered from a configuration for the rule
-  ##
-  ## * options - the list of options entered from a configuration file
-  ##
-  ## Returns true if options are valid otherwise false.
-  body:
-    if options.len == 0:
-      return errorMessage(text = "The rule varDeclared require type of declaration as the option, but nothing was supplied.").bool
-    elif options.len == 1 and options[0] notin ["full", "type", "value"]:
-      return errorMessage(text = "The rule varDeclared require 'full', 'type' or 'value' as option, but suplied option was: '" &
-          options[0] & "'.").bool
-    elif options.len > 1:
-      return errorMessage(text = "The rule varDeclared require exactly one option, but more options suplied: '" &
-          options.join(", ") & "'.").bool
-    return true

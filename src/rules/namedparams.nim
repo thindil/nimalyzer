@@ -142,16 +142,3 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           if options.negation: " not" else: "") & " have all named parameters",
           notFoundMessage = "calls which" & (
           if options.negation: " not" else: "") & " have all named parameters not found.")
-
-proc validateOptions*(options: seq[string]): bool {.contractual, raises: [],
-    tags: [RootEffect].} =
-  ## Validate the options entered from a configuration for the rule
-  ##
-  ## * options - the list of options entered from a configuration file
-  ##
-  ## Returns true if options are valid otherwise false.
-  body:
-    if options.len > 0:
-      return errorMessage(text = "The rule namedParams doesn't accept any options, but options suplied: '" &
-          options.join(", ") & "'.").bool
-    return true
