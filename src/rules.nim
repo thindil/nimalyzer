@@ -55,7 +55,12 @@ type
     amount*: int          ## The amount of results found by the rule
     enabled*: bool        ## If false, the rule is temporary disabled by pragmas
 
-  OptionsTypesArray* = array[int, typedesc] ## The list of types of options for rules
+  RuleSettings* = object ## Contains information about the program's rule configuration
+    name*: string                   ## The name of the rule
+    checkProc*: proc (astTree: PNode; options: var RuleOptions) ## The procedure used to check the rule
+    options*: seq[RuleOptionsTypes] ## The rule's options which can be set
+    optionValues*: seq[string] ## If the rule has option type custom, the values for the option
+    minOptions*: Natural            ## The minumal amount of options required by the rule
 
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
     decrease: bool = true) {.sideEffect, gcsafe, raises: [], tags: [RootEffect],
@@ -219,7 +224,8 @@ proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
 
 proc validateOptions*(ruleName: string; options: seq[string];
     optionsTypes: seq[RuleOptionsTypes]; allowedValues: seq[
-    string]; minOptions: Natural): bool {.raises: [], tags: [RootEffect], contractual.} =
+    string]; minOptions: Natural): bool {.raises: [], tags: [RootEffect],
+        contractual.} =
   ## Validate the options entered from a configuration for the selected rule
   ##
   ## * ruleName      - the name of the rule to check
