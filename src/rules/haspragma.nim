@@ -261,5 +261,5 @@ const ruleSettings*: RuleSettings = RuleSettings(name: "haspragma",
     checkProc: ruleCheck, options: @[custom, RuleOptionsTypes.string,
     RuleOptionsTypes.string, RuleOptionsTypes.string, RuleOptionsTypes.string,
     RuleOptionsTypes.string, RuleOptionsTypes.string, RuleOptionsTypes.string,
-    RuleOptionsTypes.string], optionValues: @["procedure", "templates", "all"],
+    RuleOptionsTypes.string], optionValues: @["procedures", "templates", "all"],
     minOptions: 2) ## The rule settings like name, options, etc
