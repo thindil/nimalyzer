@@ -119,6 +119,12 @@ const
   ruleOptionValues*: seq[string] = @["procedures", "templates",
       "all"]                   ## The list of custom option values for the rule
   ruleMinOptions*: Natural = 2 ## The minimum amount of options required by the rule
+  ruleSettings*: RuleSettings = RuleSettings(name: "haspragma", options: @[
+      custom, RuleOptionsTypes.string, RuleOptionsTypes.string,
+      RuleOptionsTypes.string, RuleOptionsTypes.string, RuleOptionsTypes.string,
+      RuleOptionsTypes.string, RuleOptionsTypes.string, RuleOptionsTypes.string,
+      ], optionValues: @["procedure", "templates", "all"],
+          minOptions: 2)       ## The rule settings like name, options, etc
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =

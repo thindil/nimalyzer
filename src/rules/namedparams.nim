@@ -66,6 +66,8 @@ const
   ruleOptions*: seq[RuleOptionsTypes] = @[] ## The list of options required by the rule
   ruleOptionValues*: seq[string] = @[] ## The list of custom option values for the rule
   ruleMinOptions*: Natural = ruleOptions.len ## The minimum amount of options required by the rule
+  ruleSettings*: RuleSettings = RuleSettings(
+      name: "namedparams") ## The rule settings like name, options, etc
 
 proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
@@ -81,7 +83,8 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
     options.fileName.len > 0
   body:
 
-    proc check(node: PNode; options: var RuleOptions) {.contractual, raises: [], tags: [RootEffect].} =
+    proc check(node: PNode; options: var RuleOptions) {.contractual, raises: [],
+        tags: [RootEffect].} =
       ## Check the call if it uses named parameters
       ##
       ## * node      - the AST node representing the call to check
