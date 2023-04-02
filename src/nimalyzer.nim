@@ -97,7 +97,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             options.amount = (if rule.ruleType == RuleTypes.check: 1 else: 0)
             options.enabled = true
             options.parent = true
-            rulesList[rule.name][0](astTree = astTree, options = options)
+            rulesList[rule.name].checkProc(astTree = astTree, options = options)
             if options.amount < 1:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
