@@ -222,34 +222,27 @@ proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
       else:
         options.amount.inc
 
-proc validateOptions*(ruleName: string; options: seq[string];
-    optionsTypes: seq[RuleOptionsTypes]; allowedValues: seq[
-    string]; minOptions: Natural): bool {.raises: [], tags: [RootEffect],
-        contractual.} =
+proc validateOptions*(rule: RuleSettings; options: seq[string]): bool {.raises: [], tags: [RootEffect], contractual.} =
   ## Validate the options entered from a configuration for the selected rule
   ##
-  ## * ruleName      - the name of the rule to check
-  ## * options       - the list of options entered from a configuration file
-  ## * optionsTypes  - the list of types of options allowed for the rule
-  ## * allowedValues - if the rule has option type of custom, the list of values
-  ##                   for that option.
-  ## * minOptions    - the minimal amount of options, required by the rule
+  ## * rule     - the rule's settings for the selected rule, like name, options types, etc
+  ## * options  - the list of options entered from a configuration file
   ##
   ## Returns true if the options are valid otherwise false.
   body:
     # Check if enough options entered
-    if options.len < minOptions:
-      return errorMessage(text = "The rule " & ruleName &
-          " requires at least " & $minOptions & " options, but only " &
+    if options.len < rule.minOptions:
+      return errorMessage(text = "The rule " & rule.name &
+          " requires at least " & $rule.minOptions & " options, but only " &
           $options.len & " provided: '" & options.join(", ") & "'.").bool
     # Check if too much options entered
-    if options.len > optionsTypes.len:
-      return errorMessage(text = "The rule " & ruleName &
-          " requires at maximum " & $optionsTypes.len & " options, but " &
+    if options.len > rule.options.len:
+      return errorMessage(text = "The rule " & rule.name &
+          " requires at maximum " & $rule.options.len & " options, but " &
           $options.len & " provided: '" & options.join(", ") & "'.").bool
     # Check if all options have proper values
     for index, option in options.pairs:
-      case optionsTypes[index]
+      case rule.options[index]
       of string:
         continue
       of integer:
@@ -258,19 +251,19 @@ proc validateOptions*(ruleName: string; options: seq[string];
           except ValueError:
             -1
         if intOption < 0:
-          return errorMessage(text = "The rule " & ruleName &
+          return errorMessage(text = "The rule " & rule.name &
               " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
       of node:
         let entityType: TNodeKind = parseEnum[TNodeKind](s = option,
             default = nkEmpty)
         if entityType == nkEmpty:
-          return errorMessage(text = "The rule " & ruleName &
+          return errorMessage(text = "The rule " & rule.name &
               " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
       of custom:
-        if option notin allowedValues:
-          return errorMessage(text = "The rule " & ruleName &
+        if option notin rule.optionValues:
+          return errorMessage(text = "The rule " & rule.name &
               " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
     return true
