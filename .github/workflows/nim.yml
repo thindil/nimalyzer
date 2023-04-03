@@ -26,13 +26,13 @@ jobs:
     - name: Setup Nim
       uses: jiro4989/setup-nim-action@v1
       with:
-        nim-version: '1.6.10'
+        nim-version: '1.6.12'
 
     - name: Update Nimble
       run: nimble install -y nimble
 
     - name: Install compiler package
-      run: nimble install -y compiler@1.6.10
+      run: nimble install -y compiler@1.6.12
 
     - name: Debug build
       run: nimble debug
