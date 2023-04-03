@@ -32,8 +32,7 @@ import rules
 # Nimalyzer rules imports
 import rules/[hasdoc, hasentity, haspragma, namedparams, paramsused, vardeclared]
 
-{.push ruleOff: "varDeclared".}
-const rulesList* = {haspragma.ruleSettings.name: haspragma.ruleSettings,
+const rulesList*: Table[system.string, RuleSettings] = {haspragma.ruleSettings.name: haspragma.ruleSettings,
     hasentity.ruleSettings.name: hasentity.ruleSettings,
     paramsused.ruleSettings.name: paramsused.ruleSettings,
     namedparams.ruleSettings.name: namedparams.ruleSettings,
@@ -41,7 +40,6 @@ const rulesList* = {haspragma.ruleSettings.name: haspragma.ruleSettings,
     vardeclared.ruleSettings.name: varDeclared.ruleSettings}.toTable
   ## The list of available the program's rules with their names as keys and
   ## check code plus validate options code as data
-{.push ruleOn: "varDeclared".}
 
 proc message*(text: string; level: Level = lvlInfo) {.raises: [], tags: [
     RootEffect], contractual.} =
