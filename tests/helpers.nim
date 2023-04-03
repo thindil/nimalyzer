@@ -13,9 +13,8 @@ template runRuleTest*() =
 
   setLogger()
 
-  assert not validateOptions(ruleName, invalidOptions, ruleOptions,
-      ruleOptionValues, ruleMinOptions)
-  assert validateOptions(ruleName, validOptions, ruleOptions, ruleOptionValues, ruleMinOptions)
+  assert not validateOptions(ruleSettings, invalidOptions)
+  assert validateOptions(ruleSettings, validOptions)
 
   let
     nimCache = newIdentCache()

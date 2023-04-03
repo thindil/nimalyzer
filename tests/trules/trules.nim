@@ -33,5 +33,7 @@ assert options.amount == 0
 setResult(true, options, "Myproc line 10: found", "Myproc line 10: not found")
 assert options.amount == 1
 
-assert validateOptions("Test Rule", @["1"], @[integer], @[], 1)
-assert not validateOptions("Test rule", @["a"], @[RuleOptionsTypes.string, integer], @[], 2)
+assert validateOptions(RuleSettings(name: "Test Rule", options: @[integer],
+    minOptions: 1), @["1"])
+assert not validateOptions(RuleSettings(name: "Test rule", options: @[
+    RuleOptionsTypes.string, integer], minOptions: 2), @["a"])
