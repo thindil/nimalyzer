@@ -168,4 +168,4 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "vardeclared",
     checkProc: ruleCheck, options: @[custom], optionValues: @["full", "type",
-    "value"]) ## The rule settings like name, options, etc
+    "value"], minOptions: 1) ## The rule settings like name, options, etc
