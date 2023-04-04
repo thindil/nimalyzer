@@ -26,7 +26,7 @@
 ## This is the main module of the program.
 
 # Standard library imports
-import std/[os, tables]
+import std/os
 # External modules imports
 import compiler/[idents, llstream, options, parser, pathutils]
 # Internal modules imports
@@ -97,7 +97,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             options.amount = (if rule.ruleType == RuleTypes.check: 1 else: 0)
             options.enabled = true
             options.parent = true
-            rulesList[rule.name].checkProc(astTree = astTree, options = options)
+            rulesList[rule.index].checkProc(astTree = astTree, options = options)
             if options.amount < 1:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:

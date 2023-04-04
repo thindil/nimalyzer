@@ -26,7 +26,7 @@
 ## Provides code for parse the program's configuration file
 
 # Standard library imports
-import std/[os, parseopt, tables]
+import std/[os, parseopt]
 # Internal modules imports
 import rules, utils
 
@@ -35,6 +35,7 @@ type RuleData* = object ## Contains information about the configuration of the p
   options*: seq[string] ## The options list provided by the user in a configuration file
   negation*: bool      ## If true, the rule is negation
   ruleType*: RuleTypes ## The type of the rule
+  index*: int ## The index of the rule
 
 proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
     RuleData]] {.sideEffect, raises: [], tags: [ReadIOEffect, RootEffect],
@@ -113,12 +114,16 @@ proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
             abortProgram(message = "Unknown type of rule: '" & configRule.key & "'.")
           configRule.next
           var newRule: RuleData = RuleData(name: configRule.key.toLowerAscii,
-              options: @[], negation: false, ruleType: ruleType)
+              options: @[], negation: false, ruleType: ruleType, index: -1)
           if newRule.name == "not":
             newRule.negation = true
             configRule.next
             newRule.name = configRule.key.toLowerAscii
-          if not rulesList.hasKey(key = newRule.name):
+          for index, rule in rulesList.pairs:
+            if rule.name == newRule.name:
+              newRule.index = index
+              break
+          if newRule.index == -1:
             abortProgram(message = "No rule named '" & newRule.name & "' available.")
           while true:
             configRule.next()
@@ -126,7 +131,7 @@ proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
               break
             newRule.options.add(y = configRule.key)
           try:
-            if not validateOptions(rule = rulesList[newRule.name],
+            if not validateOptions(rule = rulesList[newRule.index],
                 options = newRule.options):
               abortProgram(message = "Invalid options for rule '" &
                   newRule.name & "'.")
