@@ -35,5 +35,5 @@ assert options.amount == 1
 
 assert validateOptions(RuleSettings(name: "Test Rule", options: @[integer],
     minOptions: 1), @["1"])
-assert not validateOptions(RuleSettings(name: "Test rule", options: @[
-    RuleOptionsTypes.string, integer], minOptions: 2), @["a"])
+assert not validateOptions(RuleSettings(name: "Test rule", options: @[str,
+    integer], minOptions: 2), @["a"])
