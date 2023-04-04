@@ -44,7 +44,7 @@ type
 
   RuleOptionsTypes* = enum
     ## the available types of the program's rules' options
-    integer, string, node, custom
+    integer, str, node, custom
 
   RuleOptions* = object   ## Contains information for the program's rules
     options*: seq[string] ## The list of the program's rule
@@ -243,7 +243,7 @@ proc validateOptions*(rule: RuleSettings; options: seq[string]): bool {.raises: 
     # Check if all options have proper values
     for index, option in options.pairs:
       case rule.options[index]
-      of string:
+      of str:
         continue
       of integer:
         let intOption: int = try:
