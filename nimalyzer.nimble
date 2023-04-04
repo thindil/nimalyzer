@@ -25,8 +25,6 @@ const warningFlags = (when (NimMajor, NimMinor, NimPatch) == (1, 6,
     12): "--warning:BareExcept:off " else: "")
 
 task debug, "builds the project in debug mode":
-  if not fileExists(bindir & DirSep & "nimalyzer" & ExeExt):
-    exec "nimble install -d -y"
   exec "nim c -d:debug --styleCheck:hint --spellSuggest:auto --errorMax:0 " &
       warningFlags & "--outdir:" & binDir & " " & srcDir & DirSep & "nimalyzer.nim"
 
@@ -36,8 +34,6 @@ task release, "builds the project in release mode":
       "--outdir:" & binDir & " " & srcDir & DirSep & "nimalyzer.nim"
 
 task tests, "run the project unit tests":
-  if not fileExists(bindir & DirSep & "nimalyzer" & ExeExt):
-    exec "nimble install -d -y"
   exec "testament all"
 
 task releasewindows, "builds the project in release mode for Windows 64-bit":
@@ -46,8 +42,6 @@ task releasewindows, "builds the project in release mode for Windows 64-bit":
       warningFlags & "--outdir:" & binDir & " " & srcDir & DirSep & "nimalyzer.nim"
 
 task tools, "builds the project's tools":
-  if not fileExists(bindir & DirSep & "nimalyzer" & ExeExt):
-    exec "nimble install -d -y"
   exec "nim c -d:release --passc:-flto --passl:-s --styleCheck:hint --spellSuggest:auto --errorMax:0 " &
       warningFlags & "--outdir:" & binDir & " tools" & DirSep & "gendoc.nim"
 
