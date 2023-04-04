@@ -258,8 +258,6 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           notFoundMessage = "The selected pragma(s) not found.")
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "haspragma",
-    checkProc: ruleCheck, options: @[custom, RuleOptionsTypes.string,
-    RuleOptionsTypes.string, RuleOptionsTypes.string, RuleOptionsTypes.string,
-    RuleOptionsTypes.string, RuleOptionsTypes.string, RuleOptionsTypes.string,
-    RuleOptionsTypes.string], optionValues: @["procedures", "templates", "all"],
-    minOptions: 2) ## The rule settings like name, options, etc
+    checkProc: ruleCheck, options: @[custom, str, str, str, str, str, str, str,
+        str], optionValues: @["procedures", "templates", "all"],
+        minOptions: 2) ## The rule settings like name, options, etc

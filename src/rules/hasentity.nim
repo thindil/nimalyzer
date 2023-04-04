@@ -160,7 +160,8 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             line & ".")
 
     for node in astTree.items:
-      setRuleState(node = node, ruleName = "hasentity", oldState = options.enabled)
+      setRuleState(node = node, ruleName = "hasentity",
+          oldState = options.enabled)
       if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
           nkCommentStmt}:
         try:
@@ -217,5 +218,5 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           " with name '" & options.options[1] & "'.", showForCheck = true)
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "hasentity",
-    checkProc: ruleCheck, options: @[node, RuleOptionsTypes.string, node,
-    integer], minOptions: 2) ## The rule settings like name, options, etc
+    checkProc: ruleCheck, options: @[node, str, node, integer],
+        minOptions: 2) ## The rule settings like name, options, etc
