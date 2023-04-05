@@ -21,12 +21,16 @@ jobs:
         path: |
           ~/.nimble
           ~/.choosenim
-        key: ${{ runner.os }}-nim
+        key: ${{ runner.os }}-nimble-${{ hashFiles('*.nimble') }}
+        restore-keys: |
+          ${{ runner.os }}-nimble-
+      if: runner.os != 'Windows'
 
     - name: Setup Nim
       uses: jiro4989/setup-nim-action@v1
       with:
         nim-version: '1.6.12'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Update Nimble
       run: nimble install -y nimble
