@@ -33,7 +33,7 @@ task release, "builds the project in release mode":
   exec "nim c -d:release --passc:-flto --passl:-s " & warningFlags &
       "--outdir:" & binDir & " " & srcDir & DirSep & "nimalyzer.nim"
 
-task tests, "run the project unit tests":
+task test, "run the project unit tests":
   exec "testament all"
 
 task releasewindows, "builds the project in release mode for Windows 64-bit":
