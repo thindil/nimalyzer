@@ -54,4 +54,4 @@ jobs:
          path: nimalyzer.log
 
     - name: Run tests
-      run: nimble tests
+      run: nimble test
