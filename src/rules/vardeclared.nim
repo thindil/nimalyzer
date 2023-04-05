@@ -77,42 +77,42 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
+proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if all variables' declarations in Nim code follow
   ## the selected pattern
   ##
   ## * astTree - The AST tree representation of the Nim code to check
-  ## * options - The rule options set by the user and the previous iterations
+  ## * rule    - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many declarations of variables follow the
   ## selected pattern
   require:
     astTree != nil
-    options.fileName.len > 0
+    rule.fileName.len > 0
   body:
-    let isParent: bool = options.parent
+    let isParent: bool = rule.parent
     if isParent:
-      options.parent = false
+      rule.parent = false
     let messagePrefix: string = if getLogFilter() < lvlNotice:
         ""
       else:
-        options.fileName & ": "
+        rule.fileName & ": "
     for node in astTree.items:
       # Check the node if rule is enabled
       setRuleState(node = node, ruleName = "vardeclared",
-          oldState = options.enabled)
-      if options.enabled:
+          oldState = rule.enabled)
+      if rule.enabled:
         try:
           # Sometimes the compiler detects declarations as children of the node
           if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
             # Check each variable declaration if meet the rule requirements
             for declaration in node.items:
               # Check if declaration of variable sets its type
-              if options.options[0] in ["full", "type"]:
+              if rule.options[0] in ["full", "type"]:
                 setResult(checkResult = declaration[1].kind != nkEmpty,
-                    options = options, positiveMessage = messagePrefix &
+                    options = rule, positiveMessage = messagePrefix &
                     "declaration of " & $declaration[0] & " line: " &
                     $declaration.info.line & " sets the type '" &
                     $declaration[1] & "' as the type of the variable.",
@@ -120,9 +120,9 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                     "declaration of '" & $declaration[0] & "' line: " &
                     $declaration.info.line & " doesn't set type for the variable.")
               # Check if declaration of variable sets its value
-              if options.options[0] in ["full", "value"]:
+              if rule.options[0] in ["full", "value"]:
                 setResult(checkResult = declaration[2].kind != nkEmpty,
-                    options = options, positiveMessage = messagePrefix &
+                    options = rule, positiveMessage = messagePrefix &
                     "declaration of " & $declaration[0] & " line: " &
                     $declaration.info.line & " sets the value '" &
                     $declaration[2] & "' as the value of the variable.",
@@ -133,9 +133,9 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           elif node.kind == nkIdentDefs and astTree.kind in {nkVarSection,
               nkLetSection, nkConstSection}:
             # Check if declaration of variable sets its type
-            if options.options[0] in ["full", "type"]:
+            if rule.options[0] in ["full", "type"]:
               setResult(checkResult = node[1].kind != nkEmpty,
-                  options = options, positiveMessage = messagePrefix &
+                  options = rule, positiveMessage = messagePrefix &
                   "declaration of " & $node[0] & " line: " &
                   $node.info.line & " sets the type '" &
                   $node[1] & "' as the type of the variable.",
@@ -143,9 +143,9 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   "declaration of '" & $node[0] & "' line: " &
                   $node.info.line & " doesn't set type for the variable.")
             # Check if declaration of variable sets its value
-            if options.options[0] in ["full", "value"]:
+            if rule.options[0] in ["full", "value"]:
               setResult(checkResult = node[1].kind != nkEmpty,
-                  options = options, positiveMessage = messagePrefix &
+                  options = rule, positiveMessage = messagePrefix &
                   "declaration of " & $node[0] & " line: " &
                   $node.info.line & " sets the value '" &
                   $node[1] & "' as the value of the variable.",
@@ -153,18 +153,18 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   "declaration of '" & $node[0] & "' line: " &
                   $node.info.line & " doesn't set value for the variable.")
         except KeyError, Exception:
-          options.amount = errorMessage(text = messagePrefix &
+          rule.amount = errorMessage(text = messagePrefix &
               "can't check declaration of variable " &
               " line: " &
               $node.info.line & ". Reason: ", e = getCurrentException())
       # Check the node's children with the rule
       for child in node.items:
-        ruleCheck(astTree = child, options = options)
+        ruleCheck(astTree = child, rule = rule)
     if isParent:
-      showSummary(options = options, foundMessage = "declarations with" & (
-          if options.negation: "out" else: "") & options.options[0] &
+      showSummary(options = rule, foundMessage = "declarations with" & (
+          if rule.negation: "out" else: "") & rule.options[0] &
           " declaration", notFoundMessage = "declarations with" & (
-          if options.negation: "out" else: "") & options.options[0] & " declaration not found.")
+          if rule.negation: "out" else: "") & rule.options[0] & " declaration not found.")
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "vardeclared",
     checkProc: ruleCheck, options: @[custom], optionValues: @["full", "type",

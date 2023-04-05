@@ -69,31 +69,31 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
+proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the source code has the documentation in the proper
   ## locactions
   ##
   ## * astTree - The AST tree representation of the Nim code to check
-  ## * options - The rule options set by the user and the previous iterations
+  ## * rule    - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many times the various elements of the Nim code
   ## has the documentation comments
   require:
     astTree != nil
-    options.fileName.len > 0
+    rule.fileName.len > 0
   body:
-    let isParent: bool = options.parent
+    let isParent: bool = rule.parent
     if isParent:
-      options.parent = false
+      rule.parent = false
     let messagePrefix: string = if getLogFilter() < lvlNotice:
         ""
       else:
-        options.fileName & ": "
-    if options.enabled and isParent:
+        rule.fileName & ": "
+    if rule.enabled and isParent:
       setResult(checkResult = astTree.hasSonWith(kind = nkCommentStmt),
-          options = options, positiveMessage = messagePrefix &
+          options = rule, positiveMessage = messagePrefix &
           "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
     for node in astTree.items:
       # Check only elements which can have documentation
@@ -103,11 +103,11 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         for child in node.items:
           if child.kind == nkPragma:
             setRuleState(node = child, ruleName = "hasdoc",
-                oldState = options.enabled)
+                oldState = rule.enabled)
             break
         # Special check for constant declaration section
         if node.kind == nkConstSection:
-          ruleCheck(astTree = node, options = options)
+          ruleCheck(astTree = node, rule = rule)
         else:
           # Set the name of the declared entity which is checked for documentation
           var declName: string = try:
@@ -120,10 +120,10 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
               except KeyError, Exception:
                 ""
           if declName.len == 0:
-            options.amount = errorMessage(
+            rule.amount = errorMessage(
                 text = "Can't get the name of the declared entity.")
             return
-          if options.enabled and (declName.endsWith(suffix = "*") or
+          if rule.enabled and (declName.endsWith(suffix = "*") or
               node.kind in callableDefs):
             try:
               let hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs,
@@ -131,20 +131,20 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   node.comment.len > 0
                 else:
                   node.hasSubnodeWith(kind = nkCommentStmt)
-              setResult(checkResult = hasDoc, options = options,
+              setResult(checkResult = hasDoc, options = rule,
                   positiveMessage = messagePrefix & "Declaration of " &
                   declName & " " & $node.info.line & " has documentation.",
                   negativeMessage = messagePrefix & "Declaration of " &
                   declName & " " & $node.info.line & " doesn't have documentation.")
             except KeyError as e:
-              options.amount = errorMessage(
+              rule.amount = errorMessage(
                   text = "Can't check the declared entity '" & declName & "'.", e = e)
               return
       # Check each children of the current AST node with the rule
       for child in node.items:
-        ruleCheck(astTree = child, options = options)
+        ruleCheck(astTree = child, rule = rule)
     if isParent:
-      showSummary(options = options, foundMessage = "declared public items with documentation",
+      showSummary(options = rule, foundMessage = "declared public items with documentation",
           notFoundMessage = "The documentation not found.")
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "hasdoc",

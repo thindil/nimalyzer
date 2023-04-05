@@ -61,7 +61,7 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
+proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if calls in the source code use named paramters.
   ##
@@ -72,72 +72,72 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
   ## The amount of result how many calls in the source code use named parameters.
   require:
     astTree != nil
-    options.fileName.len > 0
+    rule.fileName.len > 0
   body:
 
-    proc check(node: PNode; options: var RuleOptions) {.contractual, raises: [],
+    proc check(node: PNode; rule: var RuleOptions) {.contractual, raises: [],
         tags: [RootEffect].} =
       ## Check the call if it uses named parameters
       ##
-      ## * node      - the AST node representing the call to check
-      ## * options   - the rule options set by the user and the previous iterations
-      ##               of the procedure
+      ## * node - the AST node representing the call to check
+      ## * rule - the rule options set by the user and the previous iterations
+      ##          of the procedure
       ##
-      ## Returns the updated parameter options.
+      ## Returns the updated parameter rule.
       require:
         node != nil
       body:
-        if not options.enabled:
+        if not rule.enabled:
           return
         let messagePrefix: string = if getLogFilter() < lvlNotice:
             ""
           else:
-            options.fileName & ": "
+            rule.fileName & ": "
         let callName: string = try:
               $node[0]
             except KeyError, Exception:
               ""
         if callName.len == 0:
           message(text = "Can't get the name of the call.", level = lvlFatal,
-              returnValue = options.amount)
-          options.amount.inc
+              returnValue = rule.amount)
+          rule.amount.inc
           return
         try:
           for i in 1..<node.sons.len:
             setResult(checkResult = node[i].kind == nkExprEqExpr,
-                options = options, positiveMessage = messagePrefix & "call " &
+                options = rule, positiveMessage = messagePrefix & "call " &
                 callName & " line: " & $node.info.line &
                 " doesn't have named parameter number: " & $i & "'.",
                 negativeMessage = messagePrefix & "call " & callName &
                 " line: " & $node.info.line &
                 " doesn't have named parameter number: " & $i & "'.")
         except KeyError, Exception:
-          options.amount = errorMessage(text = messagePrefix &
+          rule.amount = errorMessage(text = messagePrefix &
               "can't check parameters of call " & callName & " line: " &
               $node.info.line & ". Reason: ", e = getCurrentException())
 
-    let isParent: bool = options.parent
+    let isParent: bool = rule.parent
     if isParent:
-      options.parent = false
+      rule.parent = false
     setRuleState(node = astTree, ruleName = "namedparams",
-        oldState = options.enabled)
+        oldState = rule.enabled)
     if astTree.kind == nkCall:
-      check(node = astTree, options = options)
+      check(node = astTree, rule = rule)
       return
     for node in astTree.items:
       setRuleState(node = node, ruleName = "namedparams",
-          oldState = options.enabled)
+          oldState = rule.enabled)
       # Node is a call, and have parameters, check it
       if node.kind == nkCall and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
-        check(node = node, options = options)
+        check(node = node, rule = rule)
       # Check the node's children with the rule
       for child in node.items:
-        ruleCheck(astTree = child, options = options)
+        ruleCheck(astTree = child, rule = rule)
     if isParent:
-      showSummary(options = options, foundMessage = "calls which" & (
-          if options.negation: " not" else: "") & " have all named parameters",
+      showSummary(options = rule, foundMessage = "calls which" & (
+          if rule.negation: " not" else: "") & " have all named parameters",
           notFoundMessage = "calls which" & (
-          if options.negation: " not" else: "") & " have all named parameters not found.")
+          if rule.negation: " not" else: "") & " have all named parameters not found.")
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "namedparams",
     checkProc: ruleCheck) ## The rule settings like name, options, etc

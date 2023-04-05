@@ -74,29 +74,29 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
+proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if all procedures in the Nim code use all of their
   ## parameters
   ##
   ## * astTree - The AST tree representation of the Nim code to check
-  ## * options - The rule options set by the user and the previous iterations
+  ## * rule    - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many procedures uses their all parameters
   require:
     astTree != nil
-    options.fileName.len > 0
+    rule.fileName.len > 0
   body:
-    let isParent: bool = options.parent
+    let isParent: bool = rule.parent
     if isParent:
-      options.parent = false
+      rule.parent = false
     let
       messagePrefix: string = if getLogFilter() < lvlNotice:
           ""
         else:
-          options.fileName & ": "
-      nodesToCheck: set[TNodeKind] = case options.options[0]
+          rule.fileName & ": "
+      nodesToCheck: set[TNodeKind] = case rule.options[0]
         of "all":
           routineDefs
         of "procedures":
@@ -109,23 +109,23 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
       # Check the node's children if rule is enabled
       for child in node.items:
         setRuleState(node = child, ruleName = "paramsused",
-            oldState = options.enabled)
-      if options.enabled and node.kind in nodesToCheck:
+            oldState = rule.enabled)
+      if rule.enabled and node.kind in nodesToCheck:
         # Get the procedure's name
         let procName: string = try:
               $node[0]
             except KeyError, Exception:
               ""
         if procName.len == 0:
-          options.amount = errorMessage(
+          rule.amount = errorMessage(
               text = "Can't get the name of the procedure.")
           return
         # No parameters, skip
         if node[3].len < 2:
-          if options.negation:
-            options.amount.dec
+          if rule.negation:
+            rule.amount.dec
           else:
-            options.amount.inc
+            rule.amount.inc
         else:
           var index: int = -1
           # Check each parameter
@@ -138,34 +138,34 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                 index = find(s = $node[6], sub = $child[i])
                 # The node doesn't use one of its parameters
                 if index == -1:
-                  if not options.negation:
-                    setResult(checkResult = false, options = options,
+                  if not rule.negation:
+                    setResult(checkResult = false, options = rule,
                         positiveMessage = "", negativeMessage = messagePrefix &
                         "procedure " & procName & " line: " & $node.info.line &
                         " doesn't use parameter '" & $child[i] & "'.")
                   else:
-                    setResult(checkResult = false, options = options,
+                    setResult(checkResult = false, options = rule,
                         positiveMessage = "", negativeMessage = messagePrefix &
                         "procedure " & procName & " line: " & $node.info.line & " doesn't use all parameters.")
                     break
               except KeyError, Exception:
-                options.amount = errorMessage(text = messagePrefix &
+                rule.amount = errorMessage(text = messagePrefix &
                     "can't check parameters of procedure " & procName &
                     " line: " &
                     $node.info.line & ". Reason: ", e = getCurrentException())
           # The node uses all of its parameters
           if index > -1:
-            setResult(checkResult = true, options = options,
+            setResult(checkResult = true, options = rule,
                 positiveMessage = "", negativeMessage = messagePrefix &
                 "procedure " & procName & " line: " & $node.info.line & " use all parameters.")
       # Check the node's children with the rule
       for child in node.items:
-        ruleCheck(astTree = child, options = options)
+        ruleCheck(astTree = child, rule = rule)
     if isParent:
-      showSummary(options = options, foundMessage = "procedures which" & (
-          if options.negation: " not" else: "") & " uses all parameters",
+      showSummary(options = rule, foundMessage = "procedures which" & (
+          if rule.negation: " not" else: "") & " uses all parameters",
           notFoundMessage = "procedures which" & (
-          if options.negation: " not" else: "") & " uses all parameters not found.")
+          if rule.negation: " not" else: "") & " uses all parameters not found.")
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "paramsused",
     checkProc: ruleCheck, options: @[custom], optionValues: @["procedures",

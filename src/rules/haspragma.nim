@@ -110,30 +110,30 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
+proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the Nim code entities have proper pragmas.
   ##
   ## * astTree - The AST tree representation of the Nim code to check
-  ## * options - The rule options set by the user and the previous iterations
+  ## * rule    - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many times the various elements of the Nim code
   ## has the proper pragmas
   require:
     astTree != nil
-    options.options.len > 0
-    options.fileName.len > 0
+    rule.options.len > 0
+    rule.fileName.len > 0
   body:
-    let isParent: bool = options.parent
+    let isParent: bool = rule.parent
     if isParent:
-      options.parent = false
+      rule.parent = false
     let
       messagePrefix: string = if getLogFilter() < lvlNotice:
         ""
       else:
-        options.fileName & ": "
-      nodesToCheck: set[TNodeKind] = case options.options[0]
+        rule.fileName & ": "
+      nodesToCheck: set[TNodeKind] = case rule.options[0]
         of "all":
           routineDefs
         of "procedures":
@@ -144,26 +144,26 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
           {}
 
     proc setResult(procName, line, pragma: string; hasPragma: bool;
-        options: var RuleOptions) {.raises: [], tags: [RootEffect],
+        rule: var RuleOptions) {.raises: [], tags: [RootEffect],
         contractual.} =
       ## Update the amount of pragmas found and log the message if needed
       ##
-      ## * procName - the name of the Nim's code entity which was checked for
+      ## * procName   - the name of the Nim's code entity which was checked for
       ##                the pragma
       ## * line       - the line in which the Nim's entity is in the source code
       ## * hasPragma  - if true, the entity has the pragma
-      ## * options    - the rule options set by the user and the previous iterations
-      ##                 of the procedure
+      ## * rule       - the rule options set by the user and the previous iterations
+      ##                of the procedure
       ##
-      ## Returns the updated parameter options.
+      ## Returns the updated parameter rule.
       require:
         procName.len > 0
         line.len > 0
         pragma.len > 0
       body:
-        if not options.enabled:
+        if not rule.enabled:
           return
-        setResult(checkResult = hasPragma, options = options,
+        setResult(checkResult = hasPragma, options = rule,
             positiveMessage = messagePrefix & "procedure " & procName &
             " line: " & line & " has declared pragma: " & pragma & ".",
             negativeMessage = messagePrefix & "procedure " & procName &
@@ -176,7 +176,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
         for child in node.items:
           if child.kind == nkPragma:
             setRuleState(node = child, ruleName = "haspragma",
-                oldState = options.enabled)
+                oldState = rule.enabled)
             break
         # Set the name of the procedure to check
         let
@@ -186,29 +186,29 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             except KeyError, Exception:
               ""
         if procName.len == 0:
-          options.amount = errorMessage(
+          rule.amount = errorMessage(
               text = "Can't get the name of the procedure.")
           return
         # The node doesn't have any pragmas
         if pragmas == nil:
-          if not options.negation:
-            if options.ruleType == check:
+          if not rule.negation:
+            if rule.ruleType == check:
               message(text = messagePrefix & "procedure " & procName &
                   " line: " & $node.info.line &
                   " doesn't have declared any pragmas.",
-                  returnValue = options.amount)
-              options.amount = int.low
+                  returnValue = rule.amount)
+              rule.amount = int.low
             else:
-              options.amount.dec
+              rule.amount.dec
           else:
-            if options.ruleType == search:
+            if rule.ruleType == search:
               message(text = messagePrefix & "procedure " & procName &
                   " line: " & $node.info.line &
                   " doesn't have declared any pragmas.",
-                  returnValue = options.amount, level = lvlNotice,
+                  returnValue = rule.amount, level = lvlNotice,
                   decrease = false)
             else:
-              options.amount.inc
+              rule.amount.inc
         else:
           var strPragmas: seq[string] = @[]
           for pragma in pragmas:
@@ -217,10 +217,10 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
             except KeyError, Exception:
               discard
           # Check the node for each selected pragma
-          for pragma in options.options[1 .. ^1]:
+          for pragma in rule.options[1 .. ^1]:
             if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
               setResult(procName = procName, line = $node.info.line,
-                  pragma = pragma, hasPragma = false, options = options)
+                  pragma = pragma, hasPragma = false, rule = rule)
             elif pragma[^1] == '*' and pragma[0] != '*':
               var hasPragma: bool = false
               for procPragma in strPragmas:
@@ -228,7 +228,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   hasPragma = true
                   break
               setResult(procName = procName, line = $node.info.line,
-                  pragma = pragma, hasPragma = hasPragma, options = options)
+                  pragma = pragma, hasPragma = hasPragma, rule = rule)
             elif pragma[0] == '*' and pragma[^1] != '*':
               var hasPragma: bool = false
               for procPragma in strPragmas:
@@ -236,7 +236,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   hasPragma = true
                   break
               setResult(procName = procName, line = $node.info.line,
-                  pragma = pragma, hasPragma = hasPragma, options = options)
+                  pragma = pragma, hasPragma = hasPragma, rule = rule)
             elif '*' in [pragma[0], pragma[^1]]:
               var hasPragma: bool = false
               for procPragma in strPragmas:
@@ -244,17 +244,17 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   hasPragma = true
                   break
               setResult(procName = procName, line = $node.info.line,
-                  pragma = pragma, hasPragma = hasPragma, options = options)
+                  pragma = pragma, hasPragma = hasPragma, rule = rule)
             else:
               setResult(procName = procName, line = $node.info.line,
-                  pragma = pragma, hasPragma = true, options = options)
+                  pragma = pragma, hasPragma = true, rule = rule)
       for child in node.items:
-        ruleCheck(astTree = child, options = options)
+        ruleCheck(astTree = child, rule = rule)
     if isParent:
-      if not options.enabled and options.amount == 0:
-        options.amount = 1
+      if not rule.enabled and rule.amount == 0:
+        rule.amount = 1
         return
-      showSummary(options = options, foundMessage = "declared procedures with selected pragmas",
+      showSummary(options = rule, foundMessage = "declared procedures with selected pragmas",
           notFoundMessage = "The selected pragma(s) not found.")
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "haspragma",

@@ -103,79 +103,79 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
+proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the source code has the selected entity
   ##
   ## * astTree - The AST tree representation of the Nim code to check
-  ## * options - The rule options set by the user and the previous iterations
+  ## * rule    - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many times the selected elements of the Nim code
   ## were found
   require:
     astTree != nil
-    options.options.len > 1
-    options.fileName.len > 0
+    rule.options.len > 1
+    rule.fileName.len > 0
   body:
     # Set the type of the node to check
     let nodeKind: TNodeKind = try:
-          parseEnum[TNodeKind](s = options.options[0])
+          parseEnum[TNodeKind](s = rule.options[0])
         except ValueError:
           nkNone
     if nodeKind == nkNone:
-      options.amount = errorMessage(text = "Invalid type of entity: " &
-          options.options[0])
+      rule.amount = errorMessage(text = "Invalid type of entity: " &
+          rule.options[0])
       return
-    let isParent: bool = options.parent
+    let isParent: bool = rule.parent
     if isParent:
-      options.parent = false
-      options.amount = 0
-    if options.negation and isParent:
-      options.amount.inc
+      rule.parent = false
+      rule.amount = 0
+    if rule.negation and isParent:
+      rule.amount.inc
 
     proc checkEntity(nodeName, line: string;
-        options: var RuleOptions) {.raises: [], tags: [RootEffect],
+        rule: var RuleOptions) {.raises: [], tags: [RootEffect],
         contractual.} =
       ## Check if the selected entity's name fulfill the rule requirements and
       ## log the message if needed.
       ##
-      ## * nodeName  - the name of the entity which will be checked
-      ## * line      - the line of code in which the entity is declared
-      ## * options   - the rule options set by the user and the previous iterations
-      ##                of the procedure
+      ## * nodeName - the name of the entity which will be checked
+      ## * line     - the line of code in which the entity is declared
+      ## * rule     - the rule options set by the user and the previous iterations
+      ##              of the procedure
       ##
-      ## Returns the updated options parameter
-      if not options.enabled:
+      ## Returns the updated rule parameter
+      if not rule.enabled:
         return
       # The selected entity found in the node
-      if options.options[1].len == 0 or startsWith(s = nodeName,
-          prefix = options.options[1]):
-        setResult(checkResult = true, options = options, positiveMessage = (
-            if getLogFilter() < lvlNotice: "H" else: options.fileName & ": h") &
-            "as declared " & options.options[0] & " with name '" & nodeName &
+      if rule.options[1].len == 0 or startsWith(s = nodeName,
+          prefix = rule.options[1]):
+        setResult(checkResult = true, options = rule, positiveMessage = (
+            if getLogFilter() < lvlNotice: "H" else: rule.fileName & ": h") &
+            "as declared " & rule.options[0] & " with name '" & nodeName &
             "' at line: " & line & ".", negativeMessage = (if getLogFilter() <
-            lvlNotice: "H" else: options.fileName & ": h") & "as declared " &
-            options.options[0] & " with name '" & nodeName & "' at line: " &
+            lvlNotice: "H" else: rule.fileName & ": h") & "as declared " &
+            rule.options[0] & " with name '" & nodeName & "' at line: " &
             line & ".")
 
     for node in astTree.items:
       setRuleState(node = node, ruleName = "hasentity",
-          oldState = options.enabled)
+          oldState = rule.enabled)
       if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
           nkCommentStmt}:
         try:
           # If parent node specified and the current node is the same kind as
           # the parent node, check its children instead of the node
-          if options.options.len > 2:
+          if rule.options.len > 2:
             let parentKind: TNodeKind = try:
-                  parseEnum[TNodeKind](s = options.options[2])
+                  parseEnum[TNodeKind](s = rule.options[2])
                 except ValueError:
                   nkNone
             var childIndex: int = -1
-            if options.options.len == 4:
+            if rule.options.len == 4:
               childIndex = try:
-                  options.options[3].parseInt()
+                  rule.options[3].parseInt()
                 except ValueError:
                   int.low
             if node.kind == parentKind:
@@ -188,7 +188,7 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                     except KeyError, Exception:
                       ""
                   checkEntity(nodeName = childName, line = $child.info.line,
-                      options = options)
+                      rule = rule)
               elif childIndex <= node.sons.high:
                 let childName: string = try:
                     if childIndex > -1:
@@ -198,24 +198,24 @@ proc ruleCheck*(astTree: PNode; options: var RuleOptions) {.contractual,
                   except KeyError, Exception:
                     ""
                 checkEntity(nodeName = childName, line = $node.info.line,
-                    options = options)
+                    rule = rule)
           # Check the node itself
           elif node.kind == nodeKind:
             checkEntity(nodeName = $node[0], line = $node.info.line,
-                options = options)
+                rule = rule)
         except KeyError, Exception:
-          options.amount = errorMessage(
+          rule.amount = errorMessage(
               text = "Error during checking hasEntity rule: ",
               e = getCurrentException())
           return
         # Check all children of the node with the rule
         for child in node.items:
-          ruleCheck(astTree = child, options = options)
+          ruleCheck(astTree = child, rule = rule)
     if isParent:
-      showSummary(options = options, foundMessage = "declared " &
-          options.options[0] & " with name '" & options.options[1] & "'",
-          notFoundMessage = "doesn't have declared " & options.options[0] &
-          " with name '" & options.options[1] & "'.", showForCheck = true)
+      showSummary(options = rule, foundMessage = "declared " &
+          rule.options[0] & " with name '" & rule.options[1] & "'",
+          notFoundMessage = "doesn't have declared " & rule.options[0] &
+          " with name '" & rule.options[1] & "'.", showForCheck = true)
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "hasentity",
     checkProc: ruleCheck, options: @[node, str, node, integer],
