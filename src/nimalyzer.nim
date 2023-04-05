@@ -84,21 +84,23 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         try:
           let astTree: PNode = codeParser.parseAll
           codeParser.closeParser
-          var options: RuleOptions = RuleOptions(fileName: source)
+          var currentRule: RuleOptions = RuleOptions(fileName: source)
           # Check the converted source code with each selected rule
           for index, rule in rules.pairs:
             message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
                 "]" & (if rule.negation: " negation " else: " ") &
                 $rule.ruleType & " rule '" & rule.name & "' with options: '" &
                 rule.options.join(sep = ", ") & "'.", level = lvlDebug)
-            options.options = rule.options
-            options.negation = rule.negation
-            options.ruleType = rule.ruleType
-            options.amount = (if rule.ruleType == RuleTypes.check: 1 else: 0)
-            options.enabled = true
-            options.parent = true
-            rulesList[rule.index].checkProc(astTree = astTree, rule = options)
-            if options.amount < 1:
+            currentRule.options = rule.options
+            currentRule.negation = rule.negation
+            currentRule.ruleType = rule.ruleType
+            currentRule.amount = (if rule.ruleType ==
+                RuleTypes.check: 1 else: 0)
+            currentRule.enabled = true
+            currentRule.parent = true
+            rulesList[rule.index].checkProc(astTree = astTree,
+                rule = currentRule)
+            if currentRule.amount < 1:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
           abortProgram(message = "The file '" & source &
