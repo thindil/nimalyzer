@@ -84,17 +84,11 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
     astNode != nil
     rule.fileName.len > 0
   body:
-    let isParent: bool = rule.parent
-    if isParent:
-      rule.parent = false
-    let messagePrefix: string = if getLogFilter() < lvlNotice:
-        ""
-      else:
-        rule.fileName & ": "
-    if rule.enabled and isParent:
-      setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
-          rule = rule, positiveMessage = messagePrefix &
-          "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
+    initCheck:
+      if rule.enabled:
+        setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
+            rule = rule, positiveMessage = messagePrefix &
+            "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
     for node in astNode.items:
       # Check only elements which can have documentation
       if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
