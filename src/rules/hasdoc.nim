@@ -69,19 +69,19 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
+proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the source code has the documentation in the proper
   ## locactions
   ##
-  ## * astTree - The AST tree representation of the Nim code to check
+  ## * astNode - The AST node representation of the Nim code to check
   ## * rule    - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many times the various elements of the Nim code
   ## has the documentation comments
   require:
-    astTree != nil
+    astNode != nil
     rule.fileName.len > 0
   body:
     let isParent: bool = rule.parent
@@ -92,10 +92,10 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
       else:
         rule.fileName & ": "
     if rule.enabled and isParent:
-      setResult(checkResult = astTree.hasSonWith(kind = nkCommentStmt),
+      setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
           rule = rule, positiveMessage = messagePrefix &
           "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
-    for node in astTree.items:
+    for node in astNode.items:
       # Check only elements which can have documentation
       if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
           nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
@@ -107,7 +107,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
             break
         # Special check for constant declaration section
         if node.kind == nkConstSection:
-          ruleCheck(astTree = node, rule = rule)
+          ruleCheck(astNode = node, rule = rule)
         else:
           # Set the name of the declared entity which is checked for documentation
           var declName: string = try:
@@ -116,7 +116,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
                 ""
           if declName.len == 0:
             declName = try:
-                $astTree[0]
+                $astNode[0]
               except KeyError, Exception:
                 ""
           if declName.len == 0:
@@ -142,7 +142,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
               return
       # Check each children of the current AST node with the rule
       for child in node.items:
-        ruleCheck(astTree = child, rule = rule)
+        ruleCheck(astNode = child, rule = rule)
     if isParent:
       showSummary(rule = rule, foundMessage = "declared public items with documentation",
           notFoundMessage = "The documentation not found.")

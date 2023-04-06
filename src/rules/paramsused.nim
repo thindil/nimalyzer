@@ -74,18 +74,18 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
+proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if all procedures in the Nim code use all of their
   ## parameters
   ##
-  ## * astTree - The AST tree representation of the Nim code to check
+  ## * astNode - The AST node representation of the Nim code to check
   ## * rule    - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many procedures uses their all parameters
   require:
-    astTree != nil
+    astNode != nil
     rule.fileName.len > 0
   body:
     let isParent: bool = rule.parent
@@ -105,7 +105,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
           {nkTemplateDef}
         else:
           {}
-    for node in astTree.items:
+    for node in astNode.items:
       # Check the node's children if rule is enabled
       for child in node.items:
         setRuleState(node = child, ruleName = "paramsused",
@@ -160,7 +160,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
                 "procedure " & procName & " line: " & $node.info.line & " use all parameters.")
       # Check the node's children with the rule
       for child in node.items:
-        ruleCheck(astTree = child, rule = rule)
+        ruleCheck(astNode = child, rule = rule)
     if isParent:
       showSummary(rule = rule, foundMessage = "procedures which" & (
           if rule.negation: " not" else: "") & " uses all parameters",

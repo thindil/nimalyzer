@@ -103,18 +103,18 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
+proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the source code has the selected entity
   ##
-  ## * astTree - The AST tree representation of the Nim code to check
+  ## * astNode - The AST node representation of the Nim code to check
   ## * rule    - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many times the selected elements of the Nim code
   ## were found
   require:
-    astTree != nil
+    astNode != nil
     rule.options.len > 1
     rule.fileName.len > 0
   body:
@@ -159,7 +159,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
             rule.options[0] & " with name '" & nodeName & "' at line: " &
             line & ".")
 
-    for node in astTree.items:
+    for node in astNode.items:
       setRuleState(node = node, ruleName = "hasentity",
           oldState = rule.enabled)
       if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
@@ -210,7 +210,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
           return
         # Check all children of the node with the rule
         for child in node.items:
-          ruleCheck(astTree = child, rule = rule)
+          ruleCheck(astNode = child, rule = rule)
     if isParent:
       showSummary(rule = rule, foundMessage = "declared " &
           rule.options[0] & " with name '" & rule.options[1] & "'",

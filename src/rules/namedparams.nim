@@ -61,17 +61,17 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
+proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if calls in the source code use named paramters.
   ##
-  ## * astTree - The AST tree representation of the Nim code to check
+  ## * astNode - The AST node representation of the Nim code to check
   ## * options - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many calls in the source code use named parameters.
   require:
-    astTree != nil
+    astNode != nil
     rule.fileName.len > 0
   body:
 
@@ -119,12 +119,12 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
     let isParent: bool = rule.parent
     if isParent:
       rule.parent = false
-    setRuleState(node = astTree, ruleName = "namedparams",
+    setRuleState(node = astNode, ruleName = "namedparams",
         oldState = rule.enabled)
-    if astTree.kind == nkCall:
-      check(node = astTree, rule = rule)
+    if astNode.kind == nkCall:
+      check(node = astNode, rule = rule)
       return
-    for node in astTree.items:
+    for node in astNode.items:
       setRuleState(node = node, ruleName = "namedparams",
           oldState = rule.enabled)
       # Node is a call, and have parameters, check it
@@ -132,7 +132,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
         check(node = node, rule = rule)
       # Check the node's children with the rule
       for child in node.items:
-        ruleCheck(astTree = child, rule = rule)
+        ruleCheck(astNode = child, rule = rule)
     if isParent:
       showSummary(rule = rule, foundMessage = "calls which" & (
           if rule.negation: " not" else: "") & " have all named parameters",

@@ -77,19 +77,19 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
+proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if all variables' declarations in Nim code follow
   ## the selected pattern
   ##
-  ## * astTree - The AST tree representation of the Nim code to check
+  ## * astNode - The AST node representation of the Nim code to check
   ## * rule    - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many declarations of variables follow the
   ## selected pattern
   require:
-    astTree != nil
+    astNode != nil
     rule.fileName.len > 0
   body:
     let isParent: bool = rule.parent
@@ -99,7 +99,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
         ""
       else:
         rule.fileName & ": "
-    for node in astTree.items:
+    for node in astNode.items:
       # Check the node if rule is enabled
       setRuleState(node = node, ruleName = "vardeclared",
           oldState = rule.enabled)
@@ -130,7 +130,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
                     "declaration of '" & $declaration[0] & "' line: " &
                     $declaration.info.line & " doesn't set value for the variable.")
           # And sometimes the compiler detects declarations as the node
-          elif node.kind == nkIdentDefs and astTree.kind in {nkVarSection,
+          elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
               nkLetSection, nkConstSection}:
             # Check if declaration of variable sets its type
             if rule.options[0] in ["full", "type"]:
@@ -159,7 +159,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
               $node.info.line & ". Reason: ", e = getCurrentException())
       # Check the node's children with the rule
       for child in node.items:
-        ruleCheck(astTree = child, rule = rule)
+        ruleCheck(astNode = child, rule = rule)
     if isParent:
       showSummary(rule = rule, foundMessage = "declarations with" & (
           if rule.negation: "out" else: "") & rule.options[0] &

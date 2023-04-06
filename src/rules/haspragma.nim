@@ -110,18 +110,18 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
+proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
     raises: [], tags: [RootEffect].} =
   ## Check recursively if the Nim code entities have proper pragmas.
   ##
-  ## * astTree - The AST tree representation of the Nim code to check
+  ## * astNode - The AST node representation of the Nim code to check
   ## * rule    - The rule options set by the user and the previous iterations
   ##             of the procedure
   ##
   ## The amount of result how many times the various elements of the Nim code
   ## has the proper pragmas
   require:
-    astTree != nil
+    astNode != nil
     rule.options.len > 0
     rule.fileName.len > 0
   body:
@@ -169,7 +169,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
             negativeMessage = messagePrefix & "procedure " & procName &
             " line: " & line & " doesn't have declared pragma: " & pragma & ".")
 
-    for node in astTree.items:
+    for node in astNode.items:
       # Check the node's children with the rule
       # The node can have pragma, check it
       if node.kind in nodesToCheck:
@@ -249,7 +249,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
               setResult(procName = procName, line = $node.info.line,
                   pragma = pragma, hasPragma = true, rule = rule)
       for child in node.items:
-        ruleCheck(astTree = child, rule = rule)
+        ruleCheck(astNode = child, rule = rule)
     if isParent:
       if not rule.enabled and rule.amount == 0:
         rule.amount = 1
