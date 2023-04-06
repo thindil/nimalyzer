@@ -138,12 +138,12 @@ proc setRuleState*(node: PNode; ruleName: string;
         except KeyError, Exception:
           discard
 
-proc showSummary*(options: var RuleOptions; foundMessage,
+proc showSummary*(rule: var RuleOptions; foundMessage,
     notFoundMessage: string; showForCheck: bool = false) {.sideEffect, raises: [],
     tags: [RootEffect], contractual.} =
   ## Show the rule summary info and update the rule result if needed
   ##
-  ## * options         - the rule options set by the user and updated during
+  ## * rule            - the rule options set by the user and updated during
   ##                     checking the rule
   ## * foundMessage    - the message shown when rule type is count and the rule
   ##                     found something
@@ -156,39 +156,39 @@ proc showSummary*(options: var RuleOptions; foundMessage,
     foundMessage.len > 0
     notFoundMessage.len > 0
   body:
-    if options.amount < 0:
-      options.amount = 0
-    if options.ruleType == RuleTypes.count:
+    if rule.amount < 0:
+      rule.amount = 0
+    if rule.ruleType == RuleTypes.count:
       message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-          s = foundMessage) else: foundMessage) & " found: " & $options.amount,
-          returnValue = options.amount, level = lvlNotice)
-      options.amount = 1
-    elif options.amount < 1:
-      if not options.enabled and options.amount == 0:
-        options.amount = 1
-      elif options.negation:
-        if options.ruleType == check:
-          options.amount = 0
+          s = foundMessage) else: foundMessage) & " found: " & $rule.amount,
+          returnValue = rule.amount, level = lvlNotice)
+      rule.amount = 1
+    elif rule.amount < 1:
+      if not rule.enabled and rule.amount == 0:
+        rule.amount = 1
+      elif rule.negation:
+        if rule.ruleType == check:
+          rule.amount = 0
         else:
           message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
               s = notFoundMessage) else: notFoundMessage),
-              returnValue = options.amount,
+              returnValue = rule.amount,
               level = lvlNotice, decrease = false)
-          options.amount = 0
+          rule.amount = 0
       else:
-        if options.ruleType != check or showForCheck:
+        if rule.ruleType != check or showForCheck:
           message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
               s = notFoundMessage) else: notFoundMessage),
-              returnValue = options.amount,
+              returnValue = rule.amount,
               level = lvlNotice, decrease = false)
-        options.amount = 0
+        rule.amount = 0
 
-proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
+proc setResult*(checkResult: bool; rule: var RuleOptions; positiveMessage,
     negativeMessage: string) {.raises: [], tags: [RootEffect], contractual.} =
   ## Update the amount of the rule results
   ##
   ## * checkResult     - if true, the entity follow the check of the rule
-  ## * options         - the options supplied to the rule
+  ## * rule            - the rule's options supplied to the rule
   ## * positiveMessage - the message shown when the entity meet the rule check
   ## * negativeMessage - the message shown when the entity not meet the rule check
   ##
@@ -197,32 +197,33 @@ proc setResult*(checkResult: bool; options: var RuleOptions; positiveMessage,
   body:
     # The entity not meet rule's requirements
     if not checkResult:
-      if options.negation and options.ruleType == check:
-        options.amount.inc
+      if rule.negation and rule.ruleType == check:
+        rule.amount.inc
         return
       if negativeMessage.len > 0:
-        if options.ruleType == check:
-          message(text = negativeMessage, returnValue = options.amount)
-          options.amount = int.low
+        if rule.ruleType == check:
+          message(text = negativeMessage, returnValue = rule.amount)
+          rule.amount = int.low
         else:
-          if options.negation:
-            message(text = negativeMessage, returnValue = options.amount,
+          if rule.negation:
+            message(text = negativeMessage, returnValue = rule.amount,
                 level = lvlNotice, decrease = false)
     # The enitity meet the rule's requirements
     else:
-      if options.negation:
-        if options.ruleType == check and positiveMessage.len > 0:
-          message(text = positiveMessage, returnValue = options.amount)
+      if rule.negation:
+        if rule.ruleType == check and positiveMessage.len > 0:
+          message(text = positiveMessage, returnValue = rule.amount)
         else:
-          options.amount.dec
+          rule.amount.dec
         return
-      if options.ruleType == search and positiveMessage.len > 0:
-        message(text = positiveMessage, returnValue = options.amount,
+      if rule.ruleType == search and positiveMessage.len > 0:
+        message(text = positiveMessage, returnValue = rule.amount,
             level = lvlNotice, decrease = false)
       else:
-        options.amount.inc
+        rule.amount.inc
 
-proc validateOptions*(rule: RuleSettings; options: seq[string]): bool {.raises: [], tags: [RootEffect], contractual.} =
+proc validateOptions*(rule: RuleSettings; options: seq[
+    string]): bool {.raises: [], tags: [RootEffect], contractual.} =
   ## Validate the options entered from a configuration for the selected rule
   ##
   ## * rule     - the rule's settings for the selected rule, like name, options types, etc
