@@ -57,7 +57,7 @@ type
 
   RuleSettings* = object ## Contains information about the program's rule configuration
     name*: string                   ## The name of the rule
-    checkProc*: proc (astTree: PNode; rule: var RuleOptions) ## The procedure used to check the rule
+    checkProc*: proc (astNode: PNode; rule: var RuleOptions) ## The procedure used to check the rule
     options*: seq[RuleOptionsTypes] ## The rule's options which can be set
     optionValues*: seq[string] ## If the rule has option type custom, the values for the option
     minOptions*: Natural            ## The minumal amount of options required by the rule

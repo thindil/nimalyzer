@@ -82,7 +82,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           abortProgram(message = "Can't open file '" & source &
               "' to parse. Reason: " & getCurrentExceptionMsg())
         try:
-          let astTree: PNode = codeParser.parseAll
+          let astNode: PNode = codeParser.parseAll
           codeParser.closeParser
           var currentRule: RuleOptions = RuleOptions(fileName: source)
           # Check the converted source code with each selected rule
@@ -98,7 +98,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
                 RuleTypes.check: 1 else: 0)
             currentRule.enabled = true
             currentRule.parent = true
-            rulesList[rule.index].checkProc(astTree = astTree,
+            rulesList[rule.index].checkProc(astNode = astNode,
                 rule = currentRule)
             if currentRule.amount < 1:
               resultCode = QuitFailure
