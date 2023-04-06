@@ -112,7 +112,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
               # Check if declaration of variable sets its type
               if rule.options[0] in ["full", "type"]:
                 setResult(checkResult = declaration[1].kind != nkEmpty,
-                    options = rule, positiveMessage = messagePrefix &
+                    rule = rule, positiveMessage = messagePrefix &
                     "declaration of " & $declaration[0] & " line: " &
                     $declaration.info.line & " sets the type '" &
                     $declaration[1] & "' as the type of the variable.",
@@ -122,7 +122,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
               # Check if declaration of variable sets its value
               if rule.options[0] in ["full", "value"]:
                 setResult(checkResult = declaration[2].kind != nkEmpty,
-                    options = rule, positiveMessage = messagePrefix &
+                    rule = rule, positiveMessage = messagePrefix &
                     "declaration of " & $declaration[0] & " line: " &
                     $declaration.info.line & " sets the value '" &
                     $declaration[2] & "' as the value of the variable.",
@@ -135,7 +135,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
             # Check if declaration of variable sets its type
             if rule.options[0] in ["full", "type"]:
               setResult(checkResult = node[1].kind != nkEmpty,
-                  options = rule, positiveMessage = messagePrefix &
+                  rule = rule, positiveMessage = messagePrefix &
                   "declaration of " & $node[0] & " line: " &
                   $node.info.line & " sets the type '" &
                   $node[1] & "' as the type of the variable.",
@@ -145,7 +145,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
             # Check if declaration of variable sets its value
             if rule.options[0] in ["full", "value"]:
               setResult(checkResult = node[1].kind != nkEmpty,
-                  options = rule, positiveMessage = messagePrefix &
+                  rule = rule, positiveMessage = messagePrefix &
                   "declaration of " & $node[0] & " line: " &
                   $node.info.line & " sets the value '" &
                   $node[1] & "' as the value of the variable.",
@@ -161,7 +161,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
       for child in node.items:
         ruleCheck(astTree = child, rule = rule)
     if isParent:
-      showSummary(options = rule, foundMessage = "declarations with" & (
+      showSummary(rule = rule, foundMessage = "declarations with" & (
           if rule.negation: "out" else: "") & rule.options[0] &
           " declaration", notFoundMessage = "declarations with" & (
           if rule.negation: "out" else: "") & rule.options[0] & " declaration not found.")

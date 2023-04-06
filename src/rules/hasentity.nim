@@ -151,7 +151,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
       # The selected entity found in the node
       if rule.options[1].len == 0 or startsWith(s = nodeName,
           prefix = rule.options[1]):
-        setResult(checkResult = true, options = rule, positiveMessage = (
+        setResult(checkResult = true, rule = rule, positiveMessage = (
             if getLogFilter() < lvlNotice: "H" else: rule.fileName & ": h") &
             "as declared " & rule.options[0] & " with name '" & nodeName &
             "' at line: " & line & ".", negativeMessage = (if getLogFilter() <
@@ -212,7 +212,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
         for child in node.items:
           ruleCheck(astTree = child, rule = rule)
     if isParent:
-      showSummary(options = rule, foundMessage = "declared " &
+      showSummary(rule = rule, foundMessage = "declared " &
           rule.options[0] & " with name '" & rule.options[1] & "'",
           notFoundMessage = "doesn't have declared " & rule.options[0] &
           " with name '" & rule.options[1] & "'.", showForCheck = true)

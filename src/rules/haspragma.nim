@@ -163,7 +163,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
       body:
         if not rule.enabled:
           return
-        setResult(checkResult = hasPragma, options = rule,
+        setResult(checkResult = hasPragma, rule = rule,
             positiveMessage = messagePrefix & "procedure " & procName &
             " line: " & line & " has declared pragma: " & pragma & ".",
             negativeMessage = messagePrefix & "procedure " & procName &
@@ -254,7 +254,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
       if not rule.enabled and rule.amount == 0:
         rule.amount = 1
         return
-      showSummary(options = rule, foundMessage = "declared procedures with selected pragmas",
+      showSummary(rule = rule, foundMessage = "declared procedures with selected pragmas",
           notFoundMessage = "The selected pragma(s) not found.")
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "haspragma",

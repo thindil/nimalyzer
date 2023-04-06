@@ -139,12 +139,12 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
                 # The node doesn't use one of its parameters
                 if index == -1:
                   if not rule.negation:
-                    setResult(checkResult = false, options = rule,
+                    setResult(checkResult = false, rule = rule,
                         positiveMessage = "", negativeMessage = messagePrefix &
                         "procedure " & procName & " line: " & $node.info.line &
                         " doesn't use parameter '" & $child[i] & "'.")
                   else:
-                    setResult(checkResult = false, options = rule,
+                    setResult(checkResult = false, rule = rule,
                         positiveMessage = "", negativeMessage = messagePrefix &
                         "procedure " & procName & " line: " & $node.info.line & " doesn't use all parameters.")
                     break
@@ -155,14 +155,14 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
                     $node.info.line & ". Reason: ", e = getCurrentException())
           # The node uses all of its parameters
           if index > -1:
-            setResult(checkResult = true, options = rule,
+            setResult(checkResult = true, rule = rule,
                 positiveMessage = "", negativeMessage = messagePrefix &
                 "procedure " & procName & " line: " & $node.info.line & " use all parameters.")
       # Check the node's children with the rule
       for child in node.items:
         ruleCheck(astTree = child, rule = rule)
     if isParent:
-      showSummary(options = rule, foundMessage = "procedures which" & (
+      showSummary(rule = rule, foundMessage = "procedures which" & (
           if rule.negation: " not" else: "") & " uses all parameters",
           notFoundMessage = "procedures which" & (
           if rule.negation: " not" else: "") & " uses all parameters not found.")

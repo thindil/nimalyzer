@@ -93,7 +93,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
         rule.fileName & ": "
     if rule.enabled and isParent:
       setResult(checkResult = astTree.hasSonWith(kind = nkCommentStmt),
-          options = rule, positiveMessage = messagePrefix &
+          rule = rule, positiveMessage = messagePrefix &
           "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
     for node in astTree.items:
       # Check only elements which can have documentation
@@ -131,7 +131,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
                   node.comment.len > 0
                 else:
                   node.hasSubnodeWith(kind = nkCommentStmt)
-              setResult(checkResult = hasDoc, options = rule,
+              setResult(checkResult = hasDoc, rule = rule,
                   positiveMessage = messagePrefix & "Declaration of " &
                   declName & " " & $node.info.line & " has documentation.",
                   negativeMessage = messagePrefix & "Declaration of " &
@@ -144,7 +144,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
       for child in node.items:
         ruleCheck(astTree = child, rule = rule)
     if isParent:
-      showSummary(options = rule, foundMessage = "declared public items with documentation",
+      showSummary(rule = rule, foundMessage = "declared public items with documentation",
           notFoundMessage = "The documentation not found.")
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "hasdoc",

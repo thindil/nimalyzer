@@ -105,7 +105,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
         try:
           for i in 1..<node.sons.len:
             setResult(checkResult = node[i].kind == nkExprEqExpr,
-                options = rule, positiveMessage = messagePrefix & "call " &
+                rule = rule, positiveMessage = messagePrefix & "call " &
                 callName & " line: " & $node.info.line &
                 " doesn't have named parameter number: " & $i & "'.",
                 negativeMessage = messagePrefix & "call " & callName &
@@ -134,7 +134,7 @@ proc ruleCheck*(astTree: PNode; rule: var RuleOptions) {.contractual,
       for child in node.items:
         ruleCheck(astTree = child, rule = rule)
     if isParent:
-      showSummary(options = rule, foundMessage = "calls which" & (
+      showSummary(rule = rule, foundMessage = "calls which" & (
           if rule.negation: " not" else: "") & " have all named parameters",
           notFoundMessage = "calls which" & (
           if rule.negation: " not" else: "") & " have all named parameters not found.")
