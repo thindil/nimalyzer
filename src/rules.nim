@@ -268,3 +268,18 @@ proc validateOptions*(rule: RuleSettings; options: seq[
               " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
     return true
+
+template initCheck*(code: untyped): untyped =
+  ## Initialize the check code for a rule, set some variables for the check
+  ##
+  ## * code - the custom code which will be executed during initialization of
+  ##          the check
+  let
+    isParent{.inject.}: bool = rule.parent
+    messagePrefix{.inject.}: string = if getLogFilter() < lvlNotice:
+          ""
+        else:
+          rule.fileName & ": "
+  if isParent:
+    rule.parent = false
+    code
