@@ -269,8 +269,10 @@ proc validateOptions*(rule: RuleSettings; options: seq[
               option & "'.").bool
     return true
 
+{.hint[Name]: off.}
 template initCheck*(code: untyped): untyped =
-  ## Initialize the check code for a rule, set some variables for the check
+  ## Initialize the check code for a rule, set some variables for the check and
+  ## custom code in the main node of the code to check
   ##
   ## * code - the custom code which will be executed during initialization of
   ##          the check
@@ -283,3 +285,22 @@ template initCheck*(code: untyped): untyped =
   if isParent:
     rule.parent = false
     code
+{.hint[Name]: on.}
+
+template startCheck*(code: untyped): untyped =
+  ## Run the custom code each time when the check for a node starts
+  ##
+  ## * code - the custom code which will be executed during starting of the
+  ##          check
+  code
+
+template checking*(code: untyped): untyped =
+  ## Run the check itself for the node and execute it for each child node of
+  ## the node
+  ##
+  ## * code - the code of the check
+  for node{.inject.} in astNode.items:
+    code
+    # Check each children of the current AST node with the rule
+    for child in node.items:
+      ruleCheck(astNode = child, rule = rule)
