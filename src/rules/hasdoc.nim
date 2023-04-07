@@ -89,7 +89,9 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
         setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
             rule = rule, positiveMessage = messagePrefix &
             "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
-    for node in astNode.items:
+    startCheck:
+        discard
+    checking:
       # Check only elements which can have documentation
       if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
           nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
@@ -134,9 +136,6 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
               rule.amount = errorMessage(
                   text = "Can't check the declared entity '" & declName & "'.", e = e)
               return
-      # Check each children of the current AST node with the rule
-      for child in node.items:
-        ruleCheck(astNode = child, rule = rule)
     if isParent:
       showSummary(rule = rule, foundMessage = "declared public items with documentation",
           notFoundMessage = "The documentation not found.")
