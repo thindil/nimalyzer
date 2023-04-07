@@ -16,6 +16,7 @@ of the program.
   pragmas
 - `hasEntity` rule doesn't check properly for entities, regression
 - `hasDoc` rule doesn't check properly if module has documentation
+- `hadDoc` rule doesn't detect if template has documentation
 
 ## [0.2.0] - 2023-03-20
 
