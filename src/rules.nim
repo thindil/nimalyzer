@@ -304,3 +304,36 @@ template checking*(code: untyped): untyped =
     # Check each children of the current AST node with the rule
     for child in node.items:
       ruleCheck(astNode = child, rule = rule)
+
+template endCheck*(code: untyped): untyped =
+  ## Show the summary after the check and run the custom code if needed
+  ##
+  ## * code - the custom code which will be executed after checking the rule
+  if isParent:
+    code
+    if rule.amount < 0:
+      rule.amount = 0
+    if rule.ruleType == RuleTypes.count:
+      message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
+          s = foundMessage) else: foundMessage) & " found: " & $rule.amount,
+          returnValue = rule.amount, level = lvlNotice)
+      rule.amount = 1
+    elif rule.amount < 1:
+      if not rule.enabled and rule.amount == 0:
+        rule.amount = 1
+      elif rule.negation:
+        if rule.ruleType == check:
+          rule.amount = 0
+        else:
+          message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
+              s = notFoundMessage) else: notFoundMessage),
+              returnValue = rule.amount,
+              level = lvlNotice, decrease = false)
+          rule.amount = 0
+      else:
+        if rule.ruleType != check or showForCheck:
+          message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
+              s = notFoundMessage) else: notFoundMessage),
+              returnValue = rule.amount,
+              level = lvlNotice, decrease = false)
+        rule.amount = 0

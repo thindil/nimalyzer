@@ -137,9 +137,11 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
               rule.amount = errorMessage(
                   text = "Can't check the declared entity '" & declName & "'.", e = e)
               return
-    if isParent:
-      showSummary(rule = rule, foundMessage = "declared public items with documentation",
-          notFoundMessage = "The documentation not found.")
+    endCheck:
+      const
+        foundMessage: string = "declared public items with documentation"
+        notFoundMessage: string = "The documentation not found."
+        showForCheck: bool = false
 
 const ruleSettings*: RuleSettings = RuleSettings(name: "hasdoc",
     checkProc: ruleCheck) ## The rule settings like name, options, etc
