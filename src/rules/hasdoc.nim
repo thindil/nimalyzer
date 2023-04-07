@@ -90,7 +90,7 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
             rule = rule, positiveMessage = messagePrefix &
             "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
     startCheck:
-        discard
+      discard
     checking:
       # Check only elements which can have documentation
       if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
@@ -122,11 +122,12 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
           if rule.enabled and (declName.endsWith(suffix = "*") or
               node.kind in callableDefs):
             try:
-              let hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs,
-                  nkConstDef, nkTemplateDef}:
+              var hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
                   node.comment.len > 0
                 else:
                   node.hasSubnodeWith(kind = nkCommentStmt)
+              if node.kind == nkTemplateDef and not hasDoc:
+                hasDoc = node.comment.len > 0
               setResult(checkResult = hasDoc, rule = rule,
                   positiveMessage = messagePrefix & "Declaration of " &
                   declName & " " & $node.info.line & " has documentation.",
