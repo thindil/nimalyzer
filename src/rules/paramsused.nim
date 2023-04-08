@@ -135,14 +135,15 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
             index = -1
             for i in 0..child.len - 3:
               try:
-                index = find(s = $node[6], sub = $child[i])
+                let varName: string = split(s = $child[i])[0]
+                index = find(s = $node[6], sub = varName)
                 # The node doesn't use one of its parameters
                 if index == -1:
                   if not rule.negation:
                     setResult(checkResult = false, rule = rule,
                         positiveMessage = "", negativeMessage = messagePrefix &
                         "procedure " & procName & " line: " & $node.info.line &
-                        " doesn't use parameter '" & $child[i] & "'.")
+                        " doesn't use parameter '" & varName & "'.")
                   else:
                     setResult(checkResult = false, rule = rule,
                         positiveMessage = "", negativeMessage = messagePrefix &
