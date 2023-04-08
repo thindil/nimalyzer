@@ -17,6 +17,8 @@ of the program.
 - `hasEntity` rule doesn't check properly for entities, regression
 - `hasDoc` rule doesn't check properly if module has documentation
 - `hadDoc` rule doesn't detect if template has documentation
+- Detection of names of parameters of procedures in `paramsUsed` rule, when
+  parameter has pragma
 
 ## [0.2.0] - 2023-03-20
 
