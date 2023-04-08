@@ -69,21 +69,7 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
-    raises: [], tags: [RootEffect].} =
-  ## Check recursively if the source code has the documentation in the proper
-  ## locactions
-  ##
-  ## * astNode - The AST node representation of the Nim code to check
-  ## * rule    - The rule options set by the user and the previous iterations
-  ##             of the procedure
-  ##
-  ## The amount of result how many times the various elements of the Nim code
-  ## has the documentation comments
-  require:
-    astNode != nil
-    rule.fileName.len > 0
-  body:
+checkRule:
     initCheck:
       if rule.enabled:
         setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
