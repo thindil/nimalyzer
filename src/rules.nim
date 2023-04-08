@@ -355,3 +355,11 @@ template checkRule*(code: untyped): untyped =
     ## The amount of result how many times the various elements of the Nim code
     ## has the documentation comments
     code
+
+template ruleConfig*(ruleName: string; ruleOptions: seq[RuleOptionsTypes] = @[];
+    ruleOptionValues: seq[string] = @[]; ruleMinOptions: Natural = 0): untyped =
+
+  const ruleSettings*{.inject.}: RuleSettings = RuleSettings(name: ruleName,
+      checkProc: ruleCheck, options: ruleOptions,
+      optionValues: ruleOptionValues,
+      minOptions: ruleMinOptions) ## The rule settings like name, options, etc
