@@ -337,3 +337,21 @@ template endCheck*(code: untyped): untyped =
               returnValue = rule.amount,
               level = lvlNotice, decrease = false)
         rule.amount = 0
+
+template checkRule*(code: untyped): untyped =
+  ## Check the rule, add the procedure declaration and the check code itself
+  ##
+  ## * code - the code to run for check the rule
+  proc ruleCheck*(astNode{.inject.}: PNode;
+      rule{.inject.}: var RuleOptions) {.raises: [], tags: [RootEffect],
+          contractual, ruleOff: "paramsUsed".} =
+    ## Check recursively if the source code has the documentation in the proper
+    ## locactions
+    ##
+    ## * astNode - The AST node representation of the Nim code to check
+    ## * rule    - The rule options set by the user and the previous iterations
+    ##             of the procedure
+    ##
+    ## The amount of result how many times the various elements of the Nim code
+    ## has the documentation comments
+    code
