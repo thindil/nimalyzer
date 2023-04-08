@@ -358,6 +358,12 @@ template checkRule*(code: untyped): untyped =
 
 template ruleConfig*(ruleName: string; ruleOptions: seq[RuleOptionsTypes] = @[];
     ruleOptionValues: seq[string] = @[]; ruleMinOptions: Natural = 0): untyped =
+  ## Set the rule's settings, like name, options, etc
+  ##
+  ## * ruleName         - The name of the rule
+  ## * ruleOptions      - The rule's options which can be set, default no options
+  ## * ruleOptionValues - If the rule has option type custom, the values for the option
+  ## * ruleMinOptions   - The minumal amount of options required by the rule, default 0
 
   const ruleSettings*{.inject.}: RuleSettings = RuleSettings(name: ruleName,
       checkProc: ruleCheck, options: ruleOptions,
