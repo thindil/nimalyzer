@@ -26,7 +26,7 @@
 ## Provides various things for the program rules
 
 # Standard library imports
-import std/[logging, strutils]
+import std/[logging, strformat, strutils]
 # External modules imports
 import compiler/[ast, renderer]
 import contracts
@@ -315,7 +315,7 @@ template endCheck*(code: untyped): untyped =
       rule.amount = 0
     if rule.ruleType == RuleTypes.count:
       message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-          s = foundMessage) else: foundMessage) & " found: " & $rule.amount,
+          s = foundMessage.fmt) else: foundMessage.fmt) & " found: " & $rule.amount,
           returnValue = rule.amount, level = lvlNotice)
       rule.amount = 1
     elif rule.amount < 1:
@@ -326,14 +326,14 @@ template endCheck*(code: untyped): untyped =
           rule.amount = 0
         else:
           message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-              s = notFoundMessage) else: notFoundMessage),
+              s = notFoundMessage.fmt) else: notFoundMessage.fmt),
               returnValue = rule.amount,
               level = lvlNotice, decrease = false)
           rule.amount = 0
       else:
         if rule.ruleType != check or showForCheck:
           message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-              s = notFoundMessage) else: notFoundMessage),
+              s = notFoundMessage.fmt) else: notFoundMessage.fmt),
               returnValue = rule.amount,
               level = lvlNotice, decrease = false)
         rule.amount = 0
