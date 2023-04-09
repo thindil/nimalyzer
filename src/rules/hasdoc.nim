@@ -69,7 +69,9 @@
 # Import default rules' modules
 import ../rules
 
-ruleConfig(ruleName = "hasdoc")
+ruleConfig(ruleName = "hasdoc",
+  ruleFoundMessage = "declared public items with documentation",
+  ruleNotFoundMessage = "The documentation not found.")
 
 checkRule:
     initCheck:
@@ -126,7 +128,4 @@ checkRule:
                   text = "Can't check the declared entity '" & declName & "'.", e = e)
               return
     endCheck:
-      const
-        foundMessage: string = "declared public items with documentation"
-        notFoundMessage: string = "The documentation not found."
-        showForCheck: bool = false
+      discard
