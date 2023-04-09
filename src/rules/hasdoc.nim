@@ -69,6 +69,8 @@
 # Import default rules' modules
 import ../rules
 
+ruleConfig(ruleName = "hasdoc")
+
 checkRule:
     initCheck:
       if rule.enabled:
@@ -84,7 +86,7 @@ checkRule:
           nkEnumTy, nkConstSection, nkConstTy}:
         for child in node.items:
           if child.kind == nkPragma:
-            setRuleState(node = child, ruleName = "hasdoc",
+            setRuleState(node = child, ruleName = ruleSettings.name,
                 oldState = rule.enabled)
             break
         # Special check for constant declaration section
@@ -128,6 +130,3 @@ checkRule:
         foundMessage: string = "declared public items with documentation"
         notFoundMessage: string = "The documentation not found."
         showForCheck: bool = false
-
-const ruleSettings*: RuleSettings = RuleSettings(name: "hasdoc",
-    checkProc: ruleCheck) ## The rule settings like name, options, etc
