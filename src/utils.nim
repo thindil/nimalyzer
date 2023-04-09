@@ -30,7 +30,7 @@ import rules
 # Nimalyzer rules imports
 import rules/[hasdoc, hasentity, haspragma, namedparams, paramsused, vardeclared]
 
-const rulesList*: array[6, RuleSettings] = [haspragma.ruleSettings,
+let rulesList*: array[6, RuleSettings] = [haspragma.ruleSettings,
     hasentity.ruleSettings, paramsused.ruleSettings, namedparams.ruleSettings,
     hasdoc.ruleSettings, varDeclared.ruleSettings]
   ## The list of available the program's rules with their names as keys and
