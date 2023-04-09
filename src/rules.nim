@@ -344,16 +344,7 @@ template checkRule*(code: untyped): untyped =
   ## * code - the code to run for check the rule
   proc ruleCheck*(astNode{.inject.}: PNode;
       rule{.inject.}: var RuleOptions) {.raises: [], tags: [RootEffect],
-          contractual, ruleOff: "paramsUsed".} =
-    ## Check recursively if the source code has the documentation in the proper
-    ## locactions
-    ##
-    ## * astNode - The AST node representation of the Nim code to check
-    ## * rule    - The rule options set by the user and the previous iterations
-    ##             of the procedure
-    ##
-    ## The amount of result how many times the various elements of the Nim code
-    ## has the documentation comments
+          contractual, ruleOff: "paramsUsed", ruleOff: "hasDoc".} =
     code
 
 template ruleConfig*(ruleName: string; ruleOptions: seq[RuleOptionsTypes] = @[];
@@ -364,8 +355,16 @@ template ruleConfig*(ruleName: string; ruleOptions: seq[RuleOptionsTypes] = @[];
   ## * ruleOptions      - The rule's options which can be set, default no options
   ## * ruleOptionValues - If the rule has option type custom, the values for the option
   ## * ruleMinOptions   - The minumal amount of options required by the rule, default 0
+  proc ruleCheck*(astNode{.inject.}: PNode;
+      rule{.inject.}: var RuleOptions) {.ruleOff: "hasPragma".}
+    ## Check recursively if the source code has the documentation in the proper
+    ## locactions
+    ##
+    ## * astNode - The AST node representation of the Nim code to check
+    ## * rule    - The rule options set by the user and the previous iterations
+    ##             of the procedure
 
-  const ruleSettings*{.inject.}: RuleSettings = RuleSettings(name: ruleName,
+  let ruleSettings*{.inject.}: RuleSettings = RuleSettings(name: ruleName,
       checkProc: ruleCheck, options: ruleOptions,
       optionValues: ruleOptionValues,
       minOptions: ruleMinOptions) ## The rule settings like name, options, etc
