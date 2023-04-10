@@ -61,19 +61,14 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
-    raises: [], tags: [RootEffect].} =
-  ## Check recursively if calls in the source code use named paramters.
-  ##
-  ## * astNode - The AST node representation of the Nim code to check
-  ## * options - The rule options set by the user and the previous iterations
-  ##             of the procedure
-  ##
-  ## The amount of result how many calls in the source code use named parameters.
-  require:
-    astNode != nil
-    rule.fileName.len > 0
-  body:
+ruleConfig(ruleName = "namedparams",
+  ruleFoundMessage = "calls which{negation} have all named parameters",
+  ruleNotFoundMessage = "calls which{negation} have all named parameters not found.")
+
+checkRule:
+  initCheck:
+    discard
+  startCheck:
 
     proc check(node: PNode; rule: var RuleOptions) {.contractual, raises: [],
         tags: [RootEffect].} =
@@ -89,10 +84,6 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
       body:
         if not rule.enabled:
           return
-        let messagePrefix: string = if getLogFilter() < lvlNotice:
-            ""
-          else:
-            rule.fileName & ": "
         let callName: string = try:
               $node[0]
             except KeyError, Exception:
@@ -116,28 +107,15 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
               "can't check parameters of call " & callName & " line: " &
               $node.info.line & ". Reason: ", e = getCurrentException())
 
-    let isParent: bool = rule.parent
-    if isParent:
-      rule.parent = false
     setRuleState(node = astNode, ruleName = "namedparams",
         oldState = rule.enabled)
     if astNode.kind == nkCall:
       check(node = astNode, rule = rule)
       return
-    for node in astNode.items:
-      setRuleState(node = node, ruleName = "namedparams",
-          oldState = rule.enabled)
-      # Node is a call, and have parameters, check it
-      if node.kind == nkCall and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
-        check(node = node, rule = rule)
-      # Check the node's children with the rule
-      for child in node.items:
-        ruleCheck(astNode = child, rule = rule)
-    if isParent:
-      showSummary(rule = rule, foundMessage = "calls which" & (
-          if rule.negation: " not" else: "") & " have all named parameters",
-          notFoundMessage = "calls which" & (
-          if rule.negation: " not" else: "") & " have all named parameters not found.")
+  checking:
+    # Node is a call, and have parameters, check it
+    if node.kind == nkCall and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
+      check(node = node, rule = rule)
+  endCheck:
+      let negation: string = (if rule.negation: " not" else: "")
 
-const ruleSettings*: RuleSettings = RuleSettings(name: "namedparams",
-    checkProc: ruleCheck) ## The rule settings like name, options, etc
