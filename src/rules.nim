@@ -352,16 +352,16 @@ template ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
     ruleMinOptions: Natural = 0; ruleShowForCheck: bool = false): untyped =
   ## Set the rule's settings, like name, options, etc
   ##
-  ## * ruleName         - The name of the rule
-  ## * foundMessage     - The message shown when search type of the rule found
-  ##                      something
-  ## * notFoundMessage  - The message shown when search type of the rule not
-  ##                      found anything
-  ## * ruleOptions      - The rule's options which can be set, default no options
-  ## * ruleOptionValues - If the rule has option type custom, the values for the
-  ##                      option
-  ## * ruleMinOptions   - The minumal amount of options required by the rule,
-  ##                      default 0
+  ## * ruleName            - The name of the rule
+  ## * rulefoundMessage    - The message shown when count type of the rule found
+  ##                         something
+  ## * rulenotFoundMessage - The message shown when count type of the rule not
+  ##                         found anything
+  ## * ruleOptions         - The rule's options which can be set, default no options
+  ## * ruleOptionValues    - If the rule has option type custom, the values for the
+  ##                         option
+  ## * ruleMinOptions      - The minumal amount of options required by the rule,
+  ##                         default 0
   proc ruleCheck*(astNode{.inject.}: PNode;
       rule{.inject.}: var RuleOptions) {.ruleOff: "hasPragma".}
     ## Check recursively if the source code has the documentation in the proper
@@ -377,5 +377,5 @@ template ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       minOptions: ruleMinOptions) ## The rule settings like name, options, etc
   const
     showForCheck{.inject.}: bool = ruleShowForCheck ## If true, show summary for check type of the rule
-    foundMessage{.inject.}: string = ruleFoundMessage ## The message shown when search type of the rule found something
-    notFoundMessage{.inject.}: string = ruleNotFoundMessage ## The message shown when search type of the rule not found anything
+    foundMessage{.inject.}: string = ruleFoundMessage ## The message shown when count type of the rule found something
+    notFoundMessage{.inject.}: string = ruleNotFoundMessage ## The message shown when count type of the rule not found anything
