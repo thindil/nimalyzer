@@ -74,29 +74,18 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
-    raises: [], tags: [RootEffect].} =
-  ## Check recursively if all procedures in the Nim code use all of their
-  ## parameters
-  ##
-  ## * astNode - The AST node representation of the Nim code to check
-  ## * rule    - The rule options set by the user and the previous iterations
-  ##             of the procedure
-  ##
-  ## The amount of result how many procedures uses their all parameters
-  require:
-    astNode != nil
-    rule.fileName.len > 0
-  body:
-    let isParent: bool = rule.parent
-    if isParent:
-      rule.parent = false
-    let
-      messagePrefix: string = if getLogFilter() < lvlNotice:
-          ""
-        else:
-          rule.fileName & ": "
-      nodesToCheck: set[TNodeKind] = case rule.options[0]
+ruleConfig(ruleName = "paramsused",
+  ruleFoundMessage = "procedures which{negation} uses all parameters",
+  ruleNotFoundMessage = "procedures which{negation} uses all parameters not found.",
+  ruleOptions = @[custom],
+  ruleOptionValues = @["procedures", "templates", "all"],
+  ruleMinOptions = 1)
+
+checkRule:
+  initCheck:
+    discard
+  startCheck:
+    let nodesToCheck: set[TNodeKind] = case rule.options[0]
         of "all":
           routineDefs
         of "procedures":
@@ -105,69 +94,56 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
           {nkTemplateDef}
         else:
           {}
-    for node in astNode.items:
-      # Check the node's children if rule is enabled
-      for child in node.items:
-        setRuleState(node = child, ruleName = "paramsused",
-            oldState = rule.enabled)
-      if rule.enabled and node.kind in nodesToCheck:
-        # Get the procedure's name
-        let procName: string = try:
-              $node[0]
-            except KeyError, Exception:
-              ""
-        if procName.len == 0:
-          rule.amount = errorMessage(
-              text = "Can't get the name of the procedure.")
-          return
-        # No parameters, skip
-        if node[3].len < 2:
-          if rule.negation:
-            rule.amount.dec
-          else:
-            rule.amount.inc
+  checking:
+    if rule.enabled and node.kind in nodesToCheck:
+      # Get the procedure's name
+      let procName: string = try:
+            $node[0]
+          except KeyError, Exception:
+            ""
+      if procName.len == 0:
+        rule.amount = errorMessage(
+            text = "Can't get the name of the procedure.")
+        return
+      # No parameters, skip
+      if node[3].len < 2:
+        if rule.negation:
+          rule.amount.dec
         else:
-          var index: int = -1
-          # Check each parameter
-          for child in node[3]:
-            if child.kind in {nkEmpty, nkIdent}:
-              continue
-            index = -1
-            for i in 0..child.len - 3:
-              try:
-                let varName: string = split(s = $child[i])[0]
-                index = find(s = $node[6], sub = varName)
-                # The node doesn't use one of its parameters
-                if index == -1:
-                  if not rule.negation:
-                    setResult(checkResult = false, rule = rule,
-                        positiveMessage = "", negativeMessage = messagePrefix &
-                        "procedure " & procName & " line: " & $node.info.line &
-                        " doesn't use parameter '" & varName & "'.")
-                  else:
-                    setResult(checkResult = false, rule = rule,
-                        positiveMessage = "", negativeMessage = messagePrefix &
-                        "procedure " & procName & " line: " & $node.info.line & " doesn't use all parameters.")
-                    break
-              except KeyError, Exception:
-                rule.amount = errorMessage(text = messagePrefix &
-                    "can't check parameters of procedure " & procName &
-                    " line: " &
-                    $node.info.line & ". Reason: ", e = getCurrentException())
-          # The node uses all of its parameters
-          if index > -1:
-            setResult(checkResult = true, rule = rule,
-                positiveMessage = "", negativeMessage = messagePrefix &
-                "procedure " & procName & " line: " & $node.info.line & " use all parameters.")
-      # Check the node's children with the rule
-      for child in node.items:
-        ruleCheck(astNode = child, rule = rule)
-    if isParent:
-      showSummary(rule = rule, foundMessage = "procedures which" & (
-          if rule.negation: " not" else: "") & " uses all parameters",
-          notFoundMessage = "procedures which" & (
-          if rule.negation: " not" else: "") & " uses all parameters not found.")
+          rule.amount.inc
+      else:
+        var index: int = -1
+        # Check each parameter
+        for child in node[3]:
+          if child.kind in {nkEmpty, nkIdent}:
+            continue
+          index = -1
+          for i in 0..child.len - 3:
+            try:
+              let varName: string = split(s = $child[i])[0]
+              index = find(s = $node[6], sub = varName)
+              # The node doesn't use one of its parameters
+              if index == -1:
+                if not rule.negation:
+                  setResult(checkResult = false, rule = rule,
+                      positiveMessage = "", negativeMessage = messagePrefix &
+                      "procedure " & procName & " line: " & $node.info.line &
+                      " doesn't use parameter '" & varName & "'.")
+                else:
+                  setResult(checkResult = false, rule = rule,
+                      positiveMessage = "", negativeMessage = messagePrefix &
+                      "procedure " & procName & " line: " & $node.info.line & " doesn't use all parameters.")
+                  break
+            except KeyError, Exception:
+              rule.amount = errorMessage(text = messagePrefix &
+                  "can't check parameters of procedure " & procName &
+                  " line: " &
+                  $node.info.line & ". Reason: ", e = getCurrentException())
+        # The node uses all of its parameters
+        if index > -1:
+          setResult(checkResult = true, rule = rule,
+              positiveMessage = "", negativeMessage = messagePrefix &
+              "procedure " & procName & " line: " & $node.info.line & " use all parameters.")
+  endCheck:
+    let negation: string = (if rule.negation: " not" else: "")
 
-const ruleSettings*: RuleSettings = RuleSettings(name: "paramsused",
-    checkProc: ruleCheck, options: @[custom], optionValues: @["procedures",
-    "templates", "all"], minOptions: 1) ## The rule settings like name, options, etc
