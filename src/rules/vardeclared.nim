@@ -77,95 +77,72 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
-    raises: [], tags: [RootEffect].} =
-  ## Check recursively if all variables' declarations in Nim code follow
-  ## the selected pattern
-  ##
-  ## * astNode - The AST node representation of the Nim code to check
-  ## * rule    - The rule options set by the user and the previous iterations
-  ##             of the procedure
-  ##
-  ## The amount of result how many declarations of variables follow the
-  ## selected pattern
-  require:
-    astNode != nil
-    rule.fileName.len > 0
-  body:
-    let isParent: bool = rule.parent
-    if isParent:
-      rule.parent = false
-    let messagePrefix: string = if getLogFilter() < lvlNotice:
-        ""
-      else:
-        rule.fileName & ": "
-    for node in astNode.items:
-      # Check the node if rule is enabled
-      setRuleState(node = node, ruleName = "vardeclared",
-          oldState = rule.enabled)
-      if rule.enabled:
-        try:
-          # Sometimes the compiler detects declarations as children of the node
-          if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
-            # Check each variable declaration if meet the rule requirements
-            for declaration in node.items:
-              # Check if declaration of variable sets its type
-              if rule.options[0] in ["full", "type"]:
-                setResult(checkResult = declaration[1].kind != nkEmpty,
-                    rule = rule, positiveMessage = messagePrefix &
-                    "declaration of " & $declaration[0] & " line: " &
-                    $declaration.info.line & " sets the type '" &
-                    $declaration[1] & "' as the type of the variable.",
-                        negativeMessage = messagePrefix &
-                    "declaration of '" & $declaration[0] & "' line: " &
-                    $declaration.info.line & " doesn't set type for the variable.")
-              # Check if declaration of variable sets its value
-              if rule.options[0] in ["full", "value"]:
-                setResult(checkResult = declaration[2].kind != nkEmpty,
-                    rule = rule, positiveMessage = messagePrefix &
-                    "declaration of " & $declaration[0] & " line: " &
-                    $declaration.info.line & " sets the value '" &
-                    $declaration[2] & "' as the value of the variable.",
-                        negativeMessage = messagePrefix &
-                    "declaration of '" & $declaration[0] & "' line: " &
-                    $declaration.info.line & " doesn't set value for the variable.")
-          # And sometimes the compiler detects declarations as the node
-          elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
-              nkLetSection, nkConstSection}:
+ruleConfig(ruleName = "vardeclared",
+  ruleFoundMessage = "declarations with{negation}{rule.options[0]} declaration",
+  ruleNotFoundMessage = "declarations with{negation}{rule.options[0]} declaration not found.",
+  ruleOptions = @[custom],
+  ruleOptionValues = @["full", "type", "value"],
+  ruleMinOptions = 1)
+
+checkRule:
+  initCheck:
+    discard
+  startCheck:
+    discard
+  checking:
+    if rule.enabled:
+      try:
+        # Sometimes the compiler detects declarations as children of the node
+        if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
+          # Check each variable declaration if meet the rule requirements
+          for declaration in node.items:
             # Check if declaration of variable sets its type
             if rule.options[0] in ["full", "type"]:
-              setResult(checkResult = node[1].kind != nkEmpty,
+              setResult(checkResult = declaration[1].kind != nkEmpty,
                   rule = rule, positiveMessage = messagePrefix &
-                  "declaration of " & $node[0] & " line: " &
-                  $node.info.line & " sets the type '" &
-                  $node[1] & "' as the type of the variable.",
+                  "declaration of " & $declaration[0] & " line: " &
+                  $declaration.info.line & " sets the type '" &
+                  $declaration[1] & "' as the type of the variable.",
                       negativeMessage = messagePrefix &
-                  "declaration of '" & $node[0] & "' line: " &
-                  $node.info.line & " doesn't set type for the variable.")
+                  "declaration of '" & $declaration[0] & "' line: " &
+                  $declaration.info.line & " doesn't set type for the variable.")
             # Check if declaration of variable sets its value
             if rule.options[0] in ["full", "value"]:
-              setResult(checkResult = node[1].kind != nkEmpty,
+              setResult(checkResult = declaration[2].kind != nkEmpty,
                   rule = rule, positiveMessage = messagePrefix &
-                  "declaration of " & $node[0] & " line: " &
-                  $node.info.line & " sets the value '" &
-                  $node[1] & "' as the value of the variable.",
+                  "declaration of " & $declaration[0] & " line: " &
+                  $declaration.info.line & " sets the value '" &
+                  $declaration[2] & "' as the value of the variable.",
                       negativeMessage = messagePrefix &
-                  "declaration of '" & $node[0] & "' line: " &
-                  $node.info.line & " doesn't set value for the variable.")
-        except KeyError, Exception:
-          rule.amount = errorMessage(text = messagePrefix &
-              "can't check declaration of variable " &
-              " line: " &
-              $node.info.line & ". Reason: ", e = getCurrentException())
-      # Check the node's children with the rule
-      for child in node.items:
-        ruleCheck(astNode = child, rule = rule)
-    if isParent:
-      showSummary(rule = rule, foundMessage = "declarations with" & (
-          if rule.negation: "out" else: "") & rule.options[0] &
-          " declaration", notFoundMessage = "declarations with" & (
-          if rule.negation: "out" else: "") & rule.options[0] & " declaration not found.")
-
-const ruleSettings*: RuleSettings = RuleSettings(name: "vardeclared",
-    checkProc: ruleCheck, options: @[custom], optionValues: @["full", "type",
-    "value"], minOptions: 1) ## The rule settings like name, options, etc
+                  "declaration of '" & $declaration[0] & "' line: " &
+                  $declaration.info.line & " doesn't set value for the variable.")
+        # And sometimes the compiler detects declarations as the node
+        elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
+            nkLetSection, nkConstSection}:
+          # Check if declaration of variable sets its type
+          if rule.options[0] in ["full", "type"]:
+            setResult(checkResult = node[1].kind != nkEmpty,
+                rule = rule, positiveMessage = messagePrefix &
+                "declaration of " & $node[0] & " line: " &
+                $node.info.line & " sets the type '" &
+                $node[1] & "' as the type of the variable.",
+                    negativeMessage = messagePrefix &
+                "declaration of '" & $node[0] & "' line: " &
+                $node.info.line & " doesn't set type for the variable.")
+          # Check if declaration of variable sets its value
+          if rule.options[0] in ["full", "value"]:
+            setResult(checkResult = node[1].kind != nkEmpty,
+                rule = rule, positiveMessage = messagePrefix &
+                "declaration of " & $node[0] & " line: " &
+                $node.info.line & " sets the value '" &
+                $node[1] & "' as the value of the variable.",
+                    negativeMessage = messagePrefix &
+                "declaration of '" & $node[0] & "' line: " &
+                $node.info.line & " doesn't set value for the variable.")
+      except KeyError, Exception:
+        rule.amount = errorMessage(text = messagePrefix &
+            "can't check declaration of variable " &
+            " line: " &
+            $node.info.line & ". Reason: ", e = getCurrentException())
+  endCheck:
+    let negation: string = (if rule.negation: "out" else: "")
