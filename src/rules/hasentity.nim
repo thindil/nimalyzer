@@ -103,21 +103,19 @@
 # Import default rules' modules
 import ../rules
 
-proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
-    raises: [], tags: [RootEffect].} =
-  ## Check recursively if the source code has the selected entity
-  ##
-  ## * astNode - The AST node representation of the Nim code to check
-  ## * rule    - The rule options set by the user and the previous iterations
-  ##             of the procedure
-  ##
-  ## The amount of result how many times the selected elements of the Nim code
-  ## were found
-  require:
-    astNode != nil
-    rule.options.len > 1
-    rule.fileName.len > 0
-  body:
+ruleConfig(ruleName = "hasentity",
+  ruleFoundMessage = "declared {rule.options[0]} with name '{rule.options[1]}'",
+  ruleNotFoundMessage = "doesn't have declared {rule.options[0]} with name '{rule.options[1]}'.",
+  ruleOptions = @[node, str, node, integer],
+  ruleMinOptions = 2,
+  ruleShowForCheck = true)
+
+checkRule:
+  initCheck:
+    rule.amount = 0
+    if rule.negation:
+      rule.amount.inc
+  startCheck:
     # Set the type of the node to check
     let nodeKind: TNodeKind = try:
           parseEnum[TNodeKind](s = rule.options[0])
@@ -127,12 +125,6 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
       rule.amount = errorMessage(text = "Invalid type of entity: " &
           rule.options[0])
       return
-    let isParent: bool = rule.parent
-    if isParent:
-      rule.parent = false
-      rule.amount = 0
-    if rule.negation and isParent:
-      rule.amount.inc
 
     proc checkEntity(nodeName, line: string;
         rule: var RuleOptions) {.raises: [], tags: [RootEffect],
@@ -159,64 +151,52 @@ proc ruleCheck*(astNode: PNode; rule: var RuleOptions) {.contractual,
             rule.options[0] & " with name '" & nodeName & "' at line: " &
             line & ".")
 
-    for node in astNode.items:
-      setRuleState(node = node, ruleName = "hasentity",
-          oldState = rule.enabled)
-      if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
-          nkCommentStmt}:
-        try:
-          # If parent node specified and the current node is the same kind as
-          # the parent node, check its children instead of the node
-          if rule.options.len > 2:
-            let parentKind: TNodeKind = try:
-                  parseEnum[TNodeKind](s = rule.options[2])
-                except ValueError:
-                  nkNone
-            var childIndex: int = -1
-            if rule.options.len == 4:
-              childIndex = try:
-                  rule.options[3].parseInt()
-                except ValueError:
-                  int.low
-            if node.kind == parentKind:
-              if childIndex == int.low:
-                for child in node.items:
-                  if child.kind != nodeKind:
-                    continue
-                  let childName: string = try:
-                      $child[0]
-                    except KeyError, Exception:
-                      ""
-                  checkEntity(nodeName = childName, line = $child.info.line,
-                      rule = rule)
-              elif childIndex <= node.sons.high:
+  checking:
+    if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
+        nkCommentStmt}:
+      try:
+        # If parent node specified and the current node is the same kind as
+        # the parent node, check its children instead of the node
+        if rule.options.len > 2:
+          let parentKind: TNodeKind = try:
+                parseEnum[TNodeKind](s = rule.options[2])
+              except ValueError:
+                nkNone
+          var childIndex: int = -1
+          if rule.options.len == 4:
+            childIndex = try:
+                rule.options[3].parseInt()
+              except ValueError:
+                int.low
+          if node.kind == parentKind:
+            if childIndex == int.low:
+              for child in node.items:
+                if child.kind != nodeKind:
+                  continue
                 let childName: string = try:
-                    if childIndex > -1:
-                      $node[childIndex]
-                    else:
-                      $node[^childIndex]
+                    $child[0]
                   except KeyError, Exception:
                     ""
-                checkEntity(nodeName = childName, line = $node.info.line,
+                checkEntity(nodeName = childName, line = $child.info.line,
                     rule = rule)
-          # Check the node itself
-          elif node.kind == nodeKind:
-            checkEntity(nodeName = $node[0], line = $node.info.line,
-                rule = rule)
-        except KeyError, Exception:
-          rule.amount = errorMessage(
-              text = "Error during checking hasEntity rule: ",
-              e = getCurrentException())
-          return
-        # Check all children of the node with the rule
-        for child in node.items:
-          ruleCheck(astNode = child, rule = rule)
-    if isParent:
-      showSummary(rule = rule, foundMessage = "declared " &
-          rule.options[0] & " with name '" & rule.options[1] & "'",
-          notFoundMessage = "doesn't have declared " & rule.options[0] &
-          " with name '" & rule.options[1] & "'.", showForCheck = true)
-
-const ruleSettings*: RuleSettings = RuleSettings(name: "hasentity",
-    checkProc: ruleCheck, options: @[node, str, node, integer],
-        minOptions: 2) ## The rule settings like name, options, etc
+            elif childIndex <= node.sons.high:
+              let childName: string = try:
+                  if childIndex > -1:
+                    $node[childIndex]
+                  else:
+                    $node[^childIndex]
+                except KeyError, Exception:
+                  ""
+              checkEntity(nodeName = childName, line = $node.info.line,
+                  rule = rule)
+        # Check the node itself
+        elif node.kind == nodeKind:
+          checkEntity(nodeName = $node[0], line = $node.info.line,
+              rule = rule)
+      except KeyError, Exception:
+        rule.amount = errorMessage(
+            text = "Error during checking hasEntity rule: ",
+            e = getCurrentException())
+        return
+  endCheck:
+    discard
