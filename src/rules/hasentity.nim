@@ -110,9 +110,8 @@ ruleConfig(ruleName = "hasentity",
   ruleMinOptions = 2,
   ruleShowForCheck = true)
 
-proc checkEntity(nodeName, line: string;
-    rule: var RuleOptions) {.raises: [], tags: [RootEffect],
-    contractual.} =
+proc checkEntity(nodeName, line: string; rule: var RuleOptions) {.raises: [],
+    tags: [RootEffect], contractual.} =
   ## Check if the selected entity's name fulfill the rule requirements and
   ## log the message if needed.
   ##
@@ -125,15 +124,13 @@ proc checkEntity(nodeName, line: string;
   if not rule.enabled:
     return
   # The selected entity found in the node
-  if rule.options[1].len == 0 or startsWith(s = nodeName,
-      prefix = rule.options[1]):
+  if rule.options[1].len == 0 or startsWith(s = nodeName, prefix = rule.options[1]):
     setResult(checkResult = true, rule = rule, positiveMessage = (
         if getLogFilter() < lvlNotice: "H" else: rule.fileName & ": h") &
         "as declared " & rule.options[0] & " with name '" & nodeName &
         "' at line: " & line & ".", negativeMessage = (if getLogFilter() <
         lvlNotice: "H" else: rule.fileName & ": h") & "as declared " &
-        rule.options[0] & " with name '" & nodeName & "' at line: " &
-        line & ".")
+        rule.options[0] & " with name '" & nodeName & "' at line: " & line & ".")
 
 checkRule:
   initCheck:
