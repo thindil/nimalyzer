@@ -292,6 +292,8 @@ template startCheck*(code: untyped): untyped =
   ##
   ## * code - the custom code which will be executed during starting of the
   ##          check
+  setRuleState(node = astNode, ruleName = ruleSettings.name,
+      oldState = rule.enabled)
   code
 
 template checking*(code: untyped): untyped =
@@ -300,6 +302,11 @@ template checking*(code: untyped): untyped =
   ##
   ## * code - the code of the check
   for node{.inject.} in astNode.items:
+    setRuleState(node = node, ruleName = ruleSettings.name,
+        oldState = rule.enabled)
+    for child in node.items:
+      setRuleState(node = child, ruleName = ruleSettings.name,
+          oldState = rule.enabled)
     code
     # Check each children of the current AST node with the rule
     for child in node.items:
@@ -315,7 +322,8 @@ template endCheck*(code: untyped): untyped =
       rule.amount = 0
     if rule.ruleType == RuleTypes.count:
       message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-          s = foundMessage.fmt) else: foundMessage.fmt) & " found: " & $rule.amount,
+          s = foundMessage.fmt) else: foundMessage.fmt) & " found: " &
+          $rule.amount,
           returnValue = rule.amount, level = lvlNotice)
       rule.amount = 1
     elif rule.amount < 1:
