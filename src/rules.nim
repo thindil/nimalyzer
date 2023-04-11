@@ -138,51 +138,6 @@ proc setRuleState*(node: PNode; ruleName: string;
         except KeyError, Exception:
           discard
 
-proc showSummary*(rule: var RuleOptions; foundMessage,
-    notFoundMessage: string; showForCheck: bool = false) {.sideEffect, raises: [],
-    tags: [RootEffect], contractual.} =
-  ## Show the rule summary info and update the rule result if needed
-  ##
-  ## * rule            - the rule options set by the user and updated during
-  ##                     checking the rule
-  ## * foundMessage    - the message shown when rule type is count and the rule
-  ##                     found something
-  ## * notFoundMessage - the message shown when the rule doesn't found anything
-  ## * showForCheck    - if true, show notFoundMessage for check type of rule,
-  ##                     otherwise, don't show any message
-  ##
-  ## Returns the updated parameter options
-  require:
-    foundMessage.len > 0
-    notFoundMessage.len > 0
-  body:
-    if rule.amount < 0:
-      rule.amount = 0
-    if rule.ruleType == RuleTypes.count:
-      message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-          s = foundMessage) else: foundMessage) & " found: " & $rule.amount,
-          returnValue = rule.amount, level = lvlNotice)
-      rule.amount = 1
-    elif rule.amount < 1:
-      if not rule.enabled and rule.amount == 0:
-        rule.amount = 1
-      elif rule.negation:
-        if rule.ruleType == check:
-          rule.amount = 0
-        else:
-          message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-              s = notFoundMessage) else: notFoundMessage),
-              returnValue = rule.amount,
-              level = lvlNotice, decrease = false)
-          rule.amount = 0
-      else:
-        if rule.ruleType != check or showForCheck:
-          message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-              s = notFoundMessage) else: notFoundMessage),
-              returnValue = rule.amount,
-              level = lvlNotice, decrease = false)
-        rule.amount = 0
-
 proc setResult*(checkResult: bool; rule: var RuleOptions; positiveMessage,
     negativeMessage: string) {.raises: [], tags: [RootEffect], contractual.} =
   ## Update the amount of the rule results
