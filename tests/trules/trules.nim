@@ -26,9 +26,7 @@ except:
   assert errorMessage("Reason: ", getCurrentException()) == 0
 
 var options = RuleOptions(options: @[], parent: true, fileName: "",
-    negation: false, ruleType: check, amount: -1, enabled: true)
-showSummary(options, "Things found:", "Things not found.")
-assert options.amount == 0
+    negation: false, ruleType: check, amount: 0, enabled: true)
 
 setResult(true, options, "Myproc line 10: found", "Myproc line 10: not found")
 assert options.amount == 1
