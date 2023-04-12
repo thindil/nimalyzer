@@ -65,57 +65,56 @@ ruleConfig(ruleName = "namedparams",
   ruleFoundMessage = "calls which{negation} have all named parameters",
   ruleNotFoundMessage = "calls which{negation} have all named parameters not found.")
 
+proc check(node: PNode; rule: var RuleOptions;
+    messagePrefix: string) {.contractual, raises: [], tags: [RootEffect].} =
+  ## Check the call if it uses named parameters
+  ##
+  ## * node - the AST node representing the call to check
+  ## * rule - the rule options set by the user and the previous iterations
+  ##          of the procedure
+  ##
+  ## Returns the updated parameter rule.
+  require:
+    node != nil
+  body:
+    if not rule.enabled:
+      return
+    let callName: string = try:
+          $node[0]
+        except KeyError, Exception:
+          ""
+    if callName.len == 0:
+      message(text = "Can't get the name of the call.", level = lvlFatal,
+          returnValue = rule.amount)
+      rule.amount.inc
+      return
+    try:
+      for i in 1..<node.sons.len:
+        setResult(checkResult = node[i].kind == nkExprEqExpr,
+            rule = rule, positiveMessage = messagePrefix & "call " &
+            callName & " line: " & $node.info.line &
+            " doesn't have named parameter number: " & $i & "'.",
+            negativeMessage = messagePrefix & "call " & callName &
+            " line: " & $node.info.line &
+            " doesn't have named parameter number: " & $i & "'.")
+    except KeyError, Exception:
+      rule.amount = errorMessage(text = messagePrefix &
+          "can't check parameters of call " & callName & " line: " &
+          $node.info.line & ". Reason: ", e = getCurrentException())
+
 checkRule:
   initCheck:
     discard
   startCheck:
-
-    proc check(node: PNode; rule: var RuleOptions) {.contractual, raises: [],
-        tags: [RootEffect].} =
-      ## Check the call if it uses named parameters
-      ##
-      ## * node - the AST node representing the call to check
-      ## * rule - the rule options set by the user and the previous iterations
-      ##          of the procedure
-      ##
-      ## Returns the updated parameter rule.
-      require:
-        node != nil
-      body:
-        if not rule.enabled:
-          return
-        let callName: string = try:
-              $node[0]
-            except KeyError, Exception:
-              ""
-        if callName.len == 0:
-          message(text = "Can't get the name of the call.", level = lvlFatal,
-              returnValue = rule.amount)
-          rule.amount.inc
-          return
-        try:
-          for i in 1..<node.sons.len:
-            setResult(checkResult = node[i].kind == nkExprEqExpr,
-                rule = rule, positiveMessage = messagePrefix & "call " &
-                callName & " line: " & $node.info.line &
-                " doesn't have named parameter number: " & $i & "'.",
-                negativeMessage = messagePrefix & "call " & callName &
-                " line: " & $node.info.line &
-                " doesn't have named parameter number: " & $i & "'.")
-        except KeyError, Exception:
-          rule.amount = errorMessage(text = messagePrefix &
-              "can't check parameters of call " & callName & " line: " &
-              $node.info.line & ". Reason: ", e = getCurrentException())
-
     setRuleState(node = astNode, ruleName = "namedparams",
         oldState = rule.enabled)
     if astNode.kind == nkCall:
-      check(node = astNode, rule = rule)
+      check(node = astNode, rule = rule, messagePrefix = messagePrefix)
       return
   checking:
     # Node is a call, and have parameters, check it
     if node.kind == nkCall and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
-      check(node = node, rule = rule)
+      check(node = node, rule = rule, messagePrefix = messagePrefix)
   endCheck:
-      let negation: string = (if rule.negation: " not" else: "")
+    let negation: string = (if rule.negation: " not" else: "")
 
