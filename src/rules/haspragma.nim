@@ -121,12 +121,14 @@ proc setResult(procName, line, pragma, messagePrefix: string; hasPragma: bool;
     rule: var RuleOptions) {.raises: [], tags: [RootEffect], contractual.} =
   ## Update the amount of pragmas found and log the message if needed
   ##
-  ## * procName   - the name of the Nim's code entity which was checked for
-  ##                the pragma
-  ## * line       - the line in which the Nim's entity is in the source code
-  ## * hasPragma  - if true, the entity has the pragma
-  ## * rule       - the rule options set by the user and the previous iterations
-  ##                of the procedure
+  ## * procName      - the name of the Nim's code entity which was checked for
+  ##                   the pragma
+  ## * line          - the line in which the Nim's entity is in the source code
+  ## * pragma        - the pragma which will be checked by the rule
+  ## * messagePrefix - the begining of the log message which will be shown
+  ## * hasPragma     - if true, the entity has the pragma
+  ## * rule          - the rule options set by the user and the previous iterations
+  ##                   of the procedure
   ##
   ## Returns the updated parameter rule.
   require:
