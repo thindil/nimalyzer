@@ -39,6 +39,8 @@
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about public declaration which have documentation.
 ##   Probably useable only with search and count type of rule.
+## * hasDoc is the name of the rule. It is case-insensitive, thus it can be
+##   set as *hasdoc*, *hasDoc* or *hAsDoC*.
 ##
 ## Disabling the rule
 ## ------------------
@@ -53,7 +55,7 @@
 ## the element which should be checked. For example, if the rule should be
 ## re-enabled for `const a = 1`, the full declaration should be::
 ##
-##     const a = 1 {.ruleOn: "hasDoc".}
+##     const a {.ruleOn: "hasDoc".} = 1
 ##
 ## Examples
 ## --------
