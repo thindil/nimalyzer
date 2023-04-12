@@ -117,6 +117,32 @@ ruleConfig(ruleName = "haspragma",
   ruleOptionValues = @["procedures", "templates", "all"],
   ruleMinOptions = 2)
 
+proc setResult(procName, line, pragma, messagePrefix: string; hasPragma: bool;
+    rule: var RuleOptions) {.raises: [], tags: [RootEffect],
+    contractual.} =
+  ## Update the amount of pragmas found and log the message if needed
+  ##
+  ## * procName   - the name of the Nim's code entity which was checked for
+  ##                the pragma
+  ## * line       - the line in which the Nim's entity is in the source code
+  ## * hasPragma  - if true, the entity has the pragma
+  ## * rule       - the rule options set by the user and the previous iterations
+  ##                of the procedure
+  ##
+  ## Returns the updated parameter rule.
+  require:
+    procName.len > 0
+    line.len > 0
+    pragma.len > 0
+  body:
+    if not rule.enabled:
+      return
+    setResult(checkResult = hasPragma, rule = rule,
+        positiveMessage = messagePrefix & "procedure " & procName &
+        " line: " & line & " has declared pragma: " & pragma & ".",
+        negativeMessage = messagePrefix & "procedure " & procName &
+        " line: " & line & " doesn't have declared pragma: " & pragma & ".")
+
 checkRule:
   initCheck:
     discard
@@ -130,33 +156,6 @@ checkRule:
         {nkTemplateDef}
       else:
         {}
-
-    proc setResult(procName, line, pragma: string; hasPragma: bool;
-        rule: var RuleOptions) {.raises: [], tags: [RootEffect],
-        contractual.} =
-      ## Update the amount of pragmas found and log the message if needed
-      ##
-      ## * procName   - the name of the Nim's code entity which was checked for
-      ##                the pragma
-      ## * line       - the line in which the Nim's entity is in the source code
-      ## * hasPragma  - if true, the entity has the pragma
-      ## * rule       - the rule options set by the user and the previous iterations
-      ##                of the procedure
-      ##
-      ## Returns the updated parameter rule.
-      require:
-        procName.len > 0
-        line.len > 0
-        pragma.len > 0
-      body:
-        if not rule.enabled:
-          return
-        setResult(checkResult = hasPragma, rule = rule,
-            positiveMessage = messagePrefix & "procedure " & procName &
-            " line: " & line & " has declared pragma: " & pragma & ".",
-            negativeMessage = messagePrefix & "procedure " & procName &
-            " line: " & line & " doesn't have declared pragma: " & pragma & ".")
-
   checking:
     if node.kind in nodesToCheck:
       for child in node.items:
@@ -206,7 +205,7 @@ checkRule:
         for pragma in rule.options[1 .. ^1]:
           if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
             setResult(procName = procName, line = $node.info.line,
-                pragma = pragma, hasPragma = false, rule = rule)
+                pragma = pragma, messagePrefix = messagePrefix, hasPragma = false, rule = rule)
           elif pragma[^1] == '*' and pragma[0] != '*':
             var hasPragma: bool = false
             for procPragma in strPragmas:
@@ -214,7 +213,7 @@ checkRule:
                 hasPragma = true
                 break
             setResult(procName = procName, line = $node.info.line,
-                pragma = pragma, hasPragma = hasPragma, rule = rule)
+                pragma = pragma, messagePrefix = messagePrefix, hasPragma = hasPragma, rule = rule)
           elif pragma[0] == '*' and pragma[^1] != '*':
             var hasPragma: bool = false
             for procPragma in strPragmas:
@@ -222,7 +221,7 @@ checkRule:
                 hasPragma = true
                 break
             setResult(procName = procName, line = $node.info.line,
-                pragma = pragma, hasPragma = hasPragma, rule = rule)
+                pragma = pragma, messagePrefix = messagePrefix, hasPragma = hasPragma, rule = rule)
           elif '*' in [pragma[0], pragma[^1]]:
             var hasPragma: bool = false
             for procPragma in strPragmas:
@@ -230,10 +229,10 @@ checkRule:
                 hasPragma = true
                 break
             setResult(procName = procName, line = $node.info.line,
-                pragma = pragma, hasPragma = hasPragma, rule = rule)
+                pragma = pragma, messagePrefix = messagePrefix, hasPragma = hasPragma, rule = rule)
           else:
             setResult(procName = procName, line = $node.info.line,
-                pragma = pragma, hasPragma = true, rule = rule)
+                pragma = pragma, messagePrefix = messagePrefix, hasPragma = true, rule = rule)
     endCheck:
       if not rule.enabled and rule.amount == 0:
         rule.amount = 1
