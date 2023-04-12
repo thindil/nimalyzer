@@ -90,11 +90,10 @@ proc check(node: PNode; rule: var RuleOptions;
       return
     try:
       for i in 1..<node.sons.len:
-        setResult(checkResult = node[i].kind == nkExprEqExpr,
-            rule = rule, positiveMessage = messagePrefix & "call " &
-            callName & " line: " & $node.info.line &
-            " doesn't have named parameter number: " & $i & "'.",
-            negativeMessage = messagePrefix & "call " & callName &
+        setResult(checkResult = node[i].kind == nkExprEqExpr, rule = rule,
+            positiveMessage = messagePrefix & "call " & callName & " line: " &
+            $node.info.line & " doesn't have named parameter number: " & $i &
+            "'.", negativeMessage = messagePrefix & "call " & callName &
             " line: " & $node.info.line &
             " doesn't have named parameter number: " & $i & "'.")
     except KeyError, Exception:
