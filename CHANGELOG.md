@@ -9,6 +9,8 @@ of the program.
 ### Changed
 - Updated the project's documentation
 - Updated README.md
+- Disabling and enabling rules' pragmas can be now place before or in the
+  code fragment for which rules should be disabled or enabled.
 
 ### Fixed
 - Typos in Changelog
