@@ -39,6 +39,8 @@
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about procedures without desired pattern.
 ##   Probably useable only with search and count type of rule.
+## * varDeclared is the name of the rule. It is case-insensitive, thus it can be
+##   set as *vardeclared*, *varDeclared* or *vArDeClArEd*.
 ## * declarationType is the desired type of variable's declaration to check.
 ##   Possible values are: full - the declaration must have declared type and
 ##   value for the variable, type - the declaration must have declared type for
