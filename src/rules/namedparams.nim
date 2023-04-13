@@ -37,6 +37,8 @@
 ##   amount of calls which set all their parameters as named.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about calls which have some parameters not named.
+## * namedParams is the name of the rule. It is case-insensitive, thus it can be
+##   set as *namedparams*, *namedParams* or *nAmEdPaRaMs*.
 ##
 ## Disabling the rule
 ## ------------------
