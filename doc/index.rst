@@ -42,15 +42,17 @@ It is possible to disable a selected rule for a part of a module with the pragma
 1. Import the module *pragmas* from *nimalyzer*: `import nimalyzer/pragmas`
 
 2. Insert in the desired place in the code the pragma to disable rule. For
-   example: `{.ruleOff: "hasDoc".}`. Please refer to the rules' documentation to
-   check where the pragma should be placed. Some rules allow it in any place in
-   a code, others require it in the specific place. For example, rule *hasDoc*
-   require that pragma in a declaration.
+   example: `{.ruleOff: "hasDoc".}`. Usualy, the pragma can be placed before or
+   in the fragment of the code in which it should be disabled, but some rules
+   can enter restrictions about it. Please refer to the rules' documentation
+   where to place the pragma.
 
 3. If you want to re-enable a rule in a code later, insert pragma ruleOn. For
-   example: `{.ruleOn: "hasDoc".}`. Same as with disabling, please refer to the
-   rules' documentation where to place the pragma. Usually, rules require it in
-   the same location where pragma *ruleOff* should be placed.
+   example: `{.ruleOn: "hasDoc".}`. Same as with disabling, the pragma can be
+   placed before or in the fragment of the code in which it should be disabled,
+   but some rules can enter restrictions about it. Please refer to the rules'
+   documentation where to place the pragma. Usually, rules require it in the
+   same location where pragma *ruleOff* should be placed.
 
 Notes
 -----
