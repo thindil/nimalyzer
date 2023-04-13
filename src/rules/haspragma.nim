@@ -84,7 +84,7 @@
 ## the element which should be checked. For example, if the rule should be
 ## re-enabled for `const a = 1`, the full declaration should be::
 ##
-##      const a = 1 {.ruleOn: "hasPragma".}
+##      const a {.ruleOn: "hasPragma".} = 1
 ##
 ## Examples
 ## --------
