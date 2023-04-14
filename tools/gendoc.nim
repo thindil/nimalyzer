@@ -97,7 +97,7 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
     try:
       # Open or create a help file for configuration to write
-      let configdocFile: File = open(filename = "doc" & DirSep & "config.rst",
+      let configdocFile: File = open(filename = "doc" & DirSep & "configuration.rst",
           mode = fmWrite)
 
       # Create the file header
