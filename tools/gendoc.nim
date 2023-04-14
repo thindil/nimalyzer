@@ -41,18 +41,30 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
     if not fileExists(filename = "nimalyzer.nimble"):
       quit(errormsg = "Please run the tool from the main directory of the project.")
 
+    proc createHeader(title: string; docFile: File) {.raises: [], tags: [
+        WriteIOEffect], contractual.} =
+      require:
+        title.len > 0
+        docFile != nil
+      body:
+        try:
+          docFile.writeLine(x = repeat(c = '=', count = title.len))
+          docFile.writeLine(x = title)
+          docFile.writeLine(x = repeat(c = '=', count = title.len))
+          docFile.writeLine(x = "")
+          docFile.writeLine(x = ".. default-role:: code")
+          docFile.writeLine(x = ".. contents::")
+        except IOError:
+          quit(errormsg = "Can't create documentation's header. Reason: " &
+              getCurrentExceptionMsg())
+
     # Open or create a help file for rules to write
     try:
       let rulesFile: File = open(filename = "doc" & DirSep &
           "available_rules.rst", mode = fmWrite)
 
       # Create the file header
-      rulesFile.writeLine(x = repeat(c = '=', count = 15))
-      rulesFile.writeLine(x = "Available rules")
-      rulesFile.writeLine(x = repeat(c = '=', count = 15))
-      rulesFile.writeLine(x = "")
-      rulesFile.writeLine(x = ".. default-role:: code")
-      rulesFile.writeLine(x = ".. contents::")
+      createHeader(title = "Available rules", docFile = rulesFile)
 
       # Get the documentation of the program's rules
       for file in walkFiles(pattern = "src/rules/*.nim"):
@@ -89,12 +101,7 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
           mode = fmWrite)
 
       # Create the file header
-      configdocFile.writeLine(x = repeat(c = '=', count = 25))
-      configdocFile.writeLine(x = "Configuration file syntax")
-      configdocFile.writeLine(x = repeat(c = '=', count = 25))
-      configdocFile.writeLine(x = "")
-      configdocFile.writeLine(x = ".. default-role:: code")
-      configdocFile.writeLine(x = ".. contents::")
+      createHeader(title = "Configuration file syntax", docFile = configdocFile)
       configdocFile.writeLine(x = "")
 
       # Get the documentation of the program's rules
