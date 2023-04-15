@@ -52,6 +52,7 @@ setting per file. Also, the path can be absolute or relative. In the second
 form, the path must be relative to the place from which nimalyzer is
 executed (working directory).
 ::
+    source src/config.nim
     source src/nimalyzer.nim
     source src/pragmas.nim
     source src/rules.nim
