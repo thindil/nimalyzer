@@ -43,6 +43,11 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
     proc createHeader(title: string; docFile: File) {.raises: [], tags: [
         WriteIOEffect], contractual.} =
+      ## Create the header of the documentation file with its title
+      ##
+      ## * title   - the title of the documentation which will be written to
+      ##             the file
+      ## * docFile - the documentation file to which the header will be written
       require:
         title.len > 0
         docFile != nil
