@@ -57,6 +57,8 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
       ruleCode = ruleCode.replace(sub = "--rulename--", by = paramStr(
           i = 1).toLowerAscii)
       writeFile(filename = fileName, content = ruleCode)
+      echo "The program's rule '" & paramStr(i = 1) & "' created in file '" &
+          fileName & "'. Don't forget to update the file src/utils.nim either."
     except IOError:
       quit(errormsg = "Can't create rule '" & paramStr(i = 1) & "'. Reason: " &
           getCurrentExceptionMsg())
