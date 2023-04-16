@@ -44,7 +44,10 @@ them to the selected directory.
 
 You will need:
 
-* [Nim compiler](https://nim-lang.org/install.html)
+* [Nim compiler](https://nim-lang.org/install.html) and its source code. If you
+  installed the compiler from website or via *choosenim*, you should have installed
+  it. Otherwise, you may need to install it manually either with *nimble install
+  compiler@[yourCompilerVersion]* or with your package manager.
 * [Contracts package](https://github.com/Udiknedormin/NimContracts)
 
 You can install them manually or by using [Nimble](https://github.com/nim-lang/nimble).
