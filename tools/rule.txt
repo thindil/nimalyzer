@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023 --author--
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,12 +31,12 @@
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search* and *count*. For more information about the types of
 ##   rules, please refer to the program's documentation. --Insert description
-##   how rules types works with the selected rule--.
+##   how rules types works with the rule--.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about --Insert description how negation affects the
 ##   rule--.
 ## * --ruleName-- is the name of the rule. It is case-insensitive, thus it can be
-##   set as *--rulename--*, *--ruleName* or *--rUlEnAmE--*.
+##   set as *--rulename--*, *--ruleName--* or *--rUlEnAmE--*.
 ##
 ## Disabling the rule
 ## ------------------
@@ -61,7 +61,7 @@
 # Import default rules' modules
 import ../rules
 
-ruleConfig(ruleName = "",
+ruleConfig(ruleName = "--rulename--",
   ruleFoundMessage = "",
   ruleNotFoundMessage = "")
 
