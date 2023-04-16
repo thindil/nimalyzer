@@ -15,7 +15,6 @@ binDir = "bin"
 
 requires "nim >= 1.6.10"
 requires "contracts >= 0.2.2"
-requires "compiler == " & $NimMajor & "." & $NimMinor & "." & $NimPatch
 
 # Tasks
 
@@ -43,6 +42,8 @@ task releasewindows, "builds the project in release mode for Windows 64-bit":
 task tools, "builds the project's tools":
   exec "nim c -d:release --passc:-flto --passl:-s --styleCheck:hint --spellSuggest:auto --errorMax:0 " &
       warningFlags & "--outdir:" & binDir & " tools" & DirSep & "gendoc.nim"
+  exec "nim c -d:release --passc:-flto --passl:-s --styleCheck:hint --spellSuggest:auto --errorMax:0 " &
+      warningFlags & "--outdir:" & binDir & " tools" & DirSep & "genrule.nim"
 
 task docs, "builds the project's documentation":
   for file in ["configuration", "index", "available_rules"]:
