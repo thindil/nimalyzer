@@ -29,7 +29,7 @@
 ## started from the main directory of the project
 
 # Standard library imports
-import std/os
+import std/[os, strutils]
 # External modules imports
 import contracts
 
@@ -43,14 +43,22 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
     # Check if the user entered the name of the rule to create
     if paramCount() == 0:
       quit(errormsg = "Please enter the name of the rule to create")
-    let fileName = "src" & DirSep & "rules" & DirSep & paramStr(i = 1) & ".nim"
+    let
+      fileName = "src" & DirSep & "rules" & DirSep & paramStr(
+          i = 1).toLowerAscii & ".nim"
+      author = (if paramCount() == 1: "Bartek thindil Jasicki" else: paramStr(i = 2))
     if fileExists(filename = fileName):
       quit(errormsg = "The rule with name '" & paramStr(i = 1) & "' exists.")
     # Copy the template rule file to the proper directory
     try:
-      copyFile(source = "rule.txt", dest = fileName)
-    except OSError, IOError:
-      quit(errormsg = "Can't copy rule template to the destination. Reason: " &
+      var ruleCode = readFile(filename = "tools" & DirSep & "rule.txt")
+      ruleCode = ruleCode.replace(sub = "--author--", by = author)
+      ruleCode = ruleCode.replace(sub = "--ruleName--", by = paramStr(i = 1))
+      ruleCode = ruleCode.replace(sub = "--rulename--", by = paramStr(
+          i = 1).toLowerAscii)
+      writeFile(filename = fileName, content = ruleCode)
+    except IOError:
+      quit(errormsg = "Can't create rule '" & paramStr(i = 1) & "'. Reason: " &
           getCurrentExceptionMsg())
 
 when isMainModule:
