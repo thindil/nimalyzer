@@ -44,14 +44,15 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
     if paramCount() == 0:
       quit(errormsg = "Please enter the name of the rule to create")
     let
-      fileName = "src" & DirSep & "rules" & DirSep & paramStr(
+      fileName: string = "src" & DirSep & "rules" & DirSep & paramStr(
           i = 1).toLowerAscii & ".nim"
-      author = (if paramCount() == 1: "Bartek thindil Jasicki" else: paramStr(i = 2))
+      author: string = (if paramCount() ==
+          1: "Bartek thindil Jasicki" else: paramStr(i = 2))
     if fileExists(filename = fileName):
       quit(errormsg = "The rule with name '" & paramStr(i = 1) & "' exists.")
     # Copy the template rule file to the proper directory
     try:
-      var ruleCode = readFile(filename = "tools" & DirSep & "rule.txt")
+      var ruleCode: string = readFile(filename = "tools" & DirSep & "rule.txt")
       ruleCode = ruleCode.replace(sub = "--author--", by = author)
       ruleCode = ruleCode.replace(sub = "--ruleName--", by = paramStr(i = 1))
       ruleCode = ruleCode.replace(sub = "--rulename--", by = paramStr(
