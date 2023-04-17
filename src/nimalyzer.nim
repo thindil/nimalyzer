@@ -66,9 +66,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     for i, source in sources.pairs:
       message(text = "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
           source & "'")
-      {.ruleOff: "varDeclared".}
-      var codeParser: Parser
-      {.ruleOn: "varDeclared".}
+      var codeParser: Parser = Parser()
       try:
         # Try to convert the source code file to AST
         let fileName: AbsoluteFile = toAbsolute(file = source,
