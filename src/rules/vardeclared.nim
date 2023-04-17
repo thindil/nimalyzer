@@ -86,6 +86,28 @@ ruleConfig(ruleName = "vardeclared",
   ruleOptionValues = @["full", "type", "value"],
   ruleMinOptions = 1)
 
+proc setCheckResult(node: PNode; index: Positive; messagePrefix: string;
+    rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
+    contractual.} =
+  ## Set the check result for the rule
+  ##
+  ## * node          - the node which will be checked
+  ## * index         - the index of the node element which will be checked. 1 for
+  ##                   the type, 2 for the value
+  ## * messagePrefix - the prefix added to the log message, set by the program
+  ## * rule          - the rule options set by the user
+  require:
+    node != nil
+    index in [1, 2]
+  body:
+    let decType: string = (if index == 1: "type" else: "value")
+    setResult(checkResult = node[index].kind != nkEmpty, rule = rule,
+        positiveMessage = messagePrefix & "declaration of " & $node[0] &
+        " line: " & $node.info.line & " sets the " & decType & " '" & $node[
+        index] & "' as the " & decType & " of the variable.",
+        negativeMessage = messagePrefix & "declaration of '" & $node[0] &
+        "' line: " & $node.info.line & " doesn't set " & decType & " for the variable.")
+
 checkRule:
   initCheck:
     discard
@@ -100,47 +122,23 @@ checkRule:
           for declaration in node.items:
             # Check if declaration of variable sets its type
             if rule.options[0] in ["full", "type"]:
-              setResult(checkResult = declaration[1].kind != nkEmpty,
-                  rule = rule, positiveMessage = messagePrefix &
-                  "declaration of " & $declaration[0] & " line: " &
-                  $declaration.info.line & " sets the type '" &
-                  $declaration[1] & "' as the type of the variable.",
-                      negativeMessage = messagePrefix &
-                  "declaration of '" & $declaration[0] & "' line: " &
-                  $declaration.info.line & " doesn't set type for the variable.")
+              setCheckResult(node = declaration, index = 1,
+                  messagePrefix = messagePrefix, rule = rule)
             # Check if declaration of variable sets its value
             if rule.options[0] in ["full", "value"]:
-              setResult(checkResult = declaration[2].kind != nkEmpty,
-                  rule = rule, positiveMessage = messagePrefix &
-                  "declaration of " & $declaration[0] & " line: " &
-                  $declaration.info.line & " sets the value '" &
-                  $declaration[2] & "' as the value of the variable.",
-                      negativeMessage = messagePrefix &
-                  "declaration of '" & $declaration[0] & "' line: " &
-                  $declaration.info.line & " doesn't set value for the variable.")
+              setCheckResult(node = declaration, index = 2,
+                  messagePrefix = messagePrefix, rule = rule)
         # And sometimes the compiler detects declarations as the node
         elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
             nkLetSection, nkConstSection}:
           # Check if declaration of variable sets its type
           if rule.options[0] in ["full", "type"]:
-            setResult(checkResult = node[1].kind != nkEmpty,
-                rule = rule, positiveMessage = messagePrefix &
-                "declaration of " & $node[0] & " line: " &
-                $node.info.line & " sets the type '" &
-                $node[1] & "' as the type of the variable.",
-                    negativeMessage = messagePrefix &
-                "declaration of '" & $node[0] & "' line: " &
-                $node.info.line & " doesn't set type for the variable.")
+            setCheckResult(node = node, index = 1,
+                messagePrefix = messagePrefix, rule = rule)
           # Check if declaration of variable sets its value
           if rule.options[0] in ["full", "value"]:
-            setResult(checkResult = node[1].kind != nkEmpty,
-                rule = rule, positiveMessage = messagePrefix &
-                "declaration of " & $node[0] & " line: " &
-                $node.info.line & " sets the value '" &
-                $node[1] & "' as the value of the variable.",
-                    negativeMessage = messagePrefix &
-                "declaration of '" & $node[0] & "' line: " &
-                $node.info.line & " doesn't set value for the variable.")
+            setCheckResult(node = node, index = 1,
+                messagePrefix = messagePrefix, rule = rule)
       except KeyError, Exception:
         rule.amount = errorMessage(text = messagePrefix &
             "can't check declaration of variable " &
