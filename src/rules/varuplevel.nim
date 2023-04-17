@@ -69,6 +69,7 @@
 ##
 ##     search not varUplevel
 
+import compiler/trees
 # Import default rules' modules
 import ../rules
 
@@ -76,12 +77,39 @@ ruleConfig(ruleName = "varuplevel",
   ruleFoundMessage = "declarations which can{negation}{rule.options[0]} be upgraded",
   ruleNotFoundMessage = "declarations which can{negation}{rule.options[0]} be upgraded not found.")
 
+let a: string = "test"
+
 checkRule:
   initCheck:
     discard
   startCheck:
     discard
   checking:
-    discard
+    if rule.enabled:
+      try:
+        # Sometimes the compiler detects declarations as children of the node
+        if node.kind in {nkVarSection, nkLetSection}:
+          # Check each variable declaration if meet the rule requirements
+          for declaration in node.items:
+            let varName: string = $declaration[0]
+            if varName.endsWith(suffix = '*') or ' ' in varName or varName ==
+                "_" or declaration.len < 3:
+              continue
+            if isDeepConstExpr(n = declaration[2]):
+              echo "Variable " & varName & " can be upgraded to constant"
+        # And sometimes the compiler detects declarations as the node
+        elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
+            nkLetSection}:
+          let varName: string = $node[0]
+          if varName.endsWith(suffix = '*') or ' ' in varName or varName ==
+              "_" or node.len < 3:
+            continue
+          if isDeepConstExpr(n = node):
+            echo "Variable " & varName & " can be upgraded to constant"
+      except KeyError, Exception:
+        rule.amount = errorMessage(text = messagePrefix &
+            "can't check declaration of variable " &
+            " line: " &
+            $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
     let negation: string = (if rule.negation: "'t" else: "")
