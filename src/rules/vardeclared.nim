@@ -137,7 +137,7 @@ checkRule:
                 messagePrefix = messagePrefix, rule = rule)
           # Check if declaration of variable sets its value
           if rule.options[0] in ["full", "value"]:
-            setCheckResult(node = node, index = 1,
+            setCheckResult(node = node, index = 2,
                 messagePrefix = messagePrefix, rule = rule)
       except KeyError, Exception:
         rule.amount = errorMessage(text = messagePrefix &
