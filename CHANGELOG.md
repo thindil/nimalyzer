@@ -21,6 +21,7 @@ of the program.
 - `hadDoc` rule doesn't detect if template has documentation
 - Detection of names of parameters of procedures in `paramsUsed` rule, when
   parameter has pragma
+- Detection of values of variables' declarations in `varDeclared` rule
 
 ## [0.2.0] - 2023-03-20
 
