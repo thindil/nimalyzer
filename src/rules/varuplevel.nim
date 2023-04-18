@@ -79,6 +79,8 @@ ruleConfig(ruleName = "varuplevel",
 
 let a: string = "test"
 
+var parent: PNode = nil
+
 proc setCheckResult(node, section: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
     contractual.} =
@@ -90,6 +92,7 @@ proc setCheckResult(node, section: PNode; messagePrefix: string;
   ## * rule          - the rule options set by the user
   require:
     node != nil
+    section != nil
   body:
     let varName: string = $node[0]
     # The declaration is global, or inside as injected a template or variable
@@ -111,7 +114,7 @@ proc setCheckResult(node, section: PNode; messagePrefix: string;
 
 checkRule:
   initCheck:
-    discard
+    parent = astNode
   startCheck:
     discard
   checking:
@@ -126,6 +129,7 @@ checkRule:
         # And sometimes the compiler detects declarations as the node
         elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
             nkLetSection}:
+          echo "node: ", $node[0], " parent: ", $parent
           setCheckResult(node = node, section = astNode,
               messagePrefix = messagePrefix, rule = rule)
       except KeyError, Exception:
