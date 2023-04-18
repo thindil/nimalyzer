@@ -74,10 +74,35 @@ import compiler/trees
 import ../rules
 
 ruleConfig(ruleName = "varuplevel",
-  ruleFoundMessage = "declarations which can{negation}{rule.options[0]} be upgraded",
-  ruleNotFoundMessage = "declarations which can{negation}{rule.options[0]} be upgraded not found.")
+  ruleFoundMessage = "declarations which can{negation} be upgraded",
+  ruleNotFoundMessage = "declarations which can{negation} be upgraded not found.")
 
 let a: string = "test"
+
+proc setCheckResult(node, parent: PNode; messagePrefix: string;
+    rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
+    contractual.} =
+  ## Set the check result for the rule
+  ##
+  ## * node          - the node which will be checked
+  ## * parent        - the parent node of the node to check
+  ## * messagePrefix - the prefix added to the log message, set by the program
+  ## * rule          - the rule options set by the user
+  require:
+    node != nil
+  body:
+    let varName: string = $node[0]
+    # The declaration is global, or inside as injected a template or variable
+    # is ignored or the declaration doesn't have initialization, ignore it
+    # and move to the next declaration.
+    if varName.endsWith(suffix = '*') or ' ' in varName or varName ==
+        "_" or node.len < 3:
+      return
+    let isConstant: bool = isDeepConstExpr(n = node[2])
+    # If the declaration is let and its value isn't a constant
+    # expression, ignore it and move to the next declaration.
+    if not isConstant and parent.kind == nkLetSection:
+      return
 
 checkRule:
   initCheck:
@@ -91,21 +116,13 @@ checkRule:
         if node.kind in {nkVarSection, nkLetSection}:
           # Check each variable declaration if meet the rule requirements
           for declaration in node.items:
-            let varName: string = $declaration[0]
-            if varName.endsWith(suffix = '*') or ' ' in varName or varName ==
-                "_" or declaration.len < 3:
-              continue
-            if isDeepConstExpr(n = declaration[2]):
-              echo "Variable " & varName & " can be upgraded to constant"
+            setCheckResult(node = declaration, parent = node,
+                messagePrefix = messagePrefix, rule = rule)
         # And sometimes the compiler detects declarations as the node
         elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
             nkLetSection}:
-          let varName: string = $node[0]
-          if varName.endsWith(suffix = '*') or ' ' in varName or varName ==
-              "_" or node.len < 3:
-            continue
-          if isDeepConstExpr(n = node):
-            echo "Variable " & varName & " can be upgraded to constant"
+          setCheckResult(node = node, parent = astNode,
+              messagePrefix = messagePrefix, rule = rule)
       except KeyError, Exception:
         rule.amount = errorMessage(text = messagePrefix &
             "can't check declaration of variable " &
