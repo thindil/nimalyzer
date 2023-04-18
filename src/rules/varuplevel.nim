@@ -110,7 +110,13 @@ proc setCheckResult(node, section: PNode; messagePrefix: string;
           negativeMessage = messagePrefix & "declaration of '" & $node[0] &
           "' line: " & $node.info.line & " can be updated to constant.")
     else:
-      discard
+      if node[2].kind == nkEmpty:
+        isUpdatable = false
+      setResult(checkResult = not isUpdatable, rule = rule,
+          positiveMessage = messagePrefix & "declaration of " & $node[0] &
+          " line: " & $node.info.line & " can't be updated to let.",
+          negativeMessage = messagePrefix & "declaration of '" & $node[0] &
+          "' line: " & $node.info.line & " can be updated to let.")
 
 checkRule:
   initCheck:
@@ -133,7 +139,7 @@ checkRule:
               messagePrefix = messagePrefix, rule = rule)
       except KeyError, Exception:
         rule.amount = errorMessage(text = messagePrefix &
-            "can't check declaration of variable " &
+            "can't check declaration of variable " & $node[0] &
             " line: " &
             $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
