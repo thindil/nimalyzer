@@ -79,13 +79,13 @@ ruleConfig(ruleName = "varuplevel",
 
 let a: string = "test"
 
-proc setCheckResult(node, parent: PNode; messagePrefix: string;
+proc setCheckResult(node, section: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
     contractual.} =
   ## Set the check result for the rule
   ##
   ## * node          - the node which will be checked
-  ## * parent        - the parent node of the node to check
+  ## * section       - the section node of the node to check
   ## * messagePrefix - the prefix added to the log message, set by the program
   ## * rule          - the rule options set by the user
   require:
@@ -98,11 +98,16 @@ proc setCheckResult(node, parent: PNode; messagePrefix: string;
     if varName.endsWith(suffix = '*') or ' ' in varName or varName ==
         "_" or node.len < 3:
       return
-    let isConstant: bool = isDeepConstExpr(n = node[2])
-    # If the declaration is let and its value isn't a constant
-    # expression, ignore it and move to the next declaration.
-    if not isConstant and parent.kind == nkLetSection:
-      return
+    var isUpdatable: bool = isDeepConstExpr(n = node[2])
+    # Check if let declaration can be updated
+    if section.kind == nkLetSection:
+      setResult(checkResult = not isUpdatable, rule = rule,
+          positiveMessage = messagePrefix & "declaration of " & $node[0] &
+          " line: " & $node.info.line & " can't be updated to constant.",
+          negativeMessage = messagePrefix & "declaration of '" & $node[0] &
+          "' line: " & $node.info.line & " can be updated to constant.")
+    else:
+      echo "var: ", $node[0]
 
 checkRule:
   initCheck:
@@ -116,12 +121,12 @@ checkRule:
         if node.kind in {nkVarSection, nkLetSection}:
           # Check each variable declaration if meet the rule requirements
           for declaration in node.items:
-            setCheckResult(node = declaration, parent = node,
+            setCheckResult(node = declaration, section = node,
                 messagePrefix = messagePrefix, rule = rule)
         # And sometimes the compiler detects declarations as the node
         elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
             nkLetSection}:
-          setCheckResult(node = node, parent = astNode,
+          setCheckResult(node = node, section = astNode,
               messagePrefix = messagePrefix, rule = rule)
       except KeyError, Exception:
         rule.amount = errorMessage(text = messagePrefix &
