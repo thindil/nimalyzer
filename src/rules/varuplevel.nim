@@ -79,8 +79,6 @@ ruleConfig(ruleName = "varuplevel",
 
 let a: string = "test"
 
-var module: PNode = nil
-
 proc setCheckResult(node, section: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
     contractual.} =
@@ -120,7 +118,7 @@ proc setCheckResult(node, section: PNode; messagePrefix: string;
 
 checkRule:
   initCheck:
-    module = astNode
+    discard
   startCheck:
     discard
   checking:
