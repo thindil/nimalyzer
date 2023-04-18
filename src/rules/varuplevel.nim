@@ -79,7 +79,7 @@ ruleConfig(ruleName = "varuplevel",
 
 let a: string = "test"
 
-var parent: PNode = nil
+var module: PNode = nil
 
 proc setCheckResult(node, section: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
@@ -110,11 +110,11 @@ proc setCheckResult(node, section: PNode; messagePrefix: string;
           negativeMessage = messagePrefix & "declaration of '" & $node[0] &
           "' line: " & $node.info.line & " can be updated to constant.")
     else:
-      echo "var: ", $node[0]
+      discard
 
 checkRule:
   initCheck:
-    parent = astNode
+    module = astNode
   startCheck:
     discard
   checking:
@@ -129,7 +129,6 @@ checkRule:
         # And sometimes the compiler detects declarations as the node
         elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
             nkLetSection}:
-          echo "node: ", $node[0], " parent: ", $parent
           setCheckResult(node = node, section = astNode,
               messagePrefix = messagePrefix, rule = rule)
       except KeyError, Exception:
