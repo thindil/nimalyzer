@@ -76,58 +76,58 @@ ruleConfig(ruleName = "hasdoc",
   ruleNotFoundMessage = "The documentation not found.")
 
 checkRule:
-    initCheck:
-      if rule.enabled:
-        setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
-            rule = rule, positiveMessage = messagePrefix &
-            "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
-    startCheck:
-      discard
-    checking:
-      # Check only elements which can have documentation
-      if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
-          nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
-          nkEnumTy, nkConstSection, nkConstTy}:
-        for child in node.items:
-          if child.kind == nkPragma:
-            setRuleState(node = child, ruleName = ruleSettings.name,
-                oldState = rule.enabled)
-            break
-        # Special check for constant declaration section
-        if node.kind == nkConstSection:
-          ruleCheck(astNode = node, rule = rule)
-        else:
-          # Set the name of the declared entity which is checked for documentation
-          var declName: string = try:
-                $node[0]
-              except KeyError, Exception:
-                ""
-          if declName.len == 0:
-            declName = try:
-                $astNode[0]
-              except KeyError, Exception:
-                ""
-          if declName.len == 0:
+  initCheck:
+    if rule.enabled:
+      setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
+          rule = rule, positiveMessage = messagePrefix &
+          "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
+  startCheck:
+    discard
+  checking:
+    # Check only elements which can have documentation
+    if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
+        nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
+        nkEnumTy, nkConstSection, nkConstTy}:
+      for child in node.items:
+        if child.kind == nkPragma:
+          setRuleState(node = child, ruleName = ruleSettings.name,
+              oldState = rule.enabled)
+          break
+      # Special check for constant declaration section
+      if node.kind == nkConstSection:
+        ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
+      else:
+        # Set the name of the declared entity which is checked for documentation
+        var declName: string = try:
+              $node[0]
+            except KeyError, Exception:
+              ""
+        if declName.len == 0:
+          declName = try:
+              $astNode[0]
+            except KeyError, Exception:
+              ""
+        if declName.len == 0:
+          rule.amount = errorMessage(
+              text = "Can't get the name of the declared entity.")
+          return
+        if rule.enabled and (declName.endsWith(suffix = "*") or
+            node.kind in callableDefs):
+          try:
+            var hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
+                node.comment.len > 0
+              else:
+                node.hasSubnodeWith(kind = nkCommentStmt)
+            if node.kind == nkTemplateDef and not hasDoc:
+              hasDoc = node.comment.len > 0
+            setResult(checkResult = hasDoc, rule = rule,
+                positiveMessage = messagePrefix & "Declaration of " &
+                declName & " " & $node.info.line & " has documentation.",
+                negativeMessage = messagePrefix & "Declaration of " &
+                declName & " " & $node.info.line & " doesn't have documentation.")
+          except KeyError as e:
             rule.amount = errorMessage(
-                text = "Can't get the name of the declared entity.")
+                text = "Can't check the declared entity '" & declName & "'.", e = e)
             return
-          if rule.enabled and (declName.endsWith(suffix = "*") or
-              node.kind in callableDefs):
-            try:
-              var hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
-                  node.comment.len > 0
-                else:
-                  node.hasSubnodeWith(kind = nkCommentStmt)
-              if node.kind == nkTemplateDef and not hasDoc:
-                hasDoc = node.comment.len > 0
-              setResult(checkResult = hasDoc, rule = rule,
-                  positiveMessage = messagePrefix & "Declaration of " &
-                  declName & " " & $node.info.line & " has documentation.",
-                  negativeMessage = messagePrefix & "Declaration of " &
-                  declName & " " & $node.info.line & " doesn't have documentation.")
-            except KeyError as e:
-              rule.amount = errorMessage(
-                  text = "Can't check the declared entity '" & declName & "'.", e = e)
-              return
-    endCheck:
-      discard
+  endCheck:
+    discard
