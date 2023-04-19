@@ -71,6 +71,8 @@
 ##
 ##     search not paramsUsed all
 
+# External modules imports
+import compiler/trees
 # Import default rules' modules
 import ../rules
 
@@ -120,8 +122,13 @@ checkRule:
           index = -1
           for i in 0..child.len - 3:
             try:
-              let varName: string = split(s = $child[i])[0]
-              index = find(s = $node[6], sub = varName)
+              let
+                varName: string = split(s = $child[i])[0]
+                body: PNode = flattenStmts(n = node[6])
+              for childNode in body.items:
+                index = find(s = $childNode, sub = varName)
+                if index > -1:
+                  break
               # The node doesn't use one of its parameters
               if index == -1:
                 if not rule.negation:
