@@ -11,6 +11,7 @@ of the program.
 - Updated README.md
 - Disabling and enabling rules' pragmas can be now place before or in the
   code fragment for which rules should be disabled or enabled.
+- Better checking for parameters usage by `paramsUsed` rule
 
 ### Fixed
 - Typos in Changelog
