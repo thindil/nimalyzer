@@ -57,7 +57,8 @@ type
 
   RuleSettings* = object ## Contains information about the program's rule configuration
     name*: string                   ## The name of the rule
-    checkProc*: proc (astNode: PNode; rule: var RuleOptions) ## The procedure used to check the rule
+    checkProc*: proc (astNode, parentNode: PNode;
+        rule: var RuleOptions)      ## The procedure used to check the rule
     options*: seq[RuleOptionsTypes] ## The rule's options which can be set
     optionValues*: seq[string] ## If the rule has option type custom, the values for the option
     minOptions*: Natural            ## The minumal amount of options required by the rule
@@ -265,7 +266,7 @@ template checking*(code: untyped): untyped =
     code
     # Check each children of the current AST node with the rule
     for child in node.items:
-      ruleCheck(astNode = child, rule = rule)
+      ruleCheck(astNode = child, parentNode = astNode, rule = rule)
 
 template endCheck*(code: untyped): untyped =
   ## Show the summary after the check and run the custom code if needed
@@ -305,7 +306,7 @@ template checkRule*(code: untyped): untyped =
   ## Check the rule, add the procedure declaration and the check code itself
   ##
   ## * code - the code to run for check the rule
-  proc ruleCheck*(astNode{.inject.}: PNode;
+  proc ruleCheck*(astNode{.inject.}, parentNode{.inject.}: PNode;
       rule{.inject.}: var RuleOptions) {.raises: [], tags: [RootEffect],
           contractual, ruleOff: "paramsUsed", ruleOff: "hasDoc".} =
     code
@@ -325,14 +326,15 @@ template ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
   ##                         option
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
-  proc ruleCheck*(astNode{.inject.}: PNode;
+  proc ruleCheck*(astNode{.inject.}, parentNode{.inject.}: PNode;
       rule{.inject.}: var RuleOptions) {.ruleOff: "hasPragma".}
     ## Check recursively if the source code has the documentation in the proper
     ## locactions
     ##
-    ## * astNode - The AST node representation of the Nim code to check
-    ## * rule    - The rule options set by the user and the previous iterations
-    ##             of the procedure
+    ## * astNode    - The AST node representation of the Nim code to check
+    ## * parentNode - The psrent node of the currently checked node
+    ## * rule       - The rule options set by the user and the previous iterations
+    ##                of the procedure
 
   let ruleSettings*{.inject.}: RuleSettings = RuleSettings(name: ruleName,
       checkProc: ruleCheck, options: ruleOptions,
