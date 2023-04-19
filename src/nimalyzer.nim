@@ -97,7 +97,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             currentRule.enabled = true
             currentRule.parent = true
             rulesList[rule.index].checkProc(astNode = astNode,
-                rule = currentRule)
+                parentNode = astNode, rule = currentRule)
             if currentRule.amount < 1:
               resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
