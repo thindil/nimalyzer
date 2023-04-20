@@ -69,6 +69,7 @@
 ##
 ##     search not varUplevel
 
+# External modules imports
 import compiler/trees
 # Import default rules' modules
 import ../rules
@@ -77,15 +78,14 @@ ruleConfig(ruleName = "varuplevel",
   ruleFoundMessage = "declarations which can{negation} be upgraded",
   ruleNotFoundMessage = "declarations which can{negation} be upgraded not found.")
 
-let a: string = "test"
-
-proc setCheckResult(node, section: PNode; messagePrefix: string;
+proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
     contractual.} =
   ## Set the check result for the rule
   ##
   ## * node          - the node which will be checked
   ## * section       - the section node of the node to check
+  ## * parent        - the parent node of the declaration section
   ## * messagePrefix - the prefix added to the log message, set by the program
   ## * rule          - the rule options set by the user
   require:
@@ -107,9 +107,47 @@ proc setCheckResult(node, section: PNode; messagePrefix: string;
           " line: " & $node.info.line & " can't be updated to constant.",
           negativeMessage = messagePrefix & "declaration of '" & $node[0] &
           "' line: " & $node.info.line & " can be updated to constant.")
+    # Check if var declaration can be updated
     else:
+      # No default value, can't be updated
       if node[2].kind == nkEmpty:
         isUpdatable = false
+      # Has a default value, check if can be updated
+      else:
+        isUpdatable = true
+        var nodesToCheck: PNode = nil
+        # Find the AST nodes to check
+        block findNodes:
+          for nodes in parent.items:
+            for baseNode in nodes.items:
+              for child in baseNode.items:
+                if child == node:
+                  nodesToCheck = flattenStmts(n = nodes)
+                  break findNodes
+                for subChild in child.items:
+                  if subChild == node:
+                    nodesToCheck = flattenStmts(n = baseNode)
+                    break findNodes
+
+        proc checkChild(nodes: PNode): bool =
+          result = false
+          for child in nodes.items:
+            if child.kind in {nkAsgn, nkDotExpr} and $child[0] == varName:
+              return true
+            result = checkChild(nodes = child)
+            if result:
+              break
+
+        # Check if the declaration can be updated
+        var startChecking: bool = false
+        for child in nodesToCheck.items:
+          if not startChecking and child == section:
+            startChecking = true
+            continue
+          if startChecking:
+            if checkChild(nodes = child):
+              isUpdatable = false
+              break
       setResult(checkResult = not isUpdatable, rule = rule,
           positiveMessage = messagePrefix & "declaration of " & $node[0] &
           " line: " & $node.info.line & " can't be updated to let.",
@@ -129,11 +167,11 @@ checkRule:
           # Check each variable declaration if meet the rule requirements
           for declaration in node.items:
             setCheckResult(node = declaration, section = node,
-                messagePrefix = messagePrefix, rule = rule)
+                parent = parentNode, messagePrefix = messagePrefix, rule = rule)
         # And sometimes the compiler detects declarations as the node
         elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
             nkLetSection}:
-          setCheckResult(node = node, section = astNode,
+          setCheckResult(node = node, section = astNode, parent = parentNode,
               messagePrefix = messagePrefix, rule = rule)
       except KeyError, Exception:
         rule.amount = errorMessage(text = messagePrefix &
