@@ -129,14 +129,21 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
                     nodesToCheck = flattenStmts(n = baseNode)
                     break findNodes
 
-        proc checkChild(nodes: PNode): bool =
-          result = false
-          for child in nodes.items:
-            if child.kind in {nkAsgn, nkDotExpr} and $child[0] == varName:
-              return true
-            result = checkChild(nodes = child)
-            if result:
-              break
+        proc checkChild(nodes: PNode): bool {.raises: [], tags: [RootEffect],
+            contractual.} =
+          require:
+            node != nil
+          body:
+            result = false
+            for child in nodes.items:
+              try:
+                if child.kind in {nkAsgn, nkDotExpr} and $child[0] == varName:
+                  return true
+                result = checkChild(nodes = child)
+                if result:
+                  break
+              except KeyError, Exception:
+                discard
 
         # Check if the declaration can be updated
         var startChecking: bool = false
