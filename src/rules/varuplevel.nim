@@ -131,6 +131,12 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
 
         proc checkChild(nodes: PNode): bool {.raises: [], tags: [RootEffect],
             contractual.} =
+          ## Check if the selected variable is assigned somewhere
+          ##
+          ## * nodes - the list of nodes to check
+          ##
+          ## Returns true if the variable is assigned somewhere after
+          ## initialization, otherwise false
           require:
             node != nil
           body:
