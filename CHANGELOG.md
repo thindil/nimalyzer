@@ -6,6 +6,10 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- New rule `varUplevel` to check if declaration of variables can be updated to
+  *let* or *const*.
+
 ### Changed
 - Updated the project's documentation
 - Updated README.md
