@@ -58,6 +58,7 @@ executed (working directory).
     source src/rules.nim
     source src/utils.nim
     source tools/gendoc.nim
+    source tools/genrule.nim
 
 Files
 -----
@@ -97,19 +98,22 @@ equal to haspragma or hasPRAGMA. If the optional word "not" is present, the
 program will check the rule in opposite direction. For example, rule
 hasPragma will check if procedures doesn't have the selected pragmas. The
 message's level for info about the line of code which violates the rule is
-lvlError. The setting below checks if all procedures in the source code have
-pragma "contractual", "raises" and "tags". The last two can be empty or have
-listed values. The second rule checks if all parameters of all procedures are
-used in the code. The third rule checks if all calls in the code uses named
-parameters. The fourth rule checks if all public declarations have
-documentation. The fifth rule checks if all variables' declarations have
-declared type and value for them.
+lvlError. The settings below checks for:
+
+1. If all procedures in the source code have pragma "contractual", "raises" and "tags". The last two can be empty or have listed values.
+2. If all parameters of all procedures areused in the code.
+3. If all calls in the code uses named parameters.
+4. If all public declarations have documentation.
+5. If all variables' declarations have declared type and value for them.
+6. If any local variable declaration can be updated to let or const.
+
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
     check paramsUsed procedures
     check namedParams
     check hasDoc
     check varDeclared full
+    check varUplevel
 
 Search rules
 ------------
