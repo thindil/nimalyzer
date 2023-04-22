@@ -49,14 +49,15 @@
 ## ------------------
 ## It is possible to disable the rule for a selected part of the checked code
 ## by using pragma *ruleOff: "paramsUsed"* in the declaration from which the rule
-## should be disabled. For example, if the rule should be disabled for procedure
-## `main()`, the full declaration of it should be::
+## should be disabled or in code before it. For example, if the rule should be
+## disabled for procedure `main()`, the full declaration of it should be::
 ##
 ##      proc main() {.ruleOff: "paramsUsed".}
 ##
 ## To enable the rule again, the pragma *ruleOn: "paramsUsed"* should be added in
-## the element which should be checked. For example, if the rule should be
-## re-enabled for function `myFunc(a: int)`, the full declaration should be::
+## the element which should be checked or in code before it. For example, if
+## the rule should be re-enabled for function `myFunc(a: int)`, the full
+## declaration should be::
 ##
 ##      func myFunc(a: int) {.ruleOn: "paramsUsed".}
 ##
