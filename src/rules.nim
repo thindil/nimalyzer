@@ -263,7 +263,8 @@ template checking*(code: untyped): untyped =
     for child in node.items:
       setRuleState(node = child, ruleName = ruleSettings.name,
           oldState = rule.enabled)
-    code
+    if rule.enabled:
+      code
     # Check each children of the current AST node with the rule
     for child in node.items:
       ruleCheck(astNode = child, parentNode = astNode, rule = rule)
