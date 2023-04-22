@@ -62,6 +62,6 @@ Notes
 * Names of the rules used for pragmas are strings, compared to the value of
   `ruleName` constants defined in the rules.
 * Disabling the rule in the code cause to disable all checks of that type in
-  the code. For example if you used `{.ruleOff: hasEntity.}` and your
+  the code. For example if you used `{.ruleOff: "hasEntity".}` and your
   configuration file contains several settings for that rule, all of them will
   be disabled from this point in the code.
