@@ -98,7 +98,7 @@ checkRule:
         else:
           {}
   checking:
-    if rule.enabled and node.kind in nodesToCheck:
+    if node.kind in nodesToCheck:
       # Get the procedure's name
       let procName: string = try:
             $node[0]

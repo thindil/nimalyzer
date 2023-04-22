@@ -114,35 +114,34 @@ checkRule:
   startCheck:
     discard
   checking:
-    if rule.enabled:
-      try:
-        # Sometimes the compiler detects declarations as children of the node
-        if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
-          # Check each variable declaration if meet the rule requirements
-          for declaration in node.items:
-            # Check if declaration of variable sets its type
-            if rule.options[0] in ["full", "type"]:
-              setCheckResult(node = declaration, index = 1,
-                  messagePrefix = messagePrefix, rule = rule)
-            # Check if declaration of variable sets its value
-            if rule.options[0] in ["full", "value"]:
-              setCheckResult(node = declaration, index = 2,
-                  messagePrefix = messagePrefix, rule = rule)
-        # And sometimes the compiler detects declarations as the node
-        elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
-            nkLetSection, nkConstSection}:
+    try:
+      # Sometimes the compiler detects declarations as children of the node
+      if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
+        # Check each variable declaration if meet the rule requirements
+        for declaration in node.items:
           # Check if declaration of variable sets its type
           if rule.options[0] in ["full", "type"]:
-            setCheckResult(node = node, index = 1,
+            setCheckResult(node = declaration, index = 1,
                 messagePrefix = messagePrefix, rule = rule)
           # Check if declaration of variable sets its value
           if rule.options[0] in ["full", "value"]:
-            setCheckResult(node = node, index = 2,
+            setCheckResult(node = declaration, index = 2,
                 messagePrefix = messagePrefix, rule = rule)
-      except KeyError, Exception:
-        rule.amount = errorMessage(text = messagePrefix &
-            "can't check declaration of variable " &
-            " line: " &
-            $node.info.line & ". Reason: ", e = getCurrentException())
+      # And sometimes the compiler detects declarations as the node
+      elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
+          nkLetSection, nkConstSection}:
+        # Check if declaration of variable sets its type
+        if rule.options[0] in ["full", "type"]:
+          setCheckResult(node = node, index = 1,
+              messagePrefix = messagePrefix, rule = rule)
+        # Check if declaration of variable sets its value
+        if rule.options[0] in ["full", "value"]:
+          setCheckResult(node = node, index = 2,
+              messagePrefix = messagePrefix, rule = rule)
+    except KeyError, Exception:
+      rule.amount = errorMessage(text = messagePrefix &
+          "can't check declaration of variable " &
+          " line: " &
+          $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
     let negation: string = (if rule.negation: "out" else: "")

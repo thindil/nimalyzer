@@ -173,23 +173,22 @@ checkRule:
   startCheck:
     discard
   checking:
-    if rule.enabled:
-      try:
-        # Sometimes the compiler detects declarations as children of the node
-        if node.kind in {nkVarSection, nkLetSection}:
-          # Check each variable declaration if meet the rule requirements
-          for declaration in node.items:
-            setCheckResult(node = declaration, section = node,
-                parent = parentNode, messagePrefix = messagePrefix, rule = rule)
-        # And sometimes the compiler detects declarations as the node
-        elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
-            nkLetSection}:
-          setCheckResult(node = node, section = astNode, parent = parentNode,
-              messagePrefix = messagePrefix, rule = rule)
-      except KeyError, Exception:
-        rule.amount = errorMessage(text = messagePrefix &
-            "can't check declaration of variable " & $node[0] &
-            " line: " &
-            $node.info.line & ". Reason: ", e = getCurrentException())
+    try:
+      # Sometimes the compiler detects declarations as children of the node
+      if node.kind in {nkVarSection, nkLetSection}:
+        # Check each variable declaration if meet the rule requirements
+        for declaration in node.items:
+          setCheckResult(node = declaration, section = node,
+              parent = parentNode, messagePrefix = messagePrefix, rule = rule)
+      # And sometimes the compiler detects declarations as the node
+      elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
+          nkLetSection}:
+        setCheckResult(node = node, section = astNode, parent = parentNode,
+            messagePrefix = messagePrefix, rule = rule)
+    except KeyError, Exception:
+      rule.amount = errorMessage(text = messagePrefix &
+          "can't check declaration of variable " & $node[0] &
+          " line: " &
+          $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
     let negation: string = (if rule.negation: "'t" else: "")

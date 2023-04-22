@@ -137,8 +137,6 @@ proc setResult(procName, line, pragma, messagePrefix: string; hasPragma: bool;
     line.len > 0
     pragma.len > 0
   body:
-    if not rule.enabled:
-      return
     setResult(checkResult = hasPragma, rule = rule,
         positiveMessage = messagePrefix & "procedure " & procName & " line: " &
         line & " has declared pragma: " & pragma & ".",
@@ -160,11 +158,6 @@ checkRule:
         {}
   checking:
     if node.kind in nodesToCheck:
-      for child in node.items:
-        if child.kind == nkPragma:
-          setRuleState(node = child, ruleName = "haspragma",
-              oldState = rule.enabled)
-          break
       # Set the name of the procedure to check
       let
         pragmas: PNode = getDeclPragma(n = node)

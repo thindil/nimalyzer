@@ -89,11 +89,6 @@ checkRule:
     if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
         nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
         nkEnumTy, nkConstSection, nkConstTy}:
-      for child in node.items:
-        if child.kind == nkPragma:
-          setRuleState(node = child, ruleName = ruleSettings.name,
-              oldState = rule.enabled)
-          break
       # Special check for constant declaration section
       if node.kind == nkConstSection:
         ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
