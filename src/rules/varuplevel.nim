@@ -142,7 +142,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
           ## Returns true if the variable is assigned somewhere after
           ## initialization, otherwise false
           require:
-            node != nil
+            nodes != nil
           body:
             result = false
             for child in nodes.items:
