@@ -148,19 +148,22 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
           discard
 
     # Check if the declaration can be updated
-    var startChecking: bool = false
+    var
+      startChecking: bool = false
+      isHidden: bool = false
     for child in nodesToCheck.items:
       if not startChecking and child == section:
         startChecking = true
         continue
       if startChecking:
         if checkChild(nodes = child):
+          isHidden = true
           break
-    setResult(checkResult = true, rule = rule,
+    setResult(checkResult = not isHidden, rule = rule,
         positiveMessage = messagePrefix & "declaration of " & $node[0] &
-        " line: " & $node.info.line & " is not hidden by children.",
+        " line: " & $node.info.line & " is not hidden by local variable.",
         negativeMessage = messagePrefix & "declaration of '" & $node[0] &
-        "' line: " & $node.info.line & " is hidden by children.")
+        "' line: " & $node.info.line & " is hidden by local variable.")
 
 checkRule:
   initCheck:
