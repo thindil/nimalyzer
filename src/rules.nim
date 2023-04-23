@@ -129,13 +129,15 @@ proc setRuleState*(node: PNode; ruleName: string;
           if pragma.len == 2 and pragma[1].toLowerAscii == "\"" &
               ruleName.toLowerAscii & "\"":
             if pragma[0].toLowerAscii == "ruleoff":
+              if oldState:
+                log(level = lvlDebug, args = "Disabling rule: '" & ruleName &
+                    "' at line: " & $node.info.line & ".")
               oldState = false
-              log(level = lvlDebug, args = "Disabling rule: '" & ruleName &
-                  "' at line: " & $node.info.line & ".")
             else:
+              if not oldState:
+                log(level = lvlDebug, args = "Enabling rule: '" & ruleName &
+                    "' at line: " & $node.info.line & ".")
               oldState = true
-              log(level = lvlDebug, args = "Enabling rule: '" & ruleName &
-                  "' at line: " & $node.info.line & ".")
         except KeyError, Exception:
           discard
 
