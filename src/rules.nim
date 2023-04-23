@@ -234,12 +234,14 @@ template initCheck*(code: untyped): untyped =
   ##
   ## * code - the custom code which will be executed during initialization of
   ##          the check
+  {.hint[XDeclaredButNotUsed]: off.}
   let
     isParent{.inject.}: bool = rule.parent
     messagePrefix{.inject.}: string = if getLogFilter() < lvlNotice:
           ""
         else:
           rule.fileName & ": "
+  {.hint[XDeclaredButNotUsed]: off.}
   if isParent:
     rule.parent = false
     code
