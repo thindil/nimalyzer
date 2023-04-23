@@ -122,10 +122,30 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
 
     proc checkChild(nodes: PNode): bool {.raises: [], tags: [RootEffect],
         contractual.} =
+      ## Check if the selected variable is hidden somewhere by a local variable
+      ##
+      ## * nodes - the list of nodes to check
+      ##
+      ## Returns true if the variable is hidden somewhere by a local variable,
+      ## otherwise false
       require:
         node != nil
       body:
         result = false
+        const varName2: int = 1
+        try:
+          for childNode in nodes.items:
+            const varName2: int = 2
+            if childNode.kind in {nkVarSection, nkLetSection, nkConstSection}:
+              for declaration in childNode.items:
+                if declaration[0].kind == nkIdent:
+                  if varName == $declaration[0]:
+                    return true
+            result = checkChild(nodes = childNode)
+            if result:
+              return
+        except KeyError, Exception:
+          discard
 
     # Check if the declaration can be updated
     var startChecking: bool = false
