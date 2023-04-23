@@ -120,6 +120,9 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         block findNodes:
           for nodes in parent.items:
             for baseNode in nodes.items:
+              if baseNode == node:
+                nodesToCheck = flattenStmts(n = parent)
+                break findNodes
               for child in baseNode.items:
                 if child == node:
                   nodesToCheck = flattenStmts(n = nodes)
