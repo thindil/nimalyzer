@@ -91,6 +91,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
   require:
     node != nil
     section != nil
+    parent != nil
   body:
     let varName: string = $node[0]
     # The declaration is global, or inside as injected a template or variable
