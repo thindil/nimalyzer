@@ -24,7 +24,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## The rule check if the local declarations in the module don't hide (have the
-## same name) as a global declarations declared in the module.
+## same name) as a parent declarations declared in the module.
 ## The syntax in a configuration file is::
 ##
 ##   [ruleType] ?not? localHides
@@ -33,13 +33,13 @@
 ##   *check*, *search* and *count*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check rule will
 ##   raise an error if find a local declaration which has the same name as
-##   one of global declarations, search rule will list any local declarations
-##   with the same name as previously declared global and raise an error if
+##   one of parent declarations, search rule will list any local declarations
+##   with the same name as previously declared parent and raise an error if
 ##   nothing found. Count rule will simply list the amount of local
-##   declarations which have the same name as global ones.
+##   declarations which have the same name as parent ones.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about local declarations which don't have name as
-##   previously declared global ones. Probably useable only for count type of
+##   previously declared parent ones. Probably useable only for count type of
 ##   rule.
 ## * localHides is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *localhides*, *localHides* or *lOcAlHiDeS*.
@@ -64,14 +64,16 @@
 ## Examples
 ## --------
 ##
-## 1. Check if any local declaration hides the global ones::
+## 1. Check if any local declaration hides the parent ones::
 ##
 ##     check localHides
 ##
-## 2. Search for all local declarations which not hide the global ones::
+## 2. Search for all local declarations which not hide the parent ones::
 ##
 ##     search not localHides
 
+# External modules imports
+import compiler/trees
 # Import default rules' modules
 import ../rules
 
@@ -79,12 +81,89 @@ ruleConfig(ruleName = "localhides",
   ruleFoundMessage = "local declarations which hide global declarations",
   ruleNotFoundMessage = "Local declarations which hide global declarations not found.")
 
+proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
+    rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
+    contractual.} =
+  ## Set the check result for the rule
+  ##
+  ## * node          - the node which will be checked
+  ## * section       - the section node of the node to check
+  ## * parent        - the parent node of the declaration section
+  ## * messagePrefix - the prefix added to the log message, set by the program
+  ## * rule          - the rule options set by the user
+  require:
+    node != nil
+    section != nil
+    parent != nil
+  body:
+    let varName: string = $node[0]
+    # The declaration is inside as injected a template or variable is ignored
+    # or the declaration doesn't have initialization, ignore it and move to
+    # the next declaration.
+    if ' ' in varName or varName == "_" or node.len < 3:
+      return
+
+    var nodesToCheck: PNode = nil
+    # Find the AST nodes to check
+    block findNodes:
+      for nodes in parent.items:
+        for baseNode in nodes.items:
+          if baseNode == node:
+            nodesToCheck = flattenStmts(n = parent)
+            break findNodes
+          for child in baseNode.items:
+            if child == node:
+              nodesToCheck = flattenStmts(n = nodes)
+              break findNodes
+            for subChild in child.items:
+              if subChild == node:
+                nodesToCheck = flattenStmts(n = baseNode)
+                break findNodes
+
+    proc checkChild(nodes: PNode): bool {.raises: [], tags: [RootEffect],
+        contractual.} =
+      require:
+        node != nil
+      body:
+        result = false
+
+    # Check if the declaration can be updated
+    var startChecking: bool = false
+    for child in nodesToCheck.items:
+      if not startChecking and child == section:
+        startChecking = true
+        continue
+      if startChecking:
+        if checkChild(nodes = child):
+          break
+    setResult(checkResult = true, rule = rule,
+        positiveMessage = messagePrefix & "declaration of " & $node[0] &
+        " line: " & $node.info.line & " is not hidden by children.",
+        negativeMessage = messagePrefix & "declaration of '" & $node[0] &
+        "' line: " & $node.info.line & " is hidden by children.")
+
 checkRule:
   initCheck:
     discard
   startCheck:
     discard
   checking:
-    discard
+    try:
+      # Sometimes the compiler detects declarations as children of the node
+      if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
+        # Check each variable declaration if meet the rule requirements
+        for declaration in node.items:
+          setCheckResult(node = declaration, section = node,
+              parent = parentNode, messagePrefix = messagePrefix, rule = rule)
+      # And sometimes the compiler detects declarations as the node
+      elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
+          nkLetSection, nkConstSection}:
+        setCheckResult(node = node, section = astNode, parent = parentNode,
+            messagePrefix = messagePrefix, rule = rule)
+    except KeyError, Exception:
+      rule.amount = errorMessage(text = messagePrefix &
+          "can't check declaration of variable " &
+          " line: " &
+          $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
     discard
