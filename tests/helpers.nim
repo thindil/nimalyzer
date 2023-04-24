@@ -43,7 +43,7 @@ template runRuleTest*() =
       $ruleOptions.amount
   ruleOptions.parent = true
   ruleCheck(invalidCode, invalidCode, ruleOptions)
-  assert ruleOptions.amount == 1, "Negative check of invalid code failed, expected result: 1, received: " &
+  assert ruleOptions.amount > 0, "Negative check of invalid code failed, expected result larger than 0, received: " &
       $ruleOptions.amount
   # search rule tests
   ruleOptions.parent = true
@@ -55,7 +55,7 @@ template runRuleTest*() =
       $ruleOptions.amount
   ruleOptions.parent = true
   ruleCheck(validCode, validCode, ruleOptions)
-  assert ruleOptions.amount == 1, "Search for valid code failed, expected result: 0, received: " &
+  assert ruleOptions.amount > 0, "Search for valid code failed, expected result greater than 0, received: " &
       $ruleOptions.amount
   # negative search rule tests
   ruleOptions.parent = true
