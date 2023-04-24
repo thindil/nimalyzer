@@ -28,56 +28,68 @@ template runRuleTest*() =
 
   # check rule tests
   ruleCheck(invalidCode, invalidCode, ruleOptions)
-  assert ruleOptions.amount == 0
+  assert ruleOptions.amount == 0, "Check of invalid code failed, expected result: 0, received: " &
+      $ruleOptions.amount
   ruleOptions.parent = true
   ruleCheck(validCode, validCode, ruleOptions)
-  assert ruleOptions.amount == 1
+  assert ruleOptions.amount == 1, "Check of valid code failed, expected result: 1, received: " &
+      $ruleOptions.amount
   # negative check rule tests
   ruleOptions.parent = true
   ruleOptions.negation = true
   ruleOptions.amount = 0
   ruleCheck(validCode, validCode, ruleOptions)
-  assert ruleOptions.amount == 0
+  assert ruleOptions.amount == 0, "Negative check of valid code failed, expected result: 0, received: " &
+      $ruleOptions.amount
   ruleOptions.parent = true
   ruleCheck(invalidCode, invalidCode, ruleOptions)
-  assert ruleOptions.amount == 1
+  assert ruleOptions.amount == 1, "Negative check of invalid code failed, expected result: 1, received: " &
+      $ruleOptions.amount
   # search rule tests
   ruleOptions.parent = true
   ruleOptions.ruleType = search
   ruleOptions.negation = false
   ruleOptions.amount = 0
   ruleCheck(invalidCode, invalidCode, ruleOptions)
-  assert ruleOptions.amount == 0
+  assert ruleOptions.amount == 0, "Search for invalid code failed, expected result: 0, received: " &
+      $ruleOptions.amount
   ruleOptions.parent = true
   ruleCheck(validCode, validCode, ruleOptions)
-  assert ruleOptions.amount == 1
+  assert ruleOptions.amount == 1, "Search for valid code failed, expected result: 0, received: " &
+      $ruleOptions.amount
   # negative search rule tests
   ruleOptions.parent = true
   ruleOptions.negation = true
   ruleOptions.amount = 0
   ruleCheck(validCode, validCode, ruleOptions)
-  assert ruleOptions.amount == 0
+  assert ruleOptions.amount == 0, "Negative search for valid code failed, expected result: 0, received: " &
+      $ruleOptions.amount
   ruleOptions.parent = true
   ruleCheck(invalidCode, invalidCode, ruleOptions)
-  assert ruleOptions.amount == 1
+  assert ruleOptions.amount == 1, "Negative search for invalid code failed, expected result: 1, received: " &
+      $ruleOptions.amount
   # count rule tests
   ruleOptions.parent = true
   ruleOptions.ruleType = count
   ruleOptions.negation = false
   ruleOptions.amount = 0
   ruleCheck(invalidCode, invalidCode, ruleOptions)
-  assert ruleOptions.amount == 1
+  assert ruleOptions.amount == 1, "Counting of invalid code failed, expected result: 1, received: " &
+      $ruleOptions.amount
   ruleOptions.parent = true
   ruleOptions.amount = 0
   ruleCheck(validCode, validCode, ruleOptions)
-  assert ruleOptions.amount == 1
+  assert ruleOptions.amount == 1, "Counting of valid code failed, expected result: 1, received: " &
+      $ruleOptions.amount
   # negative count rule tests
   ruleOptions.parent = true
   ruleOptions.negation = true
   ruleOptions.amount = 0
   ruleCheck(invalidCode, invalidCode, ruleOptions)
-  assert ruleOptions.amount == 1
+  assert ruleOptions.amount == 1, "Negative counting of invalid code failed, expected result: 1, received: " &
+      $ruleOptions.amount
   ruleOptions.parent = true
   ruleOptions.amount = 0
   ruleCheck(validCode, validCode, ruleOptions)
-  assert ruleOptions.amount == 1
+  assert ruleOptions.amount == 1, "Negative counting of valid code failed, expected result: 1, received: " &
+      $ruleOptions.amount
