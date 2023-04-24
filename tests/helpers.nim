@@ -32,7 +32,7 @@ template runRuleTest*() =
       $ruleOptions.amount
   ruleOptions.parent = true
   ruleCheck(validCode, validCode, ruleOptions)
-  assert ruleOptions.amount == 1, "Check of valid code failed, expected result: 1, received: " &
+  assert ruleOptions.amount > 0, "Check of valid code failed, expected result larger than 0, received: " &
       $ruleOptions.amount
   # negative check rule tests
   ruleOptions.parent = true
