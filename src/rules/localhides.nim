@@ -120,11 +120,12 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
                 nodesToCheck = flattenStmts(n = baseNode)
                 break findNodes
 
-    proc checkChild(nodes: PNode): Natural {.raises: [], tags: [RootEffect],
+    proc checkChild(nodes: PNode; rule: RuleOptions): Natural {.raises: [], tags: [RootEffect],
         contractual.} =
       ## Check if the selected variable is hidden somewhere by a local variable
       ##
       ## * nodes - the list of nodes to check
+      ## * rule  - the rule options set by the user
       ##
       ## Returns the number of the line if the variable is hidden by a local variable,
       ## otherwise zero
@@ -137,9 +138,10 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
             if childNode.kind in {nkVarSection, nkLetSection, nkConstSection}:
               for declaration in childNode.items:
                 if declaration[0].kind == nkIdent:
-                  if varName == $declaration[0]:
+                  if (not rule.negation and varName == $declaration[0]) or (
+                      rule.negation and varName != $declaration[0]):
                     return declaration.info.line
-            result = checkChild(nodes = childNode)
+            result = checkChild(nodes = childNode, rule = rule)
             if result > 0:
               return
         except KeyError, Exception:
@@ -154,14 +156,20 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         startChecking = true
         continue
       if startChecking:
-        hiddenLine = checkChild(nodes = child)
+        hiddenLine = checkChild(nodes = child, rule = rule)
         if hiddenLine > 0:
           break
-    setResult(checkResult = not hiddenLine.bool, rule = rule,
+    var isHidden: bool = false
+    if rule.negation and hiddenLine == 0:
+      isHidden = true
+    elif not rule.negation and hiddenLine > 0:
+      isHidden = true
+    setResult(checkResult = not isHidden, rule = rule,
         positiveMessage = messagePrefix & "declaration of " & $node[0] &
           " line: " & $node.info.line & " is not hidden by local variable.",
         negativeMessage = messagePrefix & "declaration of '" & $node[0] &
-          "' line: " & $node.info.line & " is hidden by local variable in line " &
+          "' line: " & $node.info.line &
+              " is hidden by local variable in line " &
           $hiddenLine & ".")
 
 checkRule:
@@ -188,4 +196,4 @@ checkRule:
           " line: " &
           $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
-      discard
+    discard
