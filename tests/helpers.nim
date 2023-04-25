@@ -9,7 +9,10 @@ proc setLogger*() =
   addHandler(handler = logger)
   setLogFilter(lvl = lvlInfo)
 
-template runRuleTest*() =
+type DisabledChecks* = enum
+  invalidSearch
+
+template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
 
   setLogger()
 
@@ -51,8 +54,9 @@ template runRuleTest*() =
   ruleOptions.negation = false
   ruleOptions.amount = 0
   ruleCheck(invalidCode, invalidCode, ruleOptions)
-  assert ruleOptions.amount == 0, "Search for invalid code failed, expected result: 0, received: " &
-      $ruleOptions.amount
+  if invalidSearch notin disabledChecks:
+    assert ruleOptions.amount == 0, "Search for invalid code failed, expected result: 0, received: " &
+        $ruleOptions.amount
   ruleOptions.parent = true
   ruleCheck(validCode, validCode, ruleOptions)
   assert ruleOptions.amount > 0, "Search for valid code failed, expected result greater than 0, received: " &
