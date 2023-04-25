@@ -106,6 +106,7 @@ lvlError. The settings below checks for:
 4. If all public declarations have documentation.
 5. If all variables' declarations have declared type and value for them.
 6. If any local variable declaration can be updated to let or const.
+7. If any local variable declaration hides previously declared variable.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -114,6 +115,7 @@ lvlError. The settings below checks for:
     check hasDoc
     check varDeclared full
     check varUplevel
+    check localHides
 
 Search rules
 ------------

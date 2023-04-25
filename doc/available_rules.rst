@@ -219,6 +219,58 @@ Examples
 
      check hasPragma procedures contractual "lock: *"
 
+Localhides rule
+===============
+The rule check if the local declarations in the module don't hide (have the
+same name) as a parent declarations declared in the module.
+The syntax in a configuration file is::
+
+  [ruleType] ?not? localHides
+
+* ruleType is the type of rule which will be executed. Proper values are:
+  *check*, *search* and *count*. For more information about the types of
+  rules, please refer to the program's documentation. Check rule will
+  raise an error if find a local declaration which has the same name as
+  one of parent declarations, search rule will list any local declarations
+  with the same name as previously declared parent and raise an error if
+  nothing found. Count rule will simply list the amount of local
+  declarations which have the same name as parent ones.
+* optional word *not* means negation for the rule. Adding word *not* will
+  change to inform only about local declarations which don't have name as
+  previously declared parent ones. Probably useable only for count type of
+  rule. Saerch type with negationw will returns error as the last declaration
+  is always not hidden.
+* localHides is the name of the rule. It is case-insensitive, thus it can be
+  set as *localhides*, *localHides* or *lOcAlHiDeS*.
+
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "localHides"* in the element from which the rule
+should be disabled or in code before it. For example, if the rule should
+be disabled for procedure `proc main()`, the full declaration of it should
+be::
+
+    proc main () {.ruleOff: "localHides".}
+
+To enable the rule again, the pragma *ruleOn: "localHides"* should be added in
+the element which should be checked or in code before it. For example, if
+the rule should be re-enabled for `const a = 1`, the full declaration should
+be::
+
+    const a {.ruleOn: "localHides".} = 1
+
+Examples
+--------
+
+1. Check if any local declaration hides the parent ones::
+
+    check localHides
+
+2. Search for all local declarations which not hide the parent ones::
+
+    search not localHides
+
 Namedparams rule
 ================
 The rule to check if all calls in the code uses named parameters
