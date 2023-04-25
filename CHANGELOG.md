@@ -9,6 +9,8 @@ of the program.
 ### Added
 - New rule `varUplevel` to check if declaration of variables can be updated to
   *let* or *const*.
+- New rule `localHides` to check if local variables declarations hide global
+  ones.
 
 ### Changed
 - Updated the project's documentation
