@@ -68,11 +68,11 @@ ruleConfig(ruleName = "--rulename--",
   ruleNotFoundMessage = "")
 
 checkRule:
-    initCheck:
-      discard
-    startCheck:
-      discard
-    checking:
-      discard
-    endCheck:
-      discard
+  initCheck:
+    discard
+  startCheck:
+    discard
+  checking:
+    discard
+  endCheck:
+    discard
