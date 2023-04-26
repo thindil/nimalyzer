@@ -40,7 +40,7 @@
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about local declarations which don't have name as
 ##   previously declared parent ones. Probably useable only for count type of
-##   rule. Saerch type with negationw will returns error as the last declaration
+##   rule. Search type with negation will returns error as the last declaration
 ##   is always not hidden.
 ## * localHides is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *localhides*, *localHides* or *lOcAlHiDeS*.
