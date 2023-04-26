@@ -9,11 +9,14 @@ all procedures have defined proper pragmas. Additionally, it can be used as an
 advanced search through a code tool, for example find all public variables type
 of *int* with name which starts with *newVar*. It is controlled by
 configuration files containing a set of rules, their parameters and options
-related to the program behavior. At this moment, the project is in early alpha
-stage, it doesn't offer too much, its configuration syntax can change and
-should have a nice amount of bugs. If you read this file on GitHub:
-**please don't send pull requests here**. All will be automatically closed. Any
-code propositions should go to the [Fossil](https://www.laeran.pl/repositories/nimalyzer) repository.
+related to the program behavior.
+
+At this moment, the project is in **early alpha** stage, it doesn't offer too much,
+its configuration syntax can change and should have a nice amount of bugs.
+
+If you read this file on GitHub: **please don't send pull requests here**. All will
+be automatically closed. Any code propositions should go to the
+[Fossil](https://www.laeran.pl/repositories/nimalyzer) repository.
 
 **IMPORTANT:** If you read the file in the project code repository: This
 version of the file is related to the future version of the program. It may
