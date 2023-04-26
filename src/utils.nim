@@ -28,13 +28,13 @@
 # Internal modules imports
 import rules
 # Nimalyzer rules imports
-import rules/[hasdoc, hasentity, haspragma, localhides, namedparams, paramsused,
-    vardeclared, varuplevel]
+import rules/[hasdoc, hasentity, haspragma, localhides, namedparams, namingconv,
+    paramsused, vardeclared, varuplevel]
 
-let rulesList*: array[8, RuleSettings] = [haspragma.ruleSettings,
+let rulesList*: array[9, RuleSettings] = [haspragma.ruleSettings,
     hasentity.ruleSettings, paramsused.ruleSettings, namedparams.ruleSettings,
     hasdoc.ruleSettings, varDeclared.ruleSettings, varUplevel.ruleSettings,
-    localhides.ruleSettings]
+    localhides.ruleSettings, namingconv.ruleSettings]
   ## The list of available the program's rules with their names as keys and
   ## check code plus validate options code as data
 
