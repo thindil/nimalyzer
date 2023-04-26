@@ -89,14 +89,14 @@ checkRule:
     discard
   startCheck:
     let nodesToCheck: set[TNodeKind] = case rule.options[0]
-        of "all":
-          routineDefs
-        of "procedures":
-          {nkProcDef, nkFuncDef, nkMethodDef}
-        of "templates":
-          {nkTemplateDef}
-        else:
-          {}
+      of "all":
+        routineDefs
+      of "procedures":
+        {nkProcDef, nkFuncDef, nkMethodDef}
+      of "templates":
+        {nkTemplateDef}
+      else:
+        {}
   checking:
     if node.kind in nodesToCheck:
       # Get the procedure's name
