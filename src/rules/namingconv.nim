@@ -83,19 +83,44 @@
 ##
 ##    count not namingConv enumerations ^enum
 
+# Standard library imports
+import std/re
 # Import default rules' modules
 import ../rules
 
 ruleConfig(ruleName = "namingconv",
-  ruleFoundMessage = "",
-  ruleNotFoundMessage = "")
+  ruleFoundMessage = "declarations which {negation}follow naming convention",
+  ruleNotFoundMessage = "declarations which {negation}follow naming convention not found.")
 
 checkRule:
-    initCheck:
-      discard
-    startCheck:
-      discard
-    checking:
-      discard
-    endCheck:
-      discard
+  initCheck:
+    discard
+  startCheck:
+    let
+      convention: Regex = rule.options[1].re
+      nodesToCheck: set[TNodeKind] = case rule.options[0]
+        of "variables":
+          {nkVarSection, nkLetSection, nkConstSection}
+        of "procedures":
+          {nkProcDef, nkFuncDef, nkMethodDef}
+        of "enumerations":
+          {nkEnumTy}
+        else:
+          {}
+  checking:
+    try:
+      # Sometimes the compiler detects declarations as children of the node
+      if node.kind in nodesToCheck:
+        # Check each variable declaration if meet the rule requirements
+        for declaration in node.items:
+          discard
+      # And sometimes the compiler detects declarations as the node
+      elif node.kind == nkIdentDefs and astNode.kind in nodesToCheck:
+        discard
+    except KeyError, Exception:
+      rule.amount = errorMessage(text = messagePrefix &
+        "can't check declaration of " & rule.options[0][0 .. ^1] &
+        " line: " & $node.info.line & ". Reason: ",
+        e = getCurrentException())
+  endCheck:
+    let negation: string = (if rule.negation: "not " else: "")
