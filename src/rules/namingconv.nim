@@ -90,7 +90,10 @@ import ../rules
 
 ruleConfig(ruleName = "namingconv",
   ruleFoundMessage = "declarations which {negation}follow naming convention",
-  ruleNotFoundMessage = "declarations which {negation}follow naming convention not found.")
+  ruleNotFoundMessage = "declarations which {negation}follow naming convention not found.",
+  ruleOptions = @[custom, str],
+  ruleOptionValues = @["variables", "enumerations", "procedures"],
+  ruleMinOptions = 2)
 
 checkRule:
   initCheck:
@@ -113,13 +116,22 @@ checkRule:
       if node.kind in nodesToCheck:
         # Check each variable declaration if meet the rule requirements
         for declaration in node.items:
-          discard
+          setResult(checkResult = match(s = $declaration[0],
+              pattern = convention), rule = rule,
+              positiveMessage = messagePrefix & "name of " & $declaration[0] &
+              " line: " & $declaration.info.line & " follow naming convention.",
+              negativeMessage = messagePrefix & "name of '" & $declaration[0] &
+              "' line: " & $declaration.info.line & " doesn't follow naming convention.")
       # And sometimes the compiler detects declarations as the node
       elif node.kind == nkIdentDefs and astNode.kind in nodesToCheck:
-        discard
+        setResult(checkResult = match(s = $node[0], pattern = convention),
+            rule = rule, positiveMessage = messagePrefix & "name of " & $node[
+            0] & " line: " & $node.info.line & " follow naming convention.",
+            negativeMessage = messagePrefix & "name of '" & $node[0] &
+            "' line: " & $node.info.line & " doesn't follow naming convention.")
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
-        "can't check declaration of " & rule.options[0][0 .. ^1] &
+        "can't check name of " & rule.options[0][0 .. ^1] &
         " line: " & $node.info.line & ". Reason: ",
         e = getCurrentException())
   endCheck:
