@@ -118,7 +118,7 @@ checkRule:
         for declaration in node.items:
           if declaration.kind == nkEmpty:
             continue
-          let nameToCheck = (if declaration.kind in {nkCharLit ..
+          let nameToCheck: string = (if declaration.kind in {nkCharLit ..
               nkTripleStrLit, nkSym, nkIdent}: $declaration else: $declaration[0])
           setResult(checkResult = match(s = nameToCheck,
               pattern = convention), rule = rule,
@@ -126,6 +126,8 @@ checkRule:
               " line: " & $declaration.info.line & " follow naming convention.",
               negativeMessage = messagePrefix & "name of '" & nameToCheck &
               "' line: " & $declaration.info.line & " doesn't follow naming convention.")
+          if rule.options[0] == "procedures":
+            break
       # And sometimes the compiler detects declarations as the node
       elif node.kind == nkIdentDefs and astNode.kind in nodesToCheck:
         setResult(checkResult = match(s = $node[0], pattern = convention),
