@@ -116,11 +116,15 @@ checkRule:
       if node.kind in nodesToCheck:
         # Check each variable declaration if meet the rule requirements
         for declaration in node.items:
-          setResult(checkResult = match(s = $declaration[0],
+          if declaration.kind == nkEmpty:
+            continue
+          let nameToCheck = (if declaration.kind in {nkCharLit ..
+              nkTripleStrLit, nkSym, nkIdent}: $declaration else: $declaration[0])
+          setResult(checkResult = match(s = nameToCheck,
               pattern = convention), rule = rule,
-              positiveMessage = messagePrefix & "name of " & $declaration[0] &
+              positiveMessage = messagePrefix & "name of " & nameToCheck &
               " line: " & $declaration.info.line & " follow naming convention.",
-              negativeMessage = messagePrefix & "name of '" & $declaration[0] &
+              negativeMessage = messagePrefix & "name of '" & nameToCheck &
               "' line: " & $declaration.info.line & " doesn't follow naming convention.")
       # And sometimes the compiler detects declarations as the node
       elif node.kind == nkIdentDefs and astNode.kind in nodesToCheck:
@@ -131,7 +135,7 @@ checkRule:
             "' line: " & $node.info.line & " doesn't follow naming convention.")
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
-        "can't check name of " & rule.options[0][0 .. ^1] &
+        "can't check name of " & rule.options[0][0 .. ^2] &
         " line: " & $node.info.line & ". Reason: ",
         e = getCurrentException())
   endCheck:
