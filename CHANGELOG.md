@@ -11,6 +11,8 @@ of the program.
   *let* or *const*.
 - New rule `localHides` to check if local variables declarations hide global
   ones.
+- New rule `namingConv` to check if variables, procedures and enumerations
+  fields follow the selected naming convention.
 
 ### Changed
 - Updated the project's documentation
