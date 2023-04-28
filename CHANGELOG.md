@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 Tag **BREAKING** means the change break compatibility with a previous version
 of the program.
 
-## [Unreleased]
+## [0.3.0] - 2023-04-28
 
 ### Added
 - New rule `varUplevel` to check if declaration of variables can be updated to
