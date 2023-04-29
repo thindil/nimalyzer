@@ -341,7 +341,8 @@ template ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
   proc ruleCheck*(astNode{.inject.}, parentNode{.inject.}: PNode;
-      rule{.inject.}: var RuleOptions) {.ruleOff: "hasPragma".}
+      rule{.inject.}: var RuleOptions) {.ruleOff: "hasPragma",
+      ruleOff: "paramsUsed", ruleOff: "hasDoc".}
     ## Check recursively if the source code has the documentation in the proper
     ## locactions
     ##
