@@ -98,6 +98,9 @@ proc check(node: PNode; rule: var RuleOptions;
             "'.", negativeMessage = messagePrefix & "call " & callName &
             " line: " & $node.info.line &
             " doesn't have named parameter number: " & $i & "'.")
+        if node[i].kind in {nkCall, nkDotCall} and (node[i].sons.len > 1 and
+            node[i].sons[1].kind != nkStmtList):
+          check(node = node[i], rule = rule, messagePrefix = messagePrefix)
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
           "can't check parameters of call " & callName & " line: " &
@@ -114,7 +117,8 @@ checkRule:
       return
   checking:
     # Node is a call, and have parameters, check it
-    if node.kind in {nkCall, nkDotCall} and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
+    if node.kind in {nkCall, nkDotCall} and (node.sons.len > 1 and node.sons[
+        1].kind != nkStmtList):
       check(node = node, rule = rule, messagePrefix = messagePrefix)
   endCheck:
     let negation: string = (if rule.negation: " not" else: "")
