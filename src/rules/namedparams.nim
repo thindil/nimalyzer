@@ -109,12 +109,12 @@ checkRule:
   startCheck:
     setRuleState(node = astNode, ruleName = "namedparams",
         oldState = rule.enabled)
-    if astNode.kind == nkCall:
+    if astNode.kind in {nkCall, nkDotCall}:
       check(node = astNode, rule = rule, messagePrefix = messagePrefix)
       return
   checking:
     # Node is a call, and have parameters, check it
-    if node.kind == nkCall and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
+    if node.kind in {nkCall, nkDotCall} and (node.sons.len > 1 and node.sons[1].kind != nkStmtList):
       check(node = node, rule = rule, messagePrefix = messagePrefix)
   endCheck:
     let negation: string = (if rule.negation: " not" else: "")
