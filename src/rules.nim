@@ -311,16 +311,19 @@ macro checkRule*(code: untyped): untyped =
   ## Check the rule, add the procedure declaration and the check code itself
   ##
   ## * code - the code to run for check the rule
-  return nnkStmtList.newTree(nnkProcDef.newTree(nnkPostfix.newTree(newIdentNode(
-      "*"), newIdentNode("ruleCheck")), newEmptyNode(), newEmptyNode(),
-      nnkFormalParams.newTree(newEmptyNode(), nnkIdentDefs.newTree(newIdentNode(
-      "astNode"), newIdentNode("parentNode"), newIdentNode("PNode"),
-      newEmptyNode()), nnkIdentDefs.newTree(newIdentNode("rule"),
-      nnkVarTy.newTree(newIdentNode("RuleOptions")), newEmptyNode())),
-      nnkPragma.newTree(nnkExprColonExpr.newTree(newIdentNode("raises"),
-      nnkBracket.newTree()), nnkExprColonExpr.newTree(newIdentNode("tags"),
-      nnkBracket.newTree(newIdentNode("RootEffect"))), newIdentNode(
-      "contractual")), newEmptyNode(), nnkStmtList.newTree(code)))
+  return nnkStmtList.newTree(children = nnkProcDef.newTree(nnkPostfix.newTree(
+      children = newIdentNode(i = "*"), newIdentNode(i = "ruleCheck")),
+      newEmptyNode(), newEmptyNode(), nnkFormalParams.newTree(
+      children = newEmptyNode(), nnkIdentDefs.newTree(children = newIdentNode(
+      i = "astNode"), newIdentNode(i = "parentNode"), newIdentNode(i = "PNode"),
+      newEmptyNode()), nnkIdentDefs.newTree(children = newIdentNode(i = "rule"),
+      nnkVarTy.newTree(children = newIdentNode(i = "RuleOptions")),
+      newEmptyNode())), nnkPragma.newTree(children = nnkExprColonExpr.newTree(
+      children = newIdentNode(i = "raises"), nnkBracket.newTree()),
+      nnkExprColonExpr.newTree(children = newIdentNode(i = "tags"),
+      nnkBracket.newTree(children = newIdentNode(i = "RootEffect"))),
+      newIdentNode(i = "contractual")), newEmptyNode(), nnkStmtList.newTree(
+      children = code)))
 
 template ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
     ruleOptions: seq[RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
