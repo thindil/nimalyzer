@@ -26,7 +26,7 @@
 ## Provides various things for the program rules
 
 # Standard library imports
-import std/[logging, strformat, strutils]
+import std/[logging, macros, strformat, strutils]
 # External modules imports
 import compiler/[ast, renderer]
 import contracts
@@ -307,14 +307,20 @@ template endCheck*(code: untyped): untyped =
               level = lvlNotice, decrease = false)
         rule.amount = 0
 
-template checkRule*(code: untyped): untyped =
+macro checkRule*(code: untyped): untyped =
   ## Check the rule, add the procedure declaration and the check code itself
   ##
   ## * code - the code to run for check the rule
-  proc ruleCheck*(astNode{.inject.}, parentNode{.inject.}: PNode;
-      rule{.inject.}: var RuleOptions) {.raises: [], tags: [RootEffect],
-          contractual, ruleOff: "paramsUsed", ruleOff: "hasDoc".} =
-    code
+  return nnkStmtList.newTree(nnkProcDef.newTree(nnkPostfix.newTree(newIdentNode(
+      "*"), newIdentNode("ruleCheck")), newEmptyNode(), newEmptyNode(),
+      nnkFormalParams.newTree(newEmptyNode(), nnkIdentDefs.newTree(newIdentNode(
+      "astNode"), newIdentNode("parentNode"), newIdentNode("PNode"),
+      newEmptyNode()), nnkIdentDefs.newTree(newIdentNode("rule"),
+      nnkVarTy.newTree(newIdentNode("RuleOptions")), newEmptyNode())),
+      nnkPragma.newTree(nnkExprColonExpr.newTree(newIdentNode("raises"),
+      nnkBracket.newTree()), nnkExprColonExpr.newTree(newIdentNode("tags"),
+      nnkBracket.newTree(newIdentNode("RootEffect"))), newIdentNode(
+      "contractual")), newEmptyNode(), nnkStmtList.newTree(code)))
 
 template ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
     ruleOptions: seq[RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
