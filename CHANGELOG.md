@@ -6,6 +6,9 @@ of the program.
 
 ## [Unreleased]
 
+### Changed
+- Better checking for named parameters by `namedParams` rule
+
 ### Fixed
 - Typo in Changelog
 
