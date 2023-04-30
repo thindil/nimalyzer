@@ -256,22 +256,108 @@ template startCheck*(code: untyped): untyped =
       oldState = rule.enabled)
   code
 
-template checking*(code: untyped): untyped =
+macro checking*(code: untyped): untyped =
   ## Run the check itself for the node and execute it for each child node of
   ## the node
   ##
   ## * code - the code of the check
-  for node{.inject.} in astNode.items:
-    setRuleState(node = node, ruleName = ruleSettings.name,
-        oldState = rule.enabled)
-    for child in node.items:
-      setRuleState(node = child, ruleName = ruleSettings.name,
-          oldState = rule.enabled)
-    if rule.enabled:
-      code
-    # Check each children of the current AST node with the rule
-    for child in node.items:
-      ruleCheck(astNode = child, parentNode = astNode, rule = rule)
+  return nnkStmtList.newTree(
+  nnkForStmt.newTree(
+    newIdentNode("node"),
+    nnkDotExpr.newTree(
+      newIdentNode("astNode"),
+      newIdentNode("items")
+    ),
+    nnkStmtList.newTree(
+      nnkCall.newTree(
+        newIdentNode("setRuleState"),
+        nnkExprEqExpr.newTree(
+          newIdentNode("node"),
+          newIdentNode("node")
+        ),
+        nnkExprEqExpr.newTree(
+          newIdentNode("ruleName"),
+          nnkDotExpr.newTree(
+            newIdentNode("ruleSettings"),
+            newIdentNode("name")
+          )
+        ),
+        nnkExprEqExpr.newTree(
+          newIdentNode("oldState"),
+          nnkDotExpr.newTree(
+            newIdentNode("rule"),
+            newIdentNode("enabled")
+          )
+        )
+      ),
+      nnkForStmt.newTree(
+        newIdentNode("child"),
+        nnkDotExpr.newTree(
+          newIdentNode("node"),
+          newIdentNode("items")
+        ),
+        nnkStmtList.newTree(
+          nnkCall.newTree(
+            newIdentNode("setRuleState"),
+            nnkExprEqExpr.newTree(
+              newIdentNode("node"),
+              newIdentNode("child")
+            ),
+            nnkExprEqExpr.newTree(
+              newIdentNode("ruleName"),
+              nnkDotExpr.newTree(
+                newIdentNode("ruleSettings"),
+                newIdentNode("name")
+              )
+            ),
+            nnkExprEqExpr.newTree(
+              newIdentNode("oldState"),
+              nnkDotExpr.newTree(
+                newIdentNode("rule"),
+                newIdentNode("enabled")
+              )
+            )
+          )
+        )
+      ),
+      nnkIfStmt.newTree(
+        nnkElifBranch.newTree(
+          nnkDotExpr.newTree(
+            newIdentNode("rule"),
+            newIdentNode("enabled")
+          ),
+          nnkStmtList.newTree(
+            code
+          )
+        )
+      ),
+      nnkForStmt.newTree(
+        newIdentNode("child"),
+        nnkDotExpr.newTree(
+          newIdentNode("node"),
+          newIdentNode("items")
+        ),
+        nnkStmtList.newTree(
+          nnkCall.newTree(
+            newIdentNode("ruleCheck"),
+            nnkExprEqExpr.newTree(
+              newIdentNode("astNode"),
+              newIdentNode("child")
+            ),
+            nnkExprEqExpr.newTree(
+              newIdentNode("parentNode"),
+              newIdentNode("astNode")
+            ),
+            nnkExprEqExpr.newTree(
+              newIdentNode("rule"),
+              newIdentNode("rule")
+            )
+          )
+        )
+      )
+    )
+  )
+  )
 
 template endCheck*(code: untyped): untyped =
   ## Show the summary after the check and run the custom code if needed
