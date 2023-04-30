@@ -57,6 +57,8 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   if invalidSearch notin disabledChecks:
     assert ruleOptions.amount == 0, "Search for invalid code failed, expected result: 0, received: " &
         $ruleOptions.amount
+  else:
+    echo "The test for searching for invalid code is disabled."
   ruleOptions.parent = true
   ruleCheck(validCode, validCode, ruleOptions)
   assert ruleOptions.amount > 0, "Search for valid code failed, expected result greater than 0, received: " &
