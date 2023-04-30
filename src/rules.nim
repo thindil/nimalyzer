@@ -261,96 +261,96 @@ macro checking*(code: untyped): untyped =
   ## the node
   ##
   ## * code - the code of the check
-  return nnkStmtList.newTree(
-  nnkForStmt.newTree(
-    newIdentNode("node"),
-    nnkDotExpr.newTree(
-      newIdentNode("astNode"),
-      newIdentNode("items")
+  return nnkStmtList.newTree(children =
+  nnkForStmt.newTree(children =
+    newIdentNode(i = "node"),
+    nnkDotExpr.newTree(children =
+      newIdentNode(i = "astNode"),
+      newIdentNode(i = "items")
     ),
-    nnkStmtList.newTree(
-      nnkCall.newTree(
-        newIdentNode("setRuleState"),
-        nnkExprEqExpr.newTree(
-          newIdentNode("node"),
-          newIdentNode("node")
+    nnkStmtList.newTree(children =
+      nnkCall.newTree(children =
+        newIdentNode(i = "setRuleState"),
+        nnkExprEqExpr.newTree(children =
+          newIdentNode(i = "node"),
+          newIdentNode(i = "node")
         ),
-        nnkExprEqExpr.newTree(
-          newIdentNode("ruleName"),
-          nnkDotExpr.newTree(
-            newIdentNode("ruleSettings"),
-            newIdentNode("name")
+        nnkExprEqExpr.newTree(children =
+          newIdentNode(i = "ruleName"),
+          nnkDotExpr.newTree(children =
+            newIdentNode(i = "ruleSettings"),
+            newIdentNode(i = "name")
           )
         ),
-        nnkExprEqExpr.newTree(
-          newIdentNode("oldState"),
-          nnkDotExpr.newTree(
-            newIdentNode("rule"),
-            newIdentNode("enabled")
+        nnkExprEqExpr.newTree(children =
+          newIdentNode(i = "oldState"),
+          nnkDotExpr.newTree(children =
+            newIdentNode(i = "rule"),
+            newIdentNode(i = "enabled")
           )
         )
       ),
-      nnkForStmt.newTree(
-        newIdentNode("child"),
-        nnkDotExpr.newTree(
-          newIdentNode("node"),
-          newIdentNode("items")
+      nnkForStmt.newTree(children =
+        newIdentNode(i = "child"),
+        nnkDotExpr.newTree(children =
+          newIdentNode(i = "node"),
+          newIdentNode(i = "items")
         ),
-        nnkStmtList.newTree(
-          nnkCall.newTree(
-            newIdentNode("setRuleState"),
-            nnkExprEqExpr.newTree(
-              newIdentNode("node"),
-              newIdentNode("child")
+        nnkStmtList.newTree(children =
+          nnkCall.newTree(children =
+            newIdentNode(i = "setRuleState"),
+            nnkExprEqExpr.newTree(children =
+              newIdentNode(i = "node"),
+              newIdentNode(i = "child")
             ),
-            nnkExprEqExpr.newTree(
-              newIdentNode("ruleName"),
-              nnkDotExpr.newTree(
-                newIdentNode("ruleSettings"),
-                newIdentNode("name")
+            nnkExprEqExpr.newTree(children =
+              newIdentNode(i = "ruleName"),
+              nnkDotExpr.newTree(children =
+                newIdentNode(i = "ruleSettings"),
+                newIdentNode(i = "name")
               )
             ),
-            nnkExprEqExpr.newTree(
+            nnkExprEqExpr.newTree(children =
               newIdentNode("oldState"),
-              nnkDotExpr.newTree(
-                newIdentNode("rule"),
-                newIdentNode("enabled")
+              nnkDotExpr.newTree(children =
+                newIdentNode(i = "rule"),
+                newIdentNode(i = "enabled")
               )
             )
           )
         )
       ),
-      nnkIfStmt.newTree(
-        nnkElifBranch.newTree(
-          nnkDotExpr.newTree(
-            newIdentNode("rule"),
-            newIdentNode("enabled")
+      nnkIfStmt.newTree(children =
+        nnkElifBranch.newTree(children =
+          nnkDotExpr.newTree(children =
+            newIdentNode(i = "rule"),
+            newIdentNode(i = "enabled")
           ),
-          nnkStmtList.newTree(
+          nnkStmtList.newTree(children =
             code
           )
         )
       ),
-      nnkForStmt.newTree(
-        newIdentNode("child"),
-        nnkDotExpr.newTree(
-          newIdentNode("node"),
-          newIdentNode("items")
+      nnkForStmt.newTree(children =
+        newIdentNode(i = "child"),
+        nnkDotExpr.newTree(children =
+          newIdentNode(i = "node"),
+          newIdentNode(i = "items")
         ),
-        nnkStmtList.newTree(
-          nnkCall.newTree(
-            newIdentNode("ruleCheck"),
-            nnkExprEqExpr.newTree(
-              newIdentNode("astNode"),
-              newIdentNode("child")
+        nnkStmtList.newTree(children =
+          nnkCall.newTree(children =
+            newIdentNode(i = "ruleCheck"),
+            nnkExprEqExpr.newTree(children =
+              newIdentNode(i = "astNode"),
+              newIdentNode(i = "child")
             ),
-            nnkExprEqExpr.newTree(
-              newIdentNode("parentNode"),
-              newIdentNode("astNode")
+            nnkExprEqExpr.newTree(children =
+              newIdentNode(i = "parentNode"),
+              newIdentNode(i = "astNode")
             ),
-            nnkExprEqExpr.newTree(
-              newIdentNode("rule"),
-              newIdentNode("rule")
+            nnkExprEqExpr.newTree(children =
+              newIdentNode(i = "rule"),
+              newIdentNode(i = "rule")
             )
           )
         )
