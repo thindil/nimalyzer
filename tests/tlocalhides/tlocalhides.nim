@@ -7,6 +7,7 @@ ERROR declaration of 'a' line: 1 is not hidden by local variable.
 ERROR declaration of 'b' line: 3 is not hidden by local variable.
 ERROR declaration of 'a' line: 5 is not hidden by local variable.
 NOTICE declaration of 'a' line: 5 is not hidden by local variable.
+The test for searching for invalid code is disabled.
 NOTICE declaration of 'a' line: 1 is not hidden by local variable.
 NOTICE declaration of 'b' line: 3 is not hidden by local variable.
 NOTICE Local declarations which hide global declarations not found.
