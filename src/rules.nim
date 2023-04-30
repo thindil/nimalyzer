@@ -325,9 +325,9 @@ macro checkRule*(code: untyped): untyped =
       newIdentNode(i = "contractual")), newEmptyNode(), nnkStmtList.newTree(
       children = code)))
 
-template ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
+macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
     ruleOptions: seq[RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
-    ruleMinOptions: Natural = 0; ruleShowForCheck: bool = false): untyped =
+    ruleMinOptions: int = 0; ruleShowForCheck: bool = false): untyped =
   ## Set the rule's settings, like name, options, etc
   ##
   ## * ruleName            - The name of the rule
@@ -340,22 +340,81 @@ template ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
   ##                         option
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
-  proc ruleCheck*(astNode{.inject.}, parentNode{.inject.}: PNode;
-      rule{.inject.}: var RuleOptions) {.ruleOff: "hasPragma",
-      ruleOff: "paramsUsed", ruleOff: "hasDoc".}
-    ## Check recursively if the source code has the documentation in the proper
-    ## locactions
-    ##
-    ## * astNode    - The AST node representation of the Nim code to check
-    ## * parentNode - The psrent node of the currently checked node
-    ## * rule       - The rule options set by the user and the previous iterations
-    ##                of the procedure
-
-  let ruleSettings*{.inject.}: RuleSettings = RuleSettings(name: ruleName,
-      checkProc: ruleCheck, options: ruleOptions,
-      optionValues: ruleOptionValues,
-      minOptions: ruleMinOptions) ## The rule settings like name, options, etc
-  const
-    showForCheck{.inject.}: bool = ruleShowForCheck ## If true, show summary for check type of the rule
-    foundMessage{.inject.}: string = ruleFoundMessage ## The message shown when count type of the rule found something
-    notFoundMessage{.inject.}: string = ruleNotFoundMessage ## The message shown when count type of the rule not found anything
+  return nnkStmtList.newTree(
+    nnkProcDef.newTree(
+      nnkPostfix.newTree(
+        newIdentNode("*"),
+        newIdentNode("ruleCheck")
+      ),
+      newEmptyNode(),
+      newEmptyNode(),
+      nnkFormalParams.newTree(
+        newEmptyNode(),
+        nnkIdentDefs.newTree(
+          newIdentNode("astNode"),
+          newIdentNode("parentNode"),
+          newIdentNode("PNode"),
+          newEmptyNode()
+        ),
+        nnkIdentDefs.newTree(
+          newIdentNode("rule"),
+          nnkVarTy.newTree(
+            newIdentNode("RuleOptions")
+          ),
+          newEmptyNode()
+        )
+      ),
+      newEmptyNode(),
+      newEmptyNode(),
+      newEmptyNode()
+    ),
+    nnkLetSection.newTree(
+      nnkIdentDefs.newTree(
+        nnkPostfix.newTree(
+          newIdentNode("*"),
+          newIdentNode("ruleSettings")
+        ),
+        newIdentNode("RuleSettings"),
+        nnkObjConstr.newTree(
+          newIdentNode("RuleSettings"),
+          nnkExprColonExpr.newTree(
+            newIdentNode("name"),
+            ruleName
+          ),
+          nnkExprColonExpr.newTree(
+            newIdentNode("checkProc"),
+            newIdentNode("ruleCheck")
+          ),
+          nnkExprColonExpr.newTree(
+            newIdentNode("options"),
+            ruleOptions
+          ),
+          nnkExprColonExpr.newTree(
+            newIdentNode("optionValues"),
+            ruleOptionValues
+          ),
+          nnkExprColonExpr.newTree(
+            newIdentNode("minOptions"),
+            ruleMinOptions
+          )
+        )
+      )
+    ),
+    nnkConstSection.newTree(
+      nnkConstDef.newTree(
+        newIdentNode("showForCheck"),
+        newIdentNode("bool"),
+        ruleShowForCheck
+      ),
+      nnkConstDef.newTree(
+        newIdentNode("foundMessage"),
+        newIdentNode("string"),
+        ruleFoundMessage
+      ),
+      nnkConstDef.newTree(
+        newIdentNode("notFoundMessage"),
+        newIdentNode("string"),
+        ruleNotFoundMessage
+      )
+    )
+  )
