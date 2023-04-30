@@ -340,26 +340,26 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
   ##                         option
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
-  return nnkStmtList.newTree(
-    nnkProcDef.newTree(
-      nnkPostfix.newTree(
-        newIdentNode("*"),
-        newIdentNode("ruleCheck")
+  return nnkStmtList.newTree(children =
+    [nnkProcDef.newTree(children =
+      nnkPostfix.newTree(children =
+        newIdentNode(i = "*"),
+        newIdentNode(i = "ruleCheck")
       ),
       newEmptyNode(),
       newEmptyNode(),
-      nnkFormalParams.newTree(
+      nnkFormalParams.newTree(children =
         newEmptyNode(),
-        nnkIdentDefs.newTree(
-          newIdentNode("astNode"),
-          newIdentNode("parentNode"),
-          newIdentNode("PNode"),
+        nnkIdentDefs.newTree(children =
+          newIdentNode(i = "astNode"),
+          newIdentNode(i = "parentNode"),
+          newIdentNode(i = "PNode"),
           newEmptyNode()
         ),
-        nnkIdentDefs.newTree(
-          newIdentNode("rule"),
-          nnkVarTy.newTree(
-            newIdentNode("RuleOptions")
+        nnkIdentDefs.newTree(children =
+          newIdentNode(i = "rule"),
+          nnkVarTy.newTree(children =
+            newIdentNode(i = "RuleOptions")
           ),
           newEmptyNode()
         )
@@ -368,53 +368,53 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       newEmptyNode(),
       newEmptyNode()
     ),
-    nnkLetSection.newTree(
-      nnkIdentDefs.newTree(
-        nnkPostfix.newTree(
-          newIdentNode("*"),
-          newIdentNode("ruleSettings")
+    nnkLetSection.newTree(children =
+      nnkIdentDefs.newTree(children =
+        nnkPostfix.newTree(children =
+          newIdentNode(i = "*"),
+          newIdentNode(i = "ruleSettings")
         ),
-        newIdentNode("RuleSettings"),
-        nnkObjConstr.newTree(
-          newIdentNode("RuleSettings"),
-          nnkExprColonExpr.newTree(
-            newIdentNode("name"),
+        newIdentNode(i = "RuleSettings"),
+        nnkObjConstr.newTree(children =
+          newIdentNode(i = "RuleSettings"),
+          nnkExprColonExpr.newTree(children =
+            newIdentNode(i = "name"),
             ruleName
           ),
-          nnkExprColonExpr.newTree(
-            newIdentNode("checkProc"),
-            newIdentNode("ruleCheck")
+          nnkExprColonExpr.newTree(children =
+            newIdentNode(i = "checkProc"),
+            newIdentNode(i = "ruleCheck")
           ),
-          nnkExprColonExpr.newTree(
-            newIdentNode("options"),
+          nnkExprColonExpr.newTree(children =
+            newIdentNode(i = "options"),
             ruleOptions
           ),
-          nnkExprColonExpr.newTree(
-            newIdentNode("optionValues"),
+          nnkExprColonExpr.newTree(children =
+            newIdentNode(i = "optionValues"),
             ruleOptionValues
           ),
-          nnkExprColonExpr.newTree(
-            newIdentNode("minOptions"),
+          nnkExprColonExpr.newTree(children =
+            newIdentNode(i = "minOptions"),
             ruleMinOptions
           )
         )
       )
     ),
-    nnkConstSection.newTree(
-      nnkConstDef.newTree(
-        newIdentNode("showForCheck"),
-        newIdentNode("bool"),
-        ruleShowForCheck
+    nnkConstSection.newTree(children =
+      [nnkConstDef.newTree(children =
+        [newIdentNode(i = "showForCheck"),
+        newIdentNode(i = "bool"),
+        ruleShowForCheck]
       ),
-      nnkConstDef.newTree(
-        newIdentNode("foundMessage"),
-        newIdentNode("string"),
-        ruleFoundMessage
+      nnkConstDef.newTree(children =
+        [newIdentNode(i = "foundMessage"),
+        newIdentNode(i = "string"),
+        ruleFoundMessage]
       ),
-      nnkConstDef.newTree(
-        newIdentNode("notFoundMessage"),
-        newIdentNode("string"),
-        ruleNotFoundMessage
-      )
-    )
+      nnkConstDef.newTree(children =
+        [newIdentNode(i = "notFoundMessage"),
+        newIdentNode(i = "string"),
+        ruleNotFoundMessage]
+      )]
+    )]
   )
