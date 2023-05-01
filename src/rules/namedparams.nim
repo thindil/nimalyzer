@@ -90,6 +90,10 @@ proc check(node: PNode; rule: var RuleOptions;
           returnValue = rule.amount)
       rule.amount.inc
       return
+    # Ignore checking for defined procedure. It looks like it doesn't like named
+    # parameters
+    if callName == "defined":
+      return
     try:
       for i in 1..<node.sons.len:
         setResult(checkResult = node[i].kind == nkExprEqExpr, rule = rule,
