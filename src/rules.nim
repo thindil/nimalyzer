@@ -233,62 +233,62 @@ macro initCheck*(code: untyped): untyped =
   ##
   ## * code - the custom code which will be executed during initialization of
   ##          the check
-  return nnkStmtList.newTree(
-  nnkLetSection.newTree(
-    nnkIdentDefs.newTree(
-      newIdentNode("isParent"),
-      newIdentNode("bool"),
-      nnkDotExpr.newTree(
-        newIdentNode("rule"),
-        newIdentNode("parent")
+  return nnkStmtList.newTree(children = [
+  nnkLetSection.newTree(children =
+    nnkIdentDefs.newTree(children =
+      newIdentNode(i = "isParent"),
+      newIdentNode(i = "bool"),
+      nnkDotExpr.newTree(children =
+        newIdentNode(i = "rule"),
+        newIdentNode(i = "parent")
       )
     ),
-    nnkIdentDefs.newTree(
-      newIdentNode("messagePrefix"),
-      newIdentNode("string"),
-      nnkIfExpr.newTree(
-        nnkElifExpr.newTree(
-          nnkInfix.newTree(
-            newIdentNode("<"),
-            nnkCall.newTree(
-              newIdentNode("getLogFilter")
+    nnkIdentDefs.newTree(children =
+      newIdentNode(i = "messagePrefix"),
+      newIdentNode(i = "string"),
+      nnkIfExpr.newTree(children =
+        nnkElifExpr.newTree(children =
+          nnkInfix.newTree(children =
+            newIdentNode(i = "<"),
+            nnkCall.newTree(children =
+              newIdentNode(i = "getLogFilter")
             ),
-            newIdentNode("lvlNotice")
+            newIdentNode(i = "lvlNotice")
           ),
-          nnkStmtList.newTree(
-            newLit("")
+          nnkStmtList.newTree(children =
+            newLit(s = "")
           )
         ),
-        nnkElseExpr.newTree(
-          nnkStmtList.newTree(
-            nnkInfix.newTree(
-              newIdentNode("&"),
-              nnkDotExpr.newTree(
-                newIdentNode("rule"),
-                newIdentNode("fileName")
+        nnkElseExpr.newTree(children =
+          nnkStmtList.newTree(children =
+            nnkInfix.newTree(children =
+              newIdentNode(i = "&"),
+              nnkDotExpr.newTree(children =
+                newIdentNode(i = "rule"),
+                newIdentNode(i = "fileName")
               ),
-              newLit(": ")
+              newLit(s = ": ")
             )
           )
         )
       )
     )
   ),
-  nnkIfStmt.newTree(
-    nnkElifBranch.newTree(
-      newIdentNode("isParent"),
-      nnkStmtList.newTree(
-        nnkAsgn.newTree(
-          nnkDotExpr.newTree(
-            newIdentNode("rule"),
-            newIdentNode("parent")
+  nnkIfStmt.newTree(children =
+    nnkElifBranch.newTree(children =
+      newIdentNode(i = "isParent"),
+      nnkStmtList.newTree(children =
+        nnkAsgn.newTree(children =
+          nnkDotExpr.newTree(children =
+            newIdentNode(i = "rule"),
+            newIdentNode(i = "parent")
           ),
-          newIdentNode("false")
+          newIdentNode(i = "false")
         ),
         code
       )
     )
-  )
+  )]
   )
 
 template startCheck*(code: untyped): untyped =
