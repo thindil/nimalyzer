@@ -227,25 +227,69 @@ proc validateOptions*(rule: RuleSettings; options: seq[
               option & "'.").bool
     return true
 
-{.hint[Name]: off.}
-template initCheck*(code: untyped): untyped =
+macro initCheck*(code: untyped): untyped =
   ## Initialize the check code for a rule, set some variables for the check and
   ## custom code in the main node of the code to check
   ##
   ## * code - the custom code which will be executed during initialization of
   ##          the check
-  {.hint[XDeclaredButNotUsed]: off.}
-  let
-    isParent{.inject.}: bool = rule.parent
-    messagePrefix{.inject.}: string = if getLogFilter() < lvlNotice:
-          ""
-        else:
-          rule.fileName & ": "
-  {.hint[XDeclaredButNotUsed]: off.}
-  if isParent:
-    rule.parent = false
-    code
-{.hint[Name]: on.}
+  return nnkStmtList.newTree(
+  nnkLetSection.newTree(
+    nnkIdentDefs.newTree(
+      newIdentNode("isParent"),
+      newIdentNode("bool"),
+      nnkDotExpr.newTree(
+        newIdentNode("rule"),
+        newIdentNode("parent")
+      )
+    ),
+    nnkIdentDefs.newTree(
+      newIdentNode("messagePrefix"),
+      newIdentNode("string"),
+      nnkIfExpr.newTree(
+        nnkElifExpr.newTree(
+          nnkInfix.newTree(
+            newIdentNode("<"),
+            nnkCall.newTree(
+              newIdentNode("getLogFilter")
+            ),
+            newIdentNode("lvlNotice")
+          ),
+          nnkStmtList.newTree(
+            newLit("")
+          )
+        ),
+        nnkElseExpr.newTree(
+          nnkStmtList.newTree(
+            nnkInfix.newTree(
+              newIdentNode("&"),
+              nnkDotExpr.newTree(
+                newIdentNode("rule"),
+                newIdentNode("fileName")
+              ),
+              newLit(": ")
+            )
+          )
+        )
+      )
+    )
+  ),
+  nnkIfStmt.newTree(
+    nnkElifBranch.newTree(
+      newIdentNode("isParent"),
+      nnkStmtList.newTree(
+        nnkAsgn.newTree(
+          nnkDotExpr.newTree(
+            newIdentNode("rule"),
+            newIdentNode("parent")
+          ),
+          newIdentNode("false")
+        ),
+        code
+      )
+    )
+  )
+  )
 
 template startCheck*(code: untyped): untyped =
   ## Run the custom code each time when the check for a node starts
