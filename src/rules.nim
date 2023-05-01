@@ -388,5 +388,4 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       ruleShowForCheck]), nnkConstDef.newTree(children = [newIdentNode(
       i = "foundMessage"), newIdentNode(i = "string"), ruleFoundMessage]),
       nnkConstDef.newTree(children = [newIdentNode(i = "notFoundMessage"),
-      newIdentNode(i = "string"), ruleNotFoundMessage])])]
-  )
+      newIdentNode(i = "string"), ruleNotFoundMessage])])])
