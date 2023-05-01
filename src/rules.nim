@@ -103,9 +103,7 @@ proc errorMessage*(text: string; e: ref Exception = nil): int {.sideEffect,
     var message: string = text
     if e != nil:
       message.add(y = getCurrentExceptionMsg())
-      {.ruleOff: "namedParams".}
       when defined(debug):
-        {.ruleOn: "namedParams".}
         message.add(y = getStackTrace(e = e))
     try:
       log(level = lvlFatal, args = message)
