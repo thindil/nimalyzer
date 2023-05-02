@@ -26,7 +26,7 @@
 ## Provides code for parse the program's configuration file
 
 # Standard library imports
-import std/[os, parseopt]
+import std/[os, parseopt, sequtils]
 # Internal modules imports
 import rules, utils
 
@@ -102,8 +102,7 @@ proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
             abortProgram(message = "Can't add files to check. Reason: ",
                 e = getCurrentException())
         # Set the program's rule to test the code
-        elif line.startsWith(prefix = "check") or line.startsWith(
-            prefix = "search") or line.startsWith(prefix = "count"):
+        elif availableRuleTypes.anyIt(pred = line.startsWith(prefix = it)):
           var configRule: OptParser = initOptParser(cmdline = line)
           configRule.next
           let ruleType: RuleTypes = try:
