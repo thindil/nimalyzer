@@ -8,6 +8,7 @@ of the program.
 
 ### Changed
 - Better checking for named parameters by `namedParams` rule
+- Don't check for named parameters in *defined* procedure by `namedParams` rule
 
 ### Fixed
 - Typo in Changelog
