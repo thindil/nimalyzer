@@ -35,7 +35,10 @@ type RuleData* = object ## Contains information about the configuration of the p
   options*: seq[string] ## The options list provided by the user in a configuration file
   negation*: bool      ## If true, the rule is negation
   ruleType*: RuleTypes ## The type of the rule
-  index*: int ## The index of the rule
+  index*: int          ## The index of the rule
+
+var fixCommand*: string = when defined(macos) or defined(macosx) or defined(
+    windows): "open" else: "xdg-open" & " {file} {line}"
 
 proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
     RuleData]] {.sideEffect, raises: [], tags: [ReadIOEffect, RootEffect],
@@ -81,6 +84,12 @@ proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
               fmtStr = "[$time] - $levelname: "))
           message(text = "Added file '" & fileName & "' as log file.",
               level = lvlDebug)
+        # Set the command which will be executed when rule type fix encounter
+        # a problem
+        elif line.startsWith(prefix = "fixcommand"):
+          fixCommand = line[11..^1]
+          message(text = "Command to execute for fix rules type set to '" &
+              fixCommand & "'.", level = lvlDebug)
         # Set the source code file to check
         elif line.startsWith(prefix = "source"):
           let fileName: string = unixToNativePath(path = line[7..^1])
