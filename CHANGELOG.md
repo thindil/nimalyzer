@@ -9,6 +9,8 @@ of the program.
 ### Changed
 - Better checking for named parameters by `namedParams` rule
 - Don't check for named parameters in *defined* procedure by `namedParams` rule
+- Don't check for type or value for declarations which unpack tuples by
+  `varDeclared` rule
 
 ### Fixed
 - Typo in Changelog
