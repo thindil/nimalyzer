@@ -117,6 +117,9 @@ checkRule:
     try:
       # Sometimes the compiler detects declarations as children of the node
       if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
+        # Ignore declarations which are unpacked tuples
+        if startsWith(s = $node[0], prefix = '('):
+          continue
         # Check each variable declaration if meet the rule requirements
         for declaration in node.items:
           # Check if declaration of variable sets its type
@@ -130,6 +133,9 @@ checkRule:
       # And sometimes the compiler detects declarations as the node
       elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
           nkLetSection, nkConstSection}:
+        # Ignore declarations which are unpacked tuples
+        if startsWith(s = $astNode[0], prefix = '('):
+          continue
         # Check if declaration of variable sets its type
         if rule.options[0] in ["full", "type"]:
           setCheckResult(node = node, index = 1,
