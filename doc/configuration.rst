@@ -18,7 +18,6 @@ Available settings
 
 Verbosity
 ---------
-
 The minimal level of messages which will be shown in the program output. It is
 an optional parameter. If not set, the program will be show only the standard
 messages. The message about starting the program, will always be shown as it
@@ -42,6 +41,18 @@ file. If you don't want to save any configuration related output, you can put
 it at the end of the file.
 ::
     output nimalyzer.log
+
+Fix rule command
+----------------
+The command which will be executed when the fix type of the program's rule
+encounter a problem and the rule doesn't contain a code to automatically fix
+it. It is an optional parameter. If not set, the program will try to open the
+selected file in editor. Available parameters for the command are: {file}
+which during execution will be replaced by the relative path to the currently
+checked file, and {line} which will be replaced by the line in the code which
+causes the problem. The setting below will open the file in NeoVim.
+::
+    fixcommand nvim +{line} {file}
 
 Source
 ------
