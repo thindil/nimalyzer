@@ -88,9 +88,9 @@ checkRule:
     # Check only elements which can have documentation
     if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
         nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
-        nkEnumTy, nkConstSection, nkConstTy}:
-      # Special check for constant declaration section
-      if node.kind == nkConstSection:
+        nkEnumTy, nkConstSection, nkConstTy, nkVarSection}:
+      # Special check for constant and variables declaration section
+      if node.kind in {nkConstSection, nkVarSection}:
         ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
       else:
         # Set the name of the declared entity which is checked for documentation
