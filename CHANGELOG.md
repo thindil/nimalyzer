@@ -6,6 +6,10 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- Checking global variables declarations do they have documentation with
+  `hasDoc` rule
+
 ### Changed
 - Better checking for named parameters by `namedParams` rule
 - Don't check for named parameters in *defined* procedure by `namedParams` rule
