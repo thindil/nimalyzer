@@ -40,7 +40,7 @@ type
 
   RuleTypes* = enum
     ## the types of the program's rules
-    none, check, search, count
+    none, check, search, count, fix
 
   RuleOptionsTypes* = enum
     ## the available types of the program's rules' options
@@ -63,7 +63,7 @@ type
     optionValues*: seq[string] ## If the rule has option type custom, the values for the option
     minOptions*: Natural            ## The minumal amount of options required by the rule
 
-const availableRuleTypes*: array[3, string] = ["check", "search", "count"]
+const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
 
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
