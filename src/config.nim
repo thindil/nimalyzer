@@ -45,6 +45,12 @@ var fixCommand*: string = when defined(macos) or defined(macosx) or defined(
 proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
     RuleData]] {.sideEffect, raises: [], tags: [ReadIOEffect, RootEffect],
     contractual.} =
+  ## Parse the configuration file and get all the program's settings
+  ##
+  ## * configFile - the path to the configuration file which will be parsed
+  ##
+  ## Returns tuple with the list of source code files to check and the list of
+  ## the program's rules to check.
   require:
     configFile.len > 0
   body:
