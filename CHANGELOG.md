@@ -19,6 +19,8 @@ of the program.
 
 ### Fixed
 - Typo in Changelog
+- `hasDoc` rule doesn't detect if procedure doesn't have documentation if one
+  of its child has it
 
 ## [0.3.0] - 2023-04-28
 
