@@ -102,8 +102,8 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
     try:
       # Open or create a help file for configuration to write
-      let configdocFile: File = open(filename = "doc" & DirSep & "configuration.rst",
-          mode = fmWrite)
+      let configdocFile: File = open(filename = "doc" & DirSep &
+          "configuration.rst", mode = fmWrite)
 
       # Create the file header
       createHeader(title = "Configuration file syntax", docFile = configdocFile)
@@ -111,8 +111,8 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
       # Get the documentation of the program's rules
       let configFile: File = open(filename = "config" & DirSep & "nimalyzer.cfg")
-      const settings: array[8, string] = ["verbosity", "output", "source",
-          "files", "directory", "check", "search", "count"]
+      const settings: array[10, string] = ["verbosity", "output", "source",
+          "files", "directory", "check", "search", "count", "fixcommand", "fix"]
       for line in configFile.lines:
         var newLine: string = line
         newLine.removePrefix(chars = {'#', ' '})
