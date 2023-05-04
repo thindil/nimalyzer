@@ -15,6 +15,7 @@ of the program.
 - Don't check for named parameters in *defined* procedure by `namedParams` rule
 - Don't check for type or value for declarations which unpack tuples by
   `varDeclared` rule
+- Updated the project's documentation
 
 ### Fixed
 - Typo in Changelog
