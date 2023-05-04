@@ -54,6 +54,7 @@ type
     ruleType*: RuleTypes  ## The type of rule
     amount*: int          ## The amount of results found by the rule
     enabled*: bool        ## If false, the rule is temporary disabled by pragmas
+    fixCommand*: string ## The command executed by the rule if no custom code is set for fix type of rule
 
   RuleSettings* = object ## Contains information about the program's rule configuration
     name*: string                   ## The name of the rule
@@ -62,6 +63,8 @@ type
     options*: seq[RuleOptionsTypes] ## The rule's options which can be set
     optionValues*: seq[string] ## If the rule has option type custom, the values for the option
     minOptions*: Natural            ## The minumal amount of options required by the rule
+    fixProc*: proc (astNode: PNode; fileName,
+        line: string)               ## The procedure used to auto fix the rule
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules

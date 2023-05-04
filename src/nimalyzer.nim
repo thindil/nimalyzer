@@ -49,7 +49,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     if paramCount() == 0:
       abortProgram(message = "No configuration file specified. Please run the program with path to the config file as an argument.")
     # Read the configuration file and set the program
-    let (sources, rules) = parseConfig(configFile = paramStr(i = 1))
+    let (sources, rules, fixCommand) = parseConfig(configFile = paramStr(i = 1))
     # Check if the lists of source code files and rules is set
     if sources.len == 0:
       abortProgram(message = "No files specified to check. Please enter any files names to the configuration file.")
@@ -80,7 +80,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         try:
           let astNode: PNode = codeParser.parseAll
           codeParser.closeParser
-          var currentRule: RuleOptions = RuleOptions(fileName: source)
+          var currentRule: RuleOptions = RuleOptions(fileName: source,
+              fixCommand: fixCommand)
           # Check the converted source code with each selected rule
           for index, rule in rules.pairs:
             message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &

@@ -37,20 +37,21 @@ type RuleData* = object ## Contains information about the configuration of the p
   ruleType*: RuleTypes ## The type of the rule
   index*: int          ## The index of the rule
 
-var fixCommand*: string = when defined(macos) or defined(macosx) or defined(
+const fixCommand: string = when defined(macos) or defined(macosx) or defined(
     windows): "open" else: "xdg-open" & " {file}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
 
 proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
-    RuleData]] {.sideEffect, raises: [], tags: [ReadIOEffect, RootEffect],
-    contractual.} =
+    RuleData], fixCommand: string] {.sideEffect, raises: [], tags: [
+    ReadIOEffect, RootEffect], contractual.} =
   ## Parse the configuration file and get all the program's settings
   ##
   ## * configFile - the path to the configuration file which will be parsed
   ##
-  ## Returns tuple with the list of source code files to check and the list of
-  ## the program's rules to check.
+  ## Returns tuple with the list of source code files to check, the list of
+  ## the program's rules to check and the command executed when rule doesn't
+  ## set own code for fix type of rules.
   require:
     configFile.len > 0
   body:
@@ -70,7 +71,7 @@ proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
           sources.add(y = fileName)
           message(text = "Added file '" & fileName &
               "' to the list of files to check.", level = lvlDebug)
-
+    result.fixCommand = fixCommand
     try:
       # Read the program's configuration
       for line in configFile.lines:
@@ -95,9 +96,9 @@ proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
         # Set the command which will be executed when rule type fix encounter
         # a problem
         elif line.startsWith(prefix = "fixcommand"):
-          fixCommand = line[11..^1]
+          result.fixCommand = line[11..^1]
           message(text = "Command to execute for fix rules type set to '" &
-              fixCommand & "'.", level = lvlDebug)
+              result.fixCommand & "'.", level = lvlDebug)
         # Set the source code file to check
         elif line.startsWith(prefix = "source"):
           let fileName: string = unixToNativePath(path = line[7..^1])
