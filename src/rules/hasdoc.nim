@@ -113,7 +113,7 @@ checkRule:
             var hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
                 node.comment.len > 0
               else:
-                node.hasSubnodeWith(kind = nkCommentStmt)
+                node[^1].len > 0 and node[^1][0].kind == nkCommentStmt
             if node.kind == nkTemplateDef and not hasDoc:
               hasDoc = node.comment.len > 0
             setResult(checkResult = hasDoc, rule = rule,
