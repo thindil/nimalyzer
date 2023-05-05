@@ -376,7 +376,31 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       newIdentNode(i = "PNode"), newEmptyNode()), nnkIdentDefs.newTree(
       children = newIdentNode(i = "rule"), nnkVarTy.newTree(
       children = newIdentNode(i = "RuleOptions")), newEmptyNode())),
-      newEmptyNode(), newEmptyNode(), newEmptyNode()), nnkLetSection.newTree(
+      newEmptyNode(), newEmptyNode(), newEmptyNode()), nnkStmtList.newTree(
+    nnkProcDef.newTree(
+    newIdentNode("ruleFix"),
+    newEmptyNode(),
+    newEmptyNode(),
+    nnkFormalParams.newTree(
+      newEmptyNode(),
+      nnkIdentDefs.newTree(
+        newIdentNode("astNode"),
+        newIdentNode("PNode"),
+        newEmptyNode()
+    ),
+    nnkIdentDefs.newTree(
+      newIdentNode("fileName"),
+      newIdentNode("line"),
+      newIdentNode("string"),
+      newEmptyNode()
+    )
+  ),
+    newEmptyNode(),
+    newEmptyNode(),
+    newEmptyNode()
+  )
+  ),
+      nnkLetSection.newTree(
       children = nnkIdentDefs.newTree(children = nnkPostfix.newTree(
       children = newIdentNode(i = "*"), newIdentNode(i = "ruleSettings")),
       newIdentNode(i = "RuleSettings"), nnkObjConstr.newTree(
@@ -393,3 +417,31 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       i = "foundMessage"), newIdentNode(i = "string"), ruleFoundMessage]),
       nnkConstDef.newTree(children = [newIdentNode(i = "notFoundMessage"),
       newIdentNode(i = "string"), ruleNotFoundMessage])])])
+
+macro fixRule*(code: untyped): untyped =
+  return nnkStmtList.newTree(
+  nnkProcDef.newTree(
+    newIdentNode("ruleFix"),
+    newEmptyNode(),
+    newEmptyNode(),
+    nnkFormalParams.newTree(
+      newEmptyNode(),
+      nnkIdentDefs.newTree(
+        newIdentNode("astNode"),
+        newIdentNode("PNode"),
+        newEmptyNode()
+      ),
+      nnkIdentDefs.newTree(
+        newIdentNode("fileName"),
+        newIdentNode("line"),
+        newIdentNode("string"),
+        newEmptyNode()
+      )
+    ),
+    newEmptyNode(),
+    newEmptyNode(),
+    nnkStmtList.newTree(
+      code
+    )
+  )
+  )
