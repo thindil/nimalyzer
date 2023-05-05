@@ -191,3 +191,6 @@ checkRule:
           $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
     discard
+
+fixRule:
+  discard

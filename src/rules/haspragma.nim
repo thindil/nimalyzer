@@ -237,3 +237,6 @@ checkRule:
       if not rule.enabled and rule.amount == 0:
         rule.amount = 1
         return
+
+fixRule:
+  discard

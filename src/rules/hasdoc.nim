@@ -127,3 +127,6 @@ checkRule:
             return
   endCheck:
     discard
+
+fixRule:
+  discard

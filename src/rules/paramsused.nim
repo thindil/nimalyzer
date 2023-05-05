@@ -155,3 +155,5 @@ checkRule:
   endCheck:
     let negation: string = (if rule.negation: " not" else: "")
 
+fixRule:
+  discard

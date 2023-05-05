@@ -196,3 +196,6 @@ checkRule:
           $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
     let negation: string = (if rule.negation: "'t" else: "")
+
+fixRule:
+  discard
