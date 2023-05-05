@@ -402,29 +402,29 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       newIdentNode(i = "string"), ruleNotFoundMessage])])])
 
 macro fixRule*(code: untyped): untyped =
-  return nnkStmtList.newTree(
-  nnkProcDef.newTree(
-    newIdentNode("ruleFix"),
+  return nnkStmtList.newTree(children = [
+  nnkProcDef.newTree(children = [
+    newIdentNode(i = "ruleFix"),
     newEmptyNode(),
     newEmptyNode(),
-    nnkFormalParams.newTree(
+    nnkFormalParams.newTree(children = [
       newEmptyNode(),
-      nnkIdentDefs.newTree(
-        newIdentNode("astNode"),
-        newIdentNode("PNode"),
+      nnkIdentDefs.newTree(children = [
+        newIdentNode(i = "astNode"),
+        newIdentNode(i = "PNode"),
         newEmptyNode()
-    ),
-    nnkIdentDefs.newTree(
-      newIdentNode("fileName"),
-      newIdentNode("line"),
-      newIdentNode("string"),
+    ]),
+    nnkIdentDefs.newTree(children = [
+      newIdentNode(i = "fileName"),
+      newIdentNode(i = "line"),
+      newIdentNode(i = "string"),
       newEmptyNode()
-    )
-  ),
+    ])
+  ]),
     newEmptyNode(),
     newEmptyNode(),
-    nnkStmtList.newTree(
+    nnkStmtList.newTree(children =
       code
     )
-  )
-  )
+  ])
+  ])
