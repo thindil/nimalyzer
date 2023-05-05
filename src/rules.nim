@@ -377,28 +377,28 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       children = newIdentNode(i = "rule"), nnkVarTy.newTree(
       children = newIdentNode(i = "RuleOptions")), newEmptyNode())),
       newEmptyNode(), newEmptyNode(), newEmptyNode()), nnkStmtList.newTree(
-    nnkProcDef.newTree(
-    newIdentNode("ruleFix"),
+    nnkProcDef.newTree(children = [
+    newIdentNode(i = "ruleFix"),
     newEmptyNode(),
     newEmptyNode(),
-    nnkFormalParams.newTree(
+    nnkFormalParams.newTree(children = [
       newEmptyNode(),
-      nnkIdentDefs.newTree(
-        newIdentNode("astNode"),
-        newIdentNode("PNode"),
+      nnkIdentDefs.newTree(children = [
+        newIdentNode(i = "astNode"),
+        newIdentNode(i = "PNode"),
         newEmptyNode()
-    ),
-    nnkIdentDefs.newTree(
-      newIdentNode("fileName"),
-      newIdentNode("line"),
-      newIdentNode("string"),
-      newEmptyNode()
+    ]),
+    nnkIdentDefs.newTree(children = [
+      newIdentNode(i = "fileName"),
+      newIdentNode(i = "line"),
+      newIdentNode(i = "string"),
+      newEmptyNode()]
     )
-  ),
+  ]),
     newEmptyNode(),
     newEmptyNode(),
     newEmptyNode()
-  )
+  ])
   ),
       nnkLetSection.newTree(
       children = nnkIdentDefs.newTree(children = nnkPostfix.newTree(
