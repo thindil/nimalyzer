@@ -38,7 +38,7 @@ type RuleData* = object ## Contains information about the configuration of the p
   index*: int          ## The index of the rule
 
 const fixCommand: string = when defined(macos) or defined(macosx) or defined(
-    windows): "open" else: "xdg-open" & " {file}"
+    windows): "open" else: "xdg-open" & " {fileName}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
 
