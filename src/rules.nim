@@ -402,6 +402,10 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       newIdentNode(i = "string"), ruleNotFoundMessage])])])
 
 macro fixRule*(code: untyped): untyped =
+  ## Run the code for fix the problem with the selected rule. If user doesn't
+  ## specify the code to run, execute the fixCommand
+  ##
+  ## * code - the code which will be run to fix the problem
   return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
       newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
       nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
