@@ -415,40 +415,40 @@ macro fixRule*(code: untyped): untyped =
       newEmptyNode()])]), newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(
       children = (if code[0].kind == nnkDiscardStmt:
       nnkStmtList.newTree(
-      nnkIfStmt.newTree(
-        nnkElifBranch.newTree(
-          nnkInfix.newTree(
-            newIdentNode("!="),
-            nnkCall.newTree(
+      nnkIfStmt.newTree(children = [
+        nnkElifBranch.newTree(children = [
+          nnkInfix.newTree(children = [
+            newIdentNode(i = "!="),
+            nnkCall.newTree(children = [
               newIdentNode("execShellCmd"),
-              nnkExprEqExpr.newTree(
+              nnkExprEqExpr.newTree(children = [
                 newIdentNode("command"),
                 newIdentNode("fixCommand")
-              )
-            ),
-            newLit(0)
-          ),
-          nnkStmtList.newTree(
-            nnkDiscardStmt.newTree(
-              nnkCall.newTree(
+              ])
+            ]),
+            newLit(i = 0)
+          ]),
+          nnkStmtList.newTree(children =
+            nnkDiscardStmt.newTree(children =
+              nnkCall.newTree(children = [
                 newIdentNode("errorMessage"),
-                nnkExprEqExpr.newTree(
-                  newIdentNode("text"),
-                  nnkInfix.newTree(
-                    newIdentNode("&"),
+                nnkExprEqExpr.newTree(children = [
+                  newIdentNode(i = "text"),
+                  nnkInfix.newTree(children = [
+                    newIdentNode(i = "&"),
                     nnkInfix.newTree(
-                      newIdentNode("&"),
-                      newLit("Can't execute command '"),
-                      newIdentNode("fixCommand")
+                      newIdentNode(i = "&"),
+                      newLit(s = "Can't execute command '"),
+                      newIdentNode(i = "fixCommand")
                     ),
-                    newLit("' for fix type of rule.")
-                  )
-                )
-              )
+                    newLit(s = "' for fix type of rule.")
+                  ])
+                ])
+              ])
             )
           )
-        )
-      )
+        ])
+      ])
       )
     else:
       code))])])
