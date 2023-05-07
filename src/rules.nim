@@ -63,8 +63,7 @@ type
     options*: seq[RuleOptionsTypes] ## The rule's options which can be set
     optionValues*: seq[string] ## If the rule has option type custom, the values for the option
     minOptions*: Natural            ## The minumal amount of options required by the rule
-    fixProc*: proc (astNode: PNode; fileName,
-        line: string)               ## The procedure used to auto fix the rule
+    fixProc*: proc (astNode: PNode; fixCommand: string) ## The procedure used to auto fix the rule
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
@@ -381,7 +380,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       newEmptyNode(), nnkFormalParams.newTree(children = [newEmptyNode(),
       nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
       newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
-      children = [newIdentNode(i = "fileName"), newIdentNode(i = "fixCommand"),
+      children = [newIdentNode(i = "fixCommand"),
       newIdentNode(i = "string"), newEmptyNode()])]), newEmptyNode(),
       newEmptyNode(), newEmptyNode()])), nnkLetSection.newTree(
       children = nnkIdentDefs.newTree(children = nnkPostfix.newTree(
@@ -411,8 +410,7 @@ macro fixRule*(code: untyped): untyped =
       newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
       nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
       children = [newIdentNode(i = "astNode"), newIdentNode(i = "PNode"),
-      newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(
-      i = "fileName"), newIdentNode(i = "fixCommand"), newIdentNode(
+      newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(i = "fixCommand"), newIdentNode(
           i = "string"),
       newEmptyNode()])]), newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(
       children = (if code[0].kind == nnkDiscardStmt:
