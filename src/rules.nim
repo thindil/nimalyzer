@@ -34,7 +34,7 @@ import contracts
 import pragmas
 
 # Export needed modules, so rules don't need to import them
-export logging, strutils, ast, renderer, contracts, pragmas, strformat, os
+export logging, strutils, ast, renderer, contracts, pragmas, os
 
 type
 
@@ -407,21 +407,6 @@ macro fixRule*(code: untyped): untyped =
   ## specify the code to run, execute the fixCommand
   ##
   ## * code - the code which will be run to fix the problem
-  let
-    formattedCommand = "Test"
-    fixCode = if code[0].kind == nnkDiscardStmt:
-      nnkStmtList.newTree(
-        nnkDiscardStmt.newTree(
-          nnkCall.newTree(
-            newIdentNode("execShellCmd"),
-            nnkExprEqExpr.newTree(
-              newIdentNode("command"),
-              newIdentNode("formattedCommand")
-          )
-        )
-      ))
-    else:
-      code
   return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
       newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
       nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
@@ -430,4 +415,16 @@ macro fixRule*(code: untyped): untyped =
       i = "fileName"), newIdentNode(i = "fixCommand"), newIdentNode(
           i = "string"),
       newEmptyNode()])]), newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(
-      children = code)])])
+      children = (if code[0].kind == nnkDiscardStmt:
+      nnkStmtList.newTree(
+        nnkDiscardStmt.newTree(
+          nnkCall.newTree(
+            newIdentNode("execShellCmd"),
+            nnkExprEqExpr.newTree(
+              newIdentNode("command"),
+              newIdentNode("fixCommand")
+          )
+        )
+      ))
+    else:
+      code))])])
