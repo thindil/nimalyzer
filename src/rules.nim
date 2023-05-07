@@ -410,45 +410,20 @@ macro fixRule*(code: untyped): untyped =
       newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
       nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
       children = [newIdentNode(i = "astNode"), newIdentNode(i = "PNode"),
-      newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(i = "fixCommand"), newIdentNode(
-          i = "string"),
-      newEmptyNode()])]), newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(
-      children = (if code[0].kind == nnkDiscardStmt:
-      nnkStmtList.newTree(
-      nnkIfStmt.newTree(children = [
-        nnkElifBranch.newTree(children = [
-          nnkInfix.newTree(children = [
-            newIdentNode(i = "!="),
-            nnkCall.newTree(children = [
-              newIdentNode("execShellCmd"),
-              nnkExprEqExpr.newTree(children = [
-                newIdentNode("command"),
-                newIdentNode("fixCommand")
-              ])
-            ]),
-            newLit(i = 0)
-          ]),
-          nnkStmtList.newTree(children =
-            nnkDiscardStmt.newTree(children =
-              nnkCall.newTree(children = [
-                newIdentNode("errorMessage"),
-                nnkExprEqExpr.newTree(children = [
-                  newIdentNode(i = "text"),
-                  nnkInfix.newTree(children = [
-                    newIdentNode(i = "&"),
-                    nnkInfix.newTree(
-                      newIdentNode(i = "&"),
-                      newLit(s = "Can't execute command '"),
-                      newIdentNode(i = "fixCommand")
-                    ),
-                    newLit(s = "' for fix type of rule.")
-                  ])
-                ])
-              ])
-            )
-          )
-        ])
-      ])
-      )
+      newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(
+      i = "fixCommand"), newIdentNode(i = "string"), newEmptyNode()])]),
+      newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children = (if code[
+      0].kind == nnkDiscardStmt: nnkStmtList.newTree(nnkIfStmt.newTree(
+      children = [nnkElifBranch.newTree(children = [nnkInfix.newTree(
+      children = [newIdentNode(i = "!="), nnkCall.newTree(children = [
+      newIdentNode("execShellCmd"), nnkExprEqExpr.newTree(children = [
+      newIdentNode("command"), newIdentNode("fixCommand")])]), newLit(i = 0)]),
+      nnkStmtList.newTree(children = nnkDiscardStmt.newTree(
+      children = nnkCall.newTree(children = [newIdentNode("errorMessage"),
+      nnkExprEqExpr.newTree(children = [newIdentNode(i = "text"),
+      nnkInfix.newTree(children = [newIdentNode(i = "&"), nnkInfix.newTree(
+      newIdentNode(i = "&"), newLit(s = "Can't execute command '"),
+      newIdentNode(i = "fixCommand")), newLit(
+      s = "' for fix type of rule.")])])])))])]))
     else:
       code))])])
