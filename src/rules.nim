@@ -26,7 +26,7 @@
 ## Provides various things for the program rules
 
 # Standard library imports
-import std/[logging, macros, strformat, strutils]
+import std/[logging, macros, os, strformat, strutils]
 # External modules imports
 import compiler/[ast, renderer]
 import contracts
@@ -34,7 +34,7 @@ import contracts
 import pragmas
 
 # Export needed modules, so rules don't need to import them
-export logging, strutils, ast, renderer, contracts, pragmas
+export logging, strutils, ast, renderer, contracts, pragmas, strformat, os
 
 type
 
@@ -407,6 +407,21 @@ macro fixRule*(code: untyped): untyped =
   ## specify the code to run, execute the fixCommand
   ##
   ## * code - the code which will be run to fix the problem
+  let
+    formattedCommand = "Test"
+    fixCode = if code[0].kind == nnkDiscardStmt:
+      nnkStmtList.newTree(
+        nnkDiscardStmt.newTree(
+          nnkCall.newTree(
+            newIdentNode("execShellCmd"),
+            nnkExprEqExpr.newTree(
+              newIdentNode("command"),
+              newIdentNode("formattedCommand")
+          )
+        )
+      ))
+    else:
+      code
   return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
       newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
       nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
