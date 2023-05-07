@@ -415,14 +415,40 @@ macro fixRule*(code: untyped): untyped =
       newEmptyNode()])]), newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(
       children = (if code[0].kind == nnkDiscardStmt:
       nnkStmtList.newTree(
-        nnkDiscardStmt.newTree(
-          nnkCall.newTree(
-            newIdentNode("execShellCmd"),
-            nnkExprEqExpr.newTree(
-              newIdentNode("command"),
-              newIdentNode("fixCommand")
+      nnkIfStmt.newTree(
+        nnkElifBranch.newTree(
+          nnkInfix.newTree(
+            newIdentNode("!="),
+            nnkCall.newTree(
+              newIdentNode("execShellCmd"),
+              nnkExprEqExpr.newTree(
+                newIdentNode("command"),
+                newIdentNode("fixCommand")
+              )
+            ),
+            newLit(0)
+          ),
+          nnkStmtList.newTree(
+            nnkDiscardStmt.newTree(
+              nnkCall.newTree(
+                newIdentNode("errorMessage"),
+                nnkExprEqExpr.newTree(
+                  newIdentNode("text"),
+                  nnkInfix.newTree(
+                    newIdentNode("&"),
+                    nnkInfix.newTree(
+                      newIdentNode("&"),
+                      newLit("Can't execute command '"),
+                      newIdentNode("fixCommand")
+                    ),
+                    newLit("' for fix type of rule.")
+                  )
+                )
+              )
+            )
           )
         )
-      ))
+      )
+      )
     else:
       code))])])
