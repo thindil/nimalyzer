@@ -389,7 +389,9 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       children = newIdentNode(i = "RuleSettings"), nnkExprColonExpr.newTree(
       children = newIdentNode(i = "name"), ruleName),
       nnkExprColonExpr.newTree(children = newIdentNode(i = "checkProc"),
-      newIdentNode(i = "ruleCheck")), nnkExprColonExpr.newTree(
+      newIdentNode(i = "ruleCheck")),
+      nnkExprColonExpr.newTree(children = newIdentNode(i = "fixProc"),
+      newIdentNode(i = "ruleFix")), nnkExprColonExpr.newTree(
       children = newIdentNode(i = "options"), ruleOptions),
       nnkExprColonExpr.newTree(children = newIdentNode(i = "optionValues"),
       ruleOptionValues), nnkExprColonExpr.newTree(children = newIdentNode(
