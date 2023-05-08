@@ -328,10 +328,11 @@ template endCheck*(code: untyped): untyped =
           rule.amount = 0
       else:
         if rule.ruleType != check or showForCheck:
+          let messageLevel = (if showForCheck: lvlError else: lvlNotice)
           message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
               s = notFoundMessage.fmt) else: notFoundMessage.fmt),
               returnValue = rule.amount,
-              level = lvlNotice, decrease = false)
+              level = messageLevel, decrease = false)
         rule.amount = 0
 
 macro checkRule*(code: untyped): untyped =
