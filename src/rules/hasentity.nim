@@ -110,15 +110,16 @@ ruleConfig(ruleName = "hasentity",
   ruleMinOptions = 2,
   ruleShowForCheck = true)
 
-proc checkEntity(nodeName, line: string; rule: var RuleOptions; hasPrefix: bool) {.raises: [],
-    tags: [RootEffect], contractual.} =
+proc checkEntity(nodeName, line, messagePrefix: string;
+    rule: var RuleOptions) {.raises: [], tags: [RootEffect], contractual.} =
   ## Check if the selected entity's name fulfill the rule requirements and
   ## log the message if needed.
   ##
-  ## * nodeName - the name of the entity which will be checked
-  ## * line     - the line of code in which the entity is declared
-  ## * rule     - the rule options set by the user and the previous iterations
-  ##              of the procedure
+  ## * nodeName      - the name of the entity which will be checked
+  ## * line          - the line of code in which the entity is declared
+  ## * messagePrefix - the begining of the log message which will be shown
+  ## * rule          - the rule options set by the user and the previous iterations
+  ##                   of the procedure
   ##
   ## Returns the updated rule parameter
   if not rule.enabled:
@@ -126,11 +127,11 @@ proc checkEntity(nodeName, line: string; rule: var RuleOptions; hasPrefix: bool)
   # The selected entity found in the node
   if rule.options[1].len == 0 or startsWith(s = nodeName, prefix = rule.options[1]):
     setResult(checkResult = true, rule = rule, positiveMessage = (
-        if not hasPrefix: "H" else: rule.fileName & ": h") &
+        if messagePrefix.len == 0: "H" else: messagePrefix & ": h") &
         "as declared " & rule.options[0] & " with name '" & nodeName &
-        "' at line: " & line & ".", negativeMessage = (if not hasPrefix:
-        "H" else: rule.fileName & ": h") & "as declared " &
-        rule.options[0] & " with name '" & nodeName & "' at line: " & line & ".")
+        "' at line: " & line & ".", negativeMessage = (if messagePrefix.len == 0:
+      "H" else: messagePrefix & ": h") & "as declared " &
+      rule.options[0] & " with name '" & nodeName & "' at line: " & line & ".")
 
 checkRule:
   initCheck:
@@ -174,7 +175,7 @@ checkRule:
                   except KeyError, Exception:
                     ""
                 checkEntity(nodeName = childName, line = $child.info.line,
-                    rule = rule, hasPrefix = messagePrefix.len > 0)
+                    messagePrefix = messagePrefix, rule = rule)
             elif childIndex <= node.sons.high:
               let childName: string = try:
                   if childIndex > -1:
@@ -184,11 +185,11 @@ checkRule:
                 except KeyError, Exception:
                   ""
               checkEntity(nodeName = childName, line = $node.info.line,
-                  rule = rule, hasPrefix = messagePrefix.len > 0)
+                  messagePrefix = messagePrefix, rule = rule)
         # Check the node itself
         elif node.kind == nodeKind:
           checkEntity(nodeName = $node[0], line = $node.info.line,
-              rule = rule, hasPrefix = messagePrefix.len > 0)
+              messagePrefix = messagePrefix, rule = rule)
       except KeyError, Exception:
         rule.amount = errorMessage(
             text = "Error during checking hasEntity rule: ",

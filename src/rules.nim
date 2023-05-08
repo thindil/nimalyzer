@@ -321,18 +321,16 @@ template endCheck*(code: untyped): untyped =
         if rule.ruleType == check:
           rule.amount = 0
         else:
-          message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-              s = notFoundMessage.fmt) else: notFoundMessage.fmt),
-              returnValue = rule.amount,
-              level = lvlNotice, decrease = false)
+          message(text = (if messagePrefix.len > 0: messagePrefix else: "") &
+              capitalizeAscii(s = notFoundMessage.fmt),
+              returnValue = rule.amount, level = lvlNotice, decrease = false)
           rule.amount = 0
       else:
         if rule.ruleType != check or showForCheck:
           let messageLevel = (if showForCheck: lvlError else: lvlNotice)
-          message(text = (if getLogFilter() < lvlNotice: capitalizeAscii(
-              s = notFoundMessage.fmt) else: notFoundMessage.fmt),
-              returnValue = rule.amount,
-              level = messageLevel, decrease = false)
+          message(text = (if messagePrefix.len > 0: messagePrefix else: "") &
+              capitalizeAscii(s = notFoundMessage.fmt),
+              returnValue = rule.amount, level = messageLevel, decrease = false)
         rule.amount = 0
 
 macro checkRule*(code: untyped): untyped =
