@@ -21,8 +21,10 @@ of the program.
 - Typo in Changelog
 - `hasDoc` rule doesn't detect if procedure doesn't have documentation if one
   of its child has it
-- Message level for `hadEntity` rule when it doesn't find the selected entity
+- Message level for `hasEntity` rule when it doesn't find the selected entity
   with check type of the rule
+- Message text for `hasEntity` rule when the program's verbosity is set to
+  higher level than default
 
 ## [0.3.0] - 2023-04-28
 
