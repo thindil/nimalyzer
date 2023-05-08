@@ -327,7 +327,7 @@ template endCheck*(code: untyped): untyped =
           rule.amount = 0
       else:
         if rule.ruleType != check or showForCheck:
-          let messageLevel = (if showForCheck: lvlError else: lvlNotice)
+          let messageLevel: Level = (if showForCheck: lvlError else: lvlNotice)
           message(text = (if messagePrefix.len > 0: messagePrefix else: "") &
               capitalizeAscii(s = notFoundMessage.fmt),
               returnValue = rule.amount, level = messageLevel, decrease = false)
