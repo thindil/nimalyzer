@@ -145,7 +145,7 @@ proc setRuleState*(node: PNode; ruleName: string;
           discard
 
 proc setResult*(checkResult: bool; rule: var RuleOptions; positiveMessage,
-    negativeMessage, messagePrefix: string; name, line: string = "") {.raises: [],
+    negativeMessage, messagePrefix: string; params: varargs[string]) {.raises: [],
     tags: [RootEffect], contractual.} =
   ## Update the amount of the rule results
   ##
@@ -158,6 +158,9 @@ proc setResult*(checkResult: bool; rule: var RuleOptions; positiveMessage,
   ## or decreased, depending on the rule settings.
   body:
     # The entity not meet rule's requirements
+    var replacements: seq[(string, string)] = @[]
+    for index, param in params:
+      replacements.add(y = ("{params" & $index & "}", param))
     if not checkResult:
       if rule.negation and rule.ruleType == check:
         rule.amount.inc
@@ -165,28 +168,26 @@ proc setResult*(checkResult: bool; rule: var RuleOptions; positiveMessage,
       if negativeMessage.len > 0:
         if rule.ruleType == check:
           message(text = messagePrefix & negativeMessage.multiReplace(
-              replacements = [("{name}", name), ("{line}", line)]),
-              returnValue = rule.amount)
+              replacements = replacements), returnValue = rule.amount)
           rule.amount = int.low
         else:
           if rule.negation:
             message(text = messagePrefix & negativeMessage.multiReplace(
-                replacements = [("{name}", name), ("{line}", line)]),
-                returnValue = rule.amount, level = lvlNotice, decrease = false)
+                replacements = replacements), returnValue = rule.amount,
+                level = lvlNotice, decrease = false)
     # The enitity meet the rule's requirements
     else:
       if rule.negation:
         if rule.ruleType == check and positiveMessage.len > 0:
           message(text = messagePrefix & positiveMessage.multiReplace(
-              replacements = [("{name}", name), ("{line}", line)]),
-              returnValue = rule.amount)
+              replacements = replacements), returnValue = rule.amount)
         else:
           rule.amount.dec
         return
       if rule.ruleType == search and positiveMessage.len > 0:
         message(text = messagePrefix & positiveMessage.multiReplace(
-            replacements = [("{name}", name), ("{line}", line)]),
-            returnValue = rule.amount, level = lvlNotice, decrease = false)
+            replacements = replacements), returnValue = rule.amount,
+            level = lvlNotice, decrease = false)
       else:
         rule.amount.inc
 
