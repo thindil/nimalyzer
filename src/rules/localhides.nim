@@ -159,12 +159,9 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         if hiddenLine > 0:
           break
     setResult(checkResult = hiddenLine == 0, rule = rule,
-        positiveMessage = messagePrefix & "declaration of '" & $node[0] &
-          "' line: " & $node.info.line & " is not hidden by local variable.",
-        negativeMessage = messagePrefix & "declaration of '" & $node[0] &
-          "' line: " & $node.info.line &
-              " is hidden by local variable in line " &
-          $hiddenLine & ".")
+        positiveMessage = "declaration of '{params[0]}' line: {params[1]} is not hidden by local variable.",
+        negativeMessage = "declaration of '{params[0]}' line: {params[1]} is hidden by local variable in line {params[2]}.",
+        messagePrefix = messagePrefix, params = [$node[0], $node.info.line, $hiddenLine])
 
 checkRule:
   initCheck:

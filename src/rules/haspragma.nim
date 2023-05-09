@@ -138,10 +138,10 @@ proc setResult(procName, line, pragma, messagePrefix: string; hasPragma: bool;
     pragma.len > 0
   body:
     setResult(checkResult = hasPragma, rule = rule,
-        positiveMessage = messagePrefix & "procedure " & procName & " line: " &
-        line & " has declared pragma: " & pragma & ".",
-        negativeMessage = messagePrefix & "procedure " & procName & " line: " &
-        line & " doesn't have declared pragma: " & pragma & ".")
+        positiveMessage = "procedure {params[0]} line: {params[1]} has declared pragma: {params[2]}.",
+        negativeMessage = messagePrefix &
+        "procedure {params[0]} line: {params[1]} doesn't have declared pragma: {params[2]}.",
+        messagePrefix = messagePrefix, params = [procName, line, pragma])
 
 checkRule:
   initCheck:

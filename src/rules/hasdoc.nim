@@ -118,10 +118,9 @@ checkRule:
             if node.kind == nkTemplateDef and not hasDoc:
               hasDoc = node.comment.len > 0
             setResult(checkResult = hasDoc, rule = rule,
-                positiveMessage = "Declaration of {name} at {line} has documentation.",
-                negativeMessage = "Declaration of {name} at {line} doesn't have documentation.",
-                messagePrefix = messagePrefix, name = declName,
-                line = $node.info.line)
+                positiveMessage = "Declaration of {params[0]} at {params[1]} has documentation.",
+                negativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.",
+                messagePrefix = messagePrefix, params = [declName, $node.info.line])
           except KeyError as e:
             rule.amount = errorMessage(
                 text = "Can't check the declared entity '" & declName & "'.", e = e)

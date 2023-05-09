@@ -97,11 +97,9 @@ proc check(node: PNode; rule: var RuleOptions;
     try:
       for i in 1..<node.sons.len:
         setResult(checkResult = node[i].kind == nkExprEqExpr, rule = rule,
-            positiveMessage = messagePrefix & "call " & callName & " line: " &
-            $node.info.line & " doesn't have named parameter number: " & $i &
-            "'.", negativeMessage = messagePrefix & "call " & callName &
-            " line: " & $node.info.line &
-            " doesn't have named parameter number: " & $i & "'.")
+            positiveMessage = "call {params[0]} line: {params[1]} doesn't have named parameter number: {params[2]}'.",
+            negativeMessage = "call {params[0]} line: {params[1]} doesn't have named parameter number: {params[2]}'.",
+            messagePrefix = messagePrefix, params = [callName, $node.info.line, $i])
         if node[i].kind in {nkCall, nkDotCall} and (node[i].sons.len > 1 and
             node[i].sons[1].kind != nkStmtList):
           check(node = node[i], rule = rule, messagePrefix = messagePrefix)
