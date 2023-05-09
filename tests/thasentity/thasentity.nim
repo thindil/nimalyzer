@@ -1,9 +1,9 @@
 discard """
   exitcode: 0
   output: '''FATAL The rule hasentity requires at least 2 options, but only 1 provided: ''.
-NOTICE Doesn't have declared nkProcDef with name 'MyProc'.
+ERROR Doesn't have declared nkProcDef with name 'MyProc'.
 ERROR Has declared nkProcDef with name 'MyProc' at line: 1.
-NOTICE Doesn't have declared nkProcDef with name 'MyProc'.
+ERROR Doesn't have declared nkProcDef with name 'MyProc'.
 NOTICE Has declared nkProcDef with name 'MyProc' at line: 1.
 NOTICE Doesn't have declared nkProcDef with name 'MyProc'.
 NOTICE Declared nkProcDef with name 'MyProc' found: 0
