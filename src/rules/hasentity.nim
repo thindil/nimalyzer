@@ -126,12 +126,12 @@ proc checkEntity(nodeName, line, messagePrefix: string;
     return
   # The selected entity found in the node
   if rule.options[1].len == 0 or startsWith(s = nodeName, prefix = rule.options[1]):
-    setResult(checkResult = true, rule = rule, positiveMessage = (
-        if messagePrefix.len == 0: "H" else: messagePrefix & ": h") &
-        "as declared " & rule.options[0] & " with name '" & nodeName &
-        "' at line: " & line & ".", negativeMessage = (if messagePrefix.len == 0:
-      "H" else: messagePrefix & ": h") & "as declared " &
-      rule.options[0] & " with name '" & nodeName & "' at line: " & line & ".")
+    setResult(checkResult = true, rule = rule,
+        positiveMessage = "Has declared " & rule.options[0] &
+        " with name '{name}' at line: {line}.",
+        negativeMessage = "Has declared " & rule.options[0] &
+        " with name '{name}' at line: {line}.", messagePrefix = messagePrefix,
+        name = nodeName, line = line)
 
 checkRule:
   initCheck:

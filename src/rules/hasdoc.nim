@@ -80,8 +80,9 @@ checkRule:
   initCheck:
     if rule.enabled:
       setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
-          rule = rule, positiveMessage = messagePrefix &
-          "Module has documentation.", negativeMessage = messagePrefix & "Module doesn't have documentation.")
+          rule = rule, positiveMessage = "Module has documentation.",
+          negativeMessage = "Module doesn't have documentation.",
+          messagePrefix = messagePrefix)
   startCheck:
     discard
   checking:
@@ -117,10 +118,10 @@ checkRule:
             if node.kind == nkTemplateDef and not hasDoc:
               hasDoc = node.comment.len > 0
             setResult(checkResult = hasDoc, rule = rule,
-                positiveMessage = messagePrefix & "Declaration of " &
-                declName & " " & $node.info.line & " has documentation.",
-                negativeMessage = messagePrefix & "Declaration of " &
-                declName & " " & $node.info.line & " doesn't have documentation.")
+                positiveMessage = "Declaration of {name} at {line} has documentation.",
+                negativeMessage = "Declaration of {name} at {line} doesn't have documentation.",
+                messagePrefix = messagePrefix, name = declName,
+                line = $node.info.line)
           except KeyError as e:
             rule.amount = errorMessage(
                 text = "Can't check the declared entity '" & declName & "'.", e = e)
