@@ -145,7 +145,8 @@ proc setRuleState*(node: PNode; ruleName: string;
           discard
 
 proc setResult*(checkResult: bool; rule: var RuleOptions; positiveMessage,
-    negativeMessage: string) {.raises: [], tags: [RootEffect], contractual.} =
+    negativeMessage, messagePrefix: string; name, line: string = "") {.raises: [],
+    tags: [RootEffect], contractual.} =
   ## Update the amount of the rule results
   ##
   ## * checkResult     - if true, the entity follow the check of the rule
@@ -163,23 +164,29 @@ proc setResult*(checkResult: bool; rule: var RuleOptions; positiveMessage,
         return
       if negativeMessage.len > 0:
         if rule.ruleType == check:
-          message(text = negativeMessage, returnValue = rule.amount)
+          message(text = messagePrefix & negativeMessage.multiReplace(
+              replacements = [("{name}", name), ("{line}", line)]),
+              returnValue = rule.amount)
           rule.amount = int.low
         else:
           if rule.negation:
-            message(text = negativeMessage, returnValue = rule.amount,
-                level = lvlNotice, decrease = false)
+            message(text = messagePrefix & negativeMessage.multiReplace(
+                replacements = [("{name}", name), ("{line}", line)]),
+                returnValue = rule.amount, level = lvlNotice, decrease = false)
     # The enitity meet the rule's requirements
     else:
       if rule.negation:
         if rule.ruleType == check and positiveMessage.len > 0:
-          message(text = positiveMessage, returnValue = rule.amount)
+          message(text = messagePrefix & positiveMessage.multiReplace(
+              replacements = [("{name}", name), ("{line}", line)]),
+              returnValue = rule.amount)
         else:
           rule.amount.dec
         return
       if rule.ruleType == search and positiveMessage.len > 0:
-        message(text = positiveMessage, returnValue = rule.amount,
-            level = lvlNotice, decrease = false)
+        message(text = messagePrefix & positiveMessage.multiReplace(
+            replacements = [("{name}", name), ("{line}", line)]),
+            returnValue = rule.amount, level = lvlNotice, decrease = false)
       else:
         rule.amount.inc
 
