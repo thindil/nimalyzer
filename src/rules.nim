@@ -160,7 +160,7 @@ proc setResult*(checkResult: bool; rule: var RuleOptions; positiveMessage,
     # The entity not meet rule's requirements
     var replacements: seq[(string, string)] = @[]
     for index, param in params:
-      replacements.add(y = ("{params" & $index & "}", param))
+      replacements.add(y = ("{params[" & $index & "]}", param))
     if not checkResult:
       if rule.negation and rule.ruleType == check:
         rule.amount.inc
