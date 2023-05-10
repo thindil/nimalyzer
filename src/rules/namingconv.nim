@@ -91,6 +91,8 @@ import ../rules
 ruleConfig(ruleName = "namingconv",
   ruleFoundMessage = "declarations which {negation}follow naming convention",
   ruleNotFoundMessage = "declarations which {negation}follow naming convention not found.",
+  rulePositiveMessage = "name of '{params[0]}' line: {params[1]} follow naming convention.",
+  ruleNegativeMessage = "name of '{params[0]}' line: {params[1]} doesn't follow naming convention.",
   ruleOptions = @[custom, str],
   ruleOptionValues = @["variables", "enumerations", "procedures"],
   ruleMinOptions = 2)
@@ -121,20 +123,17 @@ checkRule:
           let nameToCheck: string = (if declaration.kind in {nkCharLit ..
               nkTripleStrLit, nkSym, nkIdent}: $declaration else: $declaration[0])
           setResult(checkResult = match(s = nameToCheck, pattern = convention),
-              rule = rule,
-              positiveMessage = "name of '{params[0]}' line: {params[1]} follow naming convention.",
-              negativeMessage = "name of '{params[0]}' line: {params[1]} doesn't follow naming convention.",
-              messagePrefix = messagePrefix, params = [nameToCheck,
-              $declaration.info.line])
+              rule = rule, positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage, messagePrefix = messagePrefix,
+              params = [nameToCheck, $declaration.info.line])
           if rule.options[0] == "procedures":
             break
       # And sometimes the compiler detects declarations as the node
       elif node.kind == nkIdentDefs and astNode.kind in nodesToCheck:
         setResult(checkResult = match(s = $node[0], pattern = convention),
-            rule = rule,
-            positiveMessage = "name of '{params[0]}' line: {params[1]} follow naming convention.",
-            negativeMessage = "name of '{params[0]}' line: {params[1]} doesn't follow naming convention.",
-            messagePrefix = messagePrefix, params = [$node[0], $node.info.line])
+            rule = rule, positiveMessage = positiveMessage,
+            negativeMessage = negativeMessage, messagePrefix = messagePrefix,
+            params = [$node[0], $node.info.line])
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
         "can't check name of " & rule.options[0][0 .. ^2] &
