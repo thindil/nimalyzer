@@ -28,7 +28,8 @@ except:
 var options = RuleOptions(options: @[], parent: true, fileName: "",
     negation: false, ruleType: check, amount: 0, enabled: true)
 
-setResult(true, options, "Myproc line 10: found", "Myproc line 10: not found")
+setResult(true, options, "Myproc line 10: found", "Myproc line 10: not found",
+    messagePrefix = "Prefix:", params = [])
 assert options.amount == 1
 
 assert validateOptions(RuleSettings(name: "Test Rule", options: @[integer],
