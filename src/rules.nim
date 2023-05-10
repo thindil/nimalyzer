@@ -359,9 +359,7 @@ macro checkRule*(code: untyped): untyped =
       newIdentNode(i = "contractual")), newEmptyNode(), nnkStmtList.newTree(
       children = code)))
 
-macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
-    ruleOptions: seq[RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
-    ruleMinOptions: int = 0; ruleShowForCheck: bool = false): untyped =
+macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage, rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];  ruleMinOptions: int = 0; ruleShowForCheck: bool = false): untyped =
   ## Set the rule's settings, like name, options, etc
   ##
   ## * ruleName            - The name of the rule
@@ -369,6 +367,10 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
   ##                         something
   ## * rulenotFoundMessage - The message shown when count type of the rule not
   ##                         found anything
+  ## * rulePositiveMessage - The message shown when the rule found element which
+  ##                         follow the rule
+  ## * ruleNegativeMessage - The message shown when the rule found element which
+  ##                         doesn't follow the rule
   ## * ruleOptions         - The rule's options which can be set, default no options
   ## * ruleOptionValues    - If the rule has option type custom, the values for the
   ##                         option
@@ -408,7 +410,11 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage: string;
       nnkConstDef.newTree(children = [newIdentNode(i = "foundMessage"),
       newIdentNode(i = "string"), ruleFoundMessage]), nnkConstDef.newTree(
       children = [newIdentNode(i = "notFoundMessage"), newIdentNode(
-      i = "string"), ruleNotFoundMessage])])])
+      i = "string"), ruleNotFoundMessage]), nnkConstDef.newTree(
+      children = [newIdentNode(i = "positiveMessage"), newIdentNode(
+      i = "string"), rulePositiveMessage]), nnkConstDef.newTree(
+      children = [newIdentNode(i = "negativeMessage"), newIdentNode(
+      i = "string"), ruleNegativeMessage])])])
 
 macro fixRule*(code: untyped): untyped =
   ## Run the code for fix the problem with the selected rule. If user doesn't
