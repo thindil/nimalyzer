@@ -120,21 +120,21 @@ checkRule:
             continue
           let nameToCheck: string = (if declaration.kind in {nkCharLit ..
               nkTripleStrLit, nkSym, nkIdent}: $declaration else: $declaration[0])
-          setResult(checkResult = match(s = nameToCheck,
-              pattern = convention), rule = rule,
-              positiveMessage = messagePrefix & "name of '" & nameToCheck &
-              "' line: " & $declaration.info.line & " follow naming convention.",
-              negativeMessage = messagePrefix & "name of '" & nameToCheck &
-              "' line: " & $declaration.info.line & " doesn't follow naming convention.")
+          setResult(checkResult = match(s = nameToCheck, pattern = convention),
+              rule = rule,
+              positiveMessage = "name of '{params[0]}' line: {params[1]} follow naming convention.",
+              negativeMessage = "name of '{params[0]}' line: {params[1]} doesn't follow naming convention.",
+              messagePrefix = messagePrefix, params = [nameToCheck,
+              $declaration.info.line])
           if rule.options[0] == "procedures":
             break
       # And sometimes the compiler detects declarations as the node
       elif node.kind == nkIdentDefs and astNode.kind in nodesToCheck:
         setResult(checkResult = match(s = $node[0], pattern = convention),
-            rule = rule, positiveMessage = messagePrefix & "name of '" & $node[
-            0] & "' line: " & $node.info.line & " follow naming convention.",
-            negativeMessage = messagePrefix & "name of '" & $node[0] &
-            "' line: " & $node.info.line & " doesn't follow naming convention.")
+            rule = rule,
+            positiveMessage = "name of '{params[0]}' line: {params[1]} follow naming convention.",
+            negativeMessage = "name of '{params[0]}' line: {params[1]} doesn't follow naming convention.",
+            messagePrefix = messagePrefix, params = [$node[0], $node.info.line])
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
         "can't check name of " & rule.options[0][0 .. ^2] &

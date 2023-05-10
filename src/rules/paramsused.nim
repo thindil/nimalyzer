@@ -134,13 +134,16 @@ checkRule:
               if index == -1:
                 if not rule.negation:
                   setResult(checkResult = false, rule = rule,
-                      positiveMessage = "", negativeMessage = messagePrefix &
-                      "procedure " & procName & " line: " & $node.info.line &
-                      " doesn't use parameter '" & varName & "'.")
+                      positiveMessage = "",
+                      negativeMessage = "procedure {params[0]} line: {params[1]} doesn't use parameter '" &
+                      varName & "'.", messagePrefix = messagePrefix, params = [
+                          procName, $node.info.line])
                 else:
                   setResult(checkResult = false, rule = rule,
-                      positiveMessage = "", negativeMessage = messagePrefix &
-                      "procedure " & procName & " line: " & $node.info.line & " doesn't use all parameters.")
+                      positiveMessage = "",
+                      negativeMessage = "procedure {params[0]} line: {params[1]} doesn't use all parameters.",
+                      messagePrefix = messagePrefix, params = [procName,
+                          $node.info.line])
                   break
             except KeyError, Exception:
               rule.amount = errorMessage(text = messagePrefix &
@@ -150,8 +153,9 @@ checkRule:
         # The node uses all of its parameters
         if index > -1:
           setResult(checkResult = true, rule = rule,
-              positiveMessage = "", negativeMessage = messagePrefix &
-              "procedure " & procName & " line: " & $node.info.line & " use all parameters.")
+              positiveMessage = "", negativeMessage = "procedure {params[0]} line: {params[1]} use all parameters.",
+              messagePrefix = messagePrefix, params = [procName,
+                  $node.info.line])
   endCheck:
     let negation: string = (if rule.negation: " not" else: "")
 

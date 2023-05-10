@@ -102,11 +102,10 @@ proc setCheckResult(node: PNode; index: Positive; messagePrefix: string;
   body:
     let decType: string = (if index == 1: "type" else: "value")
     setResult(checkResult = node[index].kind != nkEmpty, rule = rule,
-        positiveMessage = messagePrefix & "declaration of " & $node[0] &
-        " line: " & $node.info.line & " sets the " & decType & " '" & $node[
-        index] & "' as the " & decType & " of the variable.",
-        negativeMessage = messagePrefix & "declaration of '" & $node[0] &
-        "' line: " & $node.info.line & " doesn't set " & decType & " for the variable.")
+        positiveMessage = "declaration of {params[0]} line: {params[1]} sets the {params[2]} '{params[3]}' as the {params[2]} of the variable.",
+        negativeMessage = "declaration of '{params[0]}' line: {params[1]} doesn't set {params[2]} for the variable.",
+        messagePrefix = messagePrefix, params = [$node[0], $node.info.line,
+        decType, $node[index]])
 
 checkRule:
   initCheck:
