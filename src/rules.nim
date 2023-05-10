@@ -359,7 +359,10 @@ macro checkRule*(code: untyped): untyped =
       newIdentNode(i = "contractual")), newEmptyNode(), nnkStmtList.newTree(
       children = code)))
 
-macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage, rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];  ruleMinOptions: int = 0; ruleShowForCheck: bool = false): untyped =
+macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
+    rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[
+    RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
+    ruleMinOptions: int = 0; ruleShowForCheck: bool = false): untyped =
   ## Set the rule's settings, like name, options, etc
   ##
   ## * ruleName            - The name of the rule
