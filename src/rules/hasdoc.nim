@@ -74,7 +74,9 @@ import ../rules
 
 ruleConfig(ruleName = "hasdoc",
   ruleFoundMessage = "declared public items with documentation",
-  ruleNotFoundMessage = "The documentation not found.")
+  ruleNotFoundMessage = "The documentation not found.",
+  rulePositiveMessage = "Declaration of {params[0]} at {params[1]} has documentation.",
+  ruleNegativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.")
 
 checkRule:
   initCheck:
@@ -118,9 +120,10 @@ checkRule:
             if node.kind == nkTemplateDef and not hasDoc:
               hasDoc = node.comment.len > 0
             setResult(checkResult = hasDoc, rule = rule,
-                positiveMessage = "Declaration of {params[0]} at {params[1]} has documentation.",
-                negativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.",
-                messagePrefix = messagePrefix, params = [declName, $node.info.line])
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage,
+                messagePrefix = messagePrefix, params = [declName,
+                $node.info.line])
           except KeyError as e:
             rule.amount = errorMessage(
                 text = "Can't check the declared entity '" & declName & "'.", e = e)

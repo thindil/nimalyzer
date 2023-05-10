@@ -80,7 +80,9 @@ import ../rules
 
 ruleConfig(ruleName = "localhides",
   ruleFoundMessage = "local declarations which hide global declarations",
-  ruleNotFoundMessage = "Local declarations which hide global declarations not found.")
+  ruleNotFoundMessage = "Local declarations which hide global declarations not found.",
+  rulePositiveMessage = "declaration of '{params[0]}' line: {params[1]} is not hidden by local variable.",
+  ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} is hidden by local variable in line {params[2]}.")
 
 proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
@@ -159,8 +161,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         if hiddenLine > 0:
           break
     setResult(checkResult = hiddenLine == 0, rule = rule,
-        positiveMessage = "declaration of '{params[0]}' line: {params[1]} is not hidden by local variable.",
-        negativeMessage = "declaration of '{params[0]}' line: {params[1]} is hidden by local variable in line {params[2]}.",
+        positiveMessage = positiveMessage, negativeMessage = negativeMessage,
         messagePrefix = messagePrefix, params = [$node[0], $node.info.line, $hiddenLine])
 
 checkRule:

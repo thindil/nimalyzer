@@ -114,6 +114,8 @@ import ../rules
 ruleConfig(ruleName = "haspragma",
   ruleFoundMessage = "declared procedures with selected pragmas",
   ruleNotFoundMessage = "The selected pragma(s) not found.",
+  rulePositiveMessage = "procedure {params[0]} line: {params[1]} has declared pragma: {params[2]}.",
+  ruleNegativeMessage = "procedure {params[0]} line: {params[1]} doesn't have declared pragma: {params[2]}.",
   ruleOptions = @[custom, str, str, str, str, str, str, str, str],
   ruleOptionValues = @["procedures", "templates", "all"],
   ruleMinOptions = 2)
@@ -138,9 +140,7 @@ proc setResult(procName, line, pragma, messagePrefix: string; hasPragma: bool;
     pragma.len > 0
   body:
     setResult(checkResult = hasPragma, rule = rule,
-        positiveMessage = "procedure {params[0]} line: {params[1]} has declared pragma: {params[2]}.",
-        negativeMessage = messagePrefix &
-        "procedure {params[0]} line: {params[1]} doesn't have declared pragma: {params[2]}.",
+        positiveMessage = positiveMessage, negativeMessage = negativeMessage,
         messagePrefix = messagePrefix, params = [procName, line, pragma])
 
 checkRule:

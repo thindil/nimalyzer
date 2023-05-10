@@ -65,7 +65,9 @@ import ../rules
 
 ruleConfig(ruleName = "namedparams",
   ruleFoundMessage = "calls which{negation} have all named parameters",
-  ruleNotFoundMessage = "calls which{negation} have all named parameters not found.")
+  ruleNotFoundMessage = "calls which{negation} have all named parameters not found.",
+  rulePositiveMessage = "call {params[0]} line: {params[1]} doesn't have named parameter number: {params[2]}'.",
+  ruleNegativeMessage = "call {params[0]} line: {params[1]} doesn't have named parameter number: {params[2]}'.")
 
 proc check(node: PNode; rule: var RuleOptions;
     messagePrefix: string) {.contractual, raises: [], tags: [RootEffect].} =
@@ -97,9 +99,9 @@ proc check(node: PNode; rule: var RuleOptions;
     try:
       for i in 1..<node.sons.len:
         setResult(checkResult = node[i].kind == nkExprEqExpr, rule = rule,
-            positiveMessage = "call {params[0]} line: {params[1]} doesn't have named parameter number: {params[2]}'.",
-            negativeMessage = "call {params[0]} line: {params[1]} doesn't have named parameter number: {params[2]}'.",
-            messagePrefix = messagePrefix, params = [callName, $node.info.line, $i])
+            positiveMessage = positiveMessage,
+            negativeMessage = negativeMessage, messagePrefix = messagePrefix,
+            params = [callName, $node.info.line, $i])
         if node[i].kind in {nkCall, nkDotCall} and (node[i].sons.len > 1 and
             node[i].sons[1].kind != nkStmtList):
           check(node = node[i], rule = rule, messagePrefix = messagePrefix)

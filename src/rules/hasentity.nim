@@ -106,6 +106,8 @@ import ../rules
 ruleConfig(ruleName = "hasentity",
   ruleFoundMessage = "declared {rule.options[0]} with name '{rule.options[1]}'",
   ruleNotFoundMessage = "doesn't have declared {rule.options[0]} with name '{rule.options[1]}'.",
+  rulePositiveMessage = "Has declared {params[0]} with name '{params[1]}' at line: {params[2]}.",
+  ruleNegativeMessage = "Has declared {params[0]} with name '{params[1]}' at line: {params[2]}.",
   ruleOptions = @[node, str, node, integer],
   ruleMinOptions = 2,
   ruleShowForCheck = true)
@@ -127,8 +129,7 @@ proc checkEntity(nodeName, line, messagePrefix: string;
   # The selected entity found in the node
   if rule.options[1].len == 0 or startsWith(s = nodeName, prefix = rule.options[1]):
     setResult(checkResult = true, rule = rule,
-        positiveMessage = "Has declared {params[0]} with name '{params[1]}' at line: {params[2]}.",
-        negativeMessage = "Has declared {params[0]} with name '{params[1]}' at line: {params[2]}.",
+        positiveMessage = positiveMessage, negativeMessage = negativeMessage,
         messagePrefix = messagePrefix, params = [rule.options[0], nodeName, line])
 
 checkRule:
