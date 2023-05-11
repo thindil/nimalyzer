@@ -82,9 +82,8 @@ checkRule:
   initCheck:
     if rule.enabled:
       setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
-          rule = rule, positiveMessage = "Module has documentation.",
-          negativeMessage = "Module doesn't have documentation.",
-          messagePrefix = messagePrefix)
+          positiveMessage = "Module has documentation.",
+          negativeMessage = "Module doesn't have documentation.")
   startCheck:
     discard
   checking:
@@ -119,10 +118,8 @@ checkRule:
                 node[^1].len > 0 and node[^1][0].kind == nkCommentStmt
             if node.kind == nkTemplateDef and not hasDoc:
               hasDoc = node.comment.len > 0
-            setResult(checkResult = hasDoc, rule = rule,
-                positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage,
-                messagePrefix = messagePrefix, params = [declName,
+            setResult(checkResult = hasDoc, positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, params = [declName,
                 $node.info.line])
           except KeyError as e:
             rule.amount = errorMessage(

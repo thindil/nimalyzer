@@ -139,9 +139,8 @@ proc setResult(procName, line, pragma, messagePrefix: string; hasPragma: bool;
     line.len > 0
     pragma.len > 0
   body:
-    setResult(checkResult = hasPragma, rule = rule,
-        positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-        messagePrefix = messagePrefix, params = [procName, line, pragma])
+    setResult(checkResult = hasPragma, positiveMessage = positiveMessage,
+        negativeMessage = negativeMessage, params = [procName, line, pragma])
 
 checkRule:
   initCheck:

@@ -128,9 +128,8 @@ proc checkEntity(nodeName, line, messagePrefix: string;
     return
   # The selected entity found in the node
   if rule.options[1].len == 0 or startsWith(s = nodeName, prefix = rule.options[1]):
-    setResult(checkResult = true, rule = rule,
-        positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-        messagePrefix = messagePrefix, params = [rule.options[0], nodeName, line])
+    setResult(checkResult = true, positiveMessage = positiveMessage,
+        negativeMessage = negativeMessage, params = [rule.options[0], nodeName, line])
 
 checkRule:
   initCheck:
