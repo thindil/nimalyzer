@@ -120,28 +120,6 @@ ruleConfig(ruleName = "haspragma",
   ruleOptionValues = @["procedures", "templates", "all"],
   ruleMinOptions = 2)
 
-proc setResult(procName, line, pragma, messagePrefix: string; hasPragma: bool;
-    rule: var RuleOptions) {.raises: [], tags: [RootEffect], contractual.} =
-  ## Update the amount of pragmas found and log the message if needed
-  ##
-  ## * procName      - the name of the Nim's code entity which was checked for
-  ##                   the pragma
-  ## * line          - the line in which the Nim's entity is in the source code
-  ## * pragma        - the pragma which will be checked by the rule
-  ## * messagePrefix - the begining of the log message which will be shown
-  ## * hasPragma     - if true, the entity has the pragma
-  ## * rule          - the rule options set by the user and the previous iterations
-  ##                   of the procedure
-  ##
-  ## Returns the updated parameter rule.
-  require:
-    procName.len > 0
-    line.len > 0
-    pragma.len > 0
-  body:
-    setResult(checkResult = hasPragma, positiveMessage = positiveMessage,
-        negativeMessage = negativeMessage, params = [procName, line, pragma])
-
 checkRule:
   initCheck:
     discard
@@ -198,40 +176,43 @@ checkRule:
         # Check the node for each selected pragma
         for pragma in rule.options[1 .. ^1]:
           if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
-            setResult(procName = procName, line = $node.info.line,
-                pragma = pragma, messagePrefix = messagePrefix,
-                hasPragma = false, rule = rule)
+            setResult(checkResult = false, positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, params = [procName,
+                $node.info.line, pragma])
           elif pragma[^1] == '*' and pragma[0] != '*':
             var hasPragma: bool = false
             for procPragma in strPragmas:
               if procPragma.startsWith(prefix = pragma[0..^2]):
                 hasPragma = true
                 break
-            setResult(procName = procName, line = $node.info.line,
-                pragma = pragma, messagePrefix = messagePrefix,
-                hasPragma = hasPragma, rule = rule)
+            setResult(checkResult = hasPragma,
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, params = [procName,
+                $node.info.line, pragma])
           elif pragma[0] == '*' and pragma[^1] != '*':
             var hasPragma: bool = false
             for procPragma in strPragmas:
               if procPragma.endsWith(suffix = pragma[1..^1]):
                 hasPragma = true
                 break
-            setResult(procName = procName, line = $node.info.line,
-                pragma = pragma, messagePrefix = messagePrefix,
-                hasPragma = hasPragma, rule = rule)
+            setResult(checkResult = hasPragma,
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, params = [procName,
+                $node.info.line, pragma])
           elif '*' in [pragma[0], pragma[^1]]:
             var hasPragma: bool = false
             for procPragma in strPragmas:
               if procPragma.contains(sub = pragma[1..^2]):
                 hasPragma = true
                 break
-            setResult(procName = procName, line = $node.info.line,
-                pragma = pragma, messagePrefix = messagePrefix,
-                hasPragma = hasPragma, rule = rule)
+            setResult(checkResult = hasPragma,
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, params = [procName,
+                $node.info.line, pragma])
           else:
-            setResult(procName = procName, line = $node.info.line,
-                pragma = pragma, messagePrefix = messagePrefix,
-                hasPragma = true, rule = rule)
+            setResult(checkResult = true, positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, params = [procName,
+                $node.info.line, pragma])
     endCheck:
       if not rule.enabled and rule.amount == 0:
         rule.amount = 1
