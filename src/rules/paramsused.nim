@@ -135,14 +135,12 @@ checkRule:
               # The node doesn't use one of its parameters
               if index == -1:
                 if not rule.negation:
-                  setResult(checkResult = false, rule = rule,
-                      positiveMessage = "", negativeMessage = negativeMessage,
-                      messagePrefix = messagePrefix, params = [procName,
+                  setResult(checkResult = false, positiveMessage = "",
+                      negativeMessage = negativeMessage, params = [procName,
                       $node.info.line, varName])
                 else:
-                  setResult(checkResult = false, rule = rule,
-                      positiveMessage = "", negativeMessage = positiveMessage,
-                      messagePrefix = messagePrefix, params = [procName,
+                  setResult(checkResult = false, positiveMessage = "",
+                      negativeMessage = positiveMessage, params = [procName,
                       $node.info.line, " doesn't"])
                   break
             except KeyError, Exception:
@@ -152,9 +150,8 @@ checkRule:
                   $node.info.line & ". Reason: ", e = getCurrentException())
         # The node uses all of its parameters
         if index > -1:
-          setResult(checkResult = true, rule = rule, positiveMessage = "",
-              negativeMessage = positiveMessage,
-              messagePrefix = messagePrefix, params = [procName,
+          setResult(checkResult = true, positiveMessage = "",
+              negativeMessage = positiveMessage, params = [procName,
               $node.info.line, ""])
   endCheck:
     let negation: string = (if rule.negation: " not" else: "")

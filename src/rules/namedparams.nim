@@ -98,10 +98,10 @@ proc check(node: PNode; rule: var RuleOptions;
       return
     try:
       for i in 1..<node.sons.len:
-        setResult(checkResult = node[i].kind == nkExprEqExpr, rule = rule,
+        setResult(checkResult = node[i].kind == nkExprEqExpr,
             positiveMessage = positiveMessage,
-            negativeMessage = negativeMessage, messagePrefix = messagePrefix,
-            params = [callName, $node.info.line, $i])
+            negativeMessage = negativeMessage, params = [callName,
+            $node.info.line, $i])
         if node[i].kind in {nkCall, nkDotCall} and (node[i].sons.len > 1 and
             node[i].sons[1].kind != nkStmtList):
           check(node = node[i], rule = rule, messagePrefix = messagePrefix)

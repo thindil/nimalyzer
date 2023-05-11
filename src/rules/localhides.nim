@@ -160,9 +160,8 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         hiddenLine = checkChild(nodes = child)
         if hiddenLine > 0:
           break
-    setResult(checkResult = hiddenLine == 0, rule = rule,
-        positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-        messagePrefix = messagePrefix, params = [$node[0], $node.info.line, $hiddenLine])
+    setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
+        negativeMessage = negativeMessage, params = [$node[0], $node.info.line, $hiddenLine])
 
 checkRule:
   initCheck:
