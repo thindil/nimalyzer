@@ -135,15 +135,15 @@ checkRule:
                 if not rule.negation:
                   setResult(checkResult = false, rule = rule,
                       positiveMessage = "",
-                      negativeMessage = "procedure {params[0]} line: {params[1]} doesn't use parameter '" &
-                      varName & "'.", messagePrefix = messagePrefix, params = [
-                          procName, $node.info.line])
+                      negativeMessage = "procedure {params[0]} line: {params[1]} doesn't use parameter '{params[2]}'.",
+                      messagePrefix = messagePrefix, params = [procName,
+                      $node.info.line, varName])
                 else:
                   setResult(checkResult = false, rule = rule,
                       positiveMessage = "",
-                      negativeMessage = "procedure {params[0]} line: {params[1]} doesn't use all parameters.",
+                      negativeMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all parameters.",
                       messagePrefix = messagePrefix, params = [procName,
-                          $node.info.line])
+                      $node.info.line, " doesn't"])
                   break
             except KeyError, Exception:
               rule.amount = errorMessage(text = messagePrefix &
@@ -152,10 +152,10 @@ checkRule:
                   $node.info.line & ". Reason: ", e = getCurrentException())
         # The node uses all of its parameters
         if index > -1:
-          setResult(checkResult = true, rule = rule,
-              positiveMessage = "", negativeMessage = "procedure {params[0]} line: {params[1]} use all parameters.",
+          setResult(checkResult = true, rule = rule, positiveMessage = "",
+              negativeMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all parameters.",
               messagePrefix = messagePrefix, params = [procName,
-                  $node.info.line])
+              $node.info.line, ""])
   endCheck:
     let negation: string = (if rule.negation: " not" else: "")
 
