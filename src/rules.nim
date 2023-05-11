@@ -144,52 +144,49 @@ proc setRuleState*(node: PNode; ruleName: string;
         except KeyError, Exception:
           discard
 
-proc setResult*(checkResult: bool; rule: var RuleOptions; positiveMessage,
-    negativeMessage, messagePrefix: string; params: varargs[string]) {.raises: [],
-    tags: [RootEffect], contractual.} =
+template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
+    params: varargs[string]) =
   ## Update the amount of the rule results
   ##
   ## * checkResult     - if true, the entity follow the check of the rule
-  ## * rule            - the rule's options supplied to the rule
   ## * positiveMessage - the message shown when the entity meet the rule check
   ## * negativeMessage - the message shown when the entity not meet the rule check
   ##
   ## Returns updated amount of the rule results. It will be increased
   ## or decreased, depending on the rule settings.
-  body:
-    # The entity not meet rule's requirements
-    var replacements: seq[(string, string)] = @[]
-    for index, param in params:
-      replacements.add(y = ("{params[" & $index & "]}", param))
-    if not checkResult:
-      if rule.negation and rule.ruleType == check:
-        rule.amount.inc
-        return
-      if negativeMessage.len > 0:
-        if rule.ruleType == check:
-          message(text = messagePrefix & negativeMessage.multiReplace(
-              replacements = replacements), returnValue = rule.amount)
-          rule.amount = int.low
-        else:
-          if rule.negation:
-            message(text = messagePrefix & negativeMessage.multiReplace(
-                replacements = replacements), returnValue = rule.amount,
-                level = lvlNotice, decrease = false)
-    # The enitity meet the rule's requirements
-    else:
-      if rule.negation:
-        if rule.ruleType == check and positiveMessage.len > 0:
-          message(text = messagePrefix & positiveMessage.multiReplace(
-              replacements = replacements), returnValue = rule.amount)
-        else:
-          rule.amount.dec
-        return
-      if rule.ruleType == search and positiveMessage.len > 0:
-        message(text = messagePrefix & positiveMessage.multiReplace(
-            replacements = replacements), returnValue = rule.amount,
-            level = lvlNotice, decrease = false)
+  # The entity not meet rule's requirements
+  var replacements: seq[(string, string)] = @[]
+  for index, param in params:
+    replacements.add(y = ("{params[" & $index & "]}", param))
+  if not checkResult:
+    if rule.negation and rule.ruleType == check:
+      rule.amount.inc
+      return
+    if negativeMessage.len > 0:
+      if rule.ruleType == check:
+        message(text = messagePrefix & negativeMessage.multiReplace(
+            replacements = replacements), returnValue = rule.amount)
+        rule.amount = int.low
       else:
-        rule.amount.inc
+        if rule.negation:
+          message(text = messagePrefix & negativeMessage.multiReplace(
+              replacements = replacements), returnValue = rule.amount,
+              level = lvlNotice, decrease = false)
+  # The enitity meet the rule's requirements
+  else:
+    if rule.negation:
+      if rule.ruleType == check and positiveMessage.len > 0:
+        message(text = messagePrefix & positiveMessage.multiReplace(
+            replacements = replacements), returnValue = rule.amount)
+      else:
+        rule.amount.dec
+      return
+    if rule.ruleType == search and positiveMessage.len > 0:
+      message(text = messagePrefix & positiveMessage.multiReplace(
+          replacements = replacements), returnValue = rule.amount,
+          level = lvlNotice, decrease = false)
+    else:
+      rule.amount.inc
 
 proc validateOptions*(rule: RuleSettings; options: seq[
     string]): bool {.raises: [], tags: [RootEffect], contractual.} =
