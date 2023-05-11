@@ -80,6 +80,8 @@ import ../rules
 ruleConfig(ruleName = "paramsused",
   ruleFoundMessage = "procedures which{negation} uses all parameters",
   ruleNotFoundMessage = "procedures which{negation} uses all parameters not found.",
+  rulePositiveMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all parameters.",
+  ruleNegativeMessage = "procedure {params[0]} line: {params[1]} doesn't use parameter '{params[2]}'.",
   ruleOptions = @[custom],
   ruleOptionValues = @["procedures", "templates", "all"],
   ruleMinOptions = 1)
@@ -134,14 +136,12 @@ checkRule:
               if index == -1:
                 if not rule.negation:
                   setResult(checkResult = false, rule = rule,
-                      positiveMessage = "",
-                      negativeMessage = "procedure {params[0]} line: {params[1]} doesn't use parameter '{params[2]}'.",
+                      positiveMessage = "", negativeMessage = negativeMessage,
                       messagePrefix = messagePrefix, params = [procName,
                       $node.info.line, varName])
                 else:
                   setResult(checkResult = false, rule = rule,
-                      positiveMessage = "",
-                      negativeMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all parameters.",
+                      positiveMessage = "", negativeMessage = positiveMessage,
                       messagePrefix = messagePrefix, params = [procName,
                       $node.info.line, " doesn't"])
                   break
@@ -153,7 +153,7 @@ checkRule:
         # The node uses all of its parameters
         if index > -1:
           setResult(checkResult = true, rule = rule, positiveMessage = "",
-              negativeMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all parameters.",
+              negativeMessage = positiveMessage,
               messagePrefix = messagePrefix, params = [procName,
               $node.info.line, ""])
   endCheck:

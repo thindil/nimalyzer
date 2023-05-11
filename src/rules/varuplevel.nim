@@ -76,7 +76,9 @@ import ../rules
 
 ruleConfig(ruleName = "varuplevel",
   ruleFoundMessage = "declarations which can{negation} be upgraded",
-  ruleNotFoundMessage = "declarations which can{negation} be upgraded not found.")
+  ruleNotFoundMessage = "declarations which can{negation} be upgraded not found.",
+  rulePositiveMessage = "declaration of {params[0]} line: {params[1]} can't be updated to {params[2]}.",
+  ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} can be updated to {params[2]}.")
 
 proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
@@ -104,9 +106,8 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     # Check if let declaration can be updated
     if section.kind == nkLetSection:
       setResult(checkResult = not isUpdatable, rule = rule,
-          positiveMessage = "declaration of {params[0]} line: {params[1]} can't be updated to constant.",
-          negativeMessage = "declaration of '{params[0]}' line: {params[1]} can be updated to constant.",
-          messagePrefix = messagePrefix, params = [$node[0], $node.info.line])
+          positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+          messagePrefix = messagePrefix, params = [$node[0], $node.info.line, "constant"])
     # Check if var declaration can be updated
     else:
       # No default value, can't be updated
@@ -165,9 +166,8 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
               isUpdatable = false
               break
       setResult(checkResult = not isUpdatable, rule = rule,
-          positiveMessage = "declaration of {params[0]} line: {params[1]} can't be updated to let.",
-          negativeMessage = "declaration of '{params[0]}' line: {params[1]} can be updated to let.",
-          messagePrefix = messagePrefix, params = [$node[0], $node.info.line])
+          positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+          messagePrefix = messagePrefix, params = [$node[0], $node.info.line, "let"])
 
 checkRule:
   initCheck:

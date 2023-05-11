@@ -82,6 +82,8 @@ import ../rules
 ruleConfig(ruleName = "vardeclared",
   ruleFoundMessage = "declarations with{negation}{rule.options[0]} declaration",
   ruleNotFoundMessage = "declarations with{negation}{rule.options[0]} declaration not found.",
+  rulePositiveMessage = "declaration of {params[0]} line: {params[1]} sets the {params[2]} '{params[3]}' as the {params[2]} of the variable.",
+  ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} doesn't set {params[2]} for the variable.",
   ruleOptions = @[custom],
   ruleOptionValues = @["full", "type", "value"],
   ruleMinOptions = 1)
@@ -102,8 +104,7 @@ proc setCheckResult(node: PNode; index: Positive; messagePrefix: string;
   body:
     let decType: string = (if index == 1: "type" else: "value")
     setResult(checkResult = node[index].kind != nkEmpty, rule = rule,
-        positiveMessage = "declaration of {params[0]} line: {params[1]} sets the {params[2]} '{params[3]}' as the {params[2]} of the variable.",
-        negativeMessage = "declaration of '{params[0]}' line: {params[1]} doesn't set {params[2]} for the variable.",
+        positiveMessage = positiveMessage, negativeMessage = negativeMessage,
         messagePrefix = messagePrefix, params = [$node[0], $node.info.line,
         decType, $node[index]])
 
