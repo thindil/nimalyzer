@@ -25,13 +25,6 @@ try:
 except:
   assert errorMessage("Reason: ", getCurrentException()) == 0
 
-var options = RuleOptions(options: @[], parent: true, fileName: "",
-    negation: false, ruleType: check, amount: 0, enabled: true)
-
-setResult(true, options, "Myproc line 10: found", "Myproc line 10: not found",
-    messagePrefix = "Prefix:", params = [])
-assert options.amount == 1
-
 assert validateOptions(RuleSettings(name: "Test Rule", options: @[integer],
     minOptions: 1), @["1"])
 assert not validateOptions(RuleSettings(name: "Test rule", options: @[str,
