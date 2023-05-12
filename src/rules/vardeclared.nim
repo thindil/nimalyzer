@@ -88,26 +88,6 @@ ruleConfig(ruleName = "vardeclared",
   ruleOptionValues = @["full", "type", "value"],
   ruleMinOptions = 1)
 
-proc setCheckResult(node: PNode; index: Positive; messagePrefix: string;
-    rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
-    contractual.} =
-  ## Set the check result for the rule
-  ##
-  ## * node          - the node which will be checked
-  ## * index         - the index of the node element which will be checked. 1 for
-  ##                   the type, 2 for the value
-  ## * messagePrefix - the prefix added to the log message, set by the program
-  ## * rule          - the rule options set by the user
-  require:
-    node != nil
-    index in [1, 2]
-  body:
-    let decType: string = (if index == 1: "type" else: "value")
-    setResult(checkResult = node[index].kind != nkEmpty, rule = rule,
-        positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-        messagePrefix = messagePrefix, params = [$node[0], $node.info.line,
-        decType, $node[index]])
-
 checkRule:
   initCheck:
     discard
@@ -124,12 +104,16 @@ checkRule:
         for declaration in node.items:
           # Check if declaration of variable sets its type
           if rule.options[0] in ["full", "type"]:
-            setCheckResult(node = declaration, index = 1,
-                messagePrefix = messagePrefix, rule = rule)
+            setResult(checkResult = declaration[1].kind != nkEmpty,
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, params = [$declaration[0],
+                $declaration.info.line, "type", $declaration[1]])
           # Check if declaration of variable sets its value
           if rule.options[0] in ["full", "value"]:
-            setCheckResult(node = declaration, index = 2,
-                messagePrefix = messagePrefix, rule = rule)
+            setResult(checkResult = declaration[2].kind != nkEmpty,
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, params = [$declaration[0],
+                $declaration.info.line, "value", $declaration[2]])
       # And sometimes the compiler detects declarations as the node
       elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
           nkLetSection, nkConstSection}:
@@ -138,12 +122,16 @@ checkRule:
           continue
         # Check if declaration of variable sets its type
         if rule.options[0] in ["full", "type"]:
-          setCheckResult(node = node, index = 1,
-              messagePrefix = messagePrefix, rule = rule)
+          setResult(checkResult = node[1].kind != nkEmpty,
+              positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage, params = [$node[0],
+              $node.info.line, "type", $node[1]])
         # Check if declaration of variable sets its value
         if rule.options[0] in ["full", "value"]:
-          setCheckResult(node = node, index = 2,
-              messagePrefix = messagePrefix, rule = rule)
+          setResult(checkResult = node[2].kind != nkEmpty,
+              positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage, params = [$node[0],
+              $node.info.line, "value", $node[2]])
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
           "can't check declaration of variable " &
