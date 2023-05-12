@@ -154,15 +154,14 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
   ##
   ## Returns updated amount of the rule results. It will be increased
   ## or decreased, depending on the rule settings.
-  # The entity not meet rule's requirements
   var replacements: seq[(string, string)] = @[]
   for index, param in params:
     replacements.add(y = ("{params[" & $index & "]}", param))
+  # The entity not meet rule's requirements
   if not checkResult:
     if rule.negation and rule.ruleType == check:
       rule.amount.inc
-      return
-    if negativeMessage.len > 0:
+    elif negativeMessage.len > 0:
       if rule.ruleType == check:
         message(text = messagePrefix & negativeMessage.multiReplace(
             replacements = replacements), returnValue = rule.amount)
@@ -180,13 +179,13 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
             replacements = replacements), returnValue = rule.amount)
       else:
         rule.amount.dec
-      return
-    if rule.ruleType == search and positiveMessage.len > 0:
-      message(text = messagePrefix & positiveMessage.multiReplace(
-          replacements = replacements), returnValue = rule.amount,
-          level = lvlNotice, decrease = false)
     else:
-      rule.amount.inc
+      if rule.ruleType == search and positiveMessage.len > 0:
+        message(text = messagePrefix & positiveMessage.multiReplace(
+            replacements = replacements), returnValue = rule.amount,
+            level = lvlNotice, decrease = false)
+      else:
+        rule.amount.inc
 
 proc validateOptions*(rule: RuleSettings; options: seq[
     string]): bool {.raises: [], tags: [RootEffect], contractual.} =
