@@ -105,9 +105,9 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     var isUpdatable: bool = isDeepConstExpr(n = node[2])
     # Check if let declaration can be updated
     if section.kind == nkLetSection:
-      setResult(checkResult = not isUpdatable, rule = rule,
+      setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          messagePrefix = messagePrefix, params = [$node[0], $node.info.line, "constant"])
+          params = [$node[0], $node.info.line, "constant"])
     # Check if var declaration can be updated
     else:
       # No default value, can't be updated
@@ -165,9 +165,9 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
             if checkChild(nodes = child):
               isUpdatable = false
               break
-      setResult(checkResult = not isUpdatable, rule = rule,
+      setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          messagePrefix = messagePrefix, params = [$node[0], $node.info.line, "let"])
+          params = [$node[0], $node.info.line, "let"])
 
 checkRule:
   initCheck:
