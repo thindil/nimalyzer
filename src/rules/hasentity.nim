@@ -112,25 +112,6 @@ ruleConfig(ruleName = "hasentity",
   ruleMinOptions = 2,
   ruleShowForCheck = true)
 
-proc checkEntity(nodeName, line, messagePrefix: string;
-    rule: var RuleOptions) {.raises: [], tags: [RootEffect], contractual.} =
-  ## Check if the selected entity's name fulfill the rule requirements and
-  ## log the message if needed.
-  ##
-  ## * nodeName      - the name of the entity which will be checked
-  ## * line          - the line of code in which the entity is declared
-  ## * messagePrefix - the begining of the log message which will be shown
-  ## * rule          - the rule options set by the user and the previous iterations
-  ##                   of the procedure
-  ##
-  ## Returns the updated rule parameter
-  if not rule.enabled:
-    return
-  # The selected entity found in the node
-  if rule.options[1].len == 0 or startsWith(s = nodeName, prefix = rule.options[1]):
-    setResult(checkResult = true, positiveMessage = positiveMessage,
-        negativeMessage = negativeMessage, params = [rule.options[0], nodeName, line])
-
 checkRule:
   initCheck:
     rule.amount = 0
@@ -172,8 +153,12 @@ checkRule:
                     $child[0]
                   except KeyError, Exception:
                     ""
-                checkEntity(nodeName = childName, line = $child.info.line,
-                    messagePrefix = messagePrefix, rule = rule)
+                if rule.options[1].len == 0 or startsWith(s = childName,
+                    prefix = rule.options[1]):
+                  setResult(checkResult = true,
+                      positiveMessage = positiveMessage,
+                      negativeMessage = negativeMessage, params = [rule.options[
+                      0], childName, $child.info.line])
             elif childIndex <= node.sons.high:
               let childName: string = try:
                   if childIndex > -1:
@@ -182,12 +167,18 @@ checkRule:
                     $node[^childIndex]
                 except KeyError, Exception:
                   ""
-              checkEntity(nodeName = childName, line = $node.info.line,
-                  messagePrefix = messagePrefix, rule = rule)
+              if rule.options[1].len == 0 or startsWith(s = childName,
+                  prefix = rule.options[1]):
+                setResult(checkResult = true, positiveMessage = positiveMessage,
+                    negativeMessage = negativeMessage, params = [rule.options[
+                    0], childName, $node.info.line])
         # Check the node itself
         elif node.kind == nodeKind:
-          checkEntity(nodeName = $node[0], line = $node.info.line,
-              messagePrefix = messagePrefix, rule = rule)
+          if rule.options[1].len == 0 or startsWith(s = $node[0],
+              prefix = rule.options[1]):
+            setResult(checkResult = true, positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, params = [rule.options[0],
+                $node[0], $node.info.line])
       except KeyError, Exception:
         rule.amount = errorMessage(
             text = "Error during checking hasEntity rule: ",
