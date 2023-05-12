@@ -65,7 +65,9 @@ import ../rules
 
 ruleConfig(ruleName = "--rulename--",
   ruleFoundMessage = "",
-  ruleNotFoundMessage = "")
+  ruleNotFoundMessage = "",
+  rulePositiveMessage = "",
+  ruleNegativeMessage = "")
 
 checkRule:
   initCheck:
@@ -76,3 +78,6 @@ checkRule:
     discard
   endCheck:
     discard
+
+fixRule:
+  discard
