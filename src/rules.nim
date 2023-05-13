@@ -46,24 +46,41 @@ type
     ## the available types of the program's rules' options
     integer, str, node, custom
 
-  RuleOptions* = object   ## Contains information for the program's rules
-    options*: seq[string] ## The list of the program's rule
-    parent*: bool ## If true, check is currently make in the parent (usualy module) entity
-    fileName*: string     ## The path to the file which is checked
-    negation*: bool       ## If true, the rule show return oposite result
-    ruleType*: RuleTypes  ## The type of rule
-    amount*: int          ## The amount of results found by the rule
-    enabled*: bool        ## If false, the rule is temporary disabled by pragmas
-    fixCommand*: string ## The command executed by the rule if no custom code is set for fix type of rule
+  RuleOptions* = object
+    ## Contains information for the program's rules
+    ##
+    ## * options    - The list of the program's rule
+    ## * parent     - If true, check is currently make in the parent (usualy module) entity
+    ## * fileName   - The path to the file which is checked
+    ## * negation   - If true, the rule show return oposite result
+    ## * ruleType   - The type of rule
+    ## * amount     - The amount of results found by the rule
+    ## * enabled    - If false, the rule is temporary disabled by pragmas
+    ## * fixCommand - The command executed by the rule if no custom code is set for fix type of rule
+    options*: seq[string]
+    parent*: bool
+    fileName*: string
+    negation*: bool
+    ruleType*: RuleTypes
+    amount*: int
+    enabled*: bool
+    fixCommand*: string
 
-  RuleSettings* = object ## Contains information about the program's rule configuration
-    name*: string                   ## The name of the rule
-    checkProc*: proc (astNode, parentNode: PNode;
-        rule: var RuleOptions)      ## The procedure used to check the rule
-    options*: seq[RuleOptionsTypes] ## The rule's options which can be set
-    optionValues*: seq[string] ## If the rule has option type custom, the values for the option
-    minOptions*: Natural            ## The minumal amount of options required by the rule
-    fixProc*: proc (astNode: PNode; fixCommand: string) ## The procedure used to auto fix the rule
+  RuleSettings* = object
+    ## Contains information about the program's rule configuration
+    ##
+    ## * name         - The name of the rule
+    ## * checkProc    - The procedure used to check the rule
+    ## * options      - The rule's options which can be set
+    ## * optionValues - If the rule has option type custom, the values for the option
+    ## * minOptions   - The minumal amount of options required by the rule
+    ## * fixProc      - The procedure used to auto fix the rule
+    name*: string
+    checkProc*: proc (astNode, parentNode: PNode; rule: var RuleOptions)
+    options*: seq[RuleOptionsTypes]
+    optionValues*: seq[string]
+    minOptions*: Natural
+    fixProc*: proc (astNode: PNode; fixCommand: string)
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
