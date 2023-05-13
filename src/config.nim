@@ -30,12 +30,19 @@ import std/[os, parseopt, sequtils]
 # Internal modules imports
 import rules, utils
 
-type RuleData* = object ## Contains information about the configuration of the program's rule
-  name*: string        ## The name of the rule
-  options*: seq[string] ## The options list provided by the user in a configuration file
-  negation*: bool      ## If true, the rule is negation
-  ruleType*: RuleTypes ## The type of the rule
-  index*: int          ## The index of the rule
+type RuleData* = object
+  ## Contains information about the configuration of the program's rule
+  ##
+  ## * name     - The name of the rule
+  ## * options  - The options list provided by the user in a configuration file
+  ## * negation - If true, the rule is negation
+  ## * ruleType - The type of the rule
+  ## * index    - The index of the rule
+  name*: string
+  options*: seq[string]
+  negation*: bool
+  ruleType*: RuleTypes
+  index*: int
 
 const fixCommand: string = when defined(macos) or defined(macosx) or defined(
     windows): "open" else: "xdg-open" & " {fileName}"
