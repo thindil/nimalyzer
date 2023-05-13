@@ -16,6 +16,8 @@ of the program.
 - Don't check for type or value for declarations which unpack tuples by
   `varDeclared` rule
 - Updated the project's documentation
+- **BREAKING**: rule `hasDoc` doesn't check public fields of objects types for
+  documentation
 
 ### Fixed
 - Typo in Changelog
