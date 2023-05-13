@@ -8,7 +8,8 @@ Available rules
 Hasdoc rule
 ===========
 The rule to check if all public declarations (variables, procedures, etc)
-have documentation comments
+have documentation comments. It doesn't check public fields of types
+declarations for the documentation.
 The syntax in a configuration file is::
 
   [ruleType] ?not? hasDoc
@@ -362,15 +363,15 @@ Examples
 
 1. Check if names of variables follow standard Nim convention::
 
-   check namingConv variables [a-z][A-Z0-9_]*
+    check namingConv variables [a-z][A-Z0-9_]*
 
 2. Find procedures which names ends with *proc*::
 
-   search namingConv procedures proc$
+    search namingConv procedures proc$
 
 3. Count enumerations which values are not start with *enum*::
 
-   count not namingConv enumerations ^enum
+    count not namingConv enumerations ^enum
 
 Paramsused rule
 ===============
