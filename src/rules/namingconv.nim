@@ -73,15 +73,15 @@
 ##
 ## 1. Check if names of variables follow standard Nim convention::
 ##
-##    check namingConv variables [a-z][A-Z0-9_]*
+##     check namingConv variables [a-z][A-Z0-9_]*
 ##
 ## 2. Find procedures which names ends with *proc*::
 ##
-##    search namingConv procedures proc$
+##     search namingConv procedures proc$
 ##
 ## 3. Count enumerations which values are not start with *enum*::
 ##
-##    count not namingConv enumerations ^enum
+##     count not namingConv enumerations ^enum
 
 # Standard library imports
 import std/re
