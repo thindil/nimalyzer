@@ -107,7 +107,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     if section.kind == nkLetSection:
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          params = [$node[0], $node.info.line, "constant"])
+          node = node, params = [$node[0], $node.info.line, "constant"])
     # Check if var declaration can be updated
     else:
       # No default value, can't be updated
@@ -167,7 +167,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
               break
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          params = [$node[0], $node.info.line, "let"])
+          node = node, params = [$node[0], $node.info.line, "let"])
 
 checkRule:
   initCheck:

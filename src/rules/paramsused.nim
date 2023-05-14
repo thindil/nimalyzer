@@ -136,12 +136,12 @@ checkRule:
               if index == -1:
                 if not rule.negation:
                   setResult(checkResult = false, positiveMessage = "",
-                      negativeMessage = negativeMessage, params = [procName,
-                      $node.info.line, varName])
+                      negativeMessage = negativeMessage, node = node, params = [
+                      procName, $node.info.line, varName])
                 else:
                   setResult(checkResult = false, positiveMessage = "",
-                      negativeMessage = positiveMessage, params = [procName,
-                      $node.info.line, " doesn't"])
+                      negativeMessage = positiveMessage, node = node, params = [
+                      procName, $node.info.line, " doesn't"])
                   break
             except KeyError, Exception:
               rule.amount = errorMessage(text = messagePrefix &
@@ -151,8 +151,8 @@ checkRule:
         # The node uses all of its parameters
         if index > -1:
           setResult(checkResult = true, positiveMessage = "",
-              negativeMessage = positiveMessage, params = [procName,
-              $node.info.line, ""])
+              negativeMessage = positiveMessage, node = node, params = [
+              procName, $node.info.line, ""])
   endCheck:
     let negation: string = (if rule.negation: " not" else: "")
 

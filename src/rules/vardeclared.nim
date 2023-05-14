@@ -106,14 +106,16 @@ checkRule:
           if rule.options[0] in ["full", "type"]:
             setResult(checkResult = declaration[1].kind != nkEmpty,
                 positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, params = [$declaration[0],
-                $declaration.info.line, "type", $declaration[1]])
+                negativeMessage = negativeMessage, node = declaration,
+                params = [$declaration[0], $declaration.info.line, "type",
+                $declaration[1]])
           # Check if declaration of variable sets its value
           if rule.options[0] in ["full", "value"]:
             setResult(checkResult = declaration[2].kind != nkEmpty,
                 positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, params = [$declaration[0],
-                $declaration.info.line, "value", $declaration[2]])
+                negativeMessage = negativeMessage, node = declaration,
+                params = [$declaration[0], $declaration.info.line, "value",
+                $declaration[2]])
       # And sometimes the compiler detects declarations as the node
       elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
           nkLetSection, nkConstSection}:
@@ -124,14 +126,14 @@ checkRule:
         if rule.options[0] in ["full", "type"]:
           setResult(checkResult = node[1].kind != nkEmpty,
               positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage, params = [$node[0],
-              $node.info.line, "type", $node[1]])
+              negativeMessage = negativeMessage, node = node, params = [$node[
+              0], $node.info.line, "type", $node[1]])
         # Check if declaration of variable sets its value
         if rule.options[0] in ["full", "value"]:
           setResult(checkResult = node[2].kind != nkEmpty,
               positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage, params = [$node[0],
-              $node.info.line, "value", $node[2]])
+              negativeMessage = negativeMessage, node = node, params = [$node[
+              0], $node.info.line, "value", $node[2]])
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
           "can't check declaration of variable " &
