@@ -334,6 +334,8 @@ template endCheck*(code: untyped): untyped =
   ## * code - the custom code which will be executed after checking the rule
   if isParent:
     code
+    if rule.ruleType == fix:
+      rule.amount = 1
     if rule.amount < 0:
       rule.amount = 0
     if rule.ruleType == RuleTypes.count:
