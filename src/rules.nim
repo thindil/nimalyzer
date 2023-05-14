@@ -161,8 +161,7 @@ proc setRuleState*(node: PNode; ruleName: string;
         except KeyError, Exception:
           discard
 
-template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
-    params: varargs[string]) =
+template setResult*(checkResult: bool; positiveMessage, negativeMessage: string; node: PNode; params: varargs[string]) =
   ## Update the amount of the rule results
   ##
   ## * checkResult     - if true, the entity follow the check of the rule
@@ -188,6 +187,8 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
           message(text = messagePrefix & negativeMessage.multiReplace(
               replacements = replacements), returnValue = rule.amount,
               level = lvlNotice, decrease = false)
+    if rule.ruleType == fix:
+      ruleFix(astNode = node, fixCommand = rule.fixCommand)
   # The enitity meet the rule's requirements
   else:
     if rule.negation:
