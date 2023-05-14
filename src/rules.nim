@@ -167,6 +167,9 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
   ## * checkResult     - if true, the entity follow the check of the rule
   ## * positiveMessage - the message shown when the entity meet the rule check
   ## * negativeMessage - the message shown when the entity not meet the rule check
+  ## * node            - the AST node currently checked
+  ## * params          - the list of texts which will be replaced in the
+  ##                     positiveMessage and negativeMessage parameters
   ##
   ## Returns updated amount of the rule results. It will be increased
   ## or decreased, depending on the rule settings.
