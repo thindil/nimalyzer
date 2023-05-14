@@ -84,7 +84,8 @@ checkRule:
     if rule.enabled:
       setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
           positiveMessage = "Module has documentation.",
-          negativeMessage = "Module doesn't have documentation.")
+          negativeMessage = "Module doesn't have documentation.",
+          node = astNode)
   startCheck:
     discard
   checking:
@@ -123,8 +124,8 @@ checkRule:
             if node.kind == nkTemplateDef and not hasDoc:
               hasDoc = node.comment.len > 0
             setResult(checkResult = hasDoc, positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, params = [declName,
-                $node.info.line])
+                negativeMessage = negativeMessage, node = node, params = [
+                declName, $node.info.line])
           except KeyError as e:
             rule.amount = errorMessage(
                 text = "Can't check the declared entity '" & declName & "'.", e = e)

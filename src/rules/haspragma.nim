@@ -177,8 +177,8 @@ checkRule:
         for pragma in rule.options[1 .. ^1]:
           if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
             setResult(checkResult = false, positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, params = [procName,
-                $node.info.line, pragma])
+                negativeMessage = negativeMessage, node = node, params = [
+                procName, $node.info.line, pragma])
           elif pragma[^1] == '*' and pragma[0] != '*':
             var hasPragma: bool = false
             for procPragma in strPragmas:
@@ -187,8 +187,8 @@ checkRule:
                 break
             setResult(checkResult = hasPragma,
                 positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, params = [procName,
-                $node.info.line, pragma])
+                negativeMessage = negativeMessage, node = node, params = [
+                procName, $node.info.line, pragma])
           elif pragma[0] == '*' and pragma[^1] != '*':
             var hasPragma: bool = false
             for procPragma in strPragmas:
@@ -197,8 +197,8 @@ checkRule:
                 break
             setResult(checkResult = hasPragma,
                 positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, params = [procName,
-                $node.info.line, pragma])
+                negativeMessage = negativeMessage, node = node, params = [
+                procName, $node.info.line, pragma])
           elif '*' in [pragma[0], pragma[^1]]:
             var hasPragma: bool = false
             for procPragma in strPragmas:
@@ -207,12 +207,12 @@ checkRule:
                 break
             setResult(checkResult = hasPragma,
                 positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, params = [procName,
-                $node.info.line, pragma])
+                negativeMessage = negativeMessage, node = node, params = [
+                procName, $node.info.line, pragma])
           else:
             setResult(checkResult = true, positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, params = [procName,
-                $node.info.line, pragma])
+                negativeMessage = negativeMessage, node = node, params = [
+                procName, $node.info.line, pragma])
     endCheck:
       if not rule.enabled and rule.amount == 0:
         rule.amount = 1

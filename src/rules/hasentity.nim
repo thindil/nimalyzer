@@ -157,8 +157,8 @@ checkRule:
                     prefix = rule.options[1]):
                   setResult(checkResult = true,
                       positiveMessage = positiveMessage,
-                      negativeMessage = negativeMessage, params = [rule.options[
-                      0], childName, $child.info.line])
+                      negativeMessage = negativeMessage, node = child,
+                      params = [rule.options[0], childName, $child.info.line])
             elif childIndex <= node.sons.high:
               let childName: string = try:
                   if childIndex > -1:
@@ -170,15 +170,15 @@ checkRule:
               if rule.options[1].len == 0 or startsWith(s = childName,
                   prefix = rule.options[1]):
                 setResult(checkResult = true, positiveMessage = positiveMessage,
-                    negativeMessage = negativeMessage, params = [rule.options[
-                    0], childName, $node.info.line])
+                    negativeMessage = negativeMessage, node = node, params = [
+                    rule.options[0], childName, $node.info.line])
         # Check the node itself
         elif node.kind == nodeKind:
           if rule.options[1].len == 0 or startsWith(s = $node[0],
               prefix = rule.options[1]):
             setResult(checkResult = true, positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, params = [rule.options[0],
-                $node[0], $node.info.line])
+                negativeMessage = negativeMessage, node = node, params = [
+                rule.options[0], $node[0], $node.info.line])
       except KeyError, Exception:
         rule.amount = errorMessage(
             text = "Error during checking hasEntity rule: ",
