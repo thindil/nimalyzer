@@ -27,6 +27,7 @@ of the program.
   with check type of the rule
 - Message text for `hasEntity` rule when the program's verbosity is set to
   higher level than default
+- Negation doesn't work for `paramsUsed` rule
 
 ## [0.3.0] - 2023-04-28
 
