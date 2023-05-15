@@ -84,6 +84,7 @@ ruleConfig(ruleName = "localhides",
   rulePositiveMessage = "declaration of '{params[0]}' line: {params[1]} is not hidden by local variable.",
   ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} is hidden by local variable in line {params[2]}.")
 
+{.push ruleOff: "paramsUsed".}
 proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
     contractual.} =
@@ -163,6 +164,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
         negativeMessage = negativeMessage, node = node, params = [$node[0],
         $node.info.line, $hiddenLine])
+{.pop ruleOff: "paramsUsed".}
 
 checkRule:
   initCheck:
