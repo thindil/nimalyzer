@@ -181,20 +181,21 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
   if not checkResult:
     if rule.negation and rule.ruleType == check:
       rule.amount.inc
-    elif negativeMessage.len > 0:
-      if rule.ruleType == check:
-        message(text = messagePrefix & negativeMessage.multiReplace(
-            replacements = replacements), returnValue = rule.amount)
-        rule.amount = int.low
-      else:
-        if rule.negation:
+    else:
+      if negativeMessage.len > 0:
+        if rule.ruleType == check:
           message(text = messagePrefix & negativeMessage.multiReplace(
-              replacements = replacements), returnValue = rule.amount,
-              level = lvlNotice, decrease = false)
-    if rule.ruleType == fix:
-      ruleFix(astNode = node, fixCommand = rule.fixCommand.multiReplace(
-          replacements = [("{fileName}", rule.fileName), ("{line}",
-          $node.info.line)]))
+              replacements = replacements), returnValue = rule.amount)
+          rule.amount = int.low
+        else:
+          if rule.negation:
+            message(text = messagePrefix & negativeMessage.multiReplace(
+                replacements = replacements), returnValue = rule.amount,
+                level = lvlNotice, decrease = false)
+      if rule.ruleType == fix:
+        ruleFix(astNode = node, fixCommand = rule.fixCommand.multiReplace(
+            replacements = [("{fileName}", rule.fileName), ("{line}",
+            $node.info.line)]))
   # The enitity meet the rule's requirements
   else:
     if rule.negation:
