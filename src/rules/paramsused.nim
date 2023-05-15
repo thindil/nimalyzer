@@ -150,7 +150,7 @@ checkRule:
                   $node.info.line & ". Reason: ", e = getCurrentException())
         # The node uses all of its parameters
         if index > -1:
-          setResult(checkResult = true, positiveMessage = "",
+          setResult(checkResult = true, positiveMessage = positiveMessage,
               negativeMessage = positiveMessage, node = node, params = [
               procName, $node.info.line, ""])
   endCheck:
