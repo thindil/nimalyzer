@@ -452,22 +452,86 @@ macro fixRule*(code: untyped): untyped =
       newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
       nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
       children = [newIdentNode(i = "astNode"), newIdentNode(i = "PNode"),
-      newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(
-      i = "fixCommand"), newIdentNode(i = "string"), newEmptyNode()]),
-      nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"),
+      newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"),
       newIdentNode(i = "RuleOptions"), newEmptyNode()])]),
-      newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children = (if code[
-      0].kind == nnkDiscardStmt: nnkStmtList.newTree(nnkIfStmt.newTree(
-      children = [nnkElifBranch.newTree(children = [nnkInfix.newTree(
-      children = [newIdentNode(i = "!="), nnkCall.newTree(children = [
-      newIdentNode("execShellCmd"), nnkExprEqExpr.newTree(children = [
-      newIdentNode("command"), newIdentNode("fixCommand")])]), newLit(i = 0)]),
-      nnkStmtList.newTree(children = nnkDiscardStmt.newTree(
-      children = nnkCall.newTree(children = [newIdentNode("errorMessage"),
-      nnkExprEqExpr.newTree(children = [newIdentNode(i = "text"),
-      nnkInfix.newTree(children = [newIdentNode(i = "&"), nnkInfix.newTree(
-      newIdentNode(i = "&"), newLit(s = "Can't execute command '"),
-      newIdentNode(i = "fixCommand")), newLit(
-      s = "' for fix type of rule.")])])])))])]))
+      newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children = (
+      if code[0].kind == nnkDiscardStmt:
+        nnkStmtList.newTree(
+        nnkStmtList.newTree(
+              nnkLetSection.newTree(
+                nnkIdentDefs.newTree(
+                  newIdentNode("fixCommand"),
+                  newEmptyNode(),
+                  nnkCall.newTree(
+                    nnkDotExpr.newTree(
+                      nnkDotExpr.newTree(
+                        newIdentNode("rule"),
+                        newIdentNode("fixCommand")
+                      ),
+                      newIdentNode("multiReplace")
+                    ),
+                    nnkExprEqExpr.newTree(
+                      newIdentNode("replacements"),
+                      nnkBracket.newTree(
+                        nnkTupleConstr.newTree(
+                          newLit("{fileName}"),
+                          nnkDotExpr.newTree(
+                            newIdentNode("rule"),
+                            newIdentNode("fileName")
+                          )
+                        ),
+                        nnkTupleConstr.newTree(
+                          newLit("{line}"),
+                          nnkPrefix.newTree(
+                            newIdentNode("$"),
+                            nnkDotExpr.newTree(
+                              nnkDotExpr.newTree(
+                                newIdentNode("astNode"),
+                                newIdentNode("info")
+                              ),
+                              newIdentNode("line")
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              ),
+              nnkIfStmt.newTree(
+                nnkElifBranch.newTree(
+                  nnkPrefix.newTree(
+                    newIdentNode("not"),
+                    nnkPar.newTree(
+                      nnkInfix.newTree(
+                        newIdentNode("=="),
+                        nnkCall.newTree(
+                          newIdentNode("execShellCmd"),
+                          newIdentNode("fixCommand")
+                        ),
+                        newLit(0)
+                      )
+                    )
+                  ),
+                  nnkStmtList.newTree(
+                    nnkDiscardStmt.newTree(
+                      nnkCall.newTree(
+                        newIdentNode("errorMessage"),
+                        nnkInfix.newTree(
+                          newIdentNode("&"),
+                          nnkInfix.newTree(
+                            newIdentNode("&"),
+                            newLit("Can\'t execute command \'"),
+                            newIdentNode("fixCommand")
+                          ),
+                          newLit("\' for fix type of rule.")
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
     else:
       code))])])
