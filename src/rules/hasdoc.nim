@@ -36,7 +36,8 @@
 ##   an error if there is a public declaration which doesn't have documentation.
 ##   Search type will list all public declarations which have documentation and
 ##   raise error if nothing was found. Count type will simply list the amount
-##   of public declarations which have documentation.
+##   of public declarations which have documentation. Fix type will execute
+##   the default shell command set by the program's setting **fixCommand**.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about public declaration which have documentation.
 ##   Probably useable only with search and count type of rule.
