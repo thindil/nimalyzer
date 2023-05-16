@@ -80,7 +80,7 @@ type
     options*: seq[RuleOptionsTypes]
     optionValues*: seq[string]
     minOptions*: Natural
-    fixProc*: proc (astNode: PNode; fixCommand: string; rule: RuleOptions)
+    fixProc*: proc (astNode: PNode; rule: RuleOptions)
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
@@ -193,9 +193,7 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
                 replacements = replacements), returnValue = rule.amount,
                 level = lvlNotice, decrease = false)
       if rule.ruleType == fix:
-        ruleFix(astNode = node, fixCommand = rule.fixCommand.multiReplace(
-            replacements = [("{fileName}", rule.fileName), ("{line}",
-            $node.info.line)]), rule = rule)
+        ruleFix(astNode = node, rule = rule)
   # The enitity meet the rule's requirements
   else:
     if rule.negation:
@@ -414,9 +412,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       nnkProcDef.newTree(children = [newIdentNode(i = "ruleFix"), newEmptyNode(),
       newEmptyNode(), nnkFormalParams.newTree(children = [newEmptyNode(),
       nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
-      newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
-      children = [newIdentNode(i = "fixCommand"), newIdentNode(i = "string"),
-      newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"),
+      newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"),
       newIdentNode(i = "RuleOptions"), newEmptyNode()])]), newEmptyNode(),
       newEmptyNode(), newEmptyNode()])), nnkLetSection.newTree(
       children = nnkIdentDefs.newTree(children = nnkPostfix.newTree(
