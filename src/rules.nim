@@ -452,48 +452,48 @@ macro fixRule*(code: untyped): untyped =
       newIdentNode(i = "RuleOptions"), newEmptyNode()])]),
       newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children = (
       if code[0].kind == nnkDiscardStmt:
-        nnkStmtList.newTree(
-        nnkStmtList.newTree(
-              nnkLetSection.newTree(
-                nnkIdentDefs.newTree(
-                  newIdentNode("fixCommand"),
+        nnkStmtList.newTree(children = [
+        nnkStmtList.newTree(children = [
+              nnkLetSection.newTree(children = [
+                nnkIdentDefs.newTree(children = [
+                  newIdentNode(i = "fixCommand"),
                   newEmptyNode(),
-                  nnkCall.newTree(
-                    nnkDotExpr.newTree(
-                      nnkDotExpr.newTree(
-                        newIdentNode("rule"),
-                        newIdentNode("fixCommand")
-                      ),
-                      newIdentNode("multiReplace")
-                    ),
-                    nnkExprEqExpr.newTree(
-                      newIdentNode("replacements"),
-                      nnkBracket.newTree(
-                        nnkTupleConstr.newTree(
-                          newLit("{fileName}"),
-                          nnkDotExpr.newTree(
-                            newIdentNode("rule"),
-                            newIdentNode("fileName")
-                          )
-                        ),
-                        nnkTupleConstr.newTree(
-                          newLit("{line}"),
-                          nnkPrefix.newTree(
-                            newIdentNode("$"),
-                            nnkDotExpr.newTree(
-                              nnkDotExpr.newTree(
-                                newIdentNode("astNode"),
-                                newIdentNode("info")
-                              ),
-                              newIdentNode("line")
-                            )
-                          )
-                        )
-                      )
-                    )
-                  )
-                )
-              ),
+                  nnkCall.newTree(children = [
+                    nnkDotExpr.newTree(children = [
+                      nnkDotExpr.newTree(children = [
+                        newIdentNode(i = "rule"),
+                        newIdentNode(i = "fixCommand")
+                      ]),
+                      newIdentNode(i = "multiReplace")
+                    ]),
+                    nnkExprEqExpr.newTree(children = [
+                      newIdentNode(i = "replacements"),
+                      nnkBracket.newTree(children = [
+                        nnkTupleConstr.newTree(children = [
+                          newLit(s = "{fileName}"),
+                          nnkDotExpr.newTree(children = [
+                            newIdentNode(i = "rule"),
+                            newIdentNode(i = "fileName")
+                          ])
+                        ]),
+                        nnkTupleConstr.newTree(children = [
+                          newLit(s = "{line}"),
+                          nnkPrefix.newTree(children = [
+                            newIdentNode(i = "$"),
+                            nnkDotExpr.newTree(children = [
+                              nnkDotExpr.newTree(children = [
+                                newIdentNode(i = "astNode"),
+                                newIdentNode(i = "info")
+                              ]),
+                              newIdentNode(i = "line")
+                            ])
+                          ])
+                        ])
+                      ])
+                    ])
+                  ])
+                ])
+              ]),
               nnkIfStmt.newTree(
                 nnkElifBranch.newTree(
                   nnkPrefix.newTree(
@@ -527,7 +527,7 @@ macro fixRule*(code: untyped): untyped =
                   )
                 )
               )
-            )
-          )
+            ])
+          ])
     else:
       code))])])
