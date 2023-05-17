@@ -166,7 +166,7 @@ proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
           message(text = "Added" & (if result.rules[
               ^1].negation: " negation " else: " ") & $result.rules[
               ^1].ruleType & " rule '" & result.rules[^1].name &
-              "' with options: '" & result.rules[^1].options.join(", ") &
+              "' with options: '" & result.rules[^1].options.join(sep = ", ") &
               "' to the list of rules to check.", level = lvlDebug)
     except IOError:
       abortProgram(message = "The specified configuration file '" & configFile & "' doesn't exist.")
