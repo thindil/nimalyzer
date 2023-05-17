@@ -477,5 +477,5 @@ macro fixRule*(code: untyped): untyped =
         nnkInfix.newTree(newIdentNode("&"), nnkInfix.newTree(newIdentNode("&"),
         newLit("Can\'t execute command \'"), newIdentNode("fixCommand")),
         newLit("\' for fix type of rule.")))))))])])
-  else:
-    code))])])
+      else:
+        code))])])
