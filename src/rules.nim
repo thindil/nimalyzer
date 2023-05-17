@@ -183,7 +183,7 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
       rule.amount.inc
     else:
       if negativeMessage.len > 0:
-        if rule.ruleType == check:
+        if rule.ruleType in {check, fix}:
           message(text = messagePrefix & negativeMessage.multiReplace(
               replacements = replacements), returnValue = rule.amount)
           rule.amount = int.low
