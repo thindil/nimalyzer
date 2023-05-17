@@ -118,7 +118,6 @@ checkRule:
         oldState = rule.enabled)
     if astNode.kind in {nkCall, nkDotCall}:
       check(node = astNode, rule = rule, messagePrefix = messagePrefix)
-      return
   checking:
     # Node is a call, and have parameters, check it
     if node.kind in {nkCall, nkDotCall} and (node.sons.len > 1 and node.sons[
