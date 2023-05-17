@@ -197,11 +197,13 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
   # The enitity meet the rule's requirements
   else:
     if rule.negation:
-      if rule.ruleType == check and positiveMessage.len > 0:
+      if rule.ruleType in {check, fix} and positiveMessage.len > 0:
         message(text = messagePrefix & positiveMessage.multiReplace(
             replacements = replacements), returnValue = rule.amount)
       else:
         rule.amount.dec
+      if rule.ruleType == fix:
+        ruleFix(astNode = node, rule = rule)
     else:
       if rule.ruleType == search and positiveMessage.len > 0:
         message(text = messagePrefix & positiveMessage.multiReplace(
