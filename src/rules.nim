@@ -225,12 +225,12 @@ proc validateOptions*(rule: RuleSettings; options: seq[
     if options.len < rule.minOptions:
       return errorMessage(text = "The rule " & rule.name &
           " requires at least " & $rule.minOptions & " options, but only " &
-          $options.len & " provided: '" & options.join(", ") & "'.").bool
+          $options.len & " provided: '" & options.join(sep = ", ") & "'.").bool
     # Check if too much options entered
     if options.len > rule.options.len:
       return errorMessage(text = "The rule " & rule.name &
           " requires at maximum " & $rule.options.len & " options, but " &
-          $options.len & " provided: '" & options.join(", ") & "'.").bool
+          $options.len & " provided: '" & options.join(sep = ", ") & "'.").bool
     # Check if all options have proper values
     for index, option in options.pairs:
       case rule.options[index]
@@ -266,22 +266,22 @@ macro initCheck*(code: untyped): untyped =
   ## * code - the custom code which will be executed during initialization of
   ##          the check
   return nnkStmtList.newTree(children = [nnkLetSection.newTree(
-      children = nnkIdentDefs.newTree(children = newIdentNode(i = "isParent"),
-      newIdentNode(i = "bool"), nnkDotExpr.newTree(children = newIdentNode(
-      i = "rule"), newIdentNode(i = "parent"))), nnkIdentDefs.newTree(
-      children = newIdentNode(i = "messagePrefix"), newIdentNode(i = "string"),
-      nnkIfExpr.newTree(children = nnkElifExpr.newTree(
-      children = nnkInfix.newTree(children = newIdentNode(i = "<"),
-      nnkCall.newTree(children = newIdentNode(i = "getLogFilter")),
-      newIdentNode(i = "lvlNotice")), nnkStmtList.newTree(children = newLit(
-      s = ""))), nnkElseExpr.newTree(children = nnkStmtList.newTree(
-      children = nnkInfix.newTree(children = newIdentNode(i = "&"),
-      nnkDotExpr.newTree(children = newIdentNode(i = "rule"), newIdentNode(
-      i = "fileName")), newLit(s = ": "))))))), nnkIfStmt.newTree(
-      children = nnkElifBranch.newTree(children = newIdentNode(i = "isParent"),
-      nnkStmtList.newTree(children = nnkAsgn.newTree(
-      children = nnkDotExpr.newTree(children = newIdentNode(i = "rule"),
-      newIdentNode(i = "parent")), newIdentNode(i = "false")), code)))])
+      children = [nnkIdentDefs.newTree(children = [newIdentNode(i = "isParent"),
+      newIdentNode(i = "bool"), nnkDotExpr.newTree(children = [newIdentNode(
+      i = "rule"), newIdentNode(i = "parent")])]), nnkIdentDefs.newTree(
+      children = [newIdentNode(i = "messagePrefix"), newIdentNode(i = "string"),
+      nnkIfExpr.newTree(children = [nnkElifExpr.newTree(
+      children = [nnkInfix.newTree(children = [newIdentNode(i = "<"),
+      nnkCall.newTree(children = [newIdentNode(i = "getLogFilter")]),
+      newIdentNode(i = "lvlNotice")]), nnkStmtList.newTree(children = newLit(
+      s = ""))]), nnkElseExpr.newTree(children = nnkStmtList.newTree(
+      children = [nnkInfix.newTree(children = [newIdentNode(i = "&"),
+      nnkDotExpr.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
+      i = "fileName")]), newLit(s = ": ")])]))])])]), nnkIfStmt.newTree(
+      children = nnkElifBranch.newTree(children = [newIdentNode(i = "isParent"),
+      nnkStmtList.newTree(children = [nnkAsgn.newTree(
+      children = [nnkDotExpr.newTree(children = [newIdentNode(i = "rule"),
+      newIdentNode(i = "parent")]), newIdentNode(i = "false")]), code])]))])
 
 template startCheck*(code: untyped): untyped =
   ## Run the custom code each time when the check for a node starts
