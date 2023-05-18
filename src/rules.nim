@@ -304,7 +304,8 @@ macro checking*(code: untyped): untyped =
       i = "setRuleState"), nnkExprEqExpr.newTree(children = [newIdentNode(
       i = "node"), newIdentNode(i = "node")]), nnkExprEqExpr.newTree(
       children = [newIdentNode(i = "ruleName"), nnkDotExpr.newTree(
-      children = [newIdentNode(i = "ruleSettings"), newIdentNode(i = "name")])]),
+      children = [newIdentNode(i = "ruleSettings"), newIdentNode(
+          i = "name")])]),
       nnkExprEqExpr.newTree(children = [newIdentNode(i = "oldState"),
       nnkDotExpr.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
       i = "enabled")])])]), nnkForStmt.newTree(children = [newIdentNode(
@@ -316,7 +317,8 @@ macro checking*(code: untyped): untyped =
       i = "ruleName"), nnkDotExpr.newTree(children = [newIdentNode(
       i = "ruleSettings"), newIdentNode(i = "name")])]), nnkExprEqExpr.newTree(
       children = [newIdentNode(i = "oldState"), nnkDotExpr.newTree(
-      children = [newIdentNode(i = "rule"), newIdentNode(i = "enabled")])])])])]),
+      children = [newIdentNode(i = "rule"), newIdentNode(
+          i = "enabled")])])])])]),
       nnkIfStmt.newTree(children = [nnkElifBranch.newTree(
       children = [nnkDotExpr.newTree(children = [newIdentNode(i = "rule"),
       newIdentNode(i = "enabled")]), nnkStmtList.newTree(children = code)])]),
@@ -327,7 +329,8 @@ macro checking*(code: untyped): untyped =
       children = [newIdentNode(i = "astNode"), newIdentNode(i = "child")]),
       nnkExprEqExpr.newTree(children = [newIdentNode(i = "parentNode"),
       newIdentNode(i = "astNode")]), nnkExprEqExpr.newTree(
-      children = [newIdentNode(i = "rule"), newIdentNode(i = "rule")])])])])])])])
+      children = [newIdentNode(i = "rule"), newIdentNode(
+          i = "rule")])])])])])])])
 
 template endCheck*(code: untyped): untyped =
   ## Show the summary after the check and run the custom code if needed
@@ -368,14 +371,17 @@ macro checkRule*(code: untyped): untyped =
   ## Check the rule, add the procedure declaration and the check code itself
   ##
   ## * code - the code to run for check the rule
-  return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [nnkPostfix.newTree(
-      children = [newIdentNode(i = "*"), newIdentNode(i = "ruleCheck")]),
+  return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
+      nnkPostfix.newTree(children = [newIdentNode(i = "*"), newIdentNode(
+          i = "ruleCheck")]),
       newEmptyNode(), newEmptyNode(), nnkFormalParams.newTree(
       children = [newEmptyNode(), nnkIdentDefs.newTree(children = [newIdentNode(
       i = "astNode"), newIdentNode(i = "parentNode"), newIdentNode(i = "PNode"),
-      newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"),
+      newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(
+          i = "rule"),
       nnkVarTy.newTree(children = newIdentNode(i = "RuleOptions")),
-      newEmptyNode()])]), nnkPragma.newTree(children = [nnkExprColonExpr.newTree(
+      newEmptyNode()])]), nnkPragma.newTree(children = [
+      nnkExprColonExpr.newTree(
       children = [newIdentNode(i = "raises"), nnkBracket.newTree()]),
       nnkExprColonExpr.newTree(children = [newIdentNode(i = "tags"),
       nnkBracket.newTree(children = newIdentNode(i = "RootEffect"))]),
@@ -411,36 +417,36 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       children = [newIdentNode(i = "rule"), nnkVarTy.newTree(
       children = [newIdentNode(i = "RuleOptions")]), newEmptyNode()])]),
       newEmptyNode(), newEmptyNode(), newEmptyNode()]), nnkStmtList.newTree(children =
-      [nnkProcDef.newTree(children = [newIdentNode(i = "ruleFix"), newEmptyNode(),
-      newEmptyNode(), nnkFormalParams.newTree(children = [newEmptyNode(),
-      nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
-      newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
-      children = [newIdentNode(i = "rule"),
-      newIdentNode(i = "RuleOptions"), newEmptyNode()])]), newEmptyNode(),
-      newEmptyNode(), newEmptyNode()])]), nnkLetSection.newTree(
-      children = nnkIdentDefs.newTree(children = [nnkPostfix.newTree(
-      children = [newIdentNode(i = "*"), newIdentNode(i = "ruleSettings")]),
-      newIdentNode(i = "RuleSettings"), nnkObjConstr.newTree(
-      children = [newIdentNode(i = "RuleSettings"), nnkExprColonExpr.newTree(
-      children = [newIdentNode(i = "name"), ruleName]),
-      nnkExprColonExpr.newTree(children = [newIdentNode(i = "checkProc"),
-      newIdentNode(i = "ruleCheck")]),
-      nnkExprColonExpr.newTree(children = [newIdentNode(i = "fixProc"),
-      newIdentNode(i = "ruleFix")]), nnkExprColonExpr.newTree(
-      children = [newIdentNode(i = "options"), ruleOptions]),
-      nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
-      ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "minOptions"), ruleMinOptions])])])), nnkConstSection.newTree(
-      children = [nnkConstDef.newTree(children = [newIdentNode(
-      i = "showForCheck"), newIdentNode(i = "bool"), ruleShowForCheck]),
-      nnkConstDef.newTree(children = [newIdentNode(i = "foundMessage"),
-      newIdentNode(i = "string"), ruleFoundMessage]), nnkConstDef.newTree(
-      children = [newIdentNode(i = "notFoundMessage"), newIdentNode(
-      i = "string"), ruleNotFoundMessage]), nnkConstDef.newTree(
-      children = [newIdentNode(i = "positiveMessage"), newIdentNode(
-      i = "string"), rulePositiveMessage]), nnkConstDef.newTree(
-      children = [newIdentNode(i = "negativeMessage"), newIdentNode(
-      i = "string"), ruleNegativeMessage])])])
+    [nnkProcDef.newTree(children = [newIdentNode(i = "ruleFix"), newEmptyNode(),
+    newEmptyNode(), nnkFormalParams.newTree(children = [newEmptyNode(),
+    nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
+    newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
+    children = [newIdentNode(i = "rule"),
+    newIdentNode(i = "RuleOptions"), newEmptyNode()])]), newEmptyNode(),
+    newEmptyNode(), newEmptyNode()])]), nnkLetSection.newTree(
+    children = nnkIdentDefs.newTree(children = [nnkPostfix.newTree(
+    children = [newIdentNode(i = "*"), newIdentNode(i = "ruleSettings")]),
+    newIdentNode(i = "RuleSettings"), nnkObjConstr.newTree(
+    children = [newIdentNode(i = "RuleSettings"), nnkExprColonExpr.newTree(
+    children = [newIdentNode(i = "name"), ruleName]),
+    nnkExprColonExpr.newTree(children = [newIdentNode(i = "checkProc"),
+    newIdentNode(i = "ruleCheck")]),
+    nnkExprColonExpr.newTree(children = [newIdentNode(i = "fixProc"),
+    newIdentNode(i = "ruleFix")]), nnkExprColonExpr.newTree(
+    children = [newIdentNode(i = "options"), ruleOptions]),
+    nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
+    ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
+    i = "minOptions"), ruleMinOptions])])])), nnkConstSection.newTree(
+    children = [nnkConstDef.newTree(children = [newIdentNode(
+    i = "showForCheck"), newIdentNode(i = "bool"), ruleShowForCheck]),
+    nnkConstDef.newTree(children = [newIdentNode(i = "foundMessage"),
+    newIdentNode(i = "string"), ruleFoundMessage]), nnkConstDef.newTree(
+    children = [newIdentNode(i = "notFoundMessage"), newIdentNode(
+    i = "string"), ruleNotFoundMessage]), nnkConstDef.newTree(
+    children = [newIdentNode(i = "positiveMessage"), newIdentNode(
+    i = "string"), rulePositiveMessage]), nnkConstDef.newTree(
+    children = [newIdentNode(i = "negativeMessage"), newIdentNode(
+    i = "string"), ruleNegativeMessage])])])
 
 macro fixRule*(code: untyped): untyped =
   ## Run the code for fix the problem with the selected rule. If user doesn't
@@ -452,30 +458,30 @@ macro fixRule*(code: untyped): untyped =
       nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
       children = [newIdentNode(i = "astNode"), newIdentNode(i = "PNode"),
       newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(
-          i = "rule"),
-      newIdentNode(i = "RuleOptions"), newEmptyNode()])]),
+      i = "rule"), newIdentNode(i = "RuleOptions"), newEmptyNode()])]),
       newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children = (
-      if code[0].kind == nnkDiscardStmt:
-        nnkStmtList.newTree(children = [nnkStmtList.newTree(children = [
-        nnkLetSection.newTree(children = [nnkIdentDefs.newTree(children = [
-        newIdentNode(i = "fixCommand"), newEmptyNode(), nnkCall.newTree(
-        children = [nnkDotExpr.newTree(children = [nnkDotExpr.newTree(
-        children = [newIdentNode(i = "rule"), newIdentNode(i = "fixCommand")]),
-        newIdentNode(i = "multiReplace")]), nnkExprEqExpr.newTree(children = [
-        newIdentNode(i = "replacements"), nnkBracket.newTree(children = [
-        nnkTupleConstr.newTree(children = [newLit(s = "{fileName}"),
-        nnkDotExpr.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
-        i = "fileName")])]), nnkTupleConstr.newTree(children = [newLit(
-        s = "{line}"), nnkPrefix.newTree(children = [newIdentNode(i = "$"),
-        nnkDotExpr.newTree(children = [nnkDotExpr.newTree(children = [
-        newIdentNode(i = "astNode"), newIdentNode(i = "info")]), newIdentNode(
-        i = "line")])])])])])])])]), nnkIfStmt.newTree(children = [nnkElifBranch.newTree(
-        children = [nnkPrefix.newTree(children = [newIdentNode(i = "not"), nnkPar.newTree(children = [nnkInfix.newTree(
-        children = [newIdentNode(i = "=="), nnkCall.newTree(children = [newIdentNode(i = "execShellCmd"),
-        newIdentNode(i = "fixCommand")]), newLit(i = 0)])])]), nnkStmtList.newTree(
-        children = [nnkDiscardStmt.newTree(children = [nnkCall.newTree(children = [newIdentNode(i = "errorMessage"),
-        nnkInfix.newTree(children = [newIdentNode(i = "&"), nnkInfix.newTree(children = [newIdentNode(i = "&"),
-        newLit(s = "Can\'t execute command \'"), newIdentNode(i = "fixCommand")]),
-        newLit(s = "\' for fix type of rule.")])])])])])])])])
-      else:
-        code))])])
+    if code[ 0].kind == nnkDiscardStmt: nnkStmtList.newTree(children = [
+      nnkStmtList.newTree(children = [nnkLetSection.newTree(children = [
+      nnkIdentDefs.newTree(children = [newIdentNode(i = "fixCommand"),
+      newEmptyNode(), nnkCall.newTree(children = [nnkDotExpr.newTree(
+      children = [nnkDotExpr.newTree(children = [newIdentNode(i = "rule"),
+      newIdentNode(i = "fixCommand")]), newIdentNode(i = "multiReplace")]),
+      nnkExprEqExpr.newTree(children = [newIdentNode(i = "replacements"),
+      nnkBracket.newTree(children = [nnkTupleConstr.newTree(children = [newLit(
+      s = "{fileName}"), nnkDotExpr.newTree(children = [newIdentNode(
+      i = "rule"), newIdentNode(i = "fileName")])]), nnkTupleConstr.newTree(
+      children = [newLit(s = "{line}"), nnkPrefix.newTree(children = [
+      newIdentNode(i = "$"), nnkDotExpr.newTree(children = [nnkDotExpr.newTree(
+      children = [newIdentNode(i = "astNode"), newIdentNode(i = "info")]),
+      newIdentNode(i = "line")])])])])])])])]), nnkIfStmt.newTree(children = [
+      nnkElifBranch.newTree(children = [nnkPrefix.newTree(children = [
+      newIdentNode(i = "not"), nnkPar.newTree(children = [nnkInfix.newTree(
+      children = [newIdentNode(i = "=="), nnkCall.newTree(children = [
+      newIdentNode(i = "execShellCmd"), newIdentNode(i = "fixCommand")]),
+      newLit(i = 0)])])]), nnkStmtList.newTree(children = [
+      nnkDiscardStmt.newTree(children = [nnkCall.newTree(children = [
+      newIdentNode(i = "errorMessage"), nnkInfix.newTree(children = [
+      newIdentNode(i = "&"), nnkInfix.newTree(children = [newIdentNode(i = "&"),
+      newLit(s = "Can\'t execute command \'"), newIdentNode(i = "fixCommand")]),
+      newLit(s = "\' for fix type of rule.")])])])])])])])])
+    else: code))])])
