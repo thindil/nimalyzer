@@ -373,20 +373,18 @@ macro checkRule*(code: untyped): untyped =
   ## * code - the code to run for check the rule
   return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
       nnkPostfix.newTree(children = [newIdentNode(i = "*"), newIdentNode(
-          i = "ruleCheck")]),
-      newEmptyNode(), newEmptyNode(), nnkFormalParams.newTree(
-      children = [newEmptyNode(), nnkIdentDefs.newTree(children = [newIdentNode(
-      i = "astNode"), newIdentNode(i = "parentNode"), newIdentNode(i = "PNode"),
-      newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(
-          i = "rule"),
-      nnkVarTy.newTree(children = newIdentNode(i = "RuleOptions")),
-      newEmptyNode()])]), nnkPragma.newTree(children = [
-      nnkExprColonExpr.newTree(
-      children = [newIdentNode(i = "raises"), nnkBracket.newTree()]),
-      nnkExprColonExpr.newTree(children = [newIdentNode(i = "tags"),
-      nnkBracket.newTree(children = newIdentNode(i = "RootEffect"))]),
-      newIdentNode(i = "contractual")]), newEmptyNode(), nnkStmtList.newTree(
-      children = code)])])
+      i = "ruleCheck")]), newEmptyNode(), newEmptyNode(),
+      nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
+      children = [newIdentNode(i = "astNode"), newIdentNode(i = "parentNode"),
+      newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
+      children = [newIdentNode(i = "rule"), nnkVarTy.newTree(
+      children = newIdentNode(i = "RuleOptions")), newEmptyNode()])]),
+      nnkPragma.newTree(children = [nnkExprColonExpr.newTree(children = [
+      newIdentNode(i = "raises"), nnkBracket.newTree()]),
+      nnkExprColonExpr.newTree(children = [newIdentNode(
+      i = "tags"), nnkBracket.newTree(children = newIdentNode(
+      i = "RootEffect"))]), newIdentNode(i = "contractual")]), newEmptyNode(),
+      nnkStmtList.newTree(children = code)])])
 
 macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
     rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[
@@ -409,14 +407,14 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
   return nnkStmtList.newTree(children = [nnkProcDef.newTree(
-      children = [nnkPostfix.newTree(children = [newIdentNode(i = "*"),
-      newIdentNode(i = "ruleCheck")]), newEmptyNode(), newEmptyNode(),
-      nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
-      children = [newIdentNode(i = "astNode"), newIdentNode(i = "parentNode"),
-      newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
-      children = [newIdentNode(i = "rule"), nnkVarTy.newTree(
-      children = [newIdentNode(i = "RuleOptions")]), newEmptyNode()])]),
-      newEmptyNode(), newEmptyNode(), newEmptyNode()]), nnkStmtList.newTree(children =
+    children = [nnkPostfix.newTree(children = [newIdentNode(i = "*"),
+    newIdentNode(i = "ruleCheck")]), newEmptyNode(), newEmptyNode(),
+    nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
+    children = [newIdentNode(i = "astNode"), newIdentNode(i = "parentNode"),
+    newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
+    children = [newIdentNode(i = "rule"), nnkVarTy.newTree(
+    children = [newIdentNode(i = "RuleOptions")]), newEmptyNode()])]),
+    newEmptyNode(), newEmptyNode(), newEmptyNode()]), nnkStmtList.newTree(children =
     [nnkProcDef.newTree(children = [newIdentNode(i = "ruleFix"), newEmptyNode(),
     newEmptyNode(), nnkFormalParams.newTree(children = [newEmptyNode(),
     nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
@@ -460,7 +458,7 @@ macro fixRule*(code: untyped): untyped =
       newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(
       i = "rule"), newIdentNode(i = "RuleOptions"), newEmptyNode()])]),
       newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children = (
-    if code[ 0].kind == nnkDiscardStmt: nnkStmtList.newTree(children = [
+    if code[0].kind == nnkDiscardStmt: nnkStmtList.newTree(children = [
       nnkStmtList.newTree(children = [nnkLetSection.newTree(children = [
       nnkIdentDefs.newTree(children = [newIdentNode(i = "fixCommand"),
       newEmptyNode(), nnkCall.newTree(children = [nnkDotExpr.newTree(
