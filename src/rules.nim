@@ -297,40 +297,37 @@ macro checking*(code: untyped): untyped =
   ## the node
   ##
   ## * code - the code of the check
-  return nnkStmtList.newTree(children = [nnkForStmt.newTree(
-      children = [newIdentNode(i = "node"), nnkDotExpr.newTree(
-      children = [newIdentNode(i = "astNode"), newIdentNode(i = "items")]),
-      nnkStmtList.newTree(children = [nnkCall.newTree(children = [newIdentNode(
-      i = "setRuleState"), nnkExprEqExpr.newTree(children = [newIdentNode(
-      i = "node"), newIdentNode(i = "node")]), nnkExprEqExpr.newTree(
-      children = [newIdentNode(i = "ruleName"), nnkDotExpr.newTree(
-      children = [newIdentNode(i = "ruleSettings"), newIdentNode(
-          i = "name")])]),
-      nnkExprEqExpr.newTree(children = [newIdentNode(i = "oldState"),
-      nnkDotExpr.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
-      i = "enabled")])])]), nnkForStmt.newTree(children = [newIdentNode(
-      i = "child"), nnkDotExpr.newTree(children = [newIdentNode(i = "node"),
-      newIdentNode(i = "items")]), nnkStmtList.newTree(
+  return nnkStmtList.newTree(children = [nnkForStmt.newTree(children = [
+      newIdentNode(i = "node"), nnkDotExpr.newTree(children = [newIdentNode(
+      i = "astNode"), newIdentNode(i = "items")]), nnkStmtList.newTree(
       children = [nnkCall.newTree(children = [newIdentNode(i = "setRuleState"),
       nnkExprEqExpr.newTree(children = [newIdentNode(i = "node"), newIdentNode(
-      i = "child")]), nnkExprEqExpr.newTree(children = [newIdentNode(
+      i = "node")]), nnkExprEqExpr.newTree(children = [newIdentNode(
       i = "ruleName"), nnkDotExpr.newTree(children = [newIdentNode(
       i = "ruleSettings"), newIdentNode(i = "name")])]), nnkExprEqExpr.newTree(
-      children = [newIdentNode(i = "oldState"), nnkDotExpr.newTree(
-      children = [newIdentNode(i = "rule"), newIdentNode(
-          i = "enabled")])])])])]),
-      nnkIfStmt.newTree(children = [nnkElifBranch.newTree(
-      children = [nnkDotExpr.newTree(children = [newIdentNode(i = "rule"),
-      newIdentNode(i = "enabled")]), nnkStmtList.newTree(children = code)])]),
+      children = [newIdentNode(i = "oldState"), nnkDotExpr.newTree(children = [
+      newIdentNode(i = "rule"), newIdentNode(i = "enabled")])])]),
       nnkForStmt.newTree(children = [newIdentNode(i = "child"),
       nnkDotExpr.newTree(children = [newIdentNode(i = "node"), newIdentNode(
       i = "items")]), nnkStmtList.newTree(children = [nnkCall.newTree(
-      children = [newIdentNode(i = "ruleCheck"), nnkExprEqExpr.newTree(
-      children = [newIdentNode(i = "astNode"), newIdentNode(i = "child")]),
-      nnkExprEqExpr.newTree(children = [newIdentNode(i = "parentNode"),
-      newIdentNode(i = "astNode")]), nnkExprEqExpr.newTree(
-      children = [newIdentNode(i = "rule"), newIdentNode(
-          i = "rule")])])])])])])])
+      children = [newIdentNode(i = "setRuleState"), nnkExprEqExpr.newTree(
+      children = [newIdentNode(i = "node"), newIdentNode(i = "child")]),
+      nnkExprEqExpr.newTree(children = [newIdentNode(i = "ruleName"),
+      nnkDotExpr.newTree(children = [newIdentNode(i = "ruleSettings"),
+      newIdentNode(i = "name")])]), nnkExprEqExpr.newTree(children = [
+      newIdentNode(i = "oldState"), nnkDotExpr.newTree(children = [newIdentNode(
+      i = "rule"), newIdentNode(i = "enabled")])])])])]), nnkIfStmt.newTree(
+      children = [nnkElifBranch.newTree(children = [nnkDotExpr.newTree(
+      children = [newIdentNode(i = "rule"), newIdentNode(i = "enabled")]),
+      nnkStmtList.newTree(children = code)])]), nnkForStmt.newTree(children = [
+      newIdentNode(i = "child"), nnkDotExpr.newTree(children = [newIdentNode(
+      i = "node"), newIdentNode(i = "items")]), nnkStmtList.newTree(children = [
+      nnkCall.newTree(children = [newIdentNode(i = "ruleCheck"),
+      nnkExprEqExpr.newTree(children = [newIdentNode(i = "astNode"),
+      newIdentNode(i = "child")]), nnkExprEqExpr.newTree(children = [
+      newIdentNode(i = "parentNode"), newIdentNode(i = "astNode")]),
+      nnkExprEqExpr.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
+      i = "rule")])])])])])])])
 
 template endCheck*(code: untyped): untyped =
   ## Show the summary after the check and run the custom code if needed
