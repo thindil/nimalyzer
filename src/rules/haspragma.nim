@@ -177,7 +177,7 @@ checkRule:
         for pragma in rule.options[1 .. ^1]:
           if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
             setResult(checkResult = false, positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node, params = [
+                negativeMessage = negativeMessage, node = node, ruleData = pragma, params = [
                 procName, $node.info.line, pragma])
           elif pragma[^1] == '*' and pragma[0] != '*':
             var hasPragma: bool = false
@@ -187,7 +187,7 @@ checkRule:
                 break
             setResult(checkResult = hasPragma,
                 positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node, params = [
+                negativeMessage = negativeMessage, node = node, ruleData = pragma, params = [
                 procName, $node.info.line, pragma])
           elif pragma[0] == '*' and pragma[^1] != '*':
             var hasPragma: bool = false
@@ -197,7 +197,7 @@ checkRule:
                 break
             setResult(checkResult = hasPragma,
                 positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node, params = [
+                negativeMessage = negativeMessage, node = node, ruleData = pragma, params = [
                 procName, $node.info.line, pragma])
           elif '*' in [pragma[0], pragma[^1]]:
             var hasPragma: bool = false
@@ -207,11 +207,11 @@ checkRule:
                 break
             setResult(checkResult = hasPragma,
                 positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node, params = [
+                negativeMessage = negativeMessage, node = node, ruleData = pragma, params = [
                 procName, $node.info.line, pragma])
           else:
             setResult(checkResult = true, positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node, params = [
+                negativeMessage = negativeMessage, node = node, ruleData = pragma, params = [
                 procName, $node.info.line, pragma])
     endCheck:
       if not rule.enabled and rule.amount == 0:
@@ -219,4 +219,17 @@ checkRule:
         return
 
 fixRule:
-  discard
+  if rule.negation:
+    for index, node in astNode[4].pairs:
+      let pragma = $node
+      if '*' notin [data[0], data[^1]] and pragma == data:
+        delSon(father = astNode[4], idx = index)
+      elif data[^1] == '*' and data[0] != '*':
+        if pragma.startsWith(prefix = data[0..^2]):
+          delSon(father = astNode[4], idx = index)
+      elif data[0] == '*' and data[^1] != '*':
+        if pragma.endsWith(suffix = data[1..^1]):
+          delSon(father = astNode[4], idx = index)
+      elif '*' in [data[0], data[^1]]:
+        if pragma.contains(sub = data[1..^2]):
+          delSon(father = astNode[4], idx = index)
