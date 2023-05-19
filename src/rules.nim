@@ -162,13 +162,14 @@ proc setRuleState*(node: PNode; ruleName: string;
           discard
 
 template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
-    node: PNode; params: varargs[string]) =
+    node: PNode; data: string = ""; params: varargs[string]) =
   ## Update the amount of the rule results
   ##
   ## * checkResult     - if true, the entity follow the check of the rule
   ## * positiveMessage - the message shown when the entity meet the rule check
   ## * negativeMessage - the message shown when the entity not meet the rule check
   ## * node            - the AST node currently checked
+  ## * data            - an additional data, used by fix type of rules
   ## * params          - the list of texts which will be replaced in the
   ##                     positiveMessage and negativeMessage parameters
   ##
