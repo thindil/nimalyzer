@@ -80,7 +80,7 @@ type
     options*: seq[RuleOptionsTypes]
     optionValues*: seq[string]
     minOptions*: Natural
-    fixProc*: proc (astNode: PNode; rule: RuleOptions)
+    fixProc*: proc (astNode: PNode; rule: RuleOptions; data: string)
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
@@ -162,14 +162,14 @@ proc setRuleState*(node: PNode; ruleName: string;
           discard
 
 template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
-    node: PNode; data: string = ""; params: varargs[string]) =
+    node: PNode; ruleData: string = ""; params: varargs[string]) =
   ## Update the amount of the rule results
   ##
   ## * checkResult     - if true, the entity follow the check of the rule
   ## * positiveMessage - the message shown when the entity meet the rule check
   ## * negativeMessage - the message shown when the entity not meet the rule check
   ## * node            - the AST node currently checked
-  ## * data            - an additional data, used by fix type of rules
+  ## * ruleData        - an additional data, used by fix type of rules
   ## * params          - the list of texts which will be replaced in the
   ##                     positiveMessage and negativeMessage parameters
   ##
@@ -194,7 +194,7 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
                 replacements = replacements), returnValue = rule.amount,
                 level = lvlNotice, decrease = false)
       if rule.ruleType == fix:
-        ruleFix(astNode = node, rule = rule)
+        ruleFix(astNode = node, rule = rule, data = ruleData)
   # The enitity meet the rule's requirements
   else:
     if rule.negation:
@@ -204,7 +204,7 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
       else:
         rule.amount.dec
       if rule.ruleType == fix:
-        ruleFix(astNode = node, rule = rule)
+        ruleFix(astNode = node, rule = rule, data = ruleData)
     else:
       if rule.ruleType == search and positiveMessage.len > 0:
         message(text = messagePrefix & positiveMessage.multiReplace(
@@ -418,7 +418,9 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
     nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
     newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
     children = [newIdentNode(i = "rule"),
-    newIdentNode(i = "RuleOptions"), newEmptyNode()])]), newEmptyNode(),
+    newIdentNode(i = "RuleOptions"), newEmptyNode()]), nnkIdentDefs.newTree(
+    children = [newIdentNode(i = "data"),
+    newIdentNode(i = "string"), newEmptyNode()])]), newEmptyNode(),
     newEmptyNode(), newEmptyNode()])]), nnkLetSection.newTree(
     children = nnkIdentDefs.newTree(children = [nnkPostfix.newTree(
     children = [newIdentNode(i = "*"), newIdentNode(i = "ruleSettings")]),
@@ -454,7 +456,9 @@ macro fixRule*(code: untyped): untyped =
       nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
       children = [newIdentNode(i = "astNode"), newIdentNode(i = "PNode"),
       newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(
-      i = "rule"), newIdentNode(i = "RuleOptions"), newEmptyNode()])]),
+      i = "rule"), newIdentNode(i = "RuleOptions"), newEmptyNode()]),
+      nnkIdentDefs.newTree(children = [newIdentNode(
+      i = "data"), newIdentNode(i = "string"), newEmptyNode()])]),
       newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children = (
     if code[0].kind == nnkDiscardStmt: nnkStmtList.newTree(children = [
       nnkStmtList.newTree(children = [nnkLetSection.newTree(children = [
