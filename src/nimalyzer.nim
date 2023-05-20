@@ -81,7 +81,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           let astNode: PNode = codeParser.parseAll
           codeParser.closeParser
           var currentRule: RuleOptions = RuleOptions(fileName: source,
-              fixCommand: fixCommand)
+              fixCommand: fixCommand, identsCache: nimCache)
           # Check the converted source code with each selected rule
           for index, rule in rules.pairs:
             message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
