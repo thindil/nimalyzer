@@ -252,3 +252,15 @@ fixRule:
     if not data.contains(chars = {'['}):
       pragmas.sons.add(y = newIdentNode(ident = getIdent(ic = rule.identsCache,
           identifier = data), info = pragmas.info))
+    elif not data.contains(chars = {'*'}):
+      let
+        startIndex = data.find(chars = {'['})
+        endIndex = data.find(chars = {']'})
+        pragmaName = data[0 .. data.find(chars = {':'}) - 1]
+      var newPragma = newTree(kind = nkExprColonExpr, children = [])
+      newPragma.sons.add(y = newIdentNode(ident = getIdent(
+          ic = rule.identsCache, identifier = pragmaName), info = pragmas.info))
+      for value in data[startIndex + 1 .. endIndex - 1].split(sep = ','):
+        if value.len == 0:
+          continue
+        echo value
