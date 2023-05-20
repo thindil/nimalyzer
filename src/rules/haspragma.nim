@@ -225,22 +225,25 @@ checkRule:
 
 fixRule:
   let pragmas = astNode.getDeclPragma
-  for child in astNode:
-    if child == pragmas:
-      for index, node in child.pairs:
-        let pragma = $node
-        if '*' notin [data[0], data[^1]] and pragma == data:
-          delSon(father = child, idx = index)
+  if rule.negation:
+    for index, node in pragmas.pairs:
+      let pragma = $node
+      if '*' notin [data[0], data[^1]] and pragma == data:
+        delSon(father = pragmas, idx = index)
+        break
+      elif data[^1] == '*' and data[0] != '*' and pragma.startsWith(
+          prefix = data[0..^2]):
+        delSon(father = pragmas, idx = index)
+        break
+      elif data[0] == '*' and data[^1] != '*' and pragma.endsWith(
+          suffix = data[1..^1]):
+        delSon(father = pragmas, idx = index)
+        break
+      elif '*' in [data[0], data[^1]] and pragma.contains(sub = data[1..^2]):
+        delSon(father = pragmas, idx = index)
+        break
+    if pragmas.len == 0:
+      for index, child in astNode.pairs:
+        if child == pragmas:
+          astNode[index] = newNode(kind = nkEmpty)
           break
-        elif data[^1] == '*' and data[0] != '*' and pragma.startsWith(
-            prefix = data[0..^2]):
-          delSon(father = child, idx = index)
-          break
-        elif data[0] == '*' and data[^1] != '*' and pragma.endsWith(
-            suffix = data[1..^1]):
-          delSon(father = child, idx = index)
-          break
-        elif '*' in [data[0], data[^1]] and pragma.contains(sub = data[1..^2]):
-          delSon(father = child, idx = index)
-          break
-      break
