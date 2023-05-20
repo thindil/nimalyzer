@@ -108,6 +108,7 @@
 ##
 ##      check hasPragma procedures contractual "lock: *"
 
+import compiler/idents
 # Import default rules' modules
 import ../rules
 
@@ -247,3 +248,7 @@ fixRule:
         if child == pragmas:
           astNode[index] = newNode(kind = nkEmpty)
           break
+  else:
+    if not data.contains(chars = {'['}):
+      pragmas.sons.add(y = newIdentNode(ident = getIdent(ic = rule.identsCache,
+          identifier = data), info = pragmas.info))
