@@ -225,7 +225,7 @@ checkRule:
         return
 
 fixRule:
-  let pragmas = astNode.getDeclPragma
+  var pragmas = astNode.getDeclPragma
   if rule.negation:
     for index, node in pragmas.pairs:
       let pragma = $node
@@ -249,6 +249,12 @@ fixRule:
           astNode[index] = newNode(kind = nkEmpty)
           break
   else:
+    if pragmas.kind == nkEmpty:
+      for index, child in astNode.pairs:
+        if child == pragmas:
+          astNode[index] = newNode(kind = nkPragma)
+          break
+      pragmas = astNode.getDeclPragma
     if not data.contains(chars = {'['}):
       pragmas.sons.add(y = newIdentNode(ident = getIdent(ic = rule.identsCache,
           identifier = data), info = pragmas.info))
@@ -257,10 +263,14 @@ fixRule:
         startIndex = data.find(chars = {'['})
         endIndex = data.find(chars = {']'})
         pragmaName = data[0 .. data.find(chars = {':'}) - 1]
-      var newPragma = newTree(kind = nkExprColonExpr, children = [])
+        newPragma = newTree(kind = nkExprColonExpr, children = [])
+        values = newTree(kind = nkBracket, children = [])
       newPragma.sons.add(y = newIdentNode(ident = getIdent(
           ic = rule.identsCache, identifier = pragmaName), info = pragmas.info))
       for value in data[startIndex + 1 .. endIndex - 1].split(sep = ','):
         if value.len == 0:
           continue
-        echo value
+        values.sons.add(y = newIdentNode(ident = getIdent(ic = rule.identsCache,
+            identifier = value), info = pragmas.info))
+      newPragma.sons.add(y = values)
+      pragmas.sons.add(y = newPragma)
