@@ -28,7 +28,7 @@
 # Standard library imports
 import std/[logging, macros, os, strformat, strutils]
 # External modules imports
-import compiler/[ast, renderer]
+import compiler/[ast, idents, renderer]
 import contracts
 # Nimalyzer pragmas imports
 import pragmas
@@ -49,14 +49,15 @@ type
   RuleOptions* = object
     ## Contains information for the program's rules
     ##
-    ## * options    - The list of the program's rule
-    ## * parent     - If true, check is currently make in the parent (usualy module) entity
-    ## * fileName   - The path to the file which is checked
-    ## * negation   - If true, the rule show return oposite result
-    ## * ruleType   - The type of rule
-    ## * amount     - The amount of results found by the rule
-    ## * enabled    - If false, the rule is temporary disabled by pragmas
-    ## * fixCommand - The command executed by the rule if no custom code is set for fix type of rule
+    ## * options     - The list of the program's rule
+    ## * parent      - If true, check is currently make in the parent (usualy module) entity
+    ## * fileName    - The path to the file which is checked
+    ## * negation    - If true, the rule show return oposite result
+    ## * ruleType    - The type of rule
+    ## * amount      - The amount of results found by the rule
+    ## * enabled     - If false, the rule is temporary disabled by pragmas
+    ## * fixCommand  - The command executed by the rule if no custom code is set for fix type of rule
+    ## * identsCache - The Nim identifiers cache
     options*: seq[string]
     parent*: bool
     fileName*: string
@@ -65,6 +66,7 @@ type
     amount*: int
     enabled*: bool
     fixCommand*: string
+    identsCache*: IdentCache
 
   RuleSettings* = object
     ## Contains information about the program's rule configuration
