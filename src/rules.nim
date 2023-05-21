@@ -182,7 +182,7 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
     replacements.add(y = ("{params[" & $index & "]}", param))
   # The entity not meet rule's requirements
   if not checkResult:
-    if rule.negation and rule.ruleType == check:
+    if rule.negation and rule.ruleType in {check, fix}:
       rule.amount.inc
     else:
       if negativeMessage.len > 0:
