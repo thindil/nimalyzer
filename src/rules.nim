@@ -198,6 +198,8 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
       if rule.ruleType == fix:
         if ruleFix(astNode = node, rule = rule, data = ruleData):
           rule.amount = int.low
+        elif rule.amount > int.low:
+          rule.amount = 1
   # The enitity meet the rule's requirements
   else:
     if rule.negation:
@@ -209,6 +211,8 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
       if rule.ruleType == fix:
         if ruleFix(astNode = node, rule = rule, data = ruleData):
           rule.amount = int.low
+        elif rule.amount > int.low:
+          rule.amount = 1
     else:
       if rule.ruleType == search and positiveMessage.len > 0:
         message(text = messagePrefix & positiveMessage.multiReplace(
