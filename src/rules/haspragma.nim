@@ -219,10 +219,10 @@ checkRule:
                 negativeMessage = negativeMessage, node = node,
                 ruleData = pragma, params = [
                 procName, $node.info.line, pragma])
-    endCheck:
-      if not rule.enabled and rule.amount == 0:
-        rule.amount = 1
-        return
+  endCheck:
+    if not rule.enabled and rule.amount == 0:
+      rule.amount = 1
+      return
 
 fixRule:
   var pragmas: PNode = astNode.getDeclPragma
