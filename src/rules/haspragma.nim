@@ -231,22 +231,27 @@ fixRule:
       let pragma: string = $node
       if '*' notin [data[0], data[^1]] and pragma == data:
         delSon(father = pragmas, idx = index)
+        result = true
         break
       elif data[^1] == '*' and data[0] != '*' and pragma.startsWith(
           prefix = data[0..^2]):
         delSon(father = pragmas, idx = index)
+        result = true
         break
       elif data[0] == '*' and data[^1] != '*' and pragma.endsWith(
           suffix = data[1..^1]):
         delSon(father = pragmas, idx = index)
+        result = true
         break
       elif '*' in [data[0], data[^1]] and pragma.contains(sub = data[1..^2]):
         delSon(father = pragmas, idx = index)
+        result = true
         break
     if pragmas.len == 0:
       for index, child in astNode.pairs:
         if child == pragmas:
           astNode[index] = newNode(kind = nkEmpty)
+          result = true
           break
   else:
     if pragmas.kind == nkEmpty:
@@ -275,3 +280,4 @@ fixRule:
             identifier = value), info = pragmas.info))
       newPragma.sons.add(y = values)
       pragmas.sons.add(y = newPragma)
+      return true
