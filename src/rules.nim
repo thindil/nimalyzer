@@ -340,9 +340,6 @@ template endCheck*(code: untyped): untyped =
   ## * code - the custom code which will be executed after checking the rule
   if isParent:
     code
-    if rule.ruleType == fix:
-      if rule.amount > int.low:
-        rule.amount = 1
     if rule.amount < 0:
       rule.amount = 0
     if rule.ruleType == RuleTypes.count:
@@ -355,7 +352,7 @@ template endCheck*(code: untyped): untyped =
       if not rule.enabled and rule.amount == 0:
         rule.amount = 1
       elif rule.negation:
-        if rule.ruleType == check:
+        if rule.ruleType in {check, fix}:
           rule.amount = 0
         else:
           message(text = (if messagePrefix.len > 0: messagePrefix else: "") &
