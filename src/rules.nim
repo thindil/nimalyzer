@@ -416,7 +416,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
     children = [newIdentNode(i = "RuleOptions")]), newEmptyNode()])]),
     newEmptyNode(), newEmptyNode(), newEmptyNode()]), nnkStmtList.newTree(children =
     [nnkProcDef.newTree(children = [newIdentNode(i = "ruleFix"), newEmptyNode(),
-    newEmptyNode(), nnkFormalParams.newTree(children = [newIdentNode("bool"),
+    newEmptyNode(), nnkFormalParams.newTree(children = [newIdentNode(i = "bool"),
     nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
     newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
     children = [newIdentNode(i = "rule"),
@@ -455,7 +455,7 @@ macro fixRule*(code: untyped): untyped =
   ## * code - the code which will be run to fix the problem
   return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
       newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
-      nnkFormalParams.newTree(children = [newIdentNode("bool"),
+      nnkFormalParams.newTree(children = [newIdentNode(i = "bool"),
       nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
       newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
       children = [newIdentNode(i = "rule"), newIdentNode(i = "RuleOptions"),
