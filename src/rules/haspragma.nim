@@ -225,10 +225,10 @@ checkRule:
         return
 
 fixRule:
-  var pragmas = astNode.getDeclPragma
+  var pragmas: PNode = astNode.getDeclPragma
   if rule.negation:
     for index, node in pragmas.pairs:
-      let pragma = $node
+      let pragma: string = $node
       if '*' notin [data[0], data[^1]] and pragma == data:
         delSon(father = pragmas, idx = index)
         break
@@ -258,13 +258,14 @@ fixRule:
     if not data.contains(chars = {'['}):
       pragmas.sons.add(y = newIdentNode(ident = getIdent(ic = rule.identsCache,
           identifier = data), info = pragmas.info))
+      return true
     elif not data.contains(chars = {'*'}):
       let
-        startIndex = data.find(chars = {'['})
-        endIndex = data.find(chars = {']'})
-        pragmaName = data[0 .. data.find(chars = {':'}) - 1]
-        newPragma = newTree(kind = nkExprColonExpr, children = [])
-        values = newTree(kind = nkBracket, children = [])
+        startIndex: int = data.find(chars = {'['})
+        endIndex: int = data.find(chars = {']'})
+        pragmaName: string = data[0 .. data.find(chars = {':'}) - 1]
+        newPragma: PNode = newTree(kind = nkExprColonExpr, children = [])
+        values: PNode = newTree(kind = nkBracket, children = [])
       newPragma.sons.add(y = newIdentNode(ident = getIdent(
           ic = rule.identsCache, identifier = pragmaName), info = pragmas.info))
       for value in data[startIndex + 1 .. endIndex - 1].split(sep = ','):
