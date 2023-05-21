@@ -82,7 +82,7 @@ type
     options*: seq[RuleOptionsTypes]
     optionValues*: seq[string]
     minOptions*: Natural
-    fixProc*: proc (astNode: PNode; rule: RuleOptions; data: string)
+    fixProc*: proc (astNode: PNode; rule: RuleOptions; data: string): bool
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
@@ -196,7 +196,8 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
                 replacements = replacements), returnValue = rule.amount,
                 level = lvlNotice, decrease = false)
       if rule.ruleType == fix:
-        ruleFix(astNode = node, rule = rule, data = ruleData)
+        if ruleFix(astNode = node, rule = rule, data = ruleData):
+          rule.amount = int.low
   # The enitity meet the rule's requirements
   else:
     if rule.negation:
@@ -206,7 +207,8 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
       else:
         rule.amount.dec
       if rule.ruleType == fix:
-        ruleFix(astNode = node, rule = rule, data = ruleData)
+        if ruleFix(astNode = node, rule = rule, data = ruleData):
+          rule.amount = int.low
     else:
       if rule.ruleType == search and positiveMessage.len > 0:
         message(text = messagePrefix & positiveMessage.multiReplace(
@@ -339,7 +341,8 @@ template endCheck*(code: untyped): untyped =
   if isParent:
     code
     if rule.ruleType == fix:
-      rule.amount = 1
+      if rule.amount > int.low:
+        rule.amount = 1
     if rule.amount < 0:
       rule.amount = 0
     if rule.ruleType == RuleTypes.count:
@@ -360,7 +363,7 @@ template endCheck*(code: untyped): untyped =
               returnValue = rule.amount, level = lvlNotice, decrease = false)
           rule.amount = 0
       else:
-        if rule.ruleType != check or showForCheck:
+        if rule.ruleType notin {check, fix} or showForCheck:
           let messageLevel: Level = (if showForCheck: lvlError else: lvlNotice)
           message(text = (if messagePrefix.len > 0: messagePrefix else: "") &
               capitalizeAscii(s = notFoundMessage.fmt),
@@ -416,7 +419,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
     children = [newIdentNode(i = "RuleOptions")]), newEmptyNode()])]),
     newEmptyNode(), newEmptyNode(), newEmptyNode()]), nnkStmtList.newTree(children =
     [nnkProcDef.newTree(children = [newIdentNode(i = "ruleFix"), newEmptyNode(),
-    newEmptyNode(), nnkFormalParams.newTree(children = [newEmptyNode(),
+    newEmptyNode(), nnkFormalParams.newTree(children = [newIdentNode("bool"),
     nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
     newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
     children = [newIdentNode(i = "rule"),
@@ -455,11 +458,11 @@ macro fixRule*(code: untyped): untyped =
   ## * code - the code which will be run to fix the problem
   return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
       newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
-      nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
-      children = [newIdentNode(i = "astNode"), newIdentNode(i = "PNode"),
+      nnkFormalParams.newTree(children = [newIdentNode("bool"),
+      nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
+      newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
+      children = [newIdentNode(i = "rule"), newIdentNode(i = "RuleOptions"),
       newEmptyNode()]), nnkIdentDefs.newTree(children = [newIdentNode(
-      i = "rule"), newIdentNode(i = "RuleOptions"), newEmptyNode()]),
-      nnkIdentDefs.newTree(children = [newIdentNode(
       i = "data"), newIdentNode(i = "string"), newEmptyNode()])]),
       newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children = (
     if code[0].kind == nnkDiscardStmt: nnkStmtList.newTree(children = [
