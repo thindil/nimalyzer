@@ -100,7 +100,9 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     section != nil
     parent != nil
   body:
-    let varName: string = $node[0]
+    let
+      varName: string = $node[0]
+      astNode: PNode = parent
     # The declaration is inside as injected a template or variable is ignored
     # or the declaration doesn't have initialization, ignore it and move to
     # the next declaration.

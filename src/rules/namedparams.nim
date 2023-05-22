@@ -69,13 +69,14 @@ ruleConfig(ruleName = "namedparams",
   rulePositiveMessage = "call {params[0]} line: {params[1]} doesn't have named parameter number: {params[2]}'.",
   ruleNegativeMessage = "call {params[0]} line: {params[1]} doesn't have named parameter number: {params[2]}'.")
 
-proc check(node: PNode; rule: var RuleOptions;
+proc check(node, astNode: PNode; rule: var RuleOptions;
     messagePrefix: string) {.contractual, raises: [], tags: [RootEffect].} =
   ## Check the call if it uses named parameters
   ##
-  ## * node - the AST node representing the call to check
-  ## * rule - the rule options set by the user and the previous iterations
-  ##          of the procedure
+  ## * node    - the AST node representing the call to check
+  ## * astNode - the parent node of the call to check
+  ## * rule    - the rule options set by the user and the previous iterations
+  ##             of the procedure
   ##
   ## Returns the updated parameter rule.
   require:
@@ -104,7 +105,8 @@ proc check(node: PNode; rule: var RuleOptions;
             $node.info.line, $i])
         if node[i].kind in {nkCall, nkDotCall} and (node[i].sons.len > 1 and
             node[i].sons[1].kind != nkStmtList):
-          check(node = node[i], rule = rule, messagePrefix = messagePrefix)
+          check(node = node[i], astNode = node, rule = rule,
+              messagePrefix = messagePrefix)
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
           "can't check parameters of call " & callName & " line: " &
@@ -117,12 +119,14 @@ checkRule:
     setRuleState(node = astNode, ruleName = "namedparams",
         oldState = rule.enabled)
     if astNode.kind in {nkCall, nkDotCall}:
-      check(node = astNode, rule = rule, messagePrefix = messagePrefix)
+      check(node = astNode, astNode = parentNode, rule = rule,
+          messagePrefix = messagePrefix)
   checking:
     # Node is a call, and have parameters, check it
     if node.kind in {nkCall, nkDotCall} and (node.sons.len > 1 and node.sons[
         1].kind != nkStmtList):
-      check(node = node, rule = rule, messagePrefix = messagePrefix)
+      check(node = node, astNode = parentNode, rule = rule,
+          messagePrefix = messagePrefix)
   endCheck:
     let negation: string = (if rule.negation: " not" else: "")
 
