@@ -98,7 +98,10 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             rulesList[rule.index].checkProc(astNode = astNode,
                 parentNode = astNode, rule = currentRule)
             if currentRule.amount < 1:
-              resultCode = QuitFailure
+              if currentRule.ruleType == fix:
+                writeFile(filename = currentRule.fileName, content = $astNode)
+              else:
+                resultCode = QuitFailure
         except ValueError, IOError, KeyError, Exception:
           abortProgram(message = "The file '" & source &
               "' can't be parsed to AST. Reason: ", e = getCurrentException())
