@@ -195,4 +195,20 @@ checkRule:
     discard
 
 fixRule:
-  discard
+  var nodesToCheck: PNode = nil
+  # Find the AST nodes to check
+  block findNodes:
+    for nodes in parentNode.items:
+      for baseNode in nodes.items:
+        if baseNode == astNode:
+          nodesToCheck = flattenStmts(n = parentNode)
+          break findNodes
+        for child in baseNode.items:
+          if child == astNode:
+            nodesToCheck = flattenStmts(n = nodes)
+            break findNodes
+          for subChild in child.items:
+            if subChild == astNode:
+              nodesToCheck = flattenStmts(n = baseNode)
+              break findNodes
+  return false
