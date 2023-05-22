@@ -135,7 +135,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
       ## Returns the number of the line if the variable is hidden by a local variable,
       ## otherwise zero
       require:
-        node != nil
+        nodes != nil
       body:
         result = 0
         try:
