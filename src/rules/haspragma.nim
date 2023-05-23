@@ -36,7 +36,9 @@
 ##   rule will look for the procedures with the selected pragmas and list
 ##   all of them which have the selected pragmas, raising error if nothing is
 ##   found.  Count type will simply list the amount of the procedures with the
-##   selected pragmas.
+##   selected pragmas. Fix type will try to append or remove the pragmas from
+##   the list to procedures. Please read general information about the fix type
+##   of rules about potential issues.
 ## * optional word *not* means negation for the rule. For example, if rule is
 ##   set to check for pragma SideEffect, adding word *not* will change
 ##   to inform only about procedures with that pragma.
