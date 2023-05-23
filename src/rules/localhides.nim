@@ -84,28 +84,28 @@ ruleConfig(ruleName = "localhides",
   rulePositiveMessage = "declaration of '{params[0]}' line: {params[1]} is not hidden by local variable.",
   ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} is hidden by local variable in line {params[2]}.")
 
-proc checkChild(nodes: PNode; varName: string): Natural {.raises: [], tags: [
+proc checkChild(nodes: PNode; varName: string): PNOde {.raises: [], tags: [
     RootEffect], contractual.} =
   ## Check if the selected variable is hidden somewhere by a local variable
   ##
   ## * nodes   - the list of nodes to check
   ## * varName - the name of the variable to check
   ##
-  ## Returns the number of the line if the variable is hidden by a local variable,
-  ## otherwise zero
+  ## Returns the child node which hides the variable, or nil if the variable is
+  ## not hidden
   require:
     nodes != nil
   body:
-    result = 0
+    result = nil
     try:
       for childNode in nodes.items:
         if childNode.kind in {nkVarSection, nkLetSection, nkConstSection}:
           for declaration in childNode.items:
             if declaration[0].kind == nkIdent:
               if varName == $declaration[0]:
-                return declaration.info.line
+                return declaration
         result = checkChild(nodes = childNode, varName = varName)
-        if result > 0:
+        if result != nil:
           return
     except KeyError, Exception:
       discard
@@ -159,8 +159,9 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         startChecking = true
         continue
       if startChecking:
-        hiddenLine = checkChild(nodes = child, varName = varName)
-        if hiddenLine > 0:
+        let hiddingChild = checkChild(nodes = child, varName = varName)
+        if hiddingChild != nil:
+          hiddenLine = hiddingChild.info.line
           break
     setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
         negativeMessage = negativeMessage, node = node, params = [$node[0],
