@@ -110,6 +110,7 @@
 ##
 ##      check hasPragma procedures contractual "lock: *"
 
+# External modules imports
 import compiler/idents
 # Import default rules' modules
 import ../rules
