@@ -84,7 +84,7 @@ ruleConfig(ruleName = "localhides",
   rulePositiveMessage = "declaration of '{params[0]}' line: {params[1]} is not hidden by local variable.",
   ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} is hidden by local variable in line {params[2]}.")
 
-proc checkChild(nodes: PNode; varName: string): PNOde {.raises: [], tags: [
+proc checkChild(nodes: PNode; varName: string): PNode {.raises: [], tags: [
     RootEffect], contractual.} =
   ## Check if the selected variable is hidden somewhere by a local variable
   ##
@@ -164,8 +164,8 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
           hiddenLine = hiddingChild.info.line
           break
     setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
-        negativeMessage = negativeMessage, node = node, params = [$node[0],
-        $node.info.line, $hiddenLine])
+        negativeMessage = negativeMessage, node = node, ruleData = $node[0],
+        params = [$node[0], $node.info.line, $hiddenLine])
 {.pop ruleOff: "paramsUsed".}
 
 checkRule:
@@ -211,4 +211,15 @@ fixRule:
             if subChild == astNode:
               nodesToCheck = flattenStmts(n = baseNode)
               break findNodes
+  var
+    startChecking: bool = false
+    hiddingChild: PNode = nil
+  for child in nodesToCheck.items:
+    if not startChecking:
+      startChecking = true
+      continue
+    hiddingChild = checkChild(nodes = child, varName = data)
+    if hiddingChild != nil:
+      break
+  echo $hiddingChild
   return false
