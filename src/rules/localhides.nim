@@ -159,7 +159,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         startChecking = true
         continue
       if startChecking:
-        let hiddingChild = checkChild(nodes = child, varName = varName)
+        let hiddingChild: PNode = checkChild(nodes = child, varName = varName)
         if hiddingChild != nil:
           hiddenLine = hiddingChild.info.line
           break
