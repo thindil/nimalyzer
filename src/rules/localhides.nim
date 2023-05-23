@@ -84,6 +84,32 @@ ruleConfig(ruleName = "localhides",
   rulePositiveMessage = "declaration of '{params[0]}' line: {params[1]} is not hidden by local variable.",
   ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} is hidden by local variable in line {params[2]}.")
 
+proc checkChild(nodes: PNode; varName: string): Natural {.raises: [], tags: [
+    RootEffect], contractual.} =
+  ## Check if the selected variable is hidden somewhere by a local variable
+  ##
+  ## * nodes   - the list of nodes to check
+  ## * varName - the name of the variable to check
+  ##
+  ## Returns the number of the line if the variable is hidden by a local variable,
+  ## otherwise zero
+  require:
+    nodes != nil
+  body:
+    result = 0
+    try:
+      for childNode in nodes.items:
+        if childNode.kind in {nkVarSection, nkLetSection, nkConstSection}:
+          for declaration in childNode.items:
+            if declaration[0].kind == nkIdent:
+              if varName == $declaration[0]:
+                return declaration.info.line
+        result = checkChild(nodes = childNode, varName = varName)
+        if result > 0:
+          return
+    except KeyError, Exception:
+      discard
+
 {.push ruleOff: "paramsUsed".}
 proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
@@ -108,7 +134,6 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     # the next declaration.
     if ' ' in varName or varName == "_" or node.len < 3:
       return
-
     var nodesToCheck: PNode = nil
     # Find the AST nodes to check
     block findNodes:
@@ -125,32 +150,6 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
               if subChild == node:
                 nodesToCheck = flattenStmts(n = baseNode)
                 break findNodes
-
-    proc checkChild(nodes: PNode): Natural {.raises: [], tags: [RootEffect],
-        contractual.} =
-      ## Check if the selected variable is hidden somewhere by a local variable
-      ##
-      ## * nodes - the list of nodes to check
-      ##
-      ## Returns the number of the line if the variable is hidden by a local variable,
-      ## otherwise zero
-      require:
-        nodes != nil
-      body:
-        result = 0
-        try:
-          for childNode in nodes.items:
-            if childNode.kind in {nkVarSection, nkLetSection, nkConstSection}:
-              for declaration in childNode.items:
-                if declaration[0].kind == nkIdent:
-                  if varName == $declaration[0]:
-                    return declaration.info.line
-            result = checkChild(nodes = childNode)
-            if result > 0:
-              return
-        except KeyError, Exception:
-          discard
-
     # Check if the declaration can be updated
     var
       startChecking: bool = false
@@ -160,7 +159,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         startChecking = true
         continue
       if startChecking:
-        hiddenLine = checkChild(nodes = child)
+        hiddenLine = checkChild(nodes = child, varName = varName)
         if hiddenLine > 0:
           break
     setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
