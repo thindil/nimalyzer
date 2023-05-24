@@ -36,7 +36,8 @@
 ##   selected naming convention. Search type will list all entities of the
 ##   selected type which follows the selected naming convention. Count type
 ##   will simply list the amount of the selected type of entities which follows
-##   the naming convention.
+##   the naming convention. Fix type will execute the default shell command set
+##   by the program's setting **fixCommand**.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about the selected type of entities which doesn't
 ##   follow the selected naming convention for search and count types of rules
