@@ -34,7 +34,9 @@
 ##   an error if there is a call which doesn't have all parameters named.
 ##   Search type will list all calls which set all their parameters as named
 ##   and raise error if nothing was found. Count type will simply list the
-##   amount of calls which set all their parameters as named.
+##   amount of calls which set all their parameters as named. Fix type will
+##   execute the default shell command set by the program's setting
+##   **fixCommand**.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about calls which have some parameters not named.
 ## * namedParams is the name of the rule. It is case-insensitive, thus it can be
