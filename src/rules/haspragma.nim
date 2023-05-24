@@ -229,6 +229,7 @@ checkRule:
 
 fixRule:
   var pragmas: PNode = astNode.getDeclPragma
+  # Remove the selected pragma from the declaration
   if rule.negation:
     for index, node in pragmas.pairs:
       let pragma: string = $node
@@ -256,6 +257,7 @@ fixRule:
           astNode[index] = newNode(kind = nkEmpty)
           result = true
           break
+  # Add the selected pramga to the declaration
   else:
     if pragmas.kind == nkEmpty:
       for index, child in astNode.pairs:
