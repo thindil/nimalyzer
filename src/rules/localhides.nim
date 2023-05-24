@@ -74,7 +74,7 @@
 ##     search not localHides
 
 # External modules imports
-import compiler/trees
+import compiler/[idents, trees]
 # Import default rules' modules
 import ../rules
 
@@ -195,6 +195,9 @@ checkRule:
     discard
 
 fixRule:
+  # Don't change anything if rule has negation
+  if rule.negation:
+    return false
   var nodesToCheck: PNode = nil
   # Find the AST nodes to check
   block findNodes:
@@ -211,6 +214,7 @@ fixRule:
             if subChild == astNode:
               nodesToCheck = flattenStmts(n = baseNode)
               break findNodes
+  # Find the local variable which hides the selected variable
   var
     startChecking: bool = false
     hiddingChild: PNode = nil
@@ -221,5 +225,7 @@ fixRule:
     hiddingChild = checkChild(nodes = child, varName = data)
     if hiddingChild != nil:
       break
-  echo $hiddingChild
-  return false
+  # Add prefix to the local variable
+  hiddingChild[0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+      identifier = "local" & data), info = hiddingChild.info)
+  return true
