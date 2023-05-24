@@ -38,8 +38,9 @@
 ##   nothing found. Count rule will simply list the amount of local
 ##   declarations which have the same name as parent ones. Fix type will try
 ##   to append a prefix `local` to the names of the local variables which
-##   hide the variable. Please read general information about the fix type
-##   of rules about potential issues.
+##   hide the variable. It doesn't nothing for rules with negation. Please
+##   read general information about the fix type of rules about potential
+##   issues.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about local declarations which don't have name as
 ##   previously declared parent ones. Probably useable only for count type of
