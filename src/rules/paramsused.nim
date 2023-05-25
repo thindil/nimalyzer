@@ -34,7 +34,8 @@
 ##   an error if there is a procedure which doesn't use all its parameters.
 ##   Search type will list all procedures which uses their all parameters and
 ##   raise error if nothing was found. Count type will simply list the amount
-##   of procedures which uses all their parameters.
+##   of procedures which uses all their parameters. Fix type will execute the
+##   default shell command set by the program's setting **fixCommand**.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about procedures which have all parameters used.
 ##   Probably useable only with search and count type of rule.
