@@ -32,19 +32,19 @@
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search* and *count*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check rule will
-##   raise an error if find a local declaration which has the same name as
+##   raise an error if it finds a local declaration which has the same name as
 ##   one of parent declarations, search rule will list any local declarations
 ##   with the same name as previously declared parent and raise an error if
 ##   nothing found. Count rule will simply list the amount of local
 ##   declarations which have the same name as parent ones. Fix type will try
 ##   to append a prefix `local` to the names of the local variables which
-##   hide the variable. It doesn't nothing for rules with negation. Please
+##   hide the variable. It doesn't anything for rules with negation. Please
 ##   read general information about the fix type of rules about potential
 ##   issues.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about local declarations which don't have name as
 ##   previously declared parent ones. Probably useable only for count type of
-##   rule. Search type with negation will returns error as the last declaration
+##   rule. Search type with negation will return error as the last declaration
 ##   is always not hidden.
 ## * localHides is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *localhides*, *localHides* or *lOcAlHiDeS*.
