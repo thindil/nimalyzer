@@ -24,7 +24,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## The rule check if the selected type of entries follow the selected naming
-## convention. It can checks variables, procedures and enumerations' values.
+## convention. It can check variables, procedures and enumerations' values.
 ## The syntax in a configuration file is::
 ##
 ##   [ruleType] ?not? namingConv [entityType] [nameExpression]
@@ -35,11 +35,11 @@
 ##   an error if there is a selected entity type which doesn't follow the
 ##   selected naming convention. Search type will list all entities of the
 ##   selected type which follows the selected naming convention. Count type
-##   will simply list the amount of the selected type of entities which follows
+##   will simply list the amount of the selected type of entities, which follows
 ##   the naming convention. Fix type will execute the default shell command set
 ##   by the program's setting **fixCommand**.
 ## * optional word *not* means negation for the rule. Adding word *not* will
-##   change to inform only about the selected type of entities which doesn't
+##   change to inform only about the selected type of entities, which doesn't
 ##   follow the selected naming convention for search and count types of rules
 ##   and raise error if the entity follows the naming convention for check type
 ##   of the rule.
