@@ -28,7 +28,7 @@
 # Standard library imports
 import std/[logging, macros, os, strformat, strutils]
 # External modules imports
-import compiler/[ast, idents, renderer]
+import compiler/[ast, idents, renderer, trees]
 import contracts
 # Nimalyzer pragmas imports
 import pragmas
@@ -492,3 +492,26 @@ macro fixRule*(code: untyped): untyped =
       newLit(s = "Can\'t execute command \'"), newIdentNode(i = "fixCommand")]),
       newLit(s = "\' for fix type of rule.")])])])])])])])])
     else: code))])])
+
+proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
+    contractual.} =
+  ## Get the list of AST nodes to check by rule
+  ##
+  ## * parentNode - the parent AST node whichi will be searching for the node
+  ## * node       - the AST node which will be looking for
+  ##
+  ## Returns the flattened list of nodes to check or nil if nothing found
+  require:
+    parentNode != nil
+    node != nil
+  body:
+    for nodes in parentNode.items:
+      for baseNode in nodes.items:
+        if baseNode == node:
+          return flattenStmts(n = parentNode)
+        for child in baseNode.items:
+          if child == node:
+            return flattenStmts(n = nodes)
+          for subChild in child.items:
+            if subChild == node:
+              return flattenStmts(n = baseNode)
