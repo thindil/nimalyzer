@@ -110,7 +110,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     if section.kind == nkLetSection:
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          node = node, params = [$node[0], $node.info.line, "constant"])
+          node = node, ruleData = "const", params = [$node[0], $node.info.line, "constant"])
     # Check if var declaration can be updated
     else:
       # No default value, can't be updated
@@ -170,7 +170,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
               break
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          node = node, params = [$node[0], $node.info.line, "let"])
+          node = node, ruleData = "let", params = [$node[0], $node.info.line, "let"])
 {.pop ruleOff: "paramsUsed".}
 
 checkRule:
@@ -200,4 +200,21 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
 
 fixRule:
-  discard
+  var nodesToCheck: PNode = nil
+  # Find the AST nodes to check
+  block findNodes:
+    for nodes in parentNode.items:
+      for baseNode in nodes.items:
+        if baseNode == astNode:
+          nodesToCheck = flattenStmts(n = parentNode)
+          break findNodes
+        for child in baseNode.items:
+          if child == astNode:
+            nodesToCheck = flattenStmts(n = nodes)
+            break findNodes
+          for subChild in child.items:
+            if subChild == astNode:
+              nodesToCheck = flattenStmts(n = baseNode)
+              break findNodes
+  echo "NODE: ", nodesToCheck, " END"
+  return false
