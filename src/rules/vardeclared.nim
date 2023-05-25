@@ -35,7 +35,8 @@
 ##   an error if there is a declaration isn't in desired pattern. Search type
 ##   will list all declarations with desired pattern and raise error if
 ##   nothing was found. Count type will simply list the amount of declarations
-##   with the desired pattern.
+##   with the desired pattern. Fix type will execute the default shell command
+##   set by the program's setting **fixCommand**.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about procedures without desired pattern.
 ##   Probably useable only with search and count type of rule.
