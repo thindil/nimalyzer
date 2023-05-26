@@ -53,8 +53,8 @@ with additional extensions:
 * All subprograms should have pragma: `gcSafe`, unless they depends on unsafe
   subprograms.
 * Subprograms shouldn't propagate exceptions, pragma `raises: []` unless they
-  are low level subprograms, like type initialization, etc. The main shell's
-  loop can't raise any exception.
+  are low level subprograms, like type initialization, etc. The main procedure
+  of the program can't raise any exception.
 * If possible, subprograms without side effects should be declared as functions.
 * All subprograms must have a corresponding unit test, even if it is a very simple
   test.
