@@ -18,6 +18,7 @@ of the program.
 - Updated the project's documentation
 - **BREAKING**: rule `hasDoc` doesn't check public fields of objects types for
   documentation
+- Updated contributing guide
 
 ### Fixed
 - Typo in Changelog
