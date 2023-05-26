@@ -2,15 +2,15 @@ import std/logging
 import compiler/[idents, options, parser]
 import ../src/rules
 
+type DisabledChecks* = enum
+  invalidSearch
+
 proc setLogger*() =
   if getHandlers().len > 0:
     return
   let logger = newConsoleLogger()
   addHandler(handler = logger)
   setLogFilter(lvl = lvlInfo)
-
-type DisabledChecks* = enum
-  invalidSearch
 
 template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
 
