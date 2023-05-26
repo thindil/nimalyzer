@@ -78,7 +78,7 @@
 ##     search not localHides
 
 # External modules imports
-import compiler/[idents, trees]
+import compiler/idents
 # Import default rules' modules
 import ../rules
 
@@ -138,22 +138,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     # the next declaration.
     if ' ' in varName or varName == "_" or node.len < 3:
       return
-    var nodesToCheck: PNode = nil
-    # Find the AST nodes to check
-    block findNodes:
-      for nodes in parent.items:
-        for baseNode in nodes.items:
-          if baseNode == node:
-            nodesToCheck = flattenStmts(n = parent)
-            break findNodes
-          for child in baseNode.items:
-            if child == node:
-              nodesToCheck = flattenStmts(n = nodes)
-              break findNodes
-            for subChild in child.items:
-              if subChild == node:
-                nodesToCheck = flattenStmts(n = baseNode)
-                break findNodes
+    let nodesToCheck: PNode = getNodesToCheck(parentNode = parent, node = node)
     # Check if the declaration can be updated
     var
       startChecking: bool = false
@@ -202,22 +187,8 @@ fixRule:
   # Don't change anything if rule has negation
   if rule.negation:
     return false
-  var nodesToCheck: PNode = nil
-  # Find the AST nodes to check
-  block findNodes:
-    for nodes in parentNode.items:
-      for baseNode in nodes.items:
-        if baseNode == astNode:
-          nodesToCheck = flattenStmts(n = parentNode)
-          break findNodes
-        for child in baseNode.items:
-          if child == astNode:
-            nodesToCheck = flattenStmts(n = nodes)
-            break findNodes
-          for subChild in child.items:
-            if subChild == astNode:
-              nodesToCheck = flattenStmts(n = baseNode)
-              break findNodes
+  let nodesToCheck: PNode = getNodesToCheck(parentNode = parentNode,
+      node = astNode)
   # Find the local variable which hides the selected variable
   var
     startChecking: bool = false
