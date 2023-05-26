@@ -12,6 +12,13 @@ proc setLogger*() =
   addHandler(handler = logger)
   setLogFilter(lvl = lvlInfo)
 
+proc setNim*(): tuple[cache: IdentCache, config: ConfigRef] =
+  let
+    nimCache = newIdentCache()
+    nimConfig = newConfigRef()
+  nimConfig.options.excl(y = optHints)
+  return (nimCache, nimConfig)
+
 template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
 
   setLogger()
@@ -20,10 +27,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   assert validateOptions(ruleSettings, validOptions)
 
   let
-    nimCache = newIdentCache()
-    nimConfig = newConfigRef()
-  nimConfig.options.excl(y = optHints)
-  let
+    (nimCache, nimConfig) = setNim()
     invalidCode = parseString(invalidNimCode, nimCache, nimConfig)
     validCode = parseString(validNimCode, nimCache, nimConfig)
   var ruleOptions = RuleOptions(parent: true, fileName: "test.nim", negation: false,
