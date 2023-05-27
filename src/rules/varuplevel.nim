@@ -185,6 +185,21 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
 
 fixRule:
-  let nodesToCheck: PNode = getNodesToCheck(parentNode = parentNode, node = astNode)
-  echo "NODE: ", nodesToCheck, " END"
+  let nodesToCheck: PNode = getNodesToCheck(parentNode = parentNode,
+      node = astNode)
+  var nodeToUplevel: PNode = nil
+  for node in nodesToCheck:
+    if node[0] == astNode:
+      nodeToUplevel = node
+      break
+  # Only one variable declared, replace the whole declaration node
+  if nodeToUplevel.len == 1:
+    nodeToUplevel = newTree(kind = (if data ==
+        "let": nkLetSection else: nkConstSection),
+        children = nodeToUplevel.sons)
+  # Add the new declaration section before the node and remove the old
+  # variable declaration
+  else:
+    discard
+  echo "nodeToUp:", nodeToUplevel, " data:", data
   return false
