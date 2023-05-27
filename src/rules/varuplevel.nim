@@ -185,21 +185,34 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
 
 fixRule:
-  let nodesToCheck: PNode = getNodesToCheck(parentNode = parentNode,
-      node = astNode)
-  var nodeToUplevel: PNode = nil
-  for node in nodesToCheck:
-    if node[0] == astNode:
-      nodeToUplevel = node
-      break
-  # Only one variable declared, replace the whole declaration node
-  if nodeToUplevel.len == 1:
-    nodeToUplevel = newTree(kind = (if data ==
+  proc updateNode(nodes: PNode) =
+    var nodeIndex: int = -1
+    for index, node in nodes.pairs:
+      if node[0] == astNode:
+        nodeIndex = index
+        break
+    # Only one variable declared, replace the whole declaration node
+    if nodes[nodeIndex].len == 1:
+      nodes[nodeIndex] = newTree(kind = (if data ==
         "let": nkLetSection else: nkConstSection),
-        children = nodeToUplevel.sons)
-  # Add the new declaration section before the node and remove the old
-  # variable declaration
-  else:
-    discard
-  echo "nodeToUp:", nodeToUplevel, " data:", data
+        children = nodes[nodeIndex].sons)
+    # Add the new declaration section before the node and remove the old
+    # variable declaration
+    else:
+      discard
+  block findNodesToCheck:
+    for nodes in parentNode.items:
+      for baseNode in nodes.items:
+        if baseNode == astNode:
+          updateNode(parentNode)
+          break findNodesToCheck
+        for child in baseNode.items:
+          if child == astNode:
+            updateNode(nodes)
+            break findNodesToCheck
+          for subChild in child.items:
+            if subChild == astNode:
+              updateNode(baseNode)
+              break findNodesToCheck
+  echo parentNode
   return false
