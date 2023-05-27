@@ -29,6 +29,8 @@ of the program.
 - Message text for `hasEntity` rule when the program's verbosity is set to
   higher level than default
 - Negation doesn't work for `paramsUsed` rule
+- Detection of variables which can be updated to *let* or *const* with
+  `varUplevel` rule
 
 ## [0.3.0] - 2023-04-28
 
