@@ -135,7 +135,8 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
             result = false
             for child in nodes.items:
               try:
-                if child.kind in {nkAsgn, nkDotExpr} and $child[0] == varName:
+                if (child.kind == nkIdent and $child == varName) or (
+                    child.kind in {nkAsgn, nkDotExpr} and $child[0] == varName):
                   return true
                 result = checkChild(nodes = child)
                 if result:
