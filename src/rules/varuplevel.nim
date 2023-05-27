@@ -119,22 +119,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
       # Has a default value, check if can be updated
       else:
         isUpdatable = true
-        var nodesToCheck: PNode = nil
-        # Find the AST nodes to check
-        block findNodes:
-          for nodes in parent.items:
-            for baseNode in nodes.items:
-              if baseNode == node:
-                nodesToCheck = flattenStmts(n = parent)
-                break findNodes
-              for child in baseNode.items:
-                if child == node:
-                  nodesToCheck = flattenStmts(n = nodes)
-                  break findNodes
-                for subChild in child.items:
-                  if subChild == node:
-                    nodesToCheck = flattenStmts(n = baseNode)
-                    break findNodes
+        let nodesToCheck: PNode = getNodesToCheck(parentNode = parent, node = node)
 
         proc checkChild(nodes: PNode): bool {.raises: [], tags: [RootEffect],
             contractual.} =
@@ -200,21 +185,6 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
 
 fixRule:
-  var nodesToCheck: PNode = nil
-  # Find the AST nodes to check
-  block findNodes:
-    for nodes in parentNode.items:
-      for baseNode in nodes.items:
-        if baseNode == astNode:
-          nodesToCheck = flattenStmts(n = parentNode)
-          break findNodes
-        for child in baseNode.items:
-          if child == astNode:
-            nodesToCheck = flattenStmts(n = nodes)
-            break findNodes
-          for subChild in child.items:
-            if subChild == astNode:
-              nodesToCheck = flattenStmts(n = baseNode)
-              break findNodes
+  let nodesToCheck: PNode = getNodesToCheck(parentNode = parentNode, node = astNode)
   echo "NODE: ", nodesToCheck, " END"
   return false
