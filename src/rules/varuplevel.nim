@@ -33,7 +33,7 @@
 ##   *check*, *search* and *count*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check type will raise
 ##   error when the declaration of the variable can be changed into let or
-##   const. Search type will list all declrations which can be updated and
+##   const. Search type will list all declarations which can be updated and
 ##   count type will show the amount of variables' declarations which can be
 ##   updated. Fix type will try to update the type of the variable declaration,
 ##   for example `var i = 1` will be updated to `let i = 1`. If variable was
