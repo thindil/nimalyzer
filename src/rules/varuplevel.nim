@@ -216,18 +216,16 @@ fixRule:
         nodes.sons = nodes.sons[0 .. nodeIndex - 1] & newSection & nodes.sons[
             nodeIndex .. ^1]
 
-  block findNodesToCheck:
-    for nodes in parentNode.items:
-      for baseNode in nodes.items:
-        if baseNode == astNode:
-          updateNode(nodes = parentNode)
-          break findNodesToCheck
-        for child in baseNode.items:
-          if child == astNode:
-            updateNode(nodes = nodes)
-            break findNodesToCheck
-          for subChild in child.items:
-            if subChild == astNode:
-              updateNode(nodes = baseNode)
-              break findNodesToCheck
-  return true
+  for nodes in parentNode.items:
+    for baseNode in nodes.items:
+      if baseNode == astNode:
+        updateNode(nodes = parentNode)
+        return true
+      for child in baseNode.items:
+        if child == astNode:
+          updateNode(nodes = nodes)
+          return true
+        for subChild in child.items:
+          if subChild == astNode:
+            updateNode(nodes = baseNode)
+            return true
