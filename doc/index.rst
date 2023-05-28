@@ -65,3 +65,20 @@ Notes
   the code. For example if you used `{.ruleOff: "hasEntity".}` and your
   configuration file contains several settings for that rule, all of them will
   be disabled from this point in the code.
+
+Fix type of rules
+=================
+
+The program allows to automatically or semi-automatically fix some problems
+reported by its rules with `fix` type of the rule. In most cases, this type of
+rules will only open the source code file with the default text editor or
+execute another command set in the program's configuration file. But several
+rules allow to automatically fix the problems, for example, *hasPragma* rule
+can add or remove a selected pragmas from declarations. In that case the
+changes will be made on the same file. Sometimes it can produce an invalid
+code, for example adding pragma **contractual** may produce an invalid code as
+the pragma requires enclosing a code in special blocks. Thus, it is strongly
+recommended to have some kind of backup of the code, for example a version
+control system like Git, Fossil, etc. More information on how the selected
+program's rule react with `fix` type of the rule can be found in the
+`available rules documentation <available_rules.html>`_.
