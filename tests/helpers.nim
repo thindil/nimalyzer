@@ -3,7 +3,7 @@ import compiler/[idents, options, parser]
 import ../src/rules
 
 type DisabledChecks* = enum
-  invalidSearch
+  invalidSearch, fixTests
 
 proc setLogger*() =
   if getHandlers().len > 0:
@@ -118,3 +118,8 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   assert ruleOptions.amount == 1, "Negative counting of valid code for rule '" &
       ruleSettings.name & "' failed, expected result: 1, received: " &
       $ruleOptions.amount
+  # fix rule tests
+  if fixTests in disabledChecks:
+    echo "The tests for fix type of rule are disabled."
+  else:
+    discard
