@@ -186,6 +186,9 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
 
 fixRule:
+  # Don't change anything if rule has negation
+  if rule.negation:
+    return false
   proc updateNode(nodes: PNode) {.raises: [], tags: [], contractual.} =
     ## Update the selected variable to let or constant declaration
     ##
