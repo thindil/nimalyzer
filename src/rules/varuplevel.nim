@@ -186,41 +186,48 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
 
 fixRule:
-  proc updateNode(nodes: PNode) =
-    var nodeIndex, declIndex: int = -1
-    for index, node in nodes.pairs:
-      if node.kind in {nkVarSection, nkLetSection}:
-        nodeIndex = index
-        for index, declaration in node.pairs:
-          if declaration == astNode:
-            declIndex = index
-            break
-    # Only one variable declared, replace the whole declaration node
-    if nodes[nodeIndex].len == 1:
-      nodes[nodeIndex] = newTree(kind = (if data ==
-        "let": nkLetSection else: nkConstSection),
-        children = nodes[nodeIndex].sons)
-    # Add the new declaration section before the node and remove the old
-    # variable declaration
-    else:
-      let newSection = newTree(kind = (if data ==
-        "let": nkLetSection else: nkConstSection),
-        children = [nodes[nodeIndex][declIndex]])
-      nodes[nodeIndex].delSon(idx = declIndex)
-      nodes.sons = nodes.sons[0 .. nodeIndex - 1] & newSection & nodes.sons[
-          nodeIndex .. ^1]
+  proc updateNode(nodes: PNode) {.raises: [], tags: [], contractual.} =
+    ## Update the selected variable to let or constant declaration
+    ##
+    ## * nodes - the AST tree to update
+    require:
+      nodes != nil
+    body:
+      var nodeIndex, declIndex: int = -1
+      for index, node in nodes.pairs:
+        if node.kind in {nkVarSection, nkLetSection}:
+          nodeIndex = index
+          for index, declaration in node.pairs:
+            if declaration == astNode:
+              declIndex = index
+              break
+      # Only one variable declared, replace the whole declaration node
+      if nodes[nodeIndex].len == 1:
+        nodes[nodeIndex] = newTree(kind = (if data ==
+          "let": nkLetSection else: nkConstSection),
+          children = nodes[nodeIndex].sons)
+      # Add the new declaration section before the node and remove the old
+      # variable declaration
+      else:
+        let newSection: PNode = newTree(kind = (if data ==
+          "let": nkLetSection else: nkConstSection),
+          children = [nodes[nodeIndex][declIndex]])
+        nodes[nodeIndex].delSon(idx = declIndex)
+        nodes.sons = nodes.sons[0 .. nodeIndex - 1] & newSection & nodes.sons[
+            nodeIndex .. ^1]
+
   block findNodesToCheck:
     for nodes in parentNode.items:
       for baseNode in nodes.items:
         if baseNode == astNode:
-          updateNode(parentNode)
+          updateNode(nodes = parentNode)
           break findNodesToCheck
         for child in baseNode.items:
           if child == astNode:
-            updateNode(nodes)
+            updateNode(nodes = nodes)
             break findNodesToCheck
           for subChild in child.items:
             if subChild == astNode:
-              updateNode(baseNode)
+              updateNode(nodes = baseNode)
               break findNodesToCheck
   return true
