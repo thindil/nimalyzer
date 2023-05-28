@@ -35,7 +35,12 @@
 ##   error when the declaration of the variable can be changed into let or
 ##   const. Search type will list all declrations which can be updated and
 ##   count type will show the amount of variables' declarations which can be
-##   updated.
+##   updated. Fix type will try to update the type of the variable declaration,
+##   for example `var i = 1` will be updated to `let i = 1`. If variable was
+##   in a declaration block, it will be moved to a new declaration above the
+##   current position. It may produce an invalid code, especially if the
+##   variable's declaration depends on a previous declaration in the same
+##   block.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about variables' declarations which can't be updated
 ##   to let or const.
