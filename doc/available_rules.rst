@@ -20,7 +20,8 @@ The syntax in a configuration file is::
   an error if there is a public declaration which doesn't have documentation.
   Search type will list all public declarations which have documentation and
   raise error if nothing was found. Count type will simply list the amount
-  of public declarations which have documentation.
+  of public declarations which have documentation. Fix type will execute
+  the default shell command set by the program's setting **fixCommand**.
 * optional word *not* means negation for the rule. Adding word *not* will
   change to inform only about public declaration which have documentation.
   Probably useable only with search and count type of rule.
@@ -68,7 +69,9 @@ configuration file is::
   an error if the selected type of entity with the selected name was not
   found in the module. Search type will list all entities of the selected
   type with the selected name and raise error if nothing was found. Count
-  type will simply list the amount of the selected entities.
+  type will simply list the amount of the selected entities. Fix type will
+  execute the default shell command set by the program's setting
+  **fixCommand**.
 * optional word *not* means negation for the rule. For example, if rule is
   set to check for procedures named myProc, adding word *not* will change
   to inform only about modules without the procedure with that name.
@@ -148,7 +151,9 @@ syntax in a configuration file is::
   rule will look for the procedures with the selected pragmas and list
   all of them which have the selected pragmas, raising error if nothing is
   found.  Count type will simply list the amount of the procedures with the
-  selected pragmas.
+  selected pragmas. Fix type will try to append or remove the pragmas from
+  the list to procedures. Please read general information about the fix type
+  of rules about potential issues.
 * optional word *not* means negation for the rule. For example, if rule is
   set to check for pragma SideEffect, adding word *not* will change
   to inform only about procedures with that pragma.
@@ -231,15 +236,19 @@ The syntax in a configuration file is::
 * ruleType is the type of rule which will be executed. Proper values are:
   *check*, *search* and *count*. For more information about the types of
   rules, please refer to the program's documentation. Check rule will
-  raise an error if find a local declaration which has the same name as
+  raise an error if it finds a local declaration which has the same name as
   one of parent declarations, search rule will list any local declarations
   with the same name as previously declared parent and raise an error if
   nothing found. Count rule will simply list the amount of local
-  declarations which have the same name as parent ones.
+  declarations which have the same name as parent ones. Fix type will try
+  to append a prefix `local` to the names of the local variables which
+  hide the variable. It doesn't anything for rules with negation. Please
+  read general information about the fix type of rules about potential
+  issues.
 * optional word *not* means negation for the rule. Adding word *not* will
   change to inform only about local declarations which don't have name as
   previously declared parent ones. Probably useable only for count type of
-  rule. Search type with negation will returns error as the last declaration
+  rule. Search type with negation will return error as the last declaration
   is always not hidden.
 * localHides is the name of the rule. It is case-insensitive, thus it can be
   set as *localhides*, *localHides* or *lOcAlHiDeS*.
@@ -285,7 +294,9 @@ The syntax in a configuration file is::
   an error if there is a call which doesn't have all parameters named.
   Search type will list all calls which set all their parameters as named
   and raise error if nothing was found. Count type will simply list the
-  amount of calls which set all their parameters as named.
+  amount of calls which set all their parameters as named. Fix type will
+  execute the default shell command set by the program's setting
+  **fixCommand**.
 * optional word *not* means negation for the rule. Adding word *not* will
   change to inform only about calls which have some parameters not named.
 * namedParams is the name of the rule. It is case-insensitive, thus it can be
@@ -314,7 +325,7 @@ Examples
 Namingconv rule
 ===============
 The rule check if the selected type of entries follow the selected naming
-convention. It can checks variables, procedures and enumerations' values.
+convention. It can check variables, procedures and enumerations' values.
 The syntax in a configuration file is::
 
   [ruleType] ?not? namingConv [entityType] [nameExpression]
@@ -325,10 +336,11 @@ The syntax in a configuration file is::
   an error if there is a selected entity type which doesn't follow the
   selected naming convention. Search type will list all entities of the
   selected type which follows the selected naming convention. Count type
-  will simply list the amount of the selected type of entities which follows
-  the naming convention.
+  will simply list the amount of the selected type of entities, which follows
+  the naming convention. Fix type will execute the default shell command set
+  by the program's setting **fixCommand**.
 * optional word *not* means negation for the rule. Adding word *not* will
-  change to inform only about the selected type of entities which doesn't
+  change to inform only about the selected type of entities, which doesn't
   follow the selected naming convention for search and count types of rules
   and raise error if the entity follows the naming convention for check type
   of the rule.
@@ -386,7 +398,8 @@ The syntax in a configuration file is::
   an error if there is a procedure which doesn't use all its parameters.
   Search type will list all procedures which uses their all parameters and
   raise error if nothing was found. Count type will simply list the amount
-  of procedures which uses all their parameters.
+  of procedures which uses all their parameters. Fix type will execute the
+  default shell command set by the program's setting **fixCommand**.
 * optional word *not* means negation for the rule. Adding word *not* will
   change to inform only about procedures which have all parameters used.
   Probably useable only with search and count type of rule.
@@ -438,7 +451,8 @@ The syntax in a configuration file is::
   an error if there is a declaration isn't in desired pattern. Search type
   will list all declarations with desired pattern and raise error if
   nothing was found. Count type will simply list the amount of declarations
-  with the desired pattern.
+  with the desired pattern. Fix type will execute the default shell command
+  set by the program's setting **fixCommand**.
 * optional word *not* means negation for the rule. Adding word *not* will
   change to inform only about procedures without desired pattern.
   Probably useable only with search and count type of rule.
@@ -491,9 +505,14 @@ The syntax in a configuration file is::
   *check*, *search* and *count*. For more information about the types of
   rules, please refer to the program's documentation. Check type will raise
   error when the declaration of the variable can be changed into let or
-  const. Search type will list all declrations which can be updated and
+  const. Search type will list all declarations which can be updated and
   count type will show the amount of variables' declarations which can be
-  updated.
+  updated. Fix type will try to update the type of the variable declaration,
+  for example `var i = 1` will be updated to `let i = 1`. If variable was
+  in a declaration block, it will be moved to a new declaration above the
+  current position. It may produce an invalid code, especially if the
+  variable's declaration depends on a previous declaration in the same
+  block.
 * optional word *not* means negation for the rule. Adding word *not* will
   change to inform only about variables' declarations which can't be updated
   to let or const.
