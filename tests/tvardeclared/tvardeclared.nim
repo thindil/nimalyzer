@@ -11,7 +11,8 @@ NOTICE Declarations withtype declaration found: 0
 NOTICE Declarations withtype declaration found: 1
 NOTICE declaration of 'i' line: 1 doesn't set type for the variable.
 NOTICE Declarations withouttype declaration found: 1
-NOTICE Declarations withouttype declaration found: 0'''
+NOTICE Declarations withouttype declaration found: 0
+The tests for fix type of rule are disabled.'''
 """
 
 import ../../src/rules/vardeclared
@@ -23,4 +24,4 @@ const
   invalidNimCode = "var i = 1"
   validNimCode = "var i: int = 1"
 
-runRuleTest()
+runRuleTest(disabledChecks = {fixTests})
