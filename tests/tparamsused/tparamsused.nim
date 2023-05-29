@@ -11,7 +11,8 @@ NOTICE Procedures which uses all parameters found: 0
 NOTICE Procedures which uses all parameters found: 1
 NOTICE procedure MyProc line: 1 doesn't use all parameters.
 NOTICE Procedures which not uses all parameters found: 1
-NOTICE Procedures which not uses all parameters found: 0'''
+NOTICE Procedures which not uses all parameters found: 0
+The tests for fix type of rule are disabled.'''
 """
 
 import ../../src/rules/paramsused
@@ -23,4 +24,4 @@ const
   invalidNimCode = "proc MyProc(arg: int) = discard"
   validNimCode = "proc MyProc(arg: int) = echo $arg"
 
-runRuleTest()
+runRuleTest(disabledChecks = {fixTests})
