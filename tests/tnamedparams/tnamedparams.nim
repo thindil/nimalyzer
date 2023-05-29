@@ -11,7 +11,8 @@ NOTICE Calls which have all named parameters found: 0
 NOTICE Calls which have all named parameters found: 1
 NOTICE call quit line: 1 doesn't have named parameter number: 1'.
 NOTICE Calls which not have all named parameters found: 1
-NOTICE Calls which not have all named parameters found: 0'''
+NOTICE Calls which not have all named parameters found: 0
+The tests for fix type of rule are disabled.'''
 """
 
 import ../../src/rules/namedparams
@@ -23,4 +24,4 @@ const
   invalidNimCode = "quit(QuitSuccess)"
   validNimCode = "myProc(named = true)"
 
-runRuleTest()
+runRuleTest(disabledChecks = {fixTests})
