@@ -11,7 +11,8 @@ NOTICE Declared public items with documentation found: 0
 NOTICE Declared public items with documentation found: 1
 NOTICE Module doesn't have documentation.
 NOTICE Declared public items with documentation found: 1
-NOTICE Declared public items with documentation found: 0'''
+NOTICE Declared public items with documentation found: 0
+The tests for fix type of rule are disabled.'''
 """
 
 import ../../src/rules/hasdoc
@@ -23,4 +24,4 @@ const
   invalidNimCode = "quit"
   validNimCode = "## Doc"
 
-runRuleTest()
+runRuleTest(disabledChecks = {fixTests})
