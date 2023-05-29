@@ -11,7 +11,8 @@ NOTICE Declarations which follow naming convention found: 0
 NOTICE Declarations which follow naming convention found: 1
 NOTICE name of 'IsThe' line: 1 doesn't follow naming convention.
 NOTICE Declarations which not follow naming convention found: 1
-NOTICE Declarations which not follow naming convention found: 0'''
+NOTICE Declarations which not follow naming convention found: 0
+The tests for fix type of rule are disabled.'''
 """
 
 import ../../src/rules/namingconv
@@ -23,4 +24,4 @@ const
   invalidNimCode = "var IsThe: int = 1"
   validNimCode = "var isThe: int = 1"
 
-runRuleTest()
+runRuleTest(disabledChecks = {fixTests})
