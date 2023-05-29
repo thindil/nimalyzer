@@ -9,7 +9,8 @@ NOTICE Doesn't have declared nkProcDef with name 'MyProc'.
 NOTICE Declared nkProcDef with name 'MyProc' found: 0
 NOTICE Declared nkProcDef with name 'MyProc' found: 1
 NOTICE Declared nkProcDef with name 'MyProc' found: 1
-NOTICE Declared nkProcDef with name 'MyProc' found: 0'''
+NOTICE Declared nkProcDef with name 'MyProc' found: 0
+The tests for fix type of rule are disabled.'''
 """
 
 import ../../src/rules/hasentity
@@ -21,4 +22,4 @@ const
   invalidNimCode = "quit"
   validNimCode = "proc MyProc() = discard"
 
-runRuleTest()
+runRuleTest(disabledChecks = {fixTests})
