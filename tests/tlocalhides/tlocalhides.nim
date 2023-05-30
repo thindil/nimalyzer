@@ -18,7 +18,8 @@ NOTICE Local declarations which hide global declarations found: 2
 NOTICE declaration of 'a' line: 1 is hidden by local variable in line 3.
 NOTICE declaration of 'a' line: 3 is hidden by local variable in line 5.
 NOTICE Local declarations which hide global declarations found: 1
-NOTICE Local declarations which hide global declarations found: 0'''
+NOTICE Local declarations which hide global declarations found: 0
+The tests for negative fix type of rule are disabled.'''
 """
 
 import ../../src/rules/localhides
@@ -40,4 +41,4 @@ for i in 1 .. 10:
 
 # Disable check for invalid code search as it always returns error instead of
 # positive value
-runRuleTest(disabledChecks = {invalidSearch})
+runRuleTest(disabledChecks = {invalidSearch, negativeFix})
