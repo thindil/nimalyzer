@@ -11,7 +11,8 @@ NOTICE Declarations which can be upgraded found: 0
 NOTICE Declarations which can be upgraded found: 1
 NOTICE declaration of 'i' line: 1 can be updated to constant.
 NOTICE Declarations which can't be upgraded found: 1
-NOTICE Declarations which can't be upgraded found: 0'''
+NOTICE Declarations which can't be upgraded found: 0
+The tests for negative fix type of rule are disabled.'''
 """
 
 import ../../src/rules/varuplevel
@@ -25,4 +26,4 @@ const
 var a: seq[int]
 a.add(1)"""
 
-runRuleTest()
+runRuleTest(disabledChecks = {negativeFix})
