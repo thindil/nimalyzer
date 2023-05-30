@@ -28,10 +28,11 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
 
   let
     (nimCache, nimConfig) = setNim()
-    invalidCode = parseString(invalidNimCode, nimCache, nimConfig)
     validCode = parseString(validNimCode, nimCache, nimConfig)
-  var ruleOptions = RuleOptions(parent: true, fileName: "test.nim", negation: false,
-        ruleType: check, options: validOptions, amount: 0, enabled: true)
+  var
+    ruleOptions = RuleOptions(parent: true, fileName: "test.nim",
+        negation: false, ruleType: check, options: validOptions, amount: 0, enabled: true)
+    invalidCode = parseString(invalidNimCode, nimCache, nimConfig)
 
   # check rule tests
   ruleCheck(invalidCode, invalidCode, ruleOptions)
@@ -122,6 +123,17 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   if fixTests in disabledChecks:
     echo "The tests for fix type of rule are disabled."
   else:
+    ruleOptions.parent = true
+    ruleOptions.ruleType = fix
+    ruleOptions.negation = false
+    ruleOptions.amount = 0
+    let oldInvalidCode = copyNode(invalidCode)
+    assert ruleFix(invalidCode, invalidCode, ruleOptions, ""),
+        "Failed to properly report the changed code by fix type of rule '" &
+        ruleSettings.name & "'."
+    assert $invalidCode == $validCode, "Failed to fix the invalid code for fix type of rule '" &
+        ruleSettings.name & "'."
+    invalidCode = copyNode(oldInvalidCode)
     # negative fix rule tests
     if negativeFix in disabledChecks:
       echo "The tests for negative fix type of rule are disabled."
