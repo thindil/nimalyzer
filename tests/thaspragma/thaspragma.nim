@@ -17,7 +17,7 @@ import ../../src/rules/haspragma
 import ../helpers.nim
 
 const
-  validOptions = @["procedures", "raises: [*"]
+  validOptions = @["procedures", "raises: []"]
   invalidOptions = @[]
   invalidNimCode = "proc MyProc() = discard"
   validNimCode = "proc MyProc() {.raises: [].} = discard"
