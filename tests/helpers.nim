@@ -3,7 +3,7 @@ import compiler/[idents, options, parser]
 import ../src/rules
 
 type DisabledChecks* = enum
-  invalidSearch, fixTests
+  invalidSearch, fixTests, negativeFix
 
 proc setLogger*() =
   if getHandlers().len > 0:
@@ -122,4 +122,8 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   if fixTests in disabledChecks:
     echo "The tests for fix type of rule are disabled."
   else:
-    discard
+    # negative fix rule tests
+    if negativeFix in disabledChecks:
+      echo "The tests for negative fix type of rule are disabled."
+    else:
+      discard
