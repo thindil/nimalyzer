@@ -160,7 +160,15 @@ checkRule:
                 returnValue = rule.amount)
             rule.amount = int.low
           else:
-            rule.amount.dec
+            if rule.ruleType == fix:
+              for pragma in rule.options[1 .. ^1]:
+                setResult(checkResult = false,
+                    positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+                    node = node,
+                    ruleData = pragma, params = [
+                    procName, $node.info.line, pragma])
+            else:
+              rule.amount.dec
         else:
           if rule.ruleType == search:
             message(text = messagePrefix & "procedure " & procName &
@@ -228,7 +236,7 @@ checkRule:
       return
 
 fixRule:
-  var pragmas: PNode = astNode.getDeclPragma
+  var pragmas: PNode = astNode[pragmasPos]
   # Remove the selected pragma from the declaration
   if rule.negation:
     for index, node in pragmas.pairs:
@@ -277,12 +285,16 @@ fixRule:
         newPragma: PNode = newTree(kind = nkExprColonExpr, children = [])
         values: PNode = newTree(kind = nkBracket, children = [])
       newPragma.sons.add(y = newIdentNode(ident = getIdent(
-          ic = rule.identsCache, identifier = pragmaName), info = pragmas.info))
+          ic = rule.identsCache, identifier = pragmaName), info = (if pragmas ==
+              nil: astNode.info else: pragmas.info)))
       for value in data[startIndex + 1 .. endIndex - 1].split(sep = ','):
         if value.len == 0:
           continue
         values.sons.add(y = newIdentNode(ident = getIdent(ic = rule.identsCache,
             identifier = value), info = pragmas.info))
       newPragma.sons.add(y = values)
-      pragmas.sons.add(y = newPragma)
+      if pragmas != nil:
+        pragmas.sons.add(y = newPragma)
+      else:
+        astNode[pragmasPos] = newPragma
       return true
