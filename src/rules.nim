@@ -422,8 +422,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       children = [newIdentNode(i = "rule"), nnkVarTy.newTree(children = [
       newIdentNode(i = "RuleOptions")]), newEmptyNode()])]), newEmptyNode(),
       newEmptyNode(), newEmptyNode()]), nnkStmtList.newTree(children = [
-      nnkProcDef.newTree(children = [nnkPostfix.newTree(children = [
-      newIdentNode(i = "*"), newIdentNode(i = "ruleFix")]), newEmptyNode(),
+      nnkProcDef.newTree(children = [newIdentNode(i = "ruleFix"), newEmptyNode(),
       newEmptyNode(), nnkFormalParams.newTree(children = [newIdentNode(
       i = "bool"), nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
       newIdentNode(i = "parentNode"), newIdentNode(i = "PNode"), newEmptyNode()]),
