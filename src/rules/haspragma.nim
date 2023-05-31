@@ -268,10 +268,7 @@ fixRule:
   # Add the selected pramga to the declaration
   else:
     if pragmas.kind == nkEmpty:
-      for index, child in astNode.pairs:
-        if child == pragmas:
-          astNode[index] = newNode(kind = nkPragma)
-          break
+      astNode[pragmasPos] = newNode(kind = nkPragma)
       pragmas = astNode.getDeclPragma
     if not data.contains(chars = {'['}):
       pragmas.sons.add(y = newIdentNode(ident = getIdent(ic = rule.identsCache,
