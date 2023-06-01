@@ -28,8 +28,8 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
 
   let
     (nimCache, nimConfig) = setNim()
-    validCode = parseString(validNimCode, nimCache, nimConfig)
   var
+    validCode = parseString(validNimCode, nimCache, nimConfig)
     invalidCode = parseString(invalidNimCode, nimCache, nimConfig)
     ruleOptions = RuleOptions(parent: true, fileName: "test.nim",
         negation: false, ruleType: check, options: validOptions, amount: 0, enabled: true)
@@ -131,7 +131,8 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
     let oldInvalidCode = copyTree(invalidCode)
     ruleCheck(invalidCode, invalidCode, ruleOptions)
     assert $invalidCode == $validCode, "Fixing the invalid code for rule '" &
-        ruleSettings.name & "' failed."
+        ruleSettings.name & "' failed. Invalid code: " & $invalidCode &
+        "\nshould be: " & $validCode
     invalidCode = copyTree(oldInvalidCode)
     # negative fix rule tests
     if negativeFix in disabledChecks:
@@ -140,4 +141,9 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
       ruleOptions.parent = true
       ruleOptions.negation = true
       ruleOptions.amount = 0
+      let oldValidCode = copyTree(validCode)
       ruleCheck(validCode, validCode, ruleOptions)
+      assert $invalidCode == $validCode,
+          "Fixing the valid code with negation for rule '" & ruleSettings.name &
+              "' failed. Invalid code: " & $invalidCode & "\nshould be: " & $validCode
+      validCode = copyTree(oldValidCode)
