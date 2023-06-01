@@ -189,20 +189,25 @@ fixRule:
     return false
   let nodesToCheck: PNode = getNodesToCheck(parentNode = parentNode,
       node = astNode)
-  proc fixLocal(nodes: PNode) =
-    # Find the local variable which hides the selected variable
-    var
-      startChecking: bool = false
-      hiddingChild: PNode = nil
-    for child in nodes.items:
-      if not startChecking:
-        startChecking = true
-        continue
-      hiddingChild = checkChild(nodes = child, varName = data)
-      if hiddingChild != nil:
-        # Add prefix to the local variable
-        hiddingChild[0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
-            identifier = "local" & data), info = hiddingChild.info)
-      fixLocal(nodes = child)
+
+  proc fixLocal(nodes: PNode) {.raises: [], tags: [RootEffect], contractual.} =
+    require:
+      nodes != nil
+    body:
+      # Find the local variable which hides the selected variable
+      var
+        startChecking: bool = false
+        hiddingChild: PNode = nil
+      for child in nodes.items:
+        if not startChecking:
+          startChecking = true
+          continue
+        hiddingChild = checkChild(nodes = child, varName = data)
+        if hiddingChild != nil:
+          # Add prefix to the local variable
+          hiddingChild[0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+              identifier = "local" & data), info = hiddingChild.info)
+        fixLocal(nodes = child)
+
   fixLocal(nodes = nodesToCheck)
   return true
