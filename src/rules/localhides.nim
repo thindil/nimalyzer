@@ -191,6 +191,10 @@ fixRule:
       node = astNode)
 
   proc fixLocal(nodes: PNode) {.raises: [], tags: [RootEffect], contractual.} =
+    ## Add prefix local to names of all local variables which hide the selected
+    ## variable
+    ##
+    ## * nodes - the list of AST nodes to check
     require:
       nodes != nil
     body:
