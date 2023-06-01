@@ -189,18 +189,20 @@ fixRule:
     return false
   let nodesToCheck: PNode = getNodesToCheck(parentNode = parentNode,
       node = astNode)
-  # Find the local variable which hides the selected variable
-  var
-    startChecking: bool = false
-    hiddingChild: PNode = nil
-  for child in nodesToCheck.items:
-    if not startChecking:
-      startChecking = true
-      continue
-    hiddingChild = checkChild(nodes = child, varName = data)
-    if hiddingChild != nil:
-      break
-  # Add prefix to the local variable
-  hiddingChild[0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
-      identifier = "local" & data), info = hiddingChild.info)
+  proc fixLocal(nodes: PNode) =
+    # Find the local variable which hides the selected variable
+    var
+      startChecking: bool = false
+      hiddingChild: PNode = nil
+    for child in nodes.items:
+      if not startChecking:
+        startChecking = true
+        continue
+      hiddingChild = checkChild(nodes = child, varName = data)
+      if hiddingChild != nil:
+        # Add prefix to the local variable
+        hiddingChild[0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+            identifier = "local" & data), info = hiddingChild.info)
+      fixLocal(nodes = child)
+  fixLocal(nodes = nodesToCheck)
   return true
