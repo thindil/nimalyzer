@@ -31,6 +31,7 @@ of the program.
 - Negation doesn't work for `paramsUsed` rule
 - Detection of variables which can be updated to *let* or *const* with
   `varUplevel` rule
+- Result of negative check for `varUplevel` rule
 
 ## [0.3.0] - 2023-04-28
 
