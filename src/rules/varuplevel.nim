@@ -166,7 +166,8 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
 
 checkRule:
   initCheck:
-    discard
+    if rule.negation:
+      rule.amount.inc
   startCheck:
     discard
   checking:
