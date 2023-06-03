@@ -8,7 +8,7 @@ type DisabledChecks* = enum
 proc setLogger*() =
   if getHandlers().len > 0:
     return
-  let logger = newConsoleLogger()
+  let logger = newConsoleLogger(fmtStr = "$levelname: ")
   addHandler(handler = logger)
   setLogFilter(lvl = lvlInfo)
 
@@ -23,6 +23,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
 
   setLogger()
 
+  info("Checking the rule's options validation.")
   assert not validateOptions(ruleSettings, invalidOptions)
   assert validateOptions(ruleSettings, validOptions)
 
@@ -35,6 +36,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
         negation: false, ruleType: check, options: validOptions, amount: 0, enabled: true)
 
   # check rule tests
+  info("Checking check type of the rule.")
   ruleCheck(invalidCode, invalidCode, ruleOptions)
   assert ruleOptions.amount == 0, "Check of invalid code for rule '" &
       ruleSettings.name & "' failed, expected result: 0, received: " &
@@ -46,6 +48,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
       "' failed, expected result larger than 0, received: " &
       $ruleOptions.amount
   # negative check rule tests
+  info("Checking negative check type of the rule.")
   ruleOptions.parent = true
   ruleOptions.negation = true
   ruleOptions.amount = 0
@@ -60,6 +63,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
       "' failed, expected result larger than 0, received: " &
       $ruleOptions.amount
   # search rule tests
+  info("Checking search type of the rule.")
   ruleOptions.parent = true
   ruleOptions.ruleType = search
   ruleOptions.negation = false
@@ -70,7 +74,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
         ruleSettings.name & "' failed, expected result: 0, received: " &
         $ruleOptions.amount
   else:
-    echo "The test for searching for invalid code is disabled."
+    info("The test for searching for invalid code is disabled.")
   ruleOptions.parent = true
   ruleCheck(validCode, validCode, ruleOptions)
   assert ruleOptions.amount > 0, "Search for valid code for rule '" &
@@ -78,6 +82,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
       "' failed, expected result greater than 0, received: " &
       $ruleOptions.amount
   # negative search rule tests
+  info("Checking negative search type of the rule.")
   ruleOptions.parent = true
   ruleOptions.negation = true
   ruleOptions.amount = 0
@@ -91,6 +96,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
       ruleSettings.name & "' failed, expected result: 1, received: " &
       $ruleOptions.amount
   # count rule tests
+  info("Checking count type of the rule.")
   ruleOptions.parent = true
   ruleOptions.ruleType = count
   ruleOptions.negation = false
@@ -106,6 +112,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
       ruleSettings.name & "' failed, expected result: 1, received: " &
       $ruleOptions.amount
   # negative count rule tests
+  info("Checking negative type of the rule.")
   ruleOptions.parent = true
   ruleOptions.negation = true
   ruleOptions.amount = 0
@@ -120,8 +127,9 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
       ruleSettings.name & "' failed, expected result: 1, received: " &
       $ruleOptions.amount
   # fix rule tests
+  info("Checking fix type of the rule.")
   if fixTests in disabledChecks:
-    echo "The tests for fix type of rule are disabled."
+    info("The tests for fix type of rule are disabled.")
   else:
     ruleOptions.parent = true
     ruleOptions.ruleType = fix
@@ -135,8 +143,9 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
         "\nshould be: " & $validCode
     invalidCode = copyTree(oldInvalidCode)
     # negative fix rule tests
+    info("Checking negative fix type of the rule.")
     if negativeFix in disabledChecks:
-      echo "The tests for negative fix type of rule are disabled."
+      info("The tests for negative fix type of rule are disabled.")
     else:
       ruleOptions.parent = true
       ruleOptions.negation = true
