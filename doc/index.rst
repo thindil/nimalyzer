@@ -81,4 +81,7 @@ the pragma requires enclosing a code in special blocks. Thus, it is strongly
 recommended to have some kind of backup of the code, for example a version
 control system like Git, Fossil, etc. More information on how the selected
 program's rule react with `fix` type of the rule can be found in the
-`available rules documentation <available_rules.html>`_.
+`available rules documentation <available_rules.html>`_. Additionally, because
+the program works on AST representation of the checked code, there is a big
+chance that the code will be reformatted after changes. It is a good idea to
+have set auto-formatting after executing `fix` type of rules.
