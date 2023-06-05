@@ -15,7 +15,7 @@ The syntax in a configuration file is::
   [ruleType] ?not? hasDoc
 
 * ruleType is the type of rule which will be executed. Proper values are:
-  *check*, *search* and *count*. For more information about the types of
+  *check*, *search*, *count* and *fix*. For more information about the types of
   rules, please refer to the program's documentation. Check type will raise
   an error if there is a public declaration which doesn't have documentation.
   Search type will list all public declarations which have documentation and
@@ -64,7 +64,7 @@ configuration file is::
   [ruleType] ?not? hasentity [entityType] [entityName] ?parentEntity? ?childIndex?
 
 * ruleType is the type of rule which will be executed. Proper values are:
-  *check*, *search* and *count*. For more information about the types of
+  *check*, *search*,  *count* and *fix*. For more information about the types of
   rules, please refer to the program's documentation. Check type will raise
   an error if the selected type of entity with the selected name was not
   found in the module. Search type will list all entities of the selected
@@ -144,7 +144,7 @@ syntax in a configuration file is::
   [ruleType] ?not? haspragma [entityType] [listOfPragmas]
 
 * ruleType is the type of rule which will be executed. Proper values are:
-  *check*, *search* and *count*. For more information about the types of
+  *check*, *search*, *count* and *fix*. For more information about the types of
   rules, please refer to the program's documentation. Check rule will
   looking for procedures with declaration of the selected list of pragmas
   and list all of them which doesn't have them, raising error either. Search
@@ -234,7 +234,7 @@ The syntax in a configuration file is::
   [ruleType] ?not? localHides
 
 * ruleType is the type of rule which will be executed. Proper values are:
-  *check*, *search* and *count*. For more information about the types of
+  *check*, *search*, *count* and *fix*. For more information about the types of
   rules, please refer to the program's documentation. Check rule will
   raise an error if it finds a local declaration which has the same name as
   one of parent declarations, search rule will list any local declarations
@@ -289,7 +289,7 @@ The syntax in a configuration file is::
   [ruleType] ?not? namedParams
 
 * ruleType is the type of rule which will be executed. Proper values are:
-  *check*, *search* and *count*. For more information about the types of
+  *check*, *search*, *count* and *fix*. For more information about the types of
   rules, please refer to the program's documentation. Check type will raise
   an error if there is a call which doesn't have all parameters named.
   Search type will list all calls which set all their parameters as named
@@ -331,7 +331,7 @@ The syntax in a configuration file is::
   [ruleType] ?not? namingConv [entityType] [nameExpression]
 
 * ruleType is the type of rule which will be executed. Proper values are:
-  *check*, *search* and *count*. For more information about the types of
+  *check*, *search*, *count* and *fix*. For more information about the types of
   rules, please refer to the program's documentation. Check type will raise
   an error if there is a selected entity type which doesn't follow the
   selected naming convention. Search type will list all entities of the
@@ -393,7 +393,7 @@ The syntax in a configuration file is::
   [ruleType] ?not? paramsUsed [declarationType]
 
 * ruleType is the type of rule which will be executed. Proper values are:
-  *check*, *search* and *count*. For more information about the types of
+  *check*, *search*, *count* and *fix*. For more information about the types of
   rules, please refer to the program's documentation. Check type will raise
   an error if there is a procedure which doesn't use all its parameters.
   Search type will list all procedures which uses their all parameters and
@@ -446,7 +446,7 @@ The syntax in a configuration file is::
   [ruleType] ?not? varDeclared [declarationType]
 
 * ruleType is the type of rule which will be executed. Proper values are:
-  *check*, *search* and *count*. For more information about the types of
+  *check*, *search*, *count* and *fix*. For more information about the types of
   rules, please refer to the program's documentation. Check type will raise
   an error if there is a declaration isn't in desired pattern. Search type
   will list all declarations with desired pattern and raise error if
@@ -502,7 +502,7 @@ The syntax in a configuration file is::
   [ruleType] ?not? varUplevel
 
 * ruleType is the type of rule which will be executed. Proper values are:
-  *check*, *search* and *count*. For more information about the types of
+  *check*, *search*, *count* and *fix*. For more information about the types of
   rules, please refer to the program's documentation. Check type will raise
   error when the declaration of the variable can be changed into let or
   const. Search type will list all declarations which can be updated and
