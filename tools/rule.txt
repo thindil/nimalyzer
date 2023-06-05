@@ -29,7 +29,7 @@
 ##   [ruleType] ?not? --ruleName--
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
-##   *check*, *search* and *count*. For more information about the types of
+##   *check*, *search*, *count* and *fix*. For more information about the types of
 ##   rules, please refer to the program's documentation. --Insert description
 ##   how rules types works with the rule--.
 ## * optional word *not* means negation for the rule. Adding word *not* will
