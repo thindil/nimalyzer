@@ -30,7 +30,7 @@
 ##   [ruleType] ?not? varDeclared [declarationType]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
-##   *check*, *search* and *count*. For more information about the types of
+##   *check*, *search*, *count* and *fix*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check type will raise
 ##   an error if there is a declaration isn't in desired pattern. Search type
 ##   will list all declarations with desired pattern and raise error if

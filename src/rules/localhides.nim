@@ -30,7 +30,7 @@
 ##   [ruleType] ?not? localHides
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
-##   *check*, *search* and *count*. For more information about the types of
+##   *check*, *search*, *count* and *fix*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check rule will
 ##   raise an error if it finds a local declaration which has the same name as
 ##   one of parent declarations, search rule will list any local declarations

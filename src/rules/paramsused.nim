@@ -29,7 +29,7 @@
 ##   [ruleType] ?not? paramsUsed [declarationType]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
-##   *check*, *search* and *count*. For more information about the types of
+##   *check*, *search*, *count* and *fix*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check type will raise
 ##   an error if there is a procedure which doesn't use all its parameters.
 ##   Search type will list all procedures which uses their all parameters and

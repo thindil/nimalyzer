@@ -29,7 +29,7 @@
 ##   [ruleType] ?not? haspragma [entityType] [listOfPragmas]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
-##   *check*, *search* and *count*. For more information about the types of
+##   *check*, *search*, *count* and *fix*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check rule will
 ##   looking for procedures with declaration of the selected list of pragmas
 ##   and list all of them which doesn't have them, raising error either. Search

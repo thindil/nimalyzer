@@ -30,7 +30,7 @@
 ##   [ruleType] ?not? hasentity [entityType] [entityName] ?parentEntity? ?childIndex?
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
-##   *check*, *search* and *count*. For more information about the types of
+##   *check*, *search*,  *count* and *fix*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check type will raise
 ##   an error if the selected type of entity with the selected name was not
 ##   found in the module. Search type will list all entities of the selected
