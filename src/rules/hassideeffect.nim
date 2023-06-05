@@ -23,18 +23,28 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## The rule to check if the declared procedures has side effects or not.
+## The rule to check if the declared procedures has side effects or not. If
+## the procedure has side effects, the rule will check if the procedure has
+## the pragma sideEffect. If the procedure doesn't have side effects, the
+## rule will check if the procedure can be changed into function.
 ## The syntax in a configuration file is::
 ##
 ##   [ruleType] ?not? hasSideEffect
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
-##   *check*, *search*, *count* and *fix. For more information about the types of
-##   rules, please refer to the program's documentation. --Insert description
-##   how rules types works with the rule--.
+##   *check*, *search*, *count* and *fix*. For more information about the types of
+##   rules, please refer to the program's documentation. Check rule will raise
+##   an error if finds a procedure which doesn't have declared pragma sideEffect
+##   or can be upgraded to function, search rule will list any procedures without
+##   declared pragma sideEffect or can be upgraded to function and raise an error
+##   if nothing found. Count rule will simply list the amount of procedures which
+##   don't have declared pragma sideEffect or can be upgraded to function. Fix
+##   type will try to add pragma sideEffect or change procedure to function.
+##   It doesn't anything for rules with negation. Please read general information
+##   about the fix type of rules about potential issues.
 ## * optional word *not* means negation for the rule. Adding word *not* will
-##   change to inform only about --Insert description how negation affects the
-##   rule--.
+##   change to inform only about declarations of procedures which either have
+##   properly declared pragma sideEffect or their are declared as functions.
 ## * hasSideEffect is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *hassideeffect*, *hasSideEffect* or *hAsSiDeEfFeCt*.
 ##
@@ -58,7 +68,14 @@
 ## Examples
 ## --------
 ##
-## --Insert rules examples--
+## 1. Check if any declaration of procedures need update about side effects::
+##
+##     check hasSideEffect
+##
+## 2. Search for declarations of procedures which are properly set information
+##    about side effects::
+##
+##     search not hasSideEffect
 
 # Import default rules' modules
 import ../rules
