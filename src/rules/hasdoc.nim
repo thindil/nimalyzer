@@ -99,8 +99,11 @@ checkRule:
       # Special check for constant and variables declaration section
       if node.kind in {nkConstSection, nkVarSection}:
         ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
-      # Don't check documentation for fields of objects
-      if node.kind == nkIdentDefs and parentNode.kind == nkTypeDef:
+      # Don't check documentation for fields of objects, unless the user set
+      # the option for it
+      if (node.kind == nkIdentDefs and parentNode.kind == nkTypeDef) and not (
+          rule.options.len == 1 and rule.options[0].toLowerAscii ==
+          "checktypesfields"):
         continue
       else:
         # Set the name of the declared entity which is checked for documentation
