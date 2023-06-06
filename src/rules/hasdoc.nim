@@ -28,7 +28,7 @@
 ## declarations for the documentation.
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? hasDoc
+##   [ruleType] ?not? hasDoc ?checkTypesFields?
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -78,7 +78,9 @@ ruleConfig(ruleName = "hasdoc",
   ruleFoundMessage = "declared public items with documentation",
   ruleNotFoundMessage = "The documentation not found.",
   rulePositiveMessage = "Declaration of {params[0]} at {params[1]} has documentation.",
-  ruleNegativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.")
+  ruleNegativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.",
+  ruleOptions = @[str],
+  ruleMinOptions = 0)
 
 checkRule:
   initCheck:
