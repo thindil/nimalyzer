@@ -1,7 +1,7 @@
 discard """
   exitcode: 0
   output: '''INFO: Checking the rule's options validation.
-FATAL: The rule hasdoc requires at maximum 0 options, but 1 provided: 'randomoption'.
+FATAL: The rule hasdoc requires at maximum 1 options, but 2 provided: 'randomoption, anotheroption'.
 INFO: Checking check type of the rule.
 ERROR: Module doesn't have documentation.
 INFO: Checking negative check type of the rule.
@@ -28,7 +28,7 @@ import ../helpers.nim
 
 const
   validOptions: seq[string] = @[]
-  invalidOptions = @["randomoption"]
+  invalidOptions = @["randomoption", "anotheroption"]
   invalidNimCode = "quit"
   validNimCode = "## Doc"
 
