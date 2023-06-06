@@ -77,14 +77,16 @@
 ##
 ##     search not hasSideEffect
 
+# External modules imports
+import compiler/parampatterns
 # Import default rules' modules
 import ../rules
 
 ruleConfig(ruleName = "hassideeffect",
-  ruleFoundMessage = "",
-  ruleNotFoundMessage = "",
-  rulePositiveMessage = "",
-  ruleNegativeMessage = "")
+  ruleFoundMessage = "declarations which {negation}have info about side effects",
+  ruleNotFoundMessage = "declarations which {negation}have info about side effects not found.",
+  rulePositiveMessage = "declaration of {params[0]} line: {params[1]} {params[2]}.",
+  ruleNegativeMessage = "declaration of {params[0]} line: {params[1]} {params[2]}.")
 
 checkRule:
   initCheck:
@@ -92,9 +94,16 @@ checkRule:
   startCheck:
     discard
   checking:
-    discard
+    if node.kind == nkProcDef:
+      case checkForSideEffects(n = node)
+      of seSideEffect:
+        echo "has side effects"
+      of seNoSideEffect:
+        echo "no side effect"
+      of seUnknown:
+        echo "unknown"
   endCheck:
-    discard
+    let negation: string = (if rule.negation: "don't " else: "")
 
 fixRule:
   discard
