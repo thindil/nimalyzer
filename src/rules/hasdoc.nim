@@ -43,6 +43,9 @@
 ##   Probably useable only with search and count type of rule.
 ## * hasDoc is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *hasdoc*, *hasDoc* or *hAsDoC*.
+## * if the optional argument *checkTypesFields* is set, the rule will check
+##   also, do fields of types' declarations have documentation. The setting is
+##   case-insensitive, same as the name of the rule.
 ##
 ## Disabling the rule
 ## ------------------
