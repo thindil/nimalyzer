@@ -84,7 +84,7 @@ ruleConfig(ruleName = "paramsused",
   rulePositiveMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all parameters.",
   ruleNegativeMessage = "procedure {params[0]} line: {params[1]} doesn't use parameter '{params[2]}'.",
   ruleOptions = @[custom],
-  ruleOptionValues = @["procedures", "templates", "all"],
+  ruleOptionValues = @["procedures", "templates", "macros" ,"all"],
   ruleMinOptions = 1)
 
 checkRule:
@@ -98,6 +98,8 @@ checkRule:
         {nkProcDef, nkFuncDef, nkMethodDef}
       of "templates":
         {nkTemplateDef}
+      of "macros":
+        {nkMacroDef}
       else:
         {}
   checking:
