@@ -27,7 +27,7 @@ of the program.
 - Updated contributing guide.
 
 ### Fixed
-- Typo in Changelog.
+- Typos in Changelog.
 - `hasDoc` rule doesn't detect if procedure doesn't have documentation if one
   of its child has it.
 - Message level for `hasEntity` rule when it doesn't find the selected entity
