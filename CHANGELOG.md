@@ -13,6 +13,8 @@ of the program.
   command when a rule find a problem, but some rules can automatically fix
   the reported problem. Please refer to the program's documentation how the
   type of rules works.
+- The option to enable checking public fields of types declarations for
+  documentation for `hasDoc` rule.
 
 ### Changed
 - Better checking for named parameters by `namedParams` rule
