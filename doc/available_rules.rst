@@ -12,7 +12,7 @@ have documentation comments. It doesn't check public fields of types
 declarations for the documentation.
 The syntax in a configuration file is::
 
-  [ruleType] ?not? hasDoc
+  [ruleType] ?not? hasDoc ?checkTypesFields?
 
 * ruleType is the type of rule which will be executed. Proper values are:
   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -27,6 +27,9 @@ The syntax in a configuration file is::
   Probably useable only with search and count type of rule.
 * hasDoc is the name of the rule. It is case-insensitive, thus it can be
   set as *hasdoc*, *hasDoc* or *hAsDoC*.
+* if the optional argument *checkTypesFields* is set, the rule will check
+  also, do fields of types' declarations have documentation. The setting is
+  case-insensitive, same as the name of the rule.
 
 Disabling the rule
 ------------------
