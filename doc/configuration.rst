@@ -113,16 +113,18 @@ message's level for info about the line of code which violates the rule is
 lvlError. The settings below checks for:
 
 1. If all procedures in the source code have pragma "contractual", "raises" and "tags". The last two can be empty or have listed values.
-2. If all parameters of all procedures areused in the code.
-3. If all calls in the code uses named parameters.
-4. If all public declarations have documentation.
-5. If all variables' declarations have declared type and value for them.
-6. If any local variable declaration can be updated to let or const.
-7. If any local variable declaration hides previously declared variable.
+2. If all parameters of all procedures are used in the code.
+3. If all parameters of all macros are used in the code.
+4. If all calls in the code uses named parameters.
+5. If all public declarations have documentation.
+6. If all variables' declarations have declared type and value for them.
+7. If any local variable declaration can be updated to let or const.
+8. If any local variable declaration hides previously declared variable.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
     check paramsUsed procedures
+    check paramsUsed macros
     check namedParams
     check hasDoc
     check varDeclared full
