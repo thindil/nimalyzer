@@ -15,6 +15,7 @@ of the program.
   type of rules works.
 - The option to enable checking public fields of types declarations for
   documentation for `hasDoc` rule.
+- Ability to check usage of parameters in macros only for `paramsUsed` rule.
 
 ### Changed
 - Better checking for named parameters by `namedParams` rule.
