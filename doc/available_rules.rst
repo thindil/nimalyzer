@@ -410,8 +410,9 @@ The syntax in a configuration file is::
   set as *paramsUsed*, *paramsUsed* or *pArAmSuSeD*.
 * declarationType is the type of declaration which will be checked for the
   parameters usage. Possible values: `procedures`: check all procedures,
-  functions and methods. `templates`: check templates only. `all`: check
-  all routines declarations (procedures, functions, templates, macros, etc.).
+  functions and methods. `templates`: check templates only. `macros`: check
+  macros only. `all`: check all routines declarations (procedures,
+  functions, templates, macros, etc.).
 
 Disabling the rule
 ------------------
