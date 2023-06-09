@@ -9,8 +9,8 @@ of the program.
 ### Added
 - Checking global variables declarations do they have documentation with
   `hasDoc` rule.
-- New type of rules: `fix`. For most of rules it just execute a configured
-  command when a rule find a problem, but some rules can automatically fix
+- New type of rules: `fix`. For most rules, it just executes a configured
+  command when a rule finds a problem, but some rules can automatically fix
   the reported problem. Please refer to the program's documentation how the
   type of rules works.
 - The option to enable checking public fields of types declarations for
