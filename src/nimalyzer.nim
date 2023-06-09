@@ -48,68 +48,70 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     # No configuration file specified, quit from the program
     if paramCount() == 0:
       abortProgram(message = "No configuration file specified. Please run the program with path to the config file as an argument.")
-    # Read the configuration file and set the program
-    var configSections: Natural = 0
-    let (sources, rules, fixCommand) = parseConfig(configFile = paramStr(i = 1),
-        sections = configSections)
-    # Check if the lists of source code files and rules is set
-    if sources.len == 0:
-      abortProgram(message = "No files specified to check. Please enter any files names to the configuration file.")
-    if rules.len == 0:
-      abortProgram(message = "No rules specified to check. Please enter any rule configuration to the configuration file.")
     let
       nimCache: IdentCache = newIdentCache()
       nimConfig: ConfigRef = newConfigRef()
     nimConfig.options.excl(y = optHints)
-    var resultCode: int = QuitSuccess
+    var
+      resultCode: int = QuitSuccess
+      configSections: int = 0
     # Check source code files with the selected rules
-    for i, source in sources.pairs:
-      message(text = "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
-          source & "'")
-      var codeParser: Parser = Parser()
-      try:
-        # Try to convert the source code file to AST
-        let fileName: AbsoluteFile = toAbsolute(file = source,
-            base = toAbsoluteDir(path = getCurrentDir()))
+    while configSections > -1:
+      # Read the configuration file and set the program
+      let (sources, rules, fixCommand) = parseConfig(configFile = paramStr(i = 1),
+          sections = configSections)
+      # Check if the lists of source code files and rules is set
+      if sources.len == 0:
+        abortProgram(message = "No files specified to check. Please enter any files names to the configuration file.")
+      if rules.len == 0:
+        abortProgram(message = "No rules specified to check. Please enter any rule configuration to the configuration file.")
+      for i, source in sources.pairs:
+        message(text = "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
+            source & "'")
+        var codeParser: Parser = Parser()
         try:
-          openParser(p = codeParser, filename = fileName,
-              inputStream = llStreamOpen(filename = fileName, mode = fmRead),
-                  cache = nimCache,
-              config = nimConfig)
-        except IOError, ValueError, KeyError, Exception:
-          abortProgram(message = "Can't open file '" & source &
-              "' to parse. Reason: " & getCurrentExceptionMsg())
-        try:
-          let astNode: PNode = codeParser.parseAll
-          codeParser.closeParser
-          var currentRule: RuleOptions = RuleOptions(fileName: source,
-              fixCommand: fixCommand, identsCache: nimCache)
-          # Check the converted source code with each selected rule
-          for index, rule in rules.pairs:
-            message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
-                "]" & (if rule.negation: " negation " else: " ") &
-                $rule.ruleType & " rule '" & rule.name & "' with options: '" &
-                rule.options.join(sep = ", ") & "'.", level = lvlDebug)
-            currentRule.options = rule.options
-            currentRule.negation = rule.negation
-            currentRule.ruleType = rule.ruleType
-            currentRule.amount = (if rule.ruleType ==
-                RuleTypes.check: 1 else: 0)
-            currentRule.enabled = true
-            currentRule.parent = true
-            rulesList[rule.index].checkProc(astNode = astNode,
-                parentNode = astNode, rule = currentRule)
-            if currentRule.amount < 1:
-              if currentRule.ruleType == fix:
-                writeFile(filename = currentRule.fileName, content = $astNode)
-              else:
-                resultCode = QuitFailure
-        except ValueError, IOError, KeyError, Exception:
-          abortProgram(message = "The file '" & source &
-              "' can't be parsed to AST. Reason: ", e = getCurrentException())
-      except OSError:
-        abortProgram(message = "Can't parse file '" & source & "'. Reason: ",
-            e = getCurrentException())
+          # Try to convert the source code file to AST
+          let fileName: AbsoluteFile = toAbsolute(file = source,
+              base = toAbsoluteDir(path = getCurrentDir()))
+          try:
+            openParser(p = codeParser, filename = fileName,
+                inputStream = llStreamOpen(filename = fileName, mode = fmRead),
+                    cache = nimCache,
+                config = nimConfig)
+          except IOError, ValueError, KeyError, Exception:
+            abortProgram(message = "Can't open file '" & source &
+                "' to parse. Reason: " & getCurrentExceptionMsg())
+          try:
+            let astNode: PNode = codeParser.parseAll
+            codeParser.closeParser
+            var currentRule: RuleOptions = RuleOptions(fileName: source,
+                fixCommand: fixCommand, identsCache: nimCache)
+            # Check the converted source code with each selected rule
+            for index, rule in rules.pairs:
+              message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
+                  "]" & (if rule.negation: " negation " else: " ") &
+                  $rule.ruleType & " rule '" & rule.name & "' with options: '" &
+                  rule.options.join(sep = ", ") & "'.", level = lvlDebug)
+              currentRule.options = rule.options
+              currentRule.negation = rule.negation
+              currentRule.ruleType = rule.ruleType
+              currentRule.amount = (if rule.ruleType ==
+                  RuleTypes.check: 1 else: 0)
+              currentRule.enabled = true
+              currentRule.parent = true
+              rulesList[rule.index].checkProc(astNode = astNode,
+                  parentNode = astNode, rule = currentRule)
+              if currentRule.amount < 1:
+                if currentRule.ruleType == fix:
+                  writeFile(filename = currentRule.fileName, content = $astNode)
+                else:
+                  resultCode = QuitFailure
+          except ValueError, IOError, KeyError, Exception:
+            abortProgram(message = "The file '" & source &
+                "' can't be parsed to AST. Reason: ", e = getCurrentException())
+        except OSError:
+          abortProgram(message = "Can't parse file '" & source & "'. Reason: ",
+              e = getCurrentException())
     message(text = "Stopping nimalyzer.")
     quit resultCode
 

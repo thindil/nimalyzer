@@ -49,7 +49,7 @@ const fixCommand: string = when defined(macos) or defined(macosx) or defined(
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
 
-proc parseConfig*(configFile: string; sections: var Natural): tuple[
+proc parseConfig*(configFile: string; sections: var int): tuple[
     sources: seq[string]; rules: seq[RuleData]; fixCommand: string] {.sideEffect,
         raises: [], tags: [
     ReadIOEffect, RootEffect], contractual.} =
@@ -82,7 +82,7 @@ proc parseConfig*(configFile: string; sections: var Natural): tuple[
     result.fixCommand = fixCommand
     try:
       # Read the program's configuration
-      var configSection: Natural = sections
+      var configSection: int = sections
       for line in configFile.lines:
         # Comment line, skip
         if line.startsWith(prefix = '#') or line.len == 0:
@@ -94,17 +94,14 @@ proc parseConfig*(configFile: string; sections: var Natural): tuple[
             continue
           else:
             configSection.dec
+            echo "next section"
             continue
-        elif configSection == 0:
-          message(text = "Start parsing the configuration file's selected section.",
-              level = lvlDebug)
         # If the configuration file contains "reset" setting, stop parsing it
         # and increase the amount of sections
         elif line == "reset":
           sections.inc
           message(text = "Stop parsing the configuration file.",
               level = lvlDebug)
-          break
         # Set the program's verbosity
         elif line.startsWith(prefix = "verbosity"):
           try:
@@ -188,5 +185,6 @@ proc parseConfig*(configFile: string; sections: var Natural): tuple[
               ^1].ruleType & " rule '" & result.rules[^1].name &
               "' with options: '" & result.rules[^1].options.join(sep = ", ") &
               "' to the list of rules to check.", level = lvlDebug)
+      sections = -1
     except IOError:
       abortProgram(message = "The specified configuration file '" & configFile & "' doesn't exist.")
