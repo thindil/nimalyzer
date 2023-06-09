@@ -49,7 +49,9 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     if paramCount() == 0:
       abortProgram(message = "No configuration file specified. Please run the program with path to the config file as an argument.")
     # Read the configuration file and set the program
-    let (sources, rules, fixCommand) = parseConfig(configFile = paramStr(i = 1))
+    var configSections: Natural = 0
+    let (sources, rules, fixCommand) = parseConfig(configFile = paramStr(i = 1),
+        sections = configSections)
     # Check if the lists of source code files and rules is set
     if sources.len == 0:
       abortProgram(message = "No files specified to check. Please enter any files names to the configuration file.")

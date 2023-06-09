@@ -49,8 +49,9 @@ const fixCommand: string = when defined(macos) or defined(macosx) or defined(
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
 
-proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
-    RuleData], fixCommand: string] {.sideEffect, raises: [], tags: [
+proc parseConfig*(configFile: string; sections: var Natural): tuple[
+    sources: seq[string]; rules: seq[RuleData]; fixCommand: string] {.sideEffect,
+        raises: [], tags: [
     ReadIOEffect, RootEffect], contractual.} =
   ## Parse the configuration file and get all the program's settings
   ##
@@ -81,10 +82,29 @@ proc parseConfig*(configFile: string): tuple[sources: seq[string], rules: seq[
     result.fixCommand = fixCommand
     try:
       # Read the program's configuration
+      var configSection: Natural = sections
       for line in configFile.lines:
         # Comment line, skip
         if line.startsWith(prefix = '#') or line.len == 0:
           continue
+        # If the configuration file contains a couple of sections of settings,
+        # skip the current line until don't meet the proper section
+        elif configSection > 0:
+          if line != "reset":
+            continue
+          else:
+            configSection.dec
+            continue
+        elif configSection == 0:
+          message(text = "Start parsing the configuration file's selected section.",
+              level = lvlDebug)
+        # If the configuration file contains "reset" setting, stop parsing it
+        # and increase the amount of sections
+        elif line == "reset":
+          sections.inc
+          message(text = "Stop parsing the configuration file.",
+              level = lvlDebug)
+          break
         # Set the program's verbosity
         elif line.startsWith(prefix = "verbosity"):
           try:
