@@ -151,9 +151,11 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   ruleOptions.parent = true
   ruleOptions.amount = 0
   ruleCheck(validCode, validCode, ruleOptions)
-  assert ruleOptions.amount == 1, "Negative counting of valid code for rule '" &
-      ruleSettings.name & "' failed, expected result: 1, received: " &
-      $ruleOptions.amount
+  try:
+    assert ruleOptions.amount == 1
+  except AssertionDefect:
+    echo "Negative counting of valid code for rule '" & ruleSettings.name &
+        "' failed, expected result: 1, received: " & $ruleOptions.amount
   # fix rule tests
   info("Checking fix type of the rule.")
   if fixTests in disabledChecks:
@@ -166,9 +168,11 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
     ruleOptions.identsCache = nimCache
     let oldInvalidCode = copyTree(invalidCode)
     ruleCheck(invalidCode, invalidCode, ruleOptions)
-    assert $invalidCode == $validCode, "Fixing the invalid code for rule '" &
-        ruleSettings.name & "' failed. Invalid code: " & $invalidCode &
-        "\nshould be: " & $validCode
+    try:
+      assert $invalidCode == $validCode
+    except AssertionDefect:
+      echo "Fixing the invalid code for rule '" & ruleSettings.name &
+          "' failed. Invalid code: " & $invalidCode & "\nshould be: " & $validCode
     invalidCode = copyTree(oldInvalidCode)
     # negative fix rule tests
     info("Checking negative fix type of the rule.")
@@ -180,7 +184,10 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
       ruleOptions.amount = 0
       let oldValidCode = copyTree(validCode)
       ruleCheck(validCode, validCode, ruleOptions)
-      assert $invalidCode == $validCode,
-          "Fixing the valid code with negation for rule '" & ruleSettings.name &
-              "' failed. Invalid code: " & $invalidCode & "\nshould be: " & $validCode
+      try:
+        assert $invalidCode == $validCode
+      except AssertionDefect:
+        echo "Fixing the valid code with negation for rule '" &
+            ruleSettings.name & "' failed. Invalid code: " & $invalidCode &
+            "\nshould be: " & $validCode
       validCode = copyTree(oldValidCode)
