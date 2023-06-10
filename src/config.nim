@@ -94,7 +94,6 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
             continue
           else:
             configSection.dec
-            echo "next section"
             continue
         # If the configuration file contains "reset" setting, stop parsing it
         # and increase the amount of sections
@@ -102,6 +101,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           sections.inc
           message(text = "Stop parsing the configuration file.",
               level = lvlDebug)
+          return
         # Set the program's verbosity
         elif line.startsWith(prefix = "verbosity"):
           try:
