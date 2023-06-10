@@ -56,10 +56,16 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
   ## Parse the configuration file and get all the program's settings
   ##
   ## * configFile - the path to the configuration file which will be parsed
+  ## * sections   - the amount of sections in the configuration file. The
+  ##                sections are separated with *reset* setting in the file.
   ##
   ## Returns tuple with the list of source code files to check, the list of
   ## the program's rules to check and the command executed when rule doesn't
-  ## set own code for fix type of rules.
+  ## set own code for fix type of rules. Also returns the updated parameter
+  ## sections. If the file was fully parsed, the parameter sections will have
+  ## value -1. Otherwise, the parameter sections will be the number of the
+  ## setting *reset* in the configuration file, so next time the procedure
+  ## can start parsing from exactly this setting.
   require:
     configFile.len > 0
   body:
