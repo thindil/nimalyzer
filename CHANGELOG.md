@@ -6,6 +6,11 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- Configuration setting `reset` which allows reset the program's configuration
+  in the configuration file to change the program's settings without stopping
+  it.
+
 ### Changed
 - Updated the project's documentation.
 
