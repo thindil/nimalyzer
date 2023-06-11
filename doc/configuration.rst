@@ -48,8 +48,8 @@ The command which will be executed when the fix type of the program's rule
 encounter a problem and the rule doesn't contain a code to automatically fix
 it. It is an optional parameter. If not set, the program will try to open the
 selected file in editor. Available parameters for the command are: {fileName}
-which during execution will be replaced by the relative path to the currently
-    checked file, and {line} which will be replaced by the line in the code which
+which during execution will be replaced by the relative path to the currently checked
+file, and {line} which will be replaced by the line in the code which
 causes the problem. The rest of the setting will be used by the executed
 program as an argument(s). The setting below will open the file in NeoVim.
 ::
@@ -71,20 +71,6 @@ executed (working directory).
     source src/utils.nim
     source tools/gendoc.nim
     source tools/genrule.nim
-
-Files
------
-The pattern of path for the list of files which will be analyzed. The path
-must be in Unix form. It will be converted to the proper path by the
-program. A configuration file must have at least one source file defined, by
-'source', 'files' or 'directory' settings. You can add more than one files
-setting per file. Also, the path can be absolute or relative. In the second
-form, the path must be relative to the place from which nimalyzer is
-executed (working directory). The setting below do exactly the same what the
-settings above.
-::
-    files src/*.nim
-    files tools/*.nim
 
 Directory
 ---------
@@ -134,7 +120,7 @@ lvlError. The settings below checks for:
 Search rules
 ------------
 Search rules are similar to the check rules. The main difference is that they
-usually returns information about the line in source code which meet the rule
+usually return information about the line in source code which meet the rule
 requirements. Another difference is, that they return the program's error if
 nothing is found. The syntax is search ?not? [nameOfTheRule] [parameters].
 All requirements for setting a search rule are the same as for check rules,
@@ -148,7 +134,7 @@ about the file and line in which they are found.
 Count rules
 -----------
 Count rules are similar to the search rules. The main difference is that they
-always returns success, no matter how many results are found. Another
+always return success, no matter how many results are found. Another
 difference is, that they return only the amount of results which meet the
 rule requirements. The syntax is count ?not? [nameOfTheRule] [parameters].
 All requirements for setting a count rule are the same as for check rules,
@@ -163,18 +149,57 @@ Fix rules
 ------------
 Fix rules are similar to the check rules. The main difference is if they find
 a problem, they will try to fix it. How exactly fixing works, depends on the
-rule. You can find detailed information how that kind of the rule affects the
-    checked code in its documentation. There are two ways: either the rule will
+rule. You can find detailed information how that kind of the rule affects the checked
+code in its documentation. There are two ways: either the rule will
 try to change the code to fix the problem, or the command configured above
 with option fixcommand will be executed. For more general information about
 the fix type of rules, its limits and how it affects the code, please refer to
 the main program's documentation. Another difference with check type of rules
 is that the fix type returns false only when the checked code was
 automatically changed by the rule. The syntax is fix ?not? [nameOfTheRule]
-[parameters]. All requirements for setting a fix rule are the same as for
-    check rules, written above. The message's level for info about the line of
+[parameters]. All requirements for setting a fix rule are the same as for check
+rules, written above. The message's level for info about the line of
 code which violates the rule's requirements is lvlError. The setting below
 will look for procedures without pragma sideEffect in the source code and
 add the pragma to any procedure which doesn't have it.
 ::
     fix hasPragma procedures sideEffect
+
+Reset
+-----
+The reset setting is a special setting. It causes the program to resets its
+whole configuration, so the new set of files with rules can be set in the
+file. When the program encounters the reset setting during parsing, it stops
+parsing and execute the selected settings. After finishing, the program will
+return to parsing the configuration file and start parsing it right from the
+last encountered reset option. For example, the setting below stops parsing
+the configuration file, checks the code of the program and later sets the
+settings for check the program's rules.
+::
+    reset
+
+Files
+-----
+The pattern of path for the list of files which will be analyzed. The path
+must be in Unix form. It will be converted to the proper path by the
+program. A configuration file must have at least one source file defined, by
+'source', 'files' or 'directory' settings. You can add more than one files
+setting per file. Also, the path can be absolute or relative. In the second
+form, the path must be relative to the place from which nimalyzer is
+executed (working directory). The pattern below check all files with 'nim'
+extension in "src/rules" directory.
+::
+    files src/rules/*.nim
+
+Here is the list of check rules to check by the progams in the second section
+of the configuration. They are almost the same as for the previous list of
+the check rules, but the first rule checks also templates and macros.
+::
+    check hasPragma all contractual "raises: [*" "tags: [*"
+    check paramsUsed procedures
+    check paramsUsed macros
+    check namedParams
+    check hasDoc
+    check varDeclared full
+    check varUplevel
+    check localHides
