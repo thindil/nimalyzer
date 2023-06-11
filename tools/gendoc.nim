@@ -111,8 +111,9 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
       # Get the documentation of the program's rules
       let configFile: File = open(filename = "config" & DirSep & "nimalyzer.cfg")
-      const settings: array[10, string] = ["verbosity", "output", "source",
-          "files", "directory", "check", "search", "count", "fixcommand", "fix"]
+      const settings: array[11, string] = ["verbosity", "output", "source",
+          "files", "directory", "check", "search", "count", "fixcommand", "fix",
+          "reset"]
       for line in configFile.lines:
         var newLine: string = line
         newLine.removePrefix(chars = {'#', ' '})
