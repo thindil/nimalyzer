@@ -8,6 +8,7 @@ of the program.
 
 ### Fixed
 - Typos in Changelog.
+- Typos in the program's configuration's documentation.
 
 ## [0.4.0] - 2023-06-08
 
