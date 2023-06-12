@@ -108,6 +108,8 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
             continue
           else:
             configSection.dec
+            message(text = "Restarting parsing the configuration file.",
+                level = lvlDebug)
             continue
         # If the configuration file contains "reset" setting, stop parsing it
         # and increase the amount of sections
