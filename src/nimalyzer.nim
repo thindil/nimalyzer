@@ -84,14 +84,20 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           try:
             let astNode: PNode = codeParser.parseAll
             codeParser.closeParser
-            var currentRule: RuleOptions = RuleOptions(fileName: source,
+            var
+              currentRule: RuleOptions = RuleOptions(fileName: source,
                 fixCommand: fixCommand, identsCache: nimCache)
+              index: Natural = 0
             # Check the converted source code with each selected rule
-            for index, rule in rules.pairs:
+            for rule in rules:
+              if rule.kind == ConfigKind.message:
+                message(text = rule.text)
+                continue
               message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
                   "]" & (if rule.negation: " negation " else: " ") &
                   $rule.ruleType & " rule '" & rule.name & "' with options: '" &
                   rule.options.join(sep = ", ") & "'.", level = lvlDebug)
+              index.inc
               currentRule.options = rule.options
               currentRule.negation = rule.negation
               currentRule.ruleType = rule.ruleType

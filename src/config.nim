@@ -30,19 +30,27 @@ import std/[os, parseopt, sequtils]
 # Internal modules imports
 import rules, utils
 
-type RuleData* = object
-  ## Contains information about the configuration of the program's rule
-  ##
-  ## * name     - The name of the rule
-  ## * options  - The options list provided by the user in a configuration file
-  ## * negation - If true, the rule is negation
-  ## * ruleType - The type of the rule
-  ## * index    - The index of the rule
-  name*: string
-  options*: seq[string]
-  negation*: bool
-  ruleType*: RuleTypes
-  index*: int
+type
+  ConfigKind* = enum
+    rule, message
+
+  ConfigData* = object
+    ## Contains information about the configuration of the program's rule
+    ##
+    ## * name     - The name of the rule
+    ## * options  - The options list provided by the user in a configuration file
+    ## * negation - If true, the rule is negation
+    ## * ruleType - The type of the rule
+    ## * index    - The index of the rule
+    case kind*: ConfigKind
+    of rule:
+      name*: string
+      options*: seq[string]
+      negation*: bool
+      ruleType*: RuleTypes
+      index*: int
+    of message:
+      text*: string
 
 const fixCommand: string = when defined(macos) or defined(macosx) or defined(
     windows): "open" else: "xdg-open" & " {fileName}"
@@ -50,8 +58,8 @@ const fixCommand: string = when defined(macos) or defined(macosx) or defined(
     ## default it try to open the selected file in the default editor.
 
 proc parseConfig*(configFile: string; sections: var int): tuple[
-    sources: seq[string]; rules: seq[RuleData]; fixCommand: string] {.sideEffect,
-        raises: [], tags: [
+    sources: seq[string]; rules: seq[ConfigData];
+        fixCommand: string] {.sideEffect, raises: [], tags: [
     ReadIOEffect, RootEffect], contractual.} =
   ## Parse the configuration file and get all the program's settings
   ##
@@ -149,6 +157,10 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           except OSError:
             abortProgram(message = "Can't add files to check. Reason: ",
                 e = getCurrentException())
+        # Set the message to show during the program's work
+        elif line.startsWith(prefix = "message"):
+          let newMessage: ConfigData = ConfigData(kind: message, text: line[8..^1])
+          result.rules.add(y = newMessage)
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = line.startsWith(prefix = it)):
           var configRule: OptParser = initOptParser(cmdline = line)
@@ -160,8 +172,9 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           if ruleType == none:
             abortProgram(message = "Unknown type of rule: '" & configRule.key & "'.")
           configRule.next
-          var newRule: RuleData = RuleData(name: configRule.key.toLowerAscii,
-              options: @[], negation: false, ruleType: ruleType, index: -1)
+          var newRule: ConfigData = ConfigData(kind: rule,
+              name: configRule.key.toLowerAscii, options: @[], negation: false,
+              ruleType: ruleType, index: -1)
           if newRule.name == "not":
             newRule.negation = true
             configRule.next
