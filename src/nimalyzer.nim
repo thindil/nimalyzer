@@ -58,13 +58,18 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     # Check source code files with the selected rules
     while configSections > -1:
       # Read the configuration file and set the program
-      let (sources, rules, fixCommand) = parseConfig(configFile = paramStr(i = 1),
-          sections = configSections)
+      var (sources, rules, fixCommand) = parseConfig(configFile = paramStr(
+          i = 1), sections = configSections)
       # Check if the lists of source code files and rules is set
       if sources.len == 0:
         abortProgram(message = "No files specified to check. Please enter any files names to the configuration file.")
       if rules.len == 0:
         abortProgram(message = "No rules specified to check. Please enter any rule configuration to the configuration file.")
+      # If the first element on the list of rules if a custom message, show it
+      # once and remove from the list
+      if rules[0].kind == ConfigKind.message:
+        message(text = rules[0].text)
+        rules.delete(i = 0)
       for i, source in sources.pairs:
         message(text = "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
             source & "'")
@@ -93,8 +98,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               if rule.kind == ConfigKind.message:
                 message(text = rule.text)
                 continue
-              message(text = "Parsing rule [" & $(index + 1) & "/" & $rules.len &
-                  "]" & (if rule.negation: " negation " else: " ") &
+              message(text = "Parsing rule [" & $(index + 1) & "/" &
+                  $rules.len & "]" & (if rule.negation: " negation " else: " ") &
                   $rule.ruleType & " rule '" & rule.name & "' with options: '" &
                   rule.options.join(sep = ", ") & "'.", level = lvlDebug)
               index.inc
