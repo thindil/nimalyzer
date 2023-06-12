@@ -113,7 +113,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
         # and increase the amount of sections
         elif line == "reset":
           sections.inc
-          message(text = "Stop parsing the configuration file.",
+          message(text = "Stopped parsing the configuration file.",
               level = lvlDebug)
           return
         # Set the program's verbosity
