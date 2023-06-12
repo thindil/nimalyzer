@@ -163,6 +163,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
         elif line.startsWith(prefix = "message"):
           let newMessage: ConfigData = ConfigData(kind: message, text: line[8..^1])
           result.rules.add(y = newMessage)
+          message(text = "Added custom message: '" & result.rules[^1].text & "' to the progam's output.")
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = line.startsWith(prefix = it)):
           var configRule: OptParser = initOptParser(cmdline = line)
