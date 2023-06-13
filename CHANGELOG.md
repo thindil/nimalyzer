@@ -10,6 +10,8 @@ of the program.
 - Configuration setting `reset` which allows reset the program's configuration
   in the configuration file to change the program's settings without stopping
   it.
+- Configuration setting `message` to add a custom messages to the program's
+  output, console and the log file.
 
 ### Changed
 - Updated the project's documentation.
