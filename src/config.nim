@@ -32,6 +32,7 @@ import rules, utils
 
 type
   ConfigKind* = enum
+    ## The types of configuration entries: a program's rule or a custom message
     rule, message
 
   ConfigData* = object
@@ -68,12 +69,12 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
   ##                sections are separated with *reset* setting in the file.
   ##
   ## Returns tuple with the list of source code files to check, the list of
-  ## the program's rules to check and the command executed when rule doesn't
-  ## set own code for fix type of rules. Also returns the updated parameter
-  ## sections. If the file was fully parsed, the parameter sections will have
-  ## value -1. Otherwise, the parameter sections will be the number of the
-  ## setting *reset* in the configuration file, so next time the procedure
-  ## can start parsing from exactly this setting.
+  ## the program's rules to check plus custom messages to show, and the command
+  ## executed when rule doesn't set own code for fix type of rules. Also
+  ## returns the updated parameter sections. If the file was fully parsed, the
+  ## parameter sections will have value -1. Otherwise, the parameter sections
+  ## will be the number of the setting *reset* in the configuration file, so
+  ## next time the procedure can start parsing from exactly this setting.
   require:
     configFile.len > 0
   body:
