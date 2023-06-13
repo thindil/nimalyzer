@@ -85,6 +85,19 @@ subdirectories.
 ::
     directory src
 
+Message
+-------
+
+The message directive allows to add a message to the program's output during
+its execution. The syntax is: message [text of the message]. The text doesn't
+need to be enclosed with quotes. The first message added before adding any
+of the program's rules is always threatened specially. It is added only once,
+before the program starts checking the rules. Any message added after any
+rule, will be repeated for each checked file. The setting below will show
+the message in the program's output (console and the log file) only once.
+::
+message Checking the program
+
 Check rules
 -----------
 Check rules are rules, which when violated by the source code, will produce the
@@ -193,8 +206,11 @@ extension in "src/rules" directory.
 
 Here is the list of check rules to check by the progams in the second section
 of the configuration. They are almost the same as for the previous list of
-the check rules, but the first rule checks also templates and macros.
+the check rules, but the first rule checks also templates and macros. We also
+set again message to show it only once as there is no rules configured for
+the program.
 ::
+message Checking the program's rules
     check hasPragma all contractual "raises: [*" "tags: [*"
     check paramsUsed procedures
     check paramsUsed macros
