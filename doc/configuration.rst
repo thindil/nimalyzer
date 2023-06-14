@@ -20,7 +20,7 @@ Verbosity
 ---------
 The minimal level of messages which will be shown in the program output. It is
 an optional parameter. If not set, the program will be show only the standard
-messages. The message about starting the program, will always be shown as it
+    messages. The message about starting the program, will always be shown as it
 is set before setting the level of verbosity. The setting below sets the verbosity
 level to show all, even debug messages. For names of levels, the
 program uses the Level enumeration values from the standard Nim logging
@@ -87,7 +87,6 @@ subdirectories.
 
 Message
 -------
-
 The message directive allows to add a message to the program's output during
 its execution. The syntax is: message [text of the message]. The text doesn't
 need to be enclosed with quotes. The first message added before adding any
@@ -96,7 +95,7 @@ before the program starts checking the rules. Any message added after any
 rule, will be repeated for each checked file. The setting below will show
 the message in the program's output (console and the log file) only once.
 ::
-message Checking the program
+    message Checking the program
 
 Check rules
 -----------
@@ -108,7 +107,7 @@ program, but it is case-insensitive in a configuration file. HasPragma is
 equal to haspragma or hasPRAGMA. If the optional word "not" is present, the
 program will check the rule in opposite direction. For example, rule
 hasPragma will check if procedures doesn't have the selected pragmas. The
-message's level for info about the line of code which violates the rule is
+    message's level for info about the line of code which violates the rule is
 lvlError. The settings below checks for:
 
 1. If all procedures in the source code have pragma "contractual", "raises" and "tags". The last two can be empty or have listed values.
@@ -210,7 +209,7 @@ the check rules, but the first rule checks also templates and macros. We also
 set again message to show it only once as there is no rules configured for
 the program.
 ::
-message Checking the program's rules
+    message Checking the program's rules
     check hasPragma all contractual "raises: [*" "tags: [*"
     check paramsUsed procedures
     check paramsUsed macros
