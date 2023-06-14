@@ -165,6 +165,8 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
                 e = getCurrentException())
         # Set the message to show during the program's work
         elif line.startsWith(prefix = "message"):
+          if line.len < 9:
+            abortProgram(message = "Can't parse 'message' setting in the configuration file. No message's text set.")
           let newMessage: ConfigData = ConfigData(kind: message, text: line[8..^1])
           result.rules.add(y = newMessage)
           message(text = "Added custom message: '" & result.rules[^1].text &
@@ -173,7 +175,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
         # of code for fix type of rules.
         elif line.startsWith(prefix = "forcefixcommand"):
           if line.len < 17:
-            abortProgram(message = "Can't parse 'forcefixcommand' setting in configuration file. No value set, should be 0, 1, true or false.");
+            abortProgram(message = "Can't parse 'forcefixcommand' setting in the configuration file. No value set, should be 0, 1, true or false.");
           if line[16..^1].toLowerAscii in ["0", "false"]:
             forceFixCommand = false
             message(text = "Disabled forcing the next rules to use fix command instead of the code.",
