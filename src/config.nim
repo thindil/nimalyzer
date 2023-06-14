@@ -50,6 +50,7 @@ type
       negation*: bool
       ruleType*: RuleTypes
       index*: int
+      forceFixCommand*: bool
     of message:
       text*: string
 
@@ -97,7 +98,9 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
     result.fixCommand = fixCommand
     try:
       # Read the program's configuration
-      var configSection: int = sections
+      var
+        configSection: int = sections
+        forceFixCommand: bool = false
       for line in configFile.lines:
         # Comment line, skip
         if line.startsWith(prefix = '#') or line.len == 0:
@@ -166,6 +169,19 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           result.rules.add(y = newMessage)
           message(text = "Added custom message: '" & result.rules[^1].text &
               "' to the program's output.", level = lvlDebug)
+        # Set do the progam should force its rules to execute the command instead
+        # of code for fix type of rules.
+        elif line.startsWith(prefix = "forcefixcommand"):
+          if line.len < 17:
+            abortProgram(message = "Can't parse 'forcefixcommand' setting in configuration file. No value set, should be 0, 1, true or false.");
+          if line[16..^1].toLowerAscii in ["0", "false"]:
+            forceFixCommand = false
+            message(text = "Disabled forcing the next rules to use fix command instead of the code.",
+                level = lvlDebug)
+          else:
+            forceFixCommand = true
+            message(text = "Enabled forcing the next rules to use fix command instead of the code.",
+                level = lvlDebug)
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = line.startsWith(prefix = it)):
           var configRule: OptParser = initOptParser(cmdline = line)
@@ -179,7 +195,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           configRule.next
           var newRule: ConfigData = ConfigData(kind: rule,
               name: configRule.key.toLowerAscii, options: @[], negation: false,
-              ruleType: ruleType, index: -1)
+              ruleType: ruleType, index: -1, forceFixCommand: forceFixCommand)
           if newRule.name == "not":
             newRule.negation = true
             configRule.next
