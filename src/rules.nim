@@ -466,8 +466,8 @@ macro fixRule*(code: untyped): untyped =
       nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
       i = "RuleOptions"), newEmptyNode()]), nnkIdentDefs.newTree(children = [
       newIdentNode(i = "data"), newIdentNode(i = "string"), newEmptyNode()])]),
-      newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children = (if code[
-      0].kind == nnkDiscardStmt: nnkStmtList.newTree(children = [
+      newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children =
+    if code[0].kind == nnkDiscardStmt: nnkStmtList.newTree(children = [
       nnkStmtList.newTree(children = [nnkLetSection.newTree(children = [
       nnkIdentDefs.newTree(children = [newIdentNode(i = "fixCommand"),
       newEmptyNode(), nnkCall.newTree(children = [nnkDotExpr.newTree(
@@ -491,7 +491,7 @@ macro fixRule*(code: untyped): untyped =
       newIdentNode(i = "&"), nnkInfix.newTree(children = [newIdentNode(i = "&"),
       newLit(s = "Can\'t execute command \'"), newIdentNode(i = "fixCommand")]),
       newLit(s = "\' for fix type of rule.")])])])])])])])])
-    else: code))])])
+    else: code)])])
 
 proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
     contractual.} =
