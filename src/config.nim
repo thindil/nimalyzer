@@ -38,11 +38,14 @@ type
   ConfigData* = object
     ## Contains information about the configuration of the program's rule
     ##
-    ## * name     - The name of the rule
-    ## * options  - The options list provided by the user in a configuration file
-    ## * negation - If true, the rule is negation
-    ## * ruleType - The type of the rule
-    ## * index    - The index of the rule
+    ## * name            - The name of the rule
+    ## * options         - The options list provided by the user in a configuration
+    ##                     file
+    ## * negation        - If true, the rule is negation
+    ## * ruleType        - The type of the rule
+    ## * index           - The index of the rule
+    ## * forceFixCommand - If true, force use setting fixCommand for the rule
+    ##                     instead of the rule's fix code
     case kind*: ConfigKind
     of rule:
       name*: string
@@ -172,7 +175,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           message(text = "Added custom message: '" & result.rules[^1].text &
               "' to the program's output.", level = lvlDebug)
         # Set do the progam should force its rules to execute the command instead
-        # of code for fix type of rules.
+        # of code for fix type of rules
         elif line.startsWith(prefix = "forcefixcommand"):
           if line.len < 17:
             abortProgram(message = "Can't parse 'forcefixcommand' setting in the configuration file. No value set, should be 0, 1, true or false.");
