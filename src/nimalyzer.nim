@@ -110,6 +110,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
                   RuleTypes.check: 1 else: 0)
               currentRule.enabled = true
               currentRule.parent = true
+              currentRule.forceFixCommand = rule.forceFixCommand
               rulesList[rule.index].checkProc(astNode = astNode,
                   parentNode = astNode, rule = currentRule)
               if currentRule.amount < 1:

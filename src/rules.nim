@@ -67,6 +67,7 @@ type
     enabled*: bool
     fixCommand*: string
     identsCache*: IdentCache
+    forceFixCommand*: bool
 
   RuleSettings* = object
     ## Contains information about the program's rule configuration
@@ -458,16 +459,7 @@ macro fixRule*(code: untyped): untyped =
   ## specify the code to run, execute the fixCommand
   ##
   ## * code - the code which will be run to fix the problem
-  return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
-      newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
-      nnkFormalParams.newTree(children = [newIdentNode(i = "bool"),
-      nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
-      newIdentNode(i = "parentNode"), newIdentNode(i = "PNode"), newEmptyNode()]),
-      nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
-      i = "RuleOptions"), newEmptyNode()]), nnkIdentDefs.newTree(children = [
-      newIdentNode(i = "data"), newIdentNode(i = "string"), newEmptyNode()])]),
-      newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children =
-    if code[0].kind == nnkDiscardStmt: nnkStmtList.newTree(children = [
+  let fixStatement = nnkStmtList.newTree(children = [
       nnkStmtList.newTree(children = [nnkLetSection.newTree(children = [
       nnkIdentDefs.newTree(children = [newIdentNode(i = "fixCommand"),
       newEmptyNode(), nnkCall.newTree(children = [nnkDotExpr.newTree(
@@ -491,7 +483,21 @@ macro fixRule*(code: untyped): untyped =
       newIdentNode(i = "&"), nnkInfix.newTree(children = [newIdentNode(i = "&"),
       newLit(s = "Can\'t execute command \'"), newIdentNode(i = "fixCommand")]),
       newLit(s = "\' for fix type of rule.")])])])])])])])])
-    else: code)])])
+  return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
+      newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
+      nnkFormalParams.newTree(children = [newIdentNode(i = "bool"),
+      nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
+      newIdentNode(i = "parentNode"), newIdentNode(i = "PNode"), newEmptyNode()]),
+      nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
+      i = "RuleOptions"), newEmptyNode()]), nnkIdentDefs.newTree(children = [
+      newIdentNode(i = "data"), newIdentNode(i = "string"), newEmptyNode()])]),
+      newEmptyNode(), newEmptyNode(), nnkStmtList.newTree(children =
+    if code[0].kind == nnkDiscardStmt:
+      fixStatement
+    else:
+      nnkStmtList.newTree(nnkIfStmt.newTree(nnkElifBranch.newTree(
+          nnkDotExpr.newTree(newIdentNode("rule"), newIdentNode(
+          "forceFixCommand")), fixStatement), nnkElse.newTree(code))))])])
 
 proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
     contractual.} =
