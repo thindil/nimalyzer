@@ -464,7 +464,7 @@ macro fixRule*(code: untyped): untyped =
   ## the fixCommand.
   ##
   ## * code - the code which will be run to fix the problem
-  let fixStatement = nnkStmtList.newTree(children = [
+  let fixStatement: NimNode = nnkStmtList.newTree(children = [
       nnkStmtList.newTree(children = [nnkLetSection.newTree(children = [
       nnkIdentDefs.newTree(children = [newIdentNode(i = "fixCommand"),
       newEmptyNode(), nnkCall.newTree(children = [nnkDotExpr.newTree(
@@ -500,9 +500,10 @@ macro fixRule*(code: untyped): untyped =
     if code[0].kind == nnkDiscardStmt:
       fixStatement
     else:
-      nnkStmtList.newTree(nnkIfStmt.newTree(nnkElifBranch.newTree(
-          nnkDotExpr.newTree(newIdentNode("rule"), newIdentNode(
-          "forceFixCommand")), fixStatement), nnkElse.newTree(code))))])])
+      nnkStmtList.newTree(children = [nnkIfStmt.newTree(children = [
+          nnkElifBranch.newTree(children = [nnkDotExpr.newTree(children = [
+          newIdentNode(i = "rule"), newIdentNode(i = "forceFixCommand")]),
+          fixStatement]), nnkElse.newTree(children = [code])])]))])])
 
 proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
     contractual.} =
