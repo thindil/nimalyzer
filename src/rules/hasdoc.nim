@@ -143,4 +143,18 @@ checkRule:
     discard
 
 fixRule:
-  discard
+  # Remove the documentation
+  if rule.negation:
+    if astNode.kind notin {nkEnumTy, nkIdentDefs, nkConstDef}:
+      for index, node in astNode:
+        if node.kind == nkCommentStmt:
+          astNode.delSon(idx = index)
+          return true
+        if node.kind == nkStmtList:
+          for index, subNode in node:
+            if subNode.kind == nkCommentStmt:
+              node.delSon(idx = index)
+              return true
+    else:
+      astNode.comment = ""
+      return true
