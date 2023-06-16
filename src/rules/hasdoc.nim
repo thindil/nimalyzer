@@ -98,7 +98,8 @@ checkRule:
     # Check only elements which can have documentation
     if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
         nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
-        nkEnumTy, nkConstSection, nkConstTy, nkVarSection}:
+        nkEnumTy, nkConstSection, nkConstTy, nkVarSection, nkTypeSection,
+        nkObjectTy}:
       # Special check for constant and variables declaration section
       if node.kind in {nkConstSection, nkVarSection}:
         ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
@@ -128,6 +129,8 @@ checkRule:
           try:
             var hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
                 node.comment.len > 0
+              elif node.kind == nkObjectTy:
+                node[2].comment.len > 0
               else:
                 node[^1].len > 0 and node[^1][0].kind == nkCommentStmt
             if node.kind == nkTemplateDef and not hasDoc:
