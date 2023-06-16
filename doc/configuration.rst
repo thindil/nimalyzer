@@ -19,8 +19,8 @@ Available settings
 Verbosity
 ---------
 The minimal level of messages which will be shown in the program output. It is
-an optional parameter. If not set, the program will be show only the standard
-    messages. The message about starting the program, will always be shown as it
+an optional parameter. If not set, the program will be show only the standard messages.
+The message about starting the program, will always be shown as it
 is set before setting the level of verbosity. The setting below sets the verbosity
 level to show all, even debug messages. For names of levels, the
 program uses the Level enumeration values from the standard Nim logging
@@ -54,6 +54,18 @@ causes the problem. The rest of the setting will be used by the executed
 program as an argument(s). The setting below will open the file in NeoVim.
 ::
     fixcommand nvim +{line} {fileName}
+
+Force fix command
+-----------------
+If the setting is set to *true* or *1*, any subsequent program's rule will execute
+the command sets with **fixcommand** setting or the default one instead of its fix
+code. If the setting is set to *false* or *0*, following program's rules will
+use their auto fix code or the command sets with the **fixcommand** setting if
+they don't contain a code to automatically fix the checked code. The setting
+below will force all the program's rules defined below to execute **fixcommand**
+instead of their code.
+::
+    forcefixcommand true
 
 Source
 ------
@@ -106,13 +118,13 @@ depends on the rule. Name of the rule to check must be one of defined in the
 program, but it is case-insensitive in a configuration file. HasPragma is
 equal to haspragma or hasPRAGMA. If the optional word "not" is present, the
 program will check the rule in opposite direction. For example, rule
-hasPragma will check if procedures doesn't have the selected pragmas. The
-    message's level for info about the line of code which violates the rule is
+hasPragma will check if procedures doesn't have the selected pragmas. The message's
+level for info about the line of code which violates the rule is
 lvlError. The settings below checks for:
 
 1. If all procedures in the source code have pragma "contractual", "raises" and "tags". The last two can be empty or have listed values.
 2. If all parameters of all procedures are used in the code.
-3. If all parameters of all macros are used in the code.
+3. If all parameters of all macros used in the code.
 4. If all calls in the code uses named parameters.
 5. If all public declarations have documentation.
 6. If all variables' declarations have declared type and value for them.
