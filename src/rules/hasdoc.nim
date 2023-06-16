@@ -148,7 +148,9 @@ checkRule:
 fixRule:
   # Remove the documentation
   if rule.negation:
-    if astNode.kind notin {nkEnumTy, nkIdentDefs, nkConstDef}:
+    if astNode.kind == nkObjectTy:
+      astNode[2].comment = ""
+    elif astNode.kind notin {nkEnumTy, nkIdentDefs, nkConstDef}:
       for index, node in astNode:
         if node.kind == nkCommentStmt:
           astNode.delSon(idx = index)
