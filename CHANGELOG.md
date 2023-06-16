@@ -22,6 +22,7 @@ of the program.
 ### Fixed
 - Typos in Changelog.
 - Typos in the program's configuration's documentation.
+- Detecting documentation of objects types declaration by `hasDoc` rule.
 
 ## [0.4.0] - 2023-06-08
 
