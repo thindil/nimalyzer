@@ -12,6 +12,9 @@ of the program.
   it.
 - Configuration setting `message` to add a custom messages to the program's
   output, console and the log file.
+- Configuration setting `forcefixcommand` which allows force subsequent
+  program's rules to use their auto fix code or the command defined with the
+  `fixcommand` setting.
 
 ### Changed
 - Updated the project's documentation.
