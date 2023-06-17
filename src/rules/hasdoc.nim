@@ -46,8 +46,8 @@
 ## * entityType is the type of entity which will be looking for. Proper values
 ##   are: `all`: check everything what can have documentation but without fields
 ##   of objects' declarations, `callables`: check all declarations of
-##   subprograms (procedures, functions, macros, etc), `types`: check declarations
-##   of types, `typesFields`: check declarations of objects' fields, `module`:
+##   subprograms (procedures, functions, macros, etc.), `types`: check declarations
+##   of types, `typesFields`: check declarations of objects' fields, `modules`:
 ##   check only module for documentation.
 ##
 ## Disabling the rule
@@ -71,11 +71,11 @@
 ##
 ## 1. Check if all public declarations in module have documentation::
 ##
-##     check hasDoc
+##     check hasDoc all
 ##
-## 2. Search for all public declarations which don't have documentation::
+## 2. Search for all modules which don't have documentation::
 ##
-##     search not hasDoc
+##     search not hasDoc modules
 
 # Import default rules' modules
 import ../rules
@@ -86,12 +86,12 @@ ruleConfig(ruleName = "hasdoc",
   rulePositiveMessage = "Declaration of {params[0]} at {params[1]} has documentation.",
   ruleNegativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.",
   ruleOptions = @[custom],
-  ruleOptionValues = @["all", "callables", "types", "typesFields", "module"],
+  ruleOptionValues = @["all", "callables", "types", "typesFields", "modules"],
   ruleMinOptions = 1)
 
 checkRule:
   initCheck:
-    if rule.enabled and rule.options[0].toLowerAscii in ["all", "module"]:
+    if rule.enabled and rule.options[0].toLowerAscii in ["all", "modules"]:
       setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
           positiveMessage = "Module has documentation.",
           negativeMessage = "Module doesn't have documentation.",
