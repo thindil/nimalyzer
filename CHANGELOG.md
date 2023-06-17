@@ -15,6 +15,8 @@ of the program.
 - Configuration setting `forcefixcommand` which allows force subsequent
   program's rules to use their auto fix code or the command defined with the
   `fixcommand` setting.
+- **BREAKING**: rule `hasDoc` needs now option to set what kind of entities
+  should be checked.
 
 ### Changed
 - Updated the project's documentation.
