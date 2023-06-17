@@ -82,33 +82,44 @@ ruleConfig(ruleName = "hasdoc",
   ruleNotFoundMessage = "The documentation not found.",
   rulePositiveMessage = "Declaration of {params[0]} at {params[1]} has documentation.",
   ruleNegativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.",
-  ruleOptions = @[str],
-  ruleMinOptions = 0)
+  ruleOptions = @[custom],
+  ruleOptionValues = @["all", "callables", "types", "typesFields", "module"],
+  ruleMinOptions = 1)
 
 checkRule:
   initCheck:
-    if rule.enabled:
+    if rule.enabled and rule.options[0].toLowerAscii in ["all", "module"]:
       setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
           positiveMessage = "Module has documentation.",
           negativeMessage = "Module doesn't have documentation.",
           node = astNode)
   startCheck:
+    let nodesToCheck: set[TNodeKind] = case rule.options[0].toLowerAscii
+      of "all":
+        {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef,
+            nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef, nkEnumTy,
+            nkConstSection, nkConstTy, nkVarSection, nkTypeSection, nkObjectTy}
+      of "callables":
+        {nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef, nkTemplateDef, nkIteratorDef}
+      of "types":
+        {nkTypeDef, nkEnumTy, nkConstTy, nkTypeSection, nkObjectTy}
+      of "typesfields":
+        {nkIdentDefs}
+      else:
+        {}
     discard
   checking:
     # Check only elements which can have documentation
-    if node.kind in {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef,
-        nkMacroDef, nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef,
-        nkEnumTy, nkConstSection, nkConstTy, nkVarSection, nkTypeSection,
-        nkObjectTy}:
+    if node.kind in nodesToCheck:
       # Special check for constant and variables declaration section
       if node.kind in {nkConstSection, nkVarSection}:
         ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
       # Don't check documentation for fields of objects, unless the user set
       # the option for it
       if (node.kind == nkIdentDefs and parentNode.kind == nkTypeDef) and (
-          rule.ruleType != fix and not rule.negation) and not (
-          rule.options.len == 1 and rule.options[0].toLowerAscii ==
-          "checktypesfields"):
+          rule.ruleType != fix and not rule.negation) and rule.options[
+              0].toLowerAscii !=
+          "typesfields":
         continue
       else:
         # Set the name of the declared entity which is checked for documentation
