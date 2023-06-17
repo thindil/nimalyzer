@@ -105,7 +105,8 @@ checkRule:
         ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
       # Don't check documentation for fields of objects, unless the user set
       # the option for it
-      if (node.kind == nkIdentDefs and parentNode.kind == nkTypeDef) and not (
+      if (node.kind == nkIdentDefs and parentNode.kind == nkTypeDef) and (
+          rule.ruleType != fix and not rule.negation) and not (
           rule.options.len == 1 and rule.options[0].toLowerAscii ==
           "checktypesfields"):
         continue
@@ -150,6 +151,7 @@ fixRule:
   if rule.negation:
     if astNode.kind == nkObjectTy:
       astNode[2].comment = ""
+      return true
     elif astNode.kind notin {nkEnumTy, nkIdentDefs, nkConstDef}:
       for index, node in astNode:
         if node.kind == nkCommentStmt:
@@ -163,3 +165,6 @@ fixRule:
     else:
       astNode.comment = ""
       return true
+  # Add the selected documentation template
+  else:
+    return false
