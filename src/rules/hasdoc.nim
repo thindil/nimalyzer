@@ -28,7 +28,7 @@
 ## declarations for the documentation.
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? hasDoc ?checkTypesFields?
+##   [ruleType] ?not? hasDoc [entityType]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -43,9 +43,12 @@
 ##   Probably useable only with search and count type of rule.
 ## * hasDoc is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *hasdoc*, *hasDoc* or *hAsDoC*.
-## * if the optional argument *checkTypesFields* is set, the rule will check
-##   also, do fields of types' declarations have documentation. The setting is
-##   case-insensitive, same as the name of the rule.
+## * entityType is the type of entity which will be looking for. Proper values
+##   are: `all`: check everything what can have documentation but without fields
+##   of objects' declarations, `callables`: check all declarations of
+##   subprograms (procedures, functions, macros, etc), `types`: check declarations
+##   of types, `typesFields`: check declarations of objects' fields, `module`:
+##   check only module for documentation.
 ##
 ## Disabling the rule
 ## ------------------
