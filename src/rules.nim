@@ -270,7 +270,7 @@ proc validateOptions*(rule: RuleSettings; options: seq[
               " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
       of custom:
-        if option notin rule.optionValues:
+        if option.toLowerAscii notin rule.optionValues:
           return errorMessage(text = "The rule " & rule.name &
               " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
