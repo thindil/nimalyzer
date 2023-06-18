@@ -126,7 +126,7 @@ lvlError. The settings below checks for:
 2. If all parameters of all procedures are used in the code.
 3. If all parameters of all macros used in the code.
 4. If all calls in the code uses named parameters.
-5. If all public declarations have documentation.
+5. If all public declarations and module have documentation, but without checking fields of objects' declarations.
 6. If all variables' declarations have declared type and value for them.
 7. If any local variable declaration can be updated to let or const.
 8. If any local variable declaration hides previously declared variable.
@@ -136,7 +136,7 @@ lvlError. The settings below checks for:
     check paramsUsed procedures
     check paramsUsed macros
     check namedParams
-    check hasDoc
+    check hasDoc all
     check varDeclared full
     check varUplevel
     check localHides
@@ -226,7 +226,7 @@ the program.
     check paramsUsed procedures
     check paramsUsed macros
     check namedParams
-    check hasDoc
+    check hasDoc all
     check varDeclared full
     check varUplevel
     check localHides
