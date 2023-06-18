@@ -85,7 +85,7 @@ ruleConfig(ruleName = "hasdoc",
   ruleNotFoundMessage = "The documentation not found.",
   rulePositiveMessage = "Declaration of {params[0]} at {params[1]} has documentation.",
   ruleNegativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.",
-  ruleOptions = @[custom],
+  ruleOptions = @[custom, str],
   ruleOptionValues = @["all", "callables", "types", "typesfields", "modules"],
   ruleMinOptions = 1)
 
@@ -181,4 +181,11 @@ fixRule:
       return true
   # Add the selected documentation template
   else:
+    if rule.options.len < 2:
+      discard errorMessage(text = "Can't add the documentation's template the declarations. No file with the template specified in the rule's options.")
+    try:
+      let docTemplate: string = readFile(rule.options[1])
+    except IOError:
+      discard errorMessage(text = "Can't add the documentation's template to the declaration. Reason: ",
+          e = getCurrentException())
     return false
