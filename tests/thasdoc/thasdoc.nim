@@ -27,7 +27,7 @@ import ../../src/rules/hasdoc
 import ../helpers.nim
 
 const
-  validOptions: seq[string] = @[]
+  validOptions: seq[string] = @["all"]
   invalidOptions = @["randomoption", "anotheroption"]
   invalidNimCode = "quit"
   validNimCode = "## Doc"
