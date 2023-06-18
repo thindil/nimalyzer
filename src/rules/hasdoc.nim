@@ -86,7 +86,7 @@ ruleConfig(ruleName = "hasdoc",
   rulePositiveMessage = "Declaration of {params[0]} at {params[1]} has documentation.",
   ruleNegativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.",
   ruleOptions = @[custom],
-  ruleOptionValues = @["all", "callables", "types", "typesFields", "modules"],
+  ruleOptionValues = @["all", "callables", "types", "typesfields", "modules"],
   ruleMinOptions = 1)
 
 checkRule:
