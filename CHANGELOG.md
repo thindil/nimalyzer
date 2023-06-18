@@ -21,6 +21,7 @@ of the program.
 ### Changed
 - Updated the project's documentation.
 - Made rules' custom options case-insensitive.
+- Better formatting of error message for rules.
 
 ### Fixed
 - Typos in Changelog.
