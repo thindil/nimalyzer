@@ -134,7 +134,7 @@ proc errorMessage*(text: string; e: ref Exception = nil): int {.sideEffect,
     if e != nil:
       message.add(y = getCurrentExceptionMsg())
       when defined(debug):
-        message.add(y = getStackTrace(e = e))
+        message.add(y = "\nStack trace:\n" & getStackTrace(e = e))
     try:
       log(level = lvlFatal, args = message)
     except Exception:
