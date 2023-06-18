@@ -20,6 +20,7 @@ of the program.
 
 ### Changed
 - Updated the project's documentation.
+- Made rules' custom options case-insensitive.
 
 ### Fixed
 - Typos in Changelog.
