@@ -119,10 +119,8 @@ checkRule:
         ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
       # Don't check documentation for fields of objects, unless the user set
       # the option for it
-      if (node.kind == nkIdentDefs and parentNode.kind == nkTypeDef) and (
-          rule.ruleType != fix and not rule.negation) and rule.options[
-              0].toLowerAscii !=
-          "typesfields":
+      if (node.kind == nkIdentDefs and parentNode.kind == nkTypeDef) and
+          rule.options[0].toLowerAscii != "typesfields":
         continue
       else:
         # Set the name of the declared entity which is checked for documentation
