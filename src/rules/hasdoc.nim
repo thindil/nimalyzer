@@ -89,8 +89,20 @@ ruleConfig(ruleName = "hasdoc",
   ruleOptionValues = @["all", "callables", "types", "typesfields", "modules"],
   ruleMinOptions = 1)
 
+var docTemplate: string = ""
+
 checkRule:
   initCheck:
+    if rule.enabled:
+      if rule.ruleType == fix and not rule.negation:
+        if rule.options.len < 2:
+          rule.amount = errorMessage(text = "Can't set the documentation's template for hasDoc rule. No file with the template specified in the rule's options.")
+        else:
+          try:
+            docTemplate = readFile(rule.options[1])
+          except IOError:
+            rule.amount = errorMessage(text = "Can't read the documentation template for hasDoc rule. Reason: ",
+              e = getCurrentException())
     if rule.enabled and rule.options[0].toLowerAscii in ["all", "modules"]:
       setResult(checkResult = astNode.hasSonWith(kind = nkCommentStmt),
           positiveMessage = "Module has documentation.",
@@ -163,7 +175,6 @@ fixRule:
   if rule.negation:
     if astNode.kind == nkObjectTy:
       astNode[2].comment = ""
-      return true
     elif astNode.kind notin {nkEnumTy, nkIdentDefs, nkConstDef}:
       for index, node in astNode:
         if node.kind == nkCommentStmt:
@@ -176,14 +187,10 @@ fixRule:
               return true
     else:
       astNode.comment = ""
-      return true
+    return true
   # Add the selected documentation template
   else:
-    if rule.options.len < 2:
-      discard errorMessage(text = "Can't add the documentation's template the declarations. No file with the template specified in the rule's options.")
-    try:
-      let docTemplate: string = readFile(rule.options[1])
-    except IOError:
-      discard errorMessage(text = "Can't add the documentation's template to the declaration. Reason: ",
-          e = getCurrentException())
+    if docTemplate.len == 0:
+      discard errorMessage(text = "Can't add the documentation's template the declarations. No template set.")
+      return false
     return false
