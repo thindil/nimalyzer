@@ -99,7 +99,7 @@ checkRule:
           rule.amount = errorMessage(text = "Can't set the documentation's template for hasDoc rule. No file with the template specified in the rule's options.")
         else:
           try:
-            docTemplate = readFile(rule.options[1])
+            docTemplate = readFile(filename = rule.options[1])
             docTemplate.stripLineEnd
           except IOError:
             rule.amount = errorMessage(text = "Can't read the documentation template for hasDoc rule. Reason: ",
