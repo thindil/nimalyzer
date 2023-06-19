@@ -100,6 +100,7 @@ checkRule:
         else:
           try:
             docTemplate = readFile(rule.options[1])
+            docTemplate.stripLineEnd
           except IOError:
             rule.amount = errorMessage(text = "Can't read the documentation template for hasDoc rule. Reason: ",
               e = getCurrentException())
@@ -193,4 +194,11 @@ fixRule:
     if docTemplate.len == 0:
       discard errorMessage(text = "Can't add the documentation's template the declarations. No template set.")
       return false
-    return false
+    if astNode.kind == nkObjectTy:
+      astNode[2].comment = docTemplate
+    elif astNode.kind notin {nkEnumTy, nkIdentDefs, nkConstDef}:
+      astNode.sons.add(y = newStrNode(kind = nkCommentStmt,
+          strVal = docTemplate))
+    else:
+      astNode.comment = docTemplate
+    return true
