@@ -28,7 +28,7 @@
 ## declarations for the documentation.
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? hasDoc [entityType]
+##   [ruleType] ?not? hasDoc [entityType] [templateFile]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -49,6 +49,11 @@
 ##   subprograms (procedures, functions, macros, etc.), `types`: check declarations
 ##   of types, `typesFields`: check declarations of objects' fields, `modules`:
 ##   check only module for documentation.
+## * templateFile is parameter required only by *fix* type of hasDoc rule.
+##   Other types of the rule can skip setting it. It should contain the template
+##   of documentation which will be inserted into the checked code. The
+##   documentation should be in reStructuredText format without leading sign
+##   for Nim documentation. It will be inserted in all desired types of entities.
 ##
 ## Disabling the rule
 ## ------------------
