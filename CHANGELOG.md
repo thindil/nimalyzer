@@ -17,6 +17,8 @@ of the program.
   `fixcommand` setting.
 - **BREAKING**: rule `hasDoc` needs now option to set what kind of entities
   should be checked.
+- `fix` type of rule to `hasDoc` rule. It can now delete documentation or
+  add a template of documentation to the checked code.
 
 ### Changed
 - Updated the project's documentation.
