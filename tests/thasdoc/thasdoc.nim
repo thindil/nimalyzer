@@ -26,7 +26,11 @@ NOTICE: Declaration of i* at 1 doesn't have documentation.
 NOTICE: Declared public items with documentation found: 2
 NOTICE: Declared public items with documentation found: 0
 INFO: Checking fix type of the rule.
-INFO: The tests for fix type of rule are disabled.'''
+ERROR: Module doesn't have documentation.
+ERROR: Declaration of i* at 1 doesn't have documentation.
+INFO: Checking negative fix type of the rule.
+ERROR: Module has documentation.
+ERROR: Declaration of i* at 2 has documentation.'''
 """
 
 import ../../src/rules/hasdoc
@@ -39,4 +43,4 @@ const
   validNimCode = """## Template doc.
 var i* = 0 ## Template doc."""
 
-runRuleTest(disabledChecks = {fixTests})
+runRuleTest()
