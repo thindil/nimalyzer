@@ -197,8 +197,9 @@ fixRule:
     if astNode.kind == nkObjectTy:
       astNode[2].comment = docTemplate
     elif astNode.kind notin {nkEnumTy, nkIdentDefs, nkConstDef}:
-      astNode.sons.add(y = newStrNode(kind = nkCommentStmt,
-          strVal = docTemplate))
+      let docNode = newNode(kind = nkCommentStmt)
+      docNode.comment = docTemplate
+      astNode.sons = docNode & astNode.sons
     else:
       astNode.comment = docTemplate
     return true
