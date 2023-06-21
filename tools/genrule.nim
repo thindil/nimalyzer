@@ -41,16 +41,24 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
     if not fileExists(filename = "nimalyzer.nimble"):
       quit(errormsg = "Please run the tool from the main directory of the project.")
     try:
+      # Ask the user for the new rule parameters
       echo "The name of the new rule: "
       var name: string = ""
       while name.len == 0:
         name = stdin.readLine
       echo "The rule will be built-in or external? (b/e):"
-      var ruleType: char = 'a'
-      while ruleType notin {'b', 'B', 'e', 'E'}:
+      var
+        builtIn: bool = true
+        ruleType: char = 'a'
+      while true:
         ruleType = getch()
+        if ruleType in {'b', 'B'}:
+          break
+        elif ruleType in {'e', 'E'}:
+          builtIn = false
+          break
       var path: string = ""
-      if ruleType.toLowerAscii == 'e':
+      if not builtIn:
         echo "The path where the rule directory will be created: "
         while path.len == 0:
           path = stdin.readLine
@@ -69,10 +77,12 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
       ruleCode = ruleCode.replace(sub = "--ruleName--", by = name)
       ruleCode = ruleCode.replace(sub = "--rulename--", by = name.toLowerAscii)
       writeFile(filename = fileName, content = ruleCode)
-      if ruleType.toLowerAscii == 'b':
-        echo "The program's rule '" & name & "' created in file '" & fileName & "'. Don't forget to update the file src/utils.nim either."
+      if builtIn:
+        echo "The program's rule '" & name & "' created in file '" & fileName &
+          "'. Don't forget to update the file src/utils.nim either."
       else:
-        echo "The program's rule '" & name & "' created in directory '" & path & "'."
+        echo "The program's rule '" & name & "' created in directory '" & path &
+          "'."
     except IOError:
       quit(errormsg = "Can't create the new rule. Reason: " &
           getCurrentExceptionMsg())
