@@ -82,7 +82,7 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
       ruleCode = ruleCode.replace(sub = "--rulename--", by = name.toLowerAscii)
       # Replace path to rules module for the external rule
       if not builtIn:
-        let dirDepth = path.count(sub = DirSep) + 1
+        let dirDepth: int = path.count(sub = DirSep) + 1
         ruleCode = ruleCode.replace(sub = "..", by = "../".repeat(
             n = dirDepth) & "src")
       writeFile(filename = fileName, content = ruleCode)
