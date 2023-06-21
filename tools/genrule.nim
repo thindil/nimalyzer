@@ -29,7 +29,7 @@
 ## started from the main directory of the project
 
 # Standard library imports
-import std/[os, strutils]
+import std/[os, strutils, terminal]
 # External modules imports
 import contracts
 
@@ -40,28 +40,41 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
     # Check if we are in the main directory of the project
     if not fileExists(filename = "nimalyzer.nimble"):
       quit(errormsg = "Please run the tool from the main directory of the project.")
-    # Check if the user entered the name of the rule to create
-    if paramCount() == 0:
-      quit(errormsg = "Please enter the name of the rule to create")
-    let
-      fileName: string = "src" & DirSep & "rules" & DirSep & paramStr(
-          i = 1).toLowerAscii & ".nim"
-      author: string = (if paramCount() ==
-          1: "Bartek thindil Jasicki" else: paramStr(i = 2))
-    if fileExists(filename = fileName):
-      quit(errormsg = "The rule with name '" & paramStr(i = 1) & "' exists.")
-    # Copy the template rule file to the proper directory
     try:
+      echo "The name of the new rule: "
+      var name: string = ""
+      while name.len == 0:
+        name = stdin.readLine
+      echo "The rule will be built-in or external? (b/e):"
+      var ruleType: char = 'a'
+      while ruleType notin {'b', 'B', 'e', 'E'}:
+        ruleType = getch()
+      var path: string = ""
+      if ruleType.toLowerAscii == 'e':
+        echo "The path where the rule directory will be created: "
+        while path.len == 0:
+          path = stdin.readLine
+      else:
+        path = "src/rules"
+      echo "The author of the rule, leave empty for use default value: "
+      var author: string = stdin.readLine
+      if author.len == 0:
+        author = "Bartek thindil Jasicki"
+      let fileName: string = path & DirSep & name.toLowerAscii & ".nim"
+      if fileExists(filename = fileName):
+        quit(errormsg = "The rule with name '" & name & "' exists.")
+      # Copy the template rule file to the proper directory
       var ruleCode: string = readFile(filename = "tools" & DirSep & "rule.txt")
       ruleCode = ruleCode.replace(sub = "--author--", by = author)
-      ruleCode = ruleCode.replace(sub = "--ruleName--", by = paramStr(i = 1))
-      ruleCode = ruleCode.replace(sub = "--rulename--", by = paramStr(
-          i = 1).toLowerAscii)
+      ruleCode = ruleCode.replace(sub = "--ruleName--", by = name)
+      ruleCode = ruleCode.replace(sub = "--rulename--", by = name.toLowerAscii)
       writeFile(filename = fileName, content = ruleCode)
-      echo "The program's rule '" & paramStr(i = 1) & "' created in file '" &
-          fileName & "'. Don't forget to update the file src/utils.nim either."
+      if ruleType.toLowerAscii == 'b':
+        echo "The program's rule '" & name & "' created in file '" & fileName & "'. Don't forget to update the file src/utils.nim either."
+      else:
+        echo "The program's rule '" & name & "' created in directory '" & path & "'."
     except IOError:
-      quit(errormsg = "Can't create rule '" & paramStr(i = 1) & "'. Reason: " &
+      quit(errormsg = "Can't create the new rule. Reason: " &
           getCurrentExceptionMsg())
 
 when isMainModule:
