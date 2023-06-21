@@ -69,13 +69,22 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
       if author.len == 0:
         author = "Bartek thindil Jasicki"
       let fileName: string = path & DirSep & name.toLowerAscii & ".nim"
+      # Check if a rule with the same name exists
       if fileExists(filename = fileName):
         quit(errormsg = "The rule with name '" & name & "' exists.")
+      # Create directory for the external rule
+      if not builtIn:
+        createDir(dir = path)
       # Copy the template rule file to the proper directory
       var ruleCode: string = readFile(filename = "tools" & DirSep & "rule.txt")
       ruleCode = ruleCode.replace(sub = "--author--", by = author)
       ruleCode = ruleCode.replace(sub = "--ruleName--", by = name)
       ruleCode = ruleCode.replace(sub = "--rulename--", by = name.toLowerAscii)
+      # Replace path to rules module for the external rule
+      if not builtIn:
+        let dirDepth = path.count(sub = DirSep) + 1
+        ruleCode = ruleCode.replace(sub = "..", by = "../".repeat(
+            n = dirDepth) & "src")
       writeFile(filename = fileName, content = ruleCode)
       if builtIn:
         echo "The program's rule '" & name & "' created in file '" & fileName &
@@ -83,7 +92,7 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
       else:
         echo "The program's rule '" & name & "' created in directory '" & path &
           "'."
-    except IOError:
+    except IOError, OSError:
       quit(errormsg = "Can't create the new rule. Reason: " &
           getCurrentExceptionMsg())
 
