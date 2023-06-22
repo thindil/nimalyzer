@@ -58,7 +58,9 @@ jobs:
       run: nimble install -y nimble
 
     - name: Debug build
-      run: nimble debug
+      run: |
+        nimble install -yd
+        nimble debug
 
   build_freebsd:
     needs: tests
