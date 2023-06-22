@@ -420,7 +420,10 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
   ##                         option
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
-  return nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
+  return nnkStmtList.newTree(children = [nnkPragma.newTree(
+        newIdentNode("used")
+      ),
+      nnkProcDef.newTree(children = [
       nnkPostfix.newTree(children = [newIdentNode(i = "*"), newIdentNode(
       i = "ruleCheck")]), newEmptyNode(), newEmptyNode(),
       nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
