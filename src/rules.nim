@@ -94,6 +94,7 @@ const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"
   ## The list of available types of the program rules
 
 var rulesList*: seq[RuleSettings] = @[]
+  ## The list of all available the program's rules with their settings
 
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
     decrease: bool = true) {.sideEffect, gcsafe, raises: [], tags: [RootEffect],
@@ -420,9 +421,9 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
   ##                         option
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
-  return nnkStmtList.newTree(children = [nnkPragma.newTree(
-        newIdentNode("used")
-      ),
+  return nnkStmtList.newTree(children = [nnkPragma.newTree(children = [
+        newIdentNode(i = "used")
+      ]),
       nnkProcDef.newTree(children = [
       nnkPostfix.newTree(children = [newIdentNode(i = "*"), newIdentNode(
       i = "ruleCheck")]), newEmptyNode(), newEmptyNode(),
@@ -452,18 +453,18 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
       ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
       i = "minOptions"), ruleMinOptions])])])),
-      nnkStmtList.newTree(
-        nnkCall.newTree(
-          nnkDotExpr.newTree(
-            newIdentNode("rulesList"),
-            newIdentNode("add")
-          ),
-          nnkExprEqExpr.newTree(
-            newIdentNode("y"),
-            newIdentNode("ruleSettings")
-          )
-        )
-      ),
+      nnkStmtList.newTree(children = [
+        nnkCall.newTree(children = [
+          nnkDotExpr.newTree(children = [
+            newIdentNode(i = "rulesList"),
+            newIdentNode(i = "add")
+          ]),
+          nnkExprEqExpr.newTree(children = [
+            newIdentNode(i = "y"),
+            newIdentNode(i = "ruleSettings")
+          ])
+        ])
+      ]),
       nnkConstSection.newTree(
       children = [nnkConstDef.newTree(children = [newIdentNode(
       i = "showForCheck"), newIdentNode(i = "bool"), ruleShowForCheck]),
