@@ -93,7 +93,7 @@ type
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
 
-var rulesList2*: seq[RuleSettings] = @[]
+var rulesList*: seq[RuleSettings] = @[]
 
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
     decrease: bool = true) {.sideEffect, gcsafe, raises: [], tags: [RootEffect],
@@ -452,7 +452,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       nnkStmtList.newTree(
         nnkCall.newTree(
           nnkDotExpr.newTree(
-            newIdentNode("rulesList2"),
+            newIdentNode("rulesList"),
             newIdentNode("add")
           ),
           nnkExprEqExpr.newTree(

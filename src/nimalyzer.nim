@@ -31,6 +31,9 @@ import std/os
 import compiler/[idents, llstream, options, parser, pathutils]
 # Internal modules imports
 import config, rules, utils
+# The program's built-in rules
+import rules/[hasdoc, hasentity, haspragma, localhides, namedparams, namingconv,
+    paramsused, vardeclared, varuplevel]
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     contractual.} =
@@ -111,7 +114,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               currentRule.enabled = true
               currentRule.parent = true
               currentRule.forceFixCommand = rule.forceFixCommand
-              rulesList2[rule.index].checkProc(astNode = astNode,
+              rulesList[rule.index].checkProc(astNode = astNode,
                   parentNode = astNode, rule = currentRule)
               if currentRule.amount < 1:
                 if currentRule.ruleType == fix:
