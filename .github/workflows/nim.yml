@@ -59,3 +59,24 @@ jobs:
 
     - name: Debug build
       run: nimble debug
+
+  build_freebsd:
+    needs: tests
+    runs-on: macos-12
+    timeout-minutes: 30
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Debug build
+      uses: cross-platform-actions/action@v0.13.0
+      with:
+        shell: sh
+        operating_system: freebsd
+        architecture: x86-64
+        version: '13.2'
+        run: |
+          sudo sed -i '' -e 's/quarterly/latest/g' /etc/pkg/FreeBSD.conf
+          sudo pkg install -y git nimble
+          nimble -y debug
