@@ -205,7 +205,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
             newRule.negation = true
             configRule.next
             newRule.name = configRule.key.toLowerAscii
-          for index, rule in rulesList.pairs:
+          for index, rule in rulesList2.pairs:
             if rule.name == newRule.name:
               newRule.index = index
               break
@@ -217,7 +217,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
               break
             newRule.options.add(y = configRule.key)
           try:
-            if not validateOptions(rule = rulesList[newRule.index],
+            if not validateOptions(rule = rulesList2[newRule.index],
                 options = newRule.options):
               abortProgram(message = "Invalid options for rule '" &
                   newRule.name & "'.")

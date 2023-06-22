@@ -93,6 +93,8 @@ type
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
 
+var rulesList2*: seq[RuleSettings] = @[]
+
 proc message*(text: string; returnValue: var int; level: Level = lvlError;
     decrease: bool = true) {.sideEffect, gcsafe, raises: [], tags: [RootEffect],
     contractual.} =
@@ -446,7 +448,20 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       children = [newIdentNode(i = "options"), ruleOptions]),
       nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
       ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "minOptions"), ruleMinOptions])])])), nnkConstSection.newTree(
+      i = "minOptions"), ruleMinOptions])])])),
+      nnkStmtList.newTree(
+        nnkCall.newTree(
+          nnkDotExpr.newTree(
+            newIdentNode("rulesList2"),
+            newIdentNode("add")
+          ),
+          nnkExprEqExpr.newTree(
+            newIdentNode("y"),
+            newIdentNode("ruleSettings")
+          )
+        )
+      ),
+      nnkConstSection.newTree(
       children = [nnkConstDef.newTree(children = [newIdentNode(
       i = "showForCheck"), newIdentNode(i = "bool"), ruleShowForCheck]),
       nnkConstDef.newTree(children = [newIdentNode(i = "foundMessage"),
