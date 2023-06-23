@@ -191,7 +191,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
         elif line.startsWith(prefix = "loadrule"):
           if line.len < 10:
             abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. No path to an external rule set.")
-          let ruleLib = loadLib(line[9..^1])
+          let ruleLib: LibHandle = loadLib(path = line[9..^1])
           if ruleLib == nil:
             abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. Can't load the rule.")
         # Set the program's rule to test the code
