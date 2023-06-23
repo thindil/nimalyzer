@@ -2,7 +2,7 @@ discard """
   exitcode: 0
 """
 
-import ../../src/config
+import ../../src/[config, nimalyzer]
 import ../helpers
 
 setLogger()
