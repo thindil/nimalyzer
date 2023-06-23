@@ -26,7 +26,7 @@
 ## Provides code for parse the program's configuration file
 
 # Standard library imports
-import std/[os, parseopt, sequtils]
+import std/[dynlib, os, parseopt, sequtils]
 # Internal modules imports
 import rules, utils
 
@@ -187,6 +187,14 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
             forceFixCommand = true
             message(text = "Enabled forcing the next rules to use fix command instead of the code.",
                 level = lvlDebug)
+        # Load the external rule.
+        elif line.startsWith(prefix = "loadrule"):
+          if line.len < 10:
+            abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. No path to an external rule set.")
+          let ruleLib = loadLib(line[9..^1])
+          if ruleLib == nil:
+            abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. Can't load the rule.")
+          let ruleSettings = cast[RuleSettings](ruleLib.symAddr("ruleSettings"))
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = line.startsWith(prefix = it)):
           var configRule: OptParser = initOptParser(cmdline = line)
