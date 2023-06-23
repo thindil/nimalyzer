@@ -194,7 +194,6 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           let ruleLib = loadLib(line[9..^1])
           if ruleLib == nil:
             abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. Can't load the rule.")
-          let ruleSettings = cast[RuleSettings](ruleLib.symAddr("ruleSettings"))
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = line.startsWith(prefix = it)):
           var configRule: OptParser = initOptParser(cmdline = line)
