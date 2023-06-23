@@ -422,9 +422,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
   return nnkStmtList.newTree(children = [nnkPragma.newTree(children = [
-        newIdentNode(i = "used")
-      ]),
-      nnkProcDef.newTree(children = [
+      newIdentNode(i = "used")]), nnkProcDef.newTree(children = [
       nnkPostfix.newTree(children = [newIdentNode(i = "*"), newIdentNode(
       i = "ruleCheck")]), newEmptyNode(), newEmptyNode(),
       nnkFormalParams.newTree(children = [newEmptyNode(), nnkIdentDefs.newTree(
@@ -452,29 +450,19 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       children = [newIdentNode(i = "options"), ruleOptions]),
       nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
       ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "minOptions"), ruleMinOptions])])])),
-      nnkStmtList.newTree(children = [
-        nnkCall.newTree(children = [
-          nnkDotExpr.newTree(children = [
-            newIdentNode(i = "rulesList"),
-            newIdentNode(i = "add")
-          ]),
-          nnkExprEqExpr.newTree(children = [
-            newIdentNode(i = "y"),
-            newIdentNode(i = "ruleSettings")
-          ])
-        ])
-      ]),
-      nnkConstSection.newTree(
-      children = [nnkConstDef.newTree(children = [newIdentNode(
-      i = "showForCheck"), newIdentNode(i = "bool"), ruleShowForCheck]),
-      nnkConstDef.newTree(children = [newIdentNode(i = "foundMessage"),
-      newIdentNode(i = "string"), ruleFoundMessage]), nnkConstDef.newTree(
-      children = [newIdentNode(i = "notFoundMessage"), newIdentNode(
-      i = "string"), ruleNotFoundMessage]), nnkConstDef.newTree(children = [
-      newIdentNode(i = "positiveMessage"), newIdentNode(i = "string"),
-      rulePositiveMessage]), nnkConstDef.newTree(children = [newIdentNode(
-      i = "negativeMessage"), newIdentNode(i = "string"),
+      i = "minOptions"), ruleMinOptions])])])), nnkStmtList.newTree(children = [
+      nnkCall.newTree(children = [nnkDotExpr.newTree(children = [newIdentNode(
+      i = "rulesList"), newIdentNode(i = "add")]), nnkExprEqExpr.newTree(
+      children = [newIdentNode(i = "y"), newIdentNode(i = "ruleSettings")])])]),
+      nnkConstSection.newTree(children = [nnkConstDef.newTree(children = [
+      newIdentNode(i = "showForCheck"), newIdentNode(i = "bool"),
+      ruleShowForCheck]), nnkConstDef.newTree(children = [newIdentNode(
+      i = "foundMessage"), newIdentNode(i = "string"), ruleFoundMessage]),
+      nnkConstDef.newTree(children = [newIdentNode(i = "notFoundMessage"),
+      newIdentNode(i = "string"), ruleNotFoundMessage]), nnkConstDef.newTree(
+      children = [newIdentNode(i = "positiveMessage"), newIdentNode(
+      i = "string"), rulePositiveMessage]), nnkConstDef.newTree(children = [
+      newIdentNode(i = "negativeMessage"), newIdentNode(i = "string"),
       ruleNegativeMessage])])])
 
 macro fixRule*(code: untyped): untyped =
