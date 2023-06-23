@@ -88,7 +88,7 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
       writeFile(filename = fileName, content = ruleCode)
       if builtIn:
         echo "The program's rule '" & name & "' created in file '" & fileName &
-          "'. Don't forget to update the file src/utils.nim either."
+          "'. Don't forget to update the file src/nimalyzer.nim either."
       else:
         echo "The program's rule '" & name & "' created in directory '" & path &
           "'."
