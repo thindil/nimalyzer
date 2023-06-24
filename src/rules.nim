@@ -459,21 +459,11 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       i = "rulesList"), newIdentNode(i = "add")]), nnkExprEqExpr.newTree(
       children = [newIdentNode(i = "y"), newIdentNode(i = "ruleSettings")])])
     else:
-      nnkStmtList.newTree(children = [
-      nnkLetSection.newTree(children = [
-      nnkIdentDefs.newTree(children = [
-      nnkPragmaExpr.newTree(children = [
-        newIdentNode(i = "ruleName"),
-        nnkPragma.newTree(children = [
-          newIdentNode(i = "exportc"),
-          newIdentNode(i = "dynlib")
-        ])
-      ]),
-      newIdentNode(i = "cstring"),
-        ruleName
-      ]),
-      ])
-      ])
+      nnkStmtList.newTree(children = [nnkLetSection.newTree(children = [
+          nnkIdentDefs.newTree(children = [nnkPragmaExpr.newTree(children = [
+          newIdentNode(i = "ruleName"), nnkPragma.newTree(children = [
+          newIdentNode(i = "exportc"), newIdentNode(i = "dynlib")])]),
+          newIdentNode(i = "cstring"), ruleName]), ])])
     ), nnkConstSection.newTree(children = [nnkConstDef.newTree(children = [
       newIdentNode(i = "showForCheck"), newIdentNode(i = "bool"),
       ruleShowForCheck]), nnkConstDef.newTree(children = [newIdentNode(
