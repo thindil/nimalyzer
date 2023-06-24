@@ -472,17 +472,6 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       newIdentNode("cstring"),
         ruleName
       ),
-      nnkIdentDefs.newTree(
-      nnkPragmaExpr.newTree(
-        newIdentNode("ruleFoundMessage"),
-        nnkPragma.newTree(
-          newIdentNode("exportc"),
-          newIdentNode("dynlib")
-        )
-      ),
-      newIdentNode("cstring"),
-        ruleFoundMessage
-      )
       )
       )
     ), nnkConstSection.newTree(children = [nnkConstDef.newTree(children = [
