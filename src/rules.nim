@@ -421,6 +421,8 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
   ##                         option
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
+  ## * ruleShowForCheck    - If true, the rule show summary message for check type
+  ##                         of the rule
   return nnkStmtList.newTree(children = [nnkPragma.newTree(children = [
       newIdentNode(i = "used")]), nnkProcDef.newTree(children = [
       nnkPostfix.newTree(children = [newIdentNode(i = "*"), newIdentNode(
