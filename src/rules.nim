@@ -404,7 +404,8 @@ macro checkRule*(code: untyped): untyped =
 macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
     rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[
     RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
-    ruleMinOptions: int = 0; ruleShowForCheck: bool = false): untyped =
+    ruleMinOptions: int = 0; ruleShowForCheck: bool = false;
+    external: static bool = false): untyped =
   ## Set the rule's settings, like name, options, etc
   ##
   ## * ruleName            - The name of the rule
@@ -452,11 +453,39 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       children = [newIdentNode(i = "options"), ruleOptions]),
       nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
       ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "minOptions"), ruleMinOptions])])])), nnkStmtList.newTree(children = [
+      i = "minOptions"), ruleMinOptions])])])), nnkStmtList.newTree(children =
+    if not external:
       nnkCall.newTree(children = [nnkDotExpr.newTree(children = [newIdentNode(
       i = "rulesList"), newIdentNode(i = "add")]), nnkExprEqExpr.newTree(
-      children = [newIdentNode(i = "y"), newIdentNode(i = "ruleSettings")])])]),
-      nnkConstSection.newTree(children = [nnkConstDef.newTree(children = [
+      children = [newIdentNode(i = "y"), newIdentNode(i = "ruleSettings")])])
+    else:
+      nnkStmtList.newTree(
+      nnkLetSection.newTree(
+      nnkIdentDefs.newTree(
+      nnkPragmaExpr.newTree(
+        newIdentNode("ruleName"),
+        nnkPragma.newTree(
+          newIdentNode("exportc"),
+          newIdentNode("dynlib")
+        )
+      ),
+      newIdentNode("cstring"),
+        ruleName
+      ),
+      nnkIdentDefs.newTree(
+      nnkPragmaExpr.newTree(
+        newIdentNode("ruleFoundMessage"),
+        nnkPragma.newTree(
+          newIdentNode("exportc"),
+          newIdentNode("dynlib")
+        )
+      ),
+      newIdentNode("cstring"),
+        ruleFoundMessage
+      )
+      )
+      )
+    ), nnkConstSection.newTree(children = [nnkConstDef.newTree(children = [
       newIdentNode(i = "showForCheck"), newIdentNode(i = "bool"),
       ruleShowForCheck]), nnkConstDef.newTree(children = [newIdentNode(
       i = "foundMessage"), newIdentNode(i = "string"), ruleFoundMessage]),
