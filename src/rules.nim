@@ -87,8 +87,6 @@ type
     options*: seq[RuleOptionsTypes]
     optionValues*: seq[string]
     minOptions*: Natural
-    fixProc*: proc (astNode, parentNode: PNode; rule: RuleOptions;
-        data: string): bool
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
@@ -448,8 +446,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       newIdentNode(i = "RuleSettings"), nnkExprColonExpr.newTree(children = [
       newIdentNode(i = "name"), ruleName]), nnkExprColonExpr.newTree(
       children = [newIdentNode(i = "checkProc"), newIdentNode(
-      i = "ruleCheck")]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "fixProc"), newIdentNode(i = "ruleFix")]), nnkExprColonExpr.newTree(
+      i = "ruleCheck")]), nnkExprColonExpr.newTree(
       children = [newIdentNode(i = "options"), ruleOptions]),
       nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
       ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
