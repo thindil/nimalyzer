@@ -230,53 +230,6 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
       else:
         rule.amount.inc
 
-proc validateOptions*(rule: RuleSettings; options: seq[
-    string]): bool {.raises: [], tags: [RootEffect], contractual.} =
-  ## Validate the options entered from a configuration for the selected rule
-  ##
-  ## * rule     - the rule's settings for the selected rule, like name, options types, etc
-  ## * options  - the list of options entered from a configuration file
-  ##
-  ## Returns true if the options are valid otherwise false.
-  body:
-    # Check if enough options entered
-    if options.len < rule.minOptions:
-      return errorMessage(text = "The rule " & rule.name &
-          " requires at least " & $rule.minOptions & " options, but only " &
-          $options.len & " provided: '" & options.join(sep = ", ") & "'.").bool
-    # Check if too much options entered
-    if options.len > rule.options.len:
-      return errorMessage(text = "The rule " & rule.name &
-          " requires at maximum " & $rule.options.len & " options, but " &
-          $options.len & " provided: '" & options.join(sep = ", ") & "'.").bool
-    # Check if all options have proper values
-    for index, option in options.pairs:
-      case rule.options[index]
-      of str:
-        continue
-      of integer:
-        let intOption: int = try:
-            options[index].parseInt()
-          except ValueError:
-            -1
-        if intOption < 0:
-          return errorMessage(text = "The rule " & rule.name &
-              " option number " & $(index + 1) & " has invalid value: '" &
-              option & "'.").bool
-      of node:
-        let entityType: TNodeKind = parseEnum[TNodeKind](s = option,
-            default = nkEmpty)
-        if entityType == nkEmpty:
-          return errorMessage(text = "The rule " & rule.name &
-              " option number " & $(index + 1) & " has invalid value: '" &
-              option & "'.").bool
-      of custom:
-        if option.toLowerAscii notin rule.optionValues:
-          return errorMessage(text = "The rule " & rule.name &
-              " option number " & $(index + 1) & " has invalid value: '" &
-              option & "'.").bool
-    return true
-
 macro initCheck*(code: untyped): untyped =
   ## Initialize the check code for a rule, set some variables for the check and
   ## custom code in the main node of the code to check
