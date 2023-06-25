@@ -242,6 +242,14 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           let ruleLib: LibHandle = loadLib(path = line[9..^1])
           if ruleLib == nil:
             abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. Can't load the rule.")
+          let newRuleSettings: CRuleSettings = cast[ptr CRuleSettings](
+              ruleLib.symAddr("ruleSettings"))[]
+          for rule in rulesList:
+            if rule.name.cstring == newRuleSettings.name:
+              abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. A rule with name '" &
+                  $newRuleSettings.name & "' exists.")
+          rulesList.add(y = RuleSettings(name: $newRuleSettings.name,
+              minOptions: newRuleSettings.minOptions))
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = line.startsWith(prefix = it)):
           var configRule: OptParser = initOptParser(cmdline = line)
