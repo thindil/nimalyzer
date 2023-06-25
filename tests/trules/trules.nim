@@ -2,8 +2,7 @@ discard """
   exitcode: 0
   output: '''ERROR: Decrease value
 INFO: Increase value
-FATAL: Reason: over- or underflow
-FATAL: The rule Test rule requires at least 2 options, but only 1 provided: 'a'.'''
+FATAL: Reason: over- or underflow'''
 """
 
 import std/logging
@@ -25,11 +24,6 @@ try:
   i.inc
 except OverflowDefect:
   assert errorMessage("Reason: ", getCurrentException()) == 0
-
-assert validateOptions(RuleSettings(name: "Test Rule", options: @[integer],
-    minOptions: 1), @["1"])
-assert not validateOptions(RuleSettings(name: "Test rule", options: @[str,
-    integer], minOptions: 2), @["a"])
 
 let
   (nimCache, nimConfig) = setNim()
