@@ -90,6 +90,8 @@ type
 
   CRuleSettings* = object
     name*: cstring
+    options*: array[10, cint]
+    optionValues*: array[10, cstring]
     minOptions*: cint
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
