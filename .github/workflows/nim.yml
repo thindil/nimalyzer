@@ -82,3 +82,23 @@ jobs:
           sudo sed -i '' -e 's/quarterly/latest/g' /etc/pkg/FreeBSD.conf
           sudo pkg install -y git nimble
           nimble -y release
+
+  build_linux:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Nim
+      uses: jiro4989/setup-nim-action@v1
+      with:
+        nim-version: '1.6.12'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update Nimble
+      run: nimble install -y nimble
+
+    - name: Release build
+      run: nimble release
