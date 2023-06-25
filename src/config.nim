@@ -248,8 +248,22 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
             if rule.name.cstring == newRuleSettings.name:
               abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. A rule with name '" &
                   $newRuleSettings.name & "' exists.")
-          rulesList.add(y = RuleSettings(name: $newRuleSettings.name,
-              minOptions: newRuleSettings.minOptions))
+          var
+            ruleSettings = RuleSettings(name: $newRuleSettings.name, minOptions: newRuleSettings.minOptions)
+            ruleOptions: seq[RuleOptionsTypes] = @[]
+          for option in newRuleSettings.options:
+            if option == -1:
+              break
+            ruleOptions.add(y = option.RuleOptionsTypes)
+          ruleSettings.options = ruleOptions
+          var
+            ruleOptionValues: seq[string] = @[]
+          for value in newRuleSettings.optionValues:
+            if value.len == 0:
+              break
+            ruleOptionValues.add(y = $value)
+          ruleSettings.optionValues = ruleOptionValues
+          rulesList.add(y = ruleSettings)
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = line.startsWith(prefix = it)):
           var configRule: OptParser = initOptParser(cmdline = line)
