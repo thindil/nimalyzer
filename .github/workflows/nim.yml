@@ -57,10 +57,10 @@ jobs:
     - name: Update Nimble
       run: nimble install -y nimble
 
-    - name: Debug build
+    - name: Release build
       run: |
         nimble install -yd
-        nimble debug
+        nimble release
 
   build_freebsd:
     needs: tests
@@ -71,7 +71,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Debug build
+    - name: Release build
       uses: cross-platform-actions/action@v0.13.0
       with:
         shell: sh
@@ -81,4 +81,4 @@ jobs:
         run: |
           sudo sed -i '' -e 's/quarterly/latest/g' /etc/pkg/FreeBSD.conf
           sudo pkg install -y git nimble
-          nimble -y debug
+          nimble -y release
