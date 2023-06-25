@@ -88,6 +88,10 @@ type
     optionValues*: seq[string]
     minOptions*: Natural
 
+  CRuleSettings* = object
+    name*: cstring
+    minOptions*: cint
+
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
 
