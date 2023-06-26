@@ -114,8 +114,13 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               currentRule.enabled = true
               currentRule.parent = true
               currentRule.forceFixCommand = rule.forceFixCommand
-              rulesList[rule.index].checkProc(astNode = astNode,
-                  parentNode = astNode, rule = currentRule)
+              if rulesList[rule.index].checkProc != nil:
+                rulesList[rule.index].checkProc(astNode = astNode,
+                    parentNode = astNode, rule = currentRule)
+              else:
+                externalCheck(astNode = astNode, parentNode = astNode,
+                    rule = currentRule, externalProc = rulesList[
+                    rule.index].externalProc)
               if currentRule.amount < 1:
                 if currentRule.ruleType == fix:
                   writeFile(filename = currentRule.fileName, content = $astNode)

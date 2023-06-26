@@ -85,7 +85,7 @@ type
     identsCache*: IdentCache
     forceFixCommand*: cint
 
-  ExternalCheckProc = proc (astNode, parentNode: PNode;
+  ExternalCheckProc = proc (astNode, parentNode: var cstring;
       rule: var CRuleOptions) {.cdecl.}
 
   RuleSettings* = object
@@ -520,4 +520,8 @@ proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
 
 proc externalCheck*(astNode, parentNode: PNode; rule: var RuleOptions;
     externalProc: ExternalCheckProc) =
-  discard
+  var
+    cAstNode: cstring = ($astNode).cstring
+    cParentNode: cstring = ($parentNode).cstring
+    cRule: CRuleOptions = CRuleOptions()
+  externalProc(cAstNode, cParentNode, cRule)
