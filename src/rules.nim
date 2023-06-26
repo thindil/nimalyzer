@@ -73,6 +73,18 @@ type
     identsCache*: IdentCache
     forceFixCommand*: bool
 
+  CRuleOptions* = object
+    options*: array[10, cstring]
+    parent*: cint
+    fileName*: cstring
+    negation*: cint
+    ruleType*: cint
+    amount*: cint
+    enabled*: cint
+    fixCommand*: cstring
+    identsCache*: IdentCache
+    forceFixCommand*: cint
+
   RuleSettings* = object
     ## Contains information about the program's rule configuration
     ##
@@ -87,10 +99,12 @@ type
     options*: seq[RuleOptionsTypes]
     optionValues*: seq[string]
     minOptions*: Natural
+    externalProc*: proc (astNode, parentNode: PNode; rule: var RuleOptions)
 
   CRuleSettings* = object
     name*: cstring
     options*: array[10, cint]
+    checkProc*: proc (astNode, parentNode: PNode; rule: var RuleOptions)
     optionValues*: array[10, cstring]
     minOptions*: cint
 
