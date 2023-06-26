@@ -75,17 +75,14 @@ type
 
   CRuleOptions* = object
     options*: array[10, cstring]
-    parent*: cint
     fileName*: cstring
     negation*: cint
     ruleType*: cint
     amount*: cint
-    enabled*: cint
     fixCommand*: cstring
-    identsCache*: IdentCache
     forceFixCommand*: cint
 
-  ExternalCheckProc = proc (astNode, parentNode: var cstring;
+  ExternalCheckProc = proc (astNode: var cstring;
       rule: var CRuleOptions) {.cdecl.}
 
   RuleSettings* = object
@@ -518,16 +515,13 @@ proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
             if subChild == node:
               return flattenStmts(n = baseNode)
 
-proc externalCheck*(astNode, parentNode: PNode; rule: var RuleOptions;
+proc externalCheck*(astNode: PNode; rule: var RuleOptions;
     externalProc: ExternalCheckProc) =
   var
     cAstNode: cstring = ($astNode).cstring
-    cParentNode: cstring = ($parentNode).cstring
-    cRule: CRuleOptions = CRuleOptions(parent: (if rule.parent: 1 else: 0),
-        fileName: rule.fileName.cstring, negation: (
-        if rule.negation: 1 else: 0), ruleType: rule.ruleType.ord.cint,
-        amount: rule.amount.cint, enabled: (if rule.enabled: 1 else: 0),
-        fixCommand: rule.fixCommand.cstring, identsCache: rule.identsCache,
+    cRule: CRuleOptions = CRuleOptions(fileName: rule.fileName.cstring,
+        negation: (if rule.negation: 1 else: 0),
+        ruleType: rule.ruleType.ord.cint, fixCommand: rule.fixCommand.cstring,
         forceFixCommand: (if rule.forceFixCommand: 1 else: 0))
     index: int = 0
   for option in rule.options:
@@ -535,6 +529,5 @@ proc externalCheck*(astNode, parentNode: PNode; rule: var RuleOptions;
     index.inc
   for i in index .. 9:
     cRule.options[i] = ""
-  externalProc(cAstNode, cParentNode, cRule)
+  externalProc(cAstNode, cRule)
   rule.amount = cRule.amount
-  rule.enabled = cRule.enabled == 1
