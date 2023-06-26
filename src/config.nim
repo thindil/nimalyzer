@@ -251,7 +251,8 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           var
             ruleSettings: RuleSettings = RuleSettings(
                 name: $newRuleSettings.name,
-                minOptions: newRuleSettings.minOptions)
+                minOptions: newRuleSettings.minOptions, checkProc: nil,
+                externalProc: newRuleSettings.checkProc)
             ruleOptions: seq[RuleOptionsTypes] = @[]
           for option in newRuleSettings.options:
             if option == -1:

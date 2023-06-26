@@ -85,6 +85,9 @@ type
     identsCache*: IdentCache
     forceFixCommand*: cint
 
+  ExternalCheckProc = proc (astNode, parentNode: PNode;
+      rule: var CRuleOptions) {.cdecl.}
+
   RuleSettings* = object
     ## Contains information about the program's rule configuration
     ##
@@ -99,12 +102,12 @@ type
     options*: seq[RuleOptionsTypes]
     optionValues*: seq[string]
     minOptions*: Natural
-    externalProc*: proc (astNode, parentNode: PNode; rule: var RuleOptions)
+    externalProc*: ExternalCheckProc
 
   CRuleSettings* = object
     name*: cstring
     options*: array[10, cint]
-    checkProc*: proc (astNode, parentNode: PNode; rule: var RuleOptions)
+    checkProc*: ExternalCheckProc
     optionValues*: array[10, cstring]
     minOptions*: cint
 
@@ -514,3 +517,7 @@ proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
           for subChild in child.items:
             if subChild == node:
               return flattenStmts(n = baseNode)
+
+proc externalCheck*(astNode, parentNode: PNode; rule: var RuleOptions;
+    externalProc: ExternalCheckProc) =
+  discard
