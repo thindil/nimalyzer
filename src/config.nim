@@ -243,13 +243,15 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           if ruleLib == nil:
             abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. Can't load the rule.")
           let newRuleSettings: CRuleSettings = cast[ptr CRuleSettings](
-              ruleLib.symAddr("ruleSettings"))[]
+              ruleLib.symAddr(name = "ruleSettings"))[]
           for rule in rulesList:
             if rule.name.cstring == newRuleSettings.name:
               abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. A rule with name '" &
                   $newRuleSettings.name & "' exists.")
           var
-            ruleSettings = RuleSettings(name: $newRuleSettings.name, minOptions: newRuleSettings.minOptions)
+            ruleSettings: RuleSettings = RuleSettings(
+                name: $newRuleSettings.name,
+                minOptions: newRuleSettings.minOptions)
             ruleOptions: seq[RuleOptionsTypes] = @[]
           for option in newRuleSettings.options:
             if option == -1:
