@@ -523,5 +523,18 @@ proc externalCheck*(astNode, parentNode: PNode; rule: var RuleOptions;
   var
     cAstNode: cstring = ($astNode).cstring
     cParentNode: cstring = ($parentNode).cstring
-    cRule: CRuleOptions = CRuleOptions()
+    cRule: CRuleOptions = CRuleOptions(parent: (if rule.parent: 1 else: 0),
+        fileName: rule.fileName.cstring, negation: (
+        if rule.negation: 1 else: 0), ruleType: rule.ruleType.ord.cint,
+        amount: rule.amount.cint, enabled: (if rule.enabled: 1 else: 0),
+        fixCommand: rule.fixCommand.cstring, identsCache: rule.identsCache,
+        forceFixCommand: (if rule.forceFixCommand: 1 else: 0))
+    index: int = 0
+  for option in rule.options:
+    cRule.options[index] = option.cstring
+    index.inc
+  for i in index .. 9:
+    cRule.options[i] = ""
   externalProc(cAstNode, cParentNode, cRule)
+  rule.amount = cRule.amount
+  rule.enabled = cRule.enabled == 1
