@@ -29,7 +29,7 @@
 ## started from the main directory of the project
 
 # Standard library imports
-import std/[os, strutils, terminal]
+import std/[os, strutils]
 # External modules imports
 import contracts
 
@@ -46,52 +46,22 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
       var name: string = ""
       while name.len == 0:
         name = stdin.readLine
-      echo "The rule will be built-in or external? (b/e):"
-      var
-        builtIn: bool = true
-        ruleType: char = 'a'
-      while true:
-        ruleType = getch()
-        if ruleType in {'b', 'B'}:
-          break
-        elif ruleType in {'e', 'E'}:
-          builtIn = false
-          break
-      var path: string = ""
-      if not builtIn:
-        echo "The path where the rule directory will be created: "
-        while path.len == 0:
-          path = stdin.readLine
-      else:
-        path = "src/rules"
       echo "The author of the rule, leave empty for use default value: "
       var author: string = stdin.readLine
       if author.len == 0:
         author = "Bartek thindil Jasicki"
-      let fileName: string = path & DirSep & name.toLowerAscii & ".nim"
+      let fileName: string = "src/rules" & DirSep & name.toLowerAscii & ".nim"
       # Check if a rule with the same name exists
       if fileExists(filename = fileName):
         quit(errormsg = "The rule with name '" & name & "' exists.")
-      # Create directory for the external rule
-      if not builtIn:
-        createDir(dir = path)
       # Copy the template rule file to the proper directory
       var ruleCode: string = readFile(filename = "tools" & DirSep & "rule.txt")
       ruleCode = ruleCode.replace(sub = "--author--", by = author)
       ruleCode = ruleCode.replace(sub = "--ruleName--", by = name)
       ruleCode = ruleCode.replace(sub = "--rulename--", by = name.toLowerAscii)
-      # Replace path to rules module for the external rule
-      if not builtIn:
-        let dirDepth: int = path.count(sub = DirSep) + 1
-        ruleCode = ruleCode.replace(sub = "..", by = "../".repeat(
-            n = dirDepth) & "src")
       writeFile(filename = fileName, content = ruleCode)
-      if builtIn:
-        echo "The program's rule '" & name & "' created in file '" & fileName &
-          "'. Don't forget to update the file src/nimalyzer.nim either."
-      else:
-        echo "The program's rule '" & name & "' created in directory '" & path &
-          "'."
+      echo "The program's rule '" & name & "' created in file '" & fileName &
+        "'. Don't forget to update the file src/nimalyzer.nim either."
     except IOError, OSError:
       quit(errormsg = "Can't create the new rule. Reason: " &
           getCurrentExceptionMsg())
