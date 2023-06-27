@@ -33,7 +33,7 @@ import compiler/[idents, llstream, options, parser, pathutils]
 import config, rules, utils
 # The program's built-in rules
 import rules/[hasdoc, hasentity, haspragma, localhides, namedparams, namingconv,
-    paramsused, vardeclared, varuplevel]
+    paramsused, vardeclared, varuplevel, ifstatements]
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     contractual.} =
