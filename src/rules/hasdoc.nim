@@ -197,16 +197,15 @@ fixRule:
       astNode.comment = ""
     return true
   # Add the selected documentation template
+  if docTemplate.len == 0:
+    discard errorMessage(text = "Can't add the documentation's template the declarations. No template set.")
+    return false
+  if astNode.kind == nkObjectTy:
+    astNode[2].comment = docTemplate
+  elif astNode.kind notin {nkEnumTy, nkIdentDefs, nkConstDef}:
+    let docNode: PNode = newNode(kind = nkCommentStmt)
+    docNode.comment = docTemplate
+    astNode.sons = docNode & astNode.sons
   else:
-    if docTemplate.len == 0:
-      discard errorMessage(text = "Can't add the documentation's template the declarations. No template set.")
-      return false
-    if astNode.kind == nkObjectTy:
-      astNode[2].comment = docTemplate
-    elif astNode.kind notin {nkEnumTy, nkIdentDefs, nkConstDef}:
-      let docNode: PNode = newNode(kind = nkCommentStmt)
-      docNode.comment = docTemplate
-      astNode.sons = docNode & astNode.sons
-    else:
-      astNode.comment = docTemplate
-    return true
+    astNode.comment = docTemplate
+  return true
