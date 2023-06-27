@@ -73,18 +73,6 @@ type
     identsCache*: IdentCache
     forceFixCommand*: bool
 
-  CRuleOptions* = object
-    options*: array[10, cstring]
-    fileName*: cstring
-    negation*: cint
-    ruleType*: cint
-    amount*: cint
-    fixCommand*: cstring
-    forceFixCommand*: cint
-
-  ExternalCheckProc = proc (astNode: var cstring;
-      rule: var CRuleOptions) {.cdecl.}
-
   RuleSettings* = object
     ## Contains information about the program's rule configuration
     ##
@@ -99,14 +87,8 @@ type
     options*: seq[RuleOptionsTypes]
     optionValues*: seq[string]
     minOptions*: Natural
-    externalProc*: ExternalCheckProc
-
-  CRuleSettings* = object
-    name*: cstring
-    options*: array[10, cint]
-    checkProc*: ExternalCheckProc
-    optionValues*: array[10, cstring]
-    minOptions*: cint
+    fixProc*: proc (astNode, parentNode: PNode; rule: RuleOptions;
+        data: string): bool
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
@@ -250,6 +232,53 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
       else:
         rule.amount.inc
 
+proc validateOptions*(rule: RuleSettings; options: seq[
+    string]): bool {.raises: [], tags: [RootEffect], contractual.} =
+  ## Validate the options entered from a configuration for the selected rule
+  ##
+  ## * rule     - the rule's settings for the selected rule, like name, options types, etc
+  ## * options  - the list of options entered from a configuration file
+  ##
+  ## Returns true if the options are valid otherwise false.
+  body:
+    # Check if enough options entered
+    if options.len < rule.minOptions:
+      return errorMessage(text = "The rule " & rule.name &
+          " requires at least " & $rule.minOptions & " options, but only " &
+          $options.len & " provided: '" & options.join(sep = ", ") & "'.").bool
+    # Check if too much options entered
+    if options.len > rule.options.len:
+      return errorMessage(text = "The rule " & rule.name &
+          " requires at maximum " & $rule.options.len & " options, but " &
+          $options.len & " provided: '" & options.join(sep = ", ") & "'.").bool
+    # Check if all options have proper values
+    for index, option in options.pairs:
+      case rule.options[index]
+      of str:
+        continue
+      of integer:
+        let intOption: int = try:
+            options[index].parseInt()
+          except ValueError:
+            -1
+        if intOption < 0:
+          return errorMessage(text = "The rule " & rule.name &
+              " option number " & $(index + 1) & " has invalid value: '" &
+              option & "'.").bool
+      of node:
+        let entityType: TNodeKind = parseEnum[TNodeKind](s = option,
+            default = nkEmpty)
+        if entityType == nkEmpty:
+          return errorMessage(text = "The rule " & rule.name &
+              " option number " & $(index + 1) & " has invalid value: '" &
+              option & "'.").bool
+      of custom:
+        if option.toLowerAscii notin rule.optionValues:
+          return errorMessage(text = "The rule " & rule.name &
+              " option number " & $(index + 1) & " has invalid value: '" &
+              option & "'.").bool
+    return true
+
 macro initCheck*(code: untyped): untyped =
   ## Initialize the check code for a rule, set some variables for the check and
   ## custom code in the main node of the code to check
@@ -375,8 +404,7 @@ macro checkRule*(code: untyped): untyped =
 macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
     rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[
     RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
-    ruleMinOptions: int = 0; ruleShowForCheck: bool = false;
-    external: static bool = false): untyped =
+    ruleMinOptions: int = 0; ruleShowForCheck: bool = false): untyped =
   ## Set the rule's settings, like name, options, etc
   ##
   ## * ruleName            - The name of the rule
@@ -393,8 +421,6 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
   ##                         option
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
-  ## * ruleShowForCheck    - If true, the rule show summary message for check type
-  ##                         of the rule
   return nnkStmtList.newTree(children = [nnkPragma.newTree(children = [
       newIdentNode(i = "used")]), nnkProcDef.newTree(children = [
       nnkPostfix.newTree(children = [newIdentNode(i = "*"), newIdentNode(
@@ -419,22 +445,16 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       newIdentNode(i = "RuleSettings"), nnkExprColonExpr.newTree(children = [
       newIdentNode(i = "name"), ruleName]), nnkExprColonExpr.newTree(
       children = [newIdentNode(i = "checkProc"), newIdentNode(
-      i = "ruleCheck")]), nnkExprColonExpr.newTree(
+      i = "ruleCheck")]), nnkExprColonExpr.newTree(children = [newIdentNode(
+      i = "fixProc"), newIdentNode(i = "ruleFix")]), nnkExprColonExpr.newTree(
       children = [newIdentNode(i = "options"), ruleOptions]),
       nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
       ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "minOptions"), ruleMinOptions])])])), nnkStmtList.newTree(children =
-    if not external:
+      i = "minOptions"), ruleMinOptions])])])), nnkStmtList.newTree(children = [
       nnkCall.newTree(children = [nnkDotExpr.newTree(children = [newIdentNode(
       i = "rulesList"), newIdentNode(i = "add")]), nnkExprEqExpr.newTree(
-      children = [newIdentNode(i = "y"), newIdentNode(i = "ruleSettings")])])
-    else:
-      nnkStmtList.newTree(children = [nnkLetSection.newTree(children = [
-          nnkIdentDefs.newTree(children = [nnkPragmaExpr.newTree(children = [
-          newIdentNode(i = "ruleName"), nnkPragma.newTree(children = [
-          newIdentNode(i = "exportc"), newIdentNode(i = "dynlib")])]),
-          newIdentNode(i = "cstring"), ruleName]), ])])
-    ), nnkConstSection.newTree(children = [nnkConstDef.newTree(children = [
+      children = [newIdentNode(i = "y"), newIdentNode(i = "ruleSettings")])])]),
+      nnkConstSection.newTree(children = [nnkConstDef.newTree(children = [
       newIdentNode(i = "showForCheck"), newIdentNode(i = "bool"),
       ruleShowForCheck]), nnkConstDef.newTree(children = [newIdentNode(
       i = "foundMessage"), newIdentNode(i = "string"), ruleFoundMessage]),
@@ -514,20 +534,3 @@ proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
           for subChild in child.items:
             if subChild == node:
               return flattenStmts(n = baseNode)
-
-proc externalCheck*(astNode: PNode; rule: var RuleOptions;
-    externalProc: ExternalCheckProc) =
-  var
-    cAstNode: cstring = ($astNode).cstring
-    cRule: CRuleOptions = CRuleOptions(fileName: rule.fileName.cstring,
-        negation: (if rule.negation: 1 else: 0),
-        ruleType: rule.ruleType.ord.cint, fixCommand: rule.fixCommand.cstring,
-        forceFixCommand: (if rule.forceFixCommand: 1 else: 0))
-    index: int = 0
-  for option in rule.options:
-    cRule.options[index] = option.cstring
-    index.inc
-  for i in index .. 9:
-    cRule.options[i] = ""
-  externalProc(cAstNode, cRule)
-  rule.amount = cRule.amount

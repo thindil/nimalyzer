@@ -26,7 +26,7 @@
 ## Provides code for parse the program's configuration file
 
 # Standard library imports
-import std/[dynlib, os, parseopt, sequtils]
+import std/[os, parseopt, sequtils]
 # Internal modules imports
 import rules, utils
 
@@ -98,54 +98,6 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           sources.add(y = fileName)
           message(text = "Added file '" & fileName &
               "' to the list of files to check.", level = lvlDebug)
-
-    proc validateOptions(rule: RuleSettings; options: seq[
-        string]): bool {.raises: [], tags: [RootEffect], contractual.} =
-      ## Validate the options entered from a configuration for the selected rule
-      ##
-      ## * rule     - the rule's settings for the selected rule, like name, options types, etc
-      ## * options  - the list of options entered from a configuration file
-      ##
-      ## Returns true if the options are valid otherwise false.
-      body:
-        # Check if enough options entered
-        if options.len < rule.minOptions:
-          return errorMessage(text = "The rule " & rule.name &
-              " requires at least " & $rule.minOptions & " options, but only " &
-              $options.len & " provided: '" & options.join(sep = ", ") & "'.").bool
-        # Check if too much options entered
-        if options.len > rule.options.len:
-          return errorMessage(text = "The rule " & rule.name &
-              " requires at maximum " & $rule.options.len & " options, but " &
-              $options.len & " provided: '" & options.join(sep = ", ") & "'.").bool
-        # Check if all options have proper values
-        for index, option in options.pairs:
-          case rule.options[index]
-          of str:
-            continue
-          of integer:
-            let intOption: int = try:
-                options[index].parseInt()
-              except ValueError:
-                -1
-            if intOption < 0:
-              return errorMessage(text = "The rule " & rule.name &
-                  " option number " & $(index + 1) & " has invalid value: '" &
-                  option & "'.").bool
-          of node:
-            let entityType: TNodeKind = parseEnum[TNodeKind](s = option,
-                default = nkEmpty)
-            if entityType == nkEmpty:
-              return errorMessage(text = "The rule " & rule.name &
-                  " option number " & $(index + 1) & " has invalid value: '" &
-                  option & "'.").bool
-          of custom:
-            if option.toLowerAscii notin rule.optionValues:
-              return errorMessage(text = "The rule " & rule.name &
-                  " option number " & $(index + 1) & " has invalid value: '" &
-                  option & "'.").bool
-        return true
-
     result.fixCommand = fixCommand
     try:
       # Read the program's configuration
@@ -235,38 +187,6 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
             forceFixCommand = true
             message(text = "Enabled forcing the next rules to use fix command instead of the code.",
                 level = lvlDebug)
-        # Load the external rule.
-        elif line.startsWith(prefix = "loadrule"):
-          if line.len < 10:
-            abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. No path to an external rule set.")
-          let ruleLib: LibHandle = loadLib(path = line[9..^1])
-          if ruleLib == nil:
-            abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. Can't load the rule.")
-          let newRuleSettings: CRuleSettings = cast[ptr CRuleSettings](
-              ruleLib.symAddr(name = "ruleSettings"))[]
-          for rule in rulesList:
-            if rule.name.cstring == newRuleSettings.name:
-              abortProgram(message = "Can't parse 'loadrule' setting in the configuration file. A rule with name '" &
-                  $newRuleSettings.name & "' exists.")
-          var
-            ruleSettings: RuleSettings = RuleSettings(
-                name: $newRuleSettings.name,
-                minOptions: newRuleSettings.minOptions, checkProc: nil,
-                externalProc: newRuleSettings.checkProc)
-            ruleOptions: seq[RuleOptionsTypes] = @[]
-          for option in newRuleSettings.options:
-            if option == -1:
-              break
-            ruleOptions.add(y = option.RuleOptionsTypes)
-          ruleSettings.options = ruleOptions
-          var
-            ruleOptionValues: seq[string] = @[]
-          for value in newRuleSettings.optionValues:
-            if value.len == 0:
-              break
-            ruleOptionValues.add(y = $value)
-          ruleSettings.optionValues = ruleOptionValues
-          rulesList.add(y = ruleSettings)
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = line.startsWith(prefix = it)):
           var configRule: OptParser = initOptParser(cmdline = line)
