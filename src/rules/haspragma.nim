@@ -152,7 +152,16 @@ checkRule:
         return
       # The node doesn't have any pragmas
       if pragmas == nil:
-        if not rule.negation:
+        if rule.negation:
+          if rule.ruleType == search:
+            message(text = messagePrefix & "procedure " & procName &
+                " line: " & $node.info.line &
+                " doesn't have declared any pragmas.",
+                returnValue = rule.amount, level = lvlNotice,
+                decrease = false)
+          else:
+            rule.amount.inc
+        else:
           if rule.ruleType == check:
             message(text = messagePrefix & "procedure " & procName &
                 " line: " & $node.info.line &
@@ -169,15 +178,6 @@ checkRule:
                     procName, $node.info.line, pragma])
             else:
               rule.amount.dec
-        else:
-          if rule.ruleType == search:
-            message(text = messagePrefix & "procedure " & procName &
-                " line: " & $node.info.line &
-                " doesn't have declared any pragmas.",
-                returnValue = rule.amount, level = lvlNotice,
-                decrease = false)
-          else:
-            rule.amount.inc
       else:
         var strPragmas: seq[string] = @[]
         for pragma in pragmas:
@@ -187,12 +187,7 @@ checkRule:
             discard
         # Check the node for each selected pragma
         for pragma in rule.options[1 .. ^1]:
-          if '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
-            setResult(checkResult = false, positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node,
-                ruleData = pragma, params = [
-                procName, $node.info.line, pragma])
-          elif pragma[^1] == '*' and pragma[0] != '*':
+          if pragma[^1] == '*' and pragma[0] != '*':
             var hasPragma: bool = false
             for procPragma in strPragmas:
               if procPragma.startsWith(prefix = pragma[0..^2]):
@@ -222,6 +217,11 @@ checkRule:
                 break
             setResult(checkResult = hasPragma,
                 positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, node = node,
+                ruleData = pragma, params = [
+                procName, $node.info.line, pragma])
+          elif '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
+            setResult(checkResult = false, positiveMessage = positiveMessage,
                 negativeMessage = negativeMessage, node = node,
                 ruleData = pragma, params = [
                 procName, $node.info.line, pragma])
@@ -290,8 +290,8 @@ fixRule:
         values.sons.add(y = newIdentNode(ident = getIdent(ic = rule.identsCache,
             identifier = value), info = pragmas.info))
       newPragma.sons.add(y = values)
-      if pragmas != nil:
-        pragmas.sons.add(y = newPragma)
-      else:
+      if pragmas == nil:
         astNode[pragmasPos] = newPragma
+      else:
+        pragmas.sons.add(y = newPragma)
       return true
