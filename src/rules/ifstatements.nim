@@ -79,11 +79,8 @@ checkRule:
       if node.len > 1:
         # Check if the if statement starts with negative condition and has else branch
         let conditions: seq[string] = ($node[0]).split
-        echo "NODE0": node[0]
-        echo "LAST:", node[^1]
         if conditions[2] == "not" or conditions[3] in ["notin", "!="]:
-          echo "HERE"
-          setResult(checkResult = node[^1].kind in {nkElse, nkElseExpr},
+          setResult(checkResult = node[^1].kind notin {nkElse, nkElseExpr},
               positiveMessage = positiveMessage,
               negativeMessage = negativeMessage,
               node = node, params = [$node.info.line,
