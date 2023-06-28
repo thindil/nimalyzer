@@ -189,29 +189,8 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
   var replacements: seq[(string, string)] = @[]
   for index, param in params:
     replacements.add(y = ("{params[" & $index & "]}", param))
-  # The entity not meet rule's requirements
-  if not checkResult:
-    if rule.negation and rule.ruleType in {check, fix}:
-      rule.amount.inc
-    else:
-      if negativeMessage.len > 0:
-        if rule.ruleType in {check, fix}:
-          message(text = messagePrefix & negativeMessage.multiReplace(
-              replacements = replacements), returnValue = rule.amount)
-          rule.amount = int.low
-        else:
-          if rule.negation:
-            message(text = messagePrefix & negativeMessage.multiReplace(
-                replacements = replacements), returnValue = rule.amount,
-                level = lvlNotice, decrease = false)
-      if rule.ruleType == fix:
-        if ruleFix(astNode = node, parentNode = astNode, rule = rule,
-            data = ruleData):
-          rule.amount = int.low
-        else:
-          rule.amount = 1
   # The enitity meet the rule's requirements
-  else:
+  if checkResult:
     if rule.negation:
       if rule.ruleType in {check, fix} and positiveMessage.len > 0:
         message(text = messagePrefix & positiveMessage.multiReplace(
@@ -231,6 +210,27 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
             level = lvlNotice, decrease = false)
       else:
         rule.amount.inc
+  # The entity not meet rule's requirements
+  else:
+    if rule.negation and rule.ruleType in {check, fix}:
+      rule.amount.inc
+    else:
+      if negativeMessage.len > 0:
+        if rule.ruleType in {check, fix}:
+          message(text = messagePrefix & negativeMessage.multiReplace(
+              replacements = replacements), returnValue = rule.amount)
+          rule.amount = int.low
+        else:
+          if rule.negation:
+            message(text = messagePrefix & negativeMessage.multiReplace(
+                replacements = replacements), returnValue = rule.amount,
+                level = lvlNotice, decrease = false)
+      if rule.ruleType == fix:
+        if ruleFix(astNode = node, parentNode = astNode, rule = rule,
+            data = ruleData):
+          rule.amount = int.low
+        else:
+          rule.amount = 1
 
 proc validateOptions*(rule: RuleSettings; options: seq[
     string]): bool {.raises: [], tags: [RootEffect], contractual.} =
@@ -364,23 +364,24 @@ template endCheck*(code: untyped): untyped =
           returnValue = rule.amount, level = lvlNotice)
       rule.amount = 1
     elif rule.amount < 1:
-      if not rule.enabled and rule.amount == 0:
-        rule.amount = 1
-      elif rule.negation:
-        if rule.ruleType in {check, fix}:
-          rule.amount = 0
+      if rule.enabled:
+        if rule.negation:
+          if rule.ruleType in {check, fix}:
+            rule.amount = 0
+          else:
+            message(text = (if messagePrefix.len > 0: messagePrefix else: "") &
+                capitalizeAscii(s = notFoundMessage.fmt),
+                returnValue = rule.amount, level = lvlNotice, decrease = false)
+            rule.amount = 0
         else:
-          message(text = (if messagePrefix.len > 0: messagePrefix else: "") &
-              capitalizeAscii(s = notFoundMessage.fmt),
-              returnValue = rule.amount, level = lvlNotice, decrease = false)
+          if rule.ruleType notin {check, fix} or showForCheck:
+            let messageLevel: Level = (if showForCheck: lvlError else: lvlNotice)
+            message(text = (if messagePrefix.len > 0: messagePrefix else: "") &
+                capitalizeAscii(s = notFoundMessage.fmt),
+                returnValue = rule.amount, level = messageLevel, decrease = false)
           rule.amount = 0
-      else:
-        if rule.ruleType notin {check, fix} or showForCheck:
-          let messageLevel: Level = (if showForCheck: lvlError else: lvlNotice)
-          message(text = (if messagePrefix.len > 0: messagePrefix else: "") &
-              capitalizeAscii(s = notFoundMessage.fmt),
-              returnValue = rule.amount, level = messageLevel, decrease = false)
-        rule.amount = 0
+      elif rule.amount == 0:
+        rule.amount = 1
 
 macro checkRule*(code: untyped): untyped =
   ## Check the rule, add the procedure declaration and the check code itself
