@@ -75,16 +75,27 @@ checkRule:
   startCheck:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
-    if node.kind == nkIfStmt and node.len > 1:
-      let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][^1][
-          ^1] else: node[^2][^1])
-      if lastNode.kind in nkLastBlockStmts:
-        setResult(checkResult = node[^1].kind notin {nkElse, nkElseExpr},
-            positiveMessage = positiveMessage,
-            negativeMessage = negativeMessage,
-            node = node, params = [$node.info.line,
-                "the content of the last branch can" & negation &
-                " be moved outside the if statement."])
+    if node.kind == nkIfStmt:
+      if node.len > 1:
+        # Check if the last if branch can be moved outside the if statement
+        let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][^1][
+            ^1] else: node[^2][^1])
+        if lastNode.kind in nkLastBlockStmts:
+          setResult(checkResult = node[^1].kind notin {nkElse, nkElseExpr},
+              positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage,
+              node = node, params = [$node.info.line,
+                  "the content of the last branch can" & negation &
+                  " be moved outside the if statement."])
+      # Check if the if statement contains empty branches (with discard only)
+      for child in node:
+        if child[^1].kind == nkStmtList and child[^1].len == 1:
+          setResult(checkResult = child[^1][0].kind != nkDiscardStmt,
+              positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage, node = node, params = [
+              $node.info.line, "the if statement branch " & (
+              if rule.negation: "doesn't contain" else: "contains") &
+              " only discard statement."])
   endCheck:
     discard
 
