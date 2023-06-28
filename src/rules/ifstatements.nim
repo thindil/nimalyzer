@@ -77,6 +77,18 @@ checkRule:
   checking:
     if node.kind == nkIfStmt:
       if node.len > 1:
+        # Check if the if statement starts with negative condition and has else branch
+        let conditions: seq[string] = ($node[0]).split
+        echo "NODE0": node[0]
+        echo "LAST:", node[^1]
+        if conditions[2] == "not" or conditions[3] in ["notin", "!="]:
+          echo "HERE"
+          setResult(checkResult = node[^1].kind in {nkElse, nkElseExpr},
+              positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage,
+              node = node, params = [$node.info.line,
+                  "the if statement " & (if rule.negation: "doesn't start" else: "starts") &
+                  " with a negative condition."])
         # Check if the last if branch can be moved outside the if statement
         let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][^1][
             ^1] else: node[^2][^1])
