@@ -80,7 +80,10 @@ checkRule:
         # Check if the if statement starts with negative condition and has else branch
         let conditions: seq[string] = ($node[0]).split
         if conditions[2] == "not" or conditions[3] in ["notin", "!="]:
-          setResult(checkResult = node[^1].kind notin {nkElse, nkElseExpr},
+          var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
+          if rule.ruleType != check:
+            checkResult = not checkResult
+          setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
               negativeMessage = negativeMessage,
               node = node, params = [$node.info.line,
@@ -90,7 +93,10 @@ checkRule:
         let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][^1][
             ^1] else: node[^2][^1])
         if lastNode.kind in nkLastBlockStmts:
-          setResult(checkResult = node[^1].kind notin {nkElse, nkElseExpr},
+          var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
+          if rule.ruleType != check:
+            checkResult = not checkResult
+          setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
               negativeMessage = negativeMessage,
               node = node, params = [$node.info.line,
@@ -99,12 +105,16 @@ checkRule:
       # Check if the if statement contains empty branches (with discard only)
       for child in node:
         if child[^1].kind == nkStmtList and child[^1].len == 1:
-          setResult(checkResult = child[^1][0].kind != nkDiscardStmt,
+          var checkResult: bool = child[^1][0].kind != nkDiscardStmt
+          if rule.ruleType != check:
+            checkResult = not checkResult
+          setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
               negativeMessage = negativeMessage, node = node, params = [
               $node.info.line, "the if statement branch " & (
               if rule.negation: "doesn't contain" else: "contains") &
               " only discard statement."])
+          break
   endCheck:
     discard
 
