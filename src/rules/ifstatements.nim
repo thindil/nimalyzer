@@ -81,12 +81,13 @@ checkRule:
         let conditions: seq[string] = ($node[0]).split
         if conditions[2] == "not" or conditions[3] in ["notin", "!="]:
           var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
-          if rule.ruleType != check:
+          if rule.ruleType notin {check, fix}:
             checkResult = not checkResult
           setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage, node = node, params = [
-              $node.info.line, "the if statement " & (
+              negativeMessage = negativeMessage, node = node,
+              ruleData = "negation", params = [ $node.info.line,
+              "the if statement " & (
               if rule.negation: "doesn't start" else: "starts") &
               " with a negative condition."])
         # Check if the last if branch can be moved outside the if statement
@@ -94,24 +95,25 @@ checkRule:
             ^1] else: node[^2][^1])
         if lastNode.kind in nkLastBlockStmts:
           var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
-          if rule.ruleType != check:
+          if rule.ruleType notin {check, fix}:
             checkResult = not checkResult
           setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage,
-              node = node, params = [$node.info.line,
-                  "the content of the last branch can" & negation &
-                  " be moved outside the if statement."])
+              negativeMessage = negativeMessage, node = node,
+              ruleData = "outside", params = [$node.info.line,
+              "the content of the last branch can" & negation &
+              " be moved outside the if statement."])
       # Check if the if statement contains empty branches (with discard only)
       for child in node:
         if child[^1].kind == nkStmtList and child[^1].len == 1:
           var checkResult: bool = child[^1][0].kind != nkDiscardStmt
-          if rule.ruleType != check:
+          if rule.ruleType notin {check, fix}:
             checkResult = not checkResult
           setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage, node = node, params = [
-              $node.info.line, "the if statement branch " & (
+              negativeMessage = negativeMessage, node = node,
+              ruleData = "discard", params = [ $node.info.line,
+              "the if statement branch " & (
               if rule.negation: "doesn't contain" else: "contains") &
               " only discard statement."])
           break
@@ -119,4 +121,17 @@ checkRule:
     discard
 
 fixRule:
-  discard
+  # Don't change anything if rule has negation
+  if rule.negation:
+    return false
+  echo "PARENT:", parentNode
+  case data
+  of "discard":
+    for index, child in parentNode:
+      if child == astNode:
+        parentNode.delSon(idx = index)
+        return true
+  echo "DATA:", data
+  echo "ASTNODE:", astNode
+  echo "PARENT:", parentNode
+  return false
