@@ -104,9 +104,10 @@ checkRule:
               "the content of the last branch can" & negation &
               " be moved outside the if statement."])
       # Check if the if statement contains empty branches (with discard only)
+      var checkResult: bool = true
       for child in node:
         if child[^1].kind == nkStmtList and child[^1].len == 1:
-          var checkResult: bool = child[^1][0].kind != nkDiscardStmt
+          checkResult = child[^1][0].kind != nkDiscardStmt
           if rule.ruleType notin {check, fix}:
             checkResult = not checkResult
           setResult(checkResult = checkResult,
@@ -117,6 +118,8 @@ checkRule:
               if rule.negation: "doesn't contain" else: "contains") &
               " only discard statement."])
           break
+      if rule.ruleType == fix and not checkResult:
+        return
   endCheck:
     discard
 
@@ -131,7 +134,11 @@ fixRule:
       if child == astNode:
         parentNode.delSon(idx = index)
         return true
+  of "outside":
+    let
+      newNode: PNode = astNode[^1][0]
+      oldParent: PNode = parentNode.copyNode
+    astNode.delSon(idx = astNode.len - 1)
   echo "DATA:", data
   echo "ASTNODE:", astNode
   echo "PARENT:", parentNode
-  return false
