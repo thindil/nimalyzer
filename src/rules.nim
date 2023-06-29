@@ -525,8 +525,6 @@ proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
     parentNode != nil
     node != nil
   body:
-    if node == nil:
-      discard
     for nodes in parentNode.items:
       for baseNode in nodes.items:
         if baseNode == node:

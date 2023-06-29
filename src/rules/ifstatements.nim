@@ -136,19 +136,20 @@ fixRule:
         return true
   of "outside":
     let
-      newIfNode: PNode = astNode.copyNode
-      newNode: PNode = astNode[^1][0].copyNode
+      newIfNode: PNode = newTree(kind = astNode.kind, children = astNode.sons)
+      newNode: PNode = newTree(kind = astNode[^1][0].kind, children = astNode[^1][0].sons)
       newParent: PNode = newTree(kind = parentNode.kind, children = [])
     for child in parentNode:
       if child == astNode:
-        echo "NEWCHILD:", child
         newIfNode.delSon(idx = astNode.len - 1)
         newParent.add(son = newIfNode)
         newParent.add(son = newNode)
       else:
-        echo "CHILD:", child
         newParent.add(son = child)
-    echo "NEW:", newParent
+    parentNode.discardSons
+    for child in newParent:
+      parentNode.add(son = child)
+    return true
   echo "DATA:", data
   echo "ASTNODE:", astNode
   echo "PARENT:", parentNode
