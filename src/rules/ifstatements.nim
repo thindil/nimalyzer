@@ -85,10 +85,10 @@ checkRule:
             checkResult = not checkResult
           setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage,
-              node = node, params = [$node.info.line,
-                  "the if statement " & (if rule.negation: "doesn't start" else: "starts") &
-                  " with a negative condition."])
+              negativeMessage = negativeMessage, node = node, params = [
+              $node.info.line, "the if statement " & (
+              if rule.negation: "doesn't start" else: "starts") &
+              " with a negative condition."])
         # Check if the last if branch can be moved outside the if statement
         let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][^1][
             ^1] else: node[^2][^1])
