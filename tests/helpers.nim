@@ -42,13 +42,14 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
         negation: false, ruleType: check, options: validOptions, amount: 0, enabled: true)
 
   # check rule tests
-  info("Checking check type of the rule.")
+  info("Checking check type of the rule with the invalid code.")
   ruleCheck(invalidCode, invalidCode, ruleOptions)
   try:
     assert ruleOptions.amount == 0
   except AssertionDefect:
     echo "Check of invalid code for rule '" & ruleSettings.name &
         "' failed, expected result: 0, received: " & $ruleOptions.amount
+  info("Checking check type of the rule with the valid code.")
   ruleOptions.parent = true
   ruleCheck(validCode, validCode, ruleOptions)
   try:
@@ -58,7 +59,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
         "' failed, expected result larger than 0, received: " &
         $ruleOptions.amount
   # negative check rule tests
-  info("Checking negative check type of the rule.")
+  info("Checking negative check type of the rule with the valid code.")
   ruleOptions.parent = true
   ruleOptions.negation = true
   ruleOptions.amount = 0
@@ -68,6 +69,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   except AssertionDefect:
     echo "Negative check of valid code for rule '" & ruleSettings.name &
         "' failed, expected result: 0, received: " & $ruleOptions.amount
+  info("Checking negative check type of the rule with the invalid code.")
   ruleOptions.parent = true
   ruleCheck(invalidCode, invalidCode, ruleOptions)
   try:
@@ -77,7 +79,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
         "' failed, expected result larger than 0, received: " &
         $ruleOptions.amount
   # search rule tests
-  info("Checking search type of the rule.")
+  info("Checking search type of the rule with the invalid code.")
   ruleOptions.parent = true
   ruleOptions.ruleType = search
   ruleOptions.negation = false
@@ -91,6 +93,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
           "' failed, expected result: 0, received: " & $ruleOptions.amount
   else:
     info("The test for searching for invalid code is disabled.")
+  info("Checking search type of the rule with the valid code.")
   ruleOptions.parent = true
   ruleCheck(validCode, validCode, ruleOptions)
   try:
@@ -100,7 +103,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
         "' failed, expected result greater than 0, received: " &
         $ruleOptions.amount
   # negative search rule tests
-  info("Checking negative search type of the rule.")
+  info("Checking negative search type of the rule with the valid code.")
   ruleOptions.parent = true
   ruleOptions.negation = true
   ruleOptions.amount = 0
@@ -110,6 +113,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   except AssertionDefect:
     echo "Negative search for valid code for rule '" & ruleSettings.name &
         "' failed, expected result: 0, received: " & $ruleOptions.amount
+  info("Checking negative search type of the rule with the invalid code.")
   ruleOptions.parent = true
   ruleCheck(invalidCode, invalidCode, ruleOptions)
   try:
@@ -118,7 +122,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
     echo "Negative search for invalid code for rule '" & ruleSettings.name &
         "' failed, expected result: 1, received: " & $ruleOptions.amount
   # count rule tests
-  info("Checking count type of the rule.")
+  info("Checking count type of the rule with the invalid code.")
   ruleOptions.parent = true
   ruleOptions.ruleType = count
   ruleOptions.negation = false
@@ -129,6 +133,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   except AssertionDefect:
     echo "Counting of invalid code for rule '" & ruleSettings.name &
         "' failed, expected result: 1, received: " & $ruleOptions.amount
+  info("Checking count type of the rule with the valid code.")
   ruleOptions.parent = true
   ruleOptions.amount = 0
   ruleCheck(validCode, validCode, ruleOptions)
@@ -138,7 +143,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
     echo "Counting of valid code for rule '" & ruleSettings.name &
         "' failed, expected result: 1, received: " & $ruleOptions.amount
   # negative count rule tests
-  info("Checking negative type of the rule.")
+  info("Checking negative count type of the rule with the invalid code.")
   ruleOptions.parent = true
   ruleOptions.negation = true
   ruleOptions.amount = 0
@@ -148,6 +153,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   except AssertionDefect:
     echo "Negative counting of invalid code for rule '" & ruleSettings.name &
         "' failed, expected result: 1, received: " & $ruleOptions.amount
+  info("Checking negative count type of the rule with the valid code.")
   ruleOptions.parent = true
   ruleOptions.amount = 0
   ruleCheck(validCode, validCode, ruleOptions)
