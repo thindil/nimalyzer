@@ -129,11 +129,13 @@ fixRule:
     return false
   echo "PARENT:", parentNode
   case data
+  # Remove empty if statement
   of "discard":
     for index, child in parentNode:
       if child == astNode:
         parentNode.delSon(idx = index)
         return true
+  # Move the part of the if statement outside
   of "outside":
     let
       newIfNode: PNode = newTree(kind = astNode.kind, children = astNode.sons)
@@ -150,6 +152,10 @@ fixRule:
     for child in newParent:
       parentNode.add(son = child)
     return true
+  # Replace the negative expression in the if statemet
+  of "negation":
+    echo "1:", astNode[0][1]
+    echo "2:", astNode[^1][0]
   echo "DATA:", data
   echo "ASTNODE:", astNode
   echo "PARENT:", parentNode
