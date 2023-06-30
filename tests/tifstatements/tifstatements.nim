@@ -32,13 +32,7 @@ import ../helpers.nim
 const
   validOptions: seq[string] = @[]
   invalidOptions = @["randomoption"]
-  invalidNimCode = """if a != 1:
-  echo "not equal"
-else:
-  echo "equal""""
-  validNimCode = """if a == 1:
-  echo "equal"
-else:
-  echo "not equal""""
+  invalidNimCode = "if a != 1: echo \"not equal\" else: echo \"equal\""
+  validNimCode = "if a == 1: echo \"equal\" else: echo \"not equal\""
 
 runRuleTest(disabledChecks = {negativeFix})
