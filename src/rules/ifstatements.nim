@@ -129,7 +129,6 @@ fixRule:
   # Don't change anything if rule has negation
   if rule.negation:
     return false
-  echo "PARENT:", parentNode
   case data
   # Remove empty if statement
   of "discard":
@@ -162,8 +161,9 @@ fixRule:
     else:
       astNode[0][0][0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
           identifier = "=="), info = astNode[0][0].info)
-    echo "1:", astNode[0][1]
-    echo "2:", astNode[^1][0]
-  echo "DATA:", data
-  echo "ASTNODE:", astNode
-  echo "PARENT:", parentNode
+    let
+      negativeNode = newTree(kind = astNode[0][1].kind, children = astNode[0][1].sons)
+      positiveNode = newTree(kind = astNode[^1][0].kind, children = astNode[^1][0].sons)
+    astNode[0][1] = positiveNode
+    astNode[^1][0] = negativeNode
+    return true
