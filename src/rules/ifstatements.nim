@@ -60,6 +60,8 @@
 ##
 ## --Insert rules examples--
 
+# External modules imports
+import compiler/idents
 # Import default rules' modules
 import ../rules
 
@@ -139,7 +141,8 @@ fixRule:
   of "outside":
     let
       newIfNode: PNode = newTree(kind = astNode.kind, children = astNode.sons)
-      newNode: PNode = newTree(kind = astNode[^1][0].kind, children = astNode[^1][0].sons)
+      newNode: PNode = newTree(kind = astNode[^1][0].kind, children = astNode[
+          ^1][0].sons)
       newParent: PNode = newTree(kind = parentNode.kind, children = [])
     for child in parentNode:
       if child == astNode:
@@ -154,6 +157,11 @@ fixRule:
     return true
   # Replace the negative expression in the if statemet
   of "negation":
+    if $astNode[0][0][0] == "not":
+      astNode[0][0][0] = newNode(kind = nkEmpty)
+    else:
+      astNode[0][0][0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+          identifier = "=="), info = astNode[0][0].info)
     echo "1:", astNode[0][1]
     echo "2:", astNode[^1][0]
   echo "DATA:", data
