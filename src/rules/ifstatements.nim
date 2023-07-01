@@ -78,7 +78,6 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
     if node.kind == nkIfStmt:
-      var oldAmount: int = rule.amount
       if node.len > 1:
         # Check if the if statement starts with negative condition and has else branch
         let conditions: seq[string] = ($node[0]).split
@@ -93,8 +92,6 @@ checkRule:
               "the if statement " & (
               if rule.negation: "doesn't start" else: "starts") &
               " with a negative condition."])
-          if rule.amount != oldAmount:
-            oldAmount = rule.amount
         # Check if the last if branch can be moved outside the if statement
         let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][^1][
             ^1] else: node[^2][^1])
