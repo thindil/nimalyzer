@@ -165,8 +165,10 @@ fixRule:
       astNode[0][0][0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
           identifier = "=="), info = astNode[0][0].info)
     let
-      negativeNode = newTree(kind = astNode[0][1].kind, children = astNode[0][1].sons)
-      positiveNode = newTree(kind = astNode[^1][0].kind, children = astNode[^1][0].sons)
+      negativeNode: PNode = newTree(kind = astNode[0][1].kind,
+          children = astNode[0][1].sons)
+      positiveNode: PNode = newTree(kind = astNode[^1][0].kind,
+          children = astNode[^1][0].sons)
     astNode[0][1] = positiveNode
     astNode[^1][0] = negativeNode
     return true
