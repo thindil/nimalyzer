@@ -78,12 +78,13 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
     if node.kind == nkIfStmt:
+      var oldAmount: int = rule.amount
       if node.len > 1:
         # Check if the if statement starts with negative condition and has else branch
         let conditions: seq[string] = ($node[0]).split
         if conditions[2] == "not" or conditions[3] in ["notin", "!="]:
           var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
-          if rule.ruleType in {search, RuleTypes.count}:
+          if rule.ruleType == RuleTypes.count and not rule.negation:
             checkResult = not checkResult
           setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
@@ -92,36 +93,38 @@ checkRule:
               "the if statement " & (
               if rule.negation: "doesn't start" else: "starts") &
               " with a negative condition."])
-        # Check if the last if branch can be moved outside the if statement
-        let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][^1][
-            ^1] else: node[^2][^1])
-        if lastNode.kind in nkLastBlockStmts:
-          var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
-          if rule.ruleType in {search, RuleTypes.count}:
-            checkResult = not checkResult
-          setResult(checkResult = checkResult,
-              positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage, node = node,
-              ruleData = "outside", params = [$node.info.line,
-              "the content of the last branch can" & negation &
-              " be moved outside the if statement."])
-      # Check if the if statement contains empty branches (with discard only)
-      var checkResult: bool = true
-      for child in node:
-        if child[^1].kind == nkStmtList and child[^1].len == 1:
-          checkResult = child[^1][0].kind != nkDiscardStmt
-          if rule.ruleType in {search, RuleTypes.count}:
-            checkResult = not checkResult
-          setResult(checkResult = checkResult,
-              positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage, node = node,
-              ruleData = "discard", params = [ $node.info.line,
-              "the if statement branch " & (
-              if rule.negation: "doesn't contain" else: "contains") &
-              " only discard statement."])
-          break
-      if rule.ruleType == fix and not checkResult:
-        return
+        if rule.amount == oldAmount:
+          # Check if the last if branch can be moved outside the if statement
+          let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][^1][
+              ^1] else: node[^2][^1])
+          if lastNode.kind in nkLastBlockStmts:
+            var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
+            if rule.ruleType == RuleTypes.count and not rule.negation:
+              checkResult = not checkResult
+            setResult(checkResult = checkResult,
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, node = node,
+                ruleData = "outside", params = [$node.info.line,
+                "the content of the last branch can" & negation &
+                " be moved outside the if statement."])
+      if rule.amount == oldAmount:
+        # Check if the if statement contains empty branches (with discard only)
+        var checkResult: bool = true
+        for child in node:
+          if child[^1].kind == nkStmtList and child[^1].len == 1:
+            checkResult = child[^1][0].kind != nkDiscardStmt
+            if rule.ruleType == RuleTypes.count and not rule.negation:
+              checkResult = not checkResult
+            setResult(checkResult = checkResult,
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, node = node,
+                ruleData = "discard", params = [ $node.info.line,
+                "the if statement branch " & (
+                if rule.negation: "doesn't contain" else: "contains") &
+                " only discard statement."])
+            break
+        if rule.ruleType == fix and not checkResult:
+          return
   endCheck:
     discard
 
