@@ -82,6 +82,7 @@ type
     ## * optionValues - If the rule has option type custom, the values for the option
     ## * minOptions   - The minumal amount of options required by the rule
     ## * fixProc      - The procedure used to auto fix the rule
+    ## * requireVm    - If true, the rule require Nim VM to run
     name*: string
     checkProc*: proc (astNode, parentNode: PNode; rule: var RuleOptions)
     options*: seq[RuleOptionsTypes]
@@ -423,6 +424,10 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
   ##                         option
   ## * ruleMinOptions      - The minumal amount of options required by the rule,
   ##                         default 0
+  ## * ruleShowForCheck    - If true, show the summary message for check type of
+  ##                         the rule. Default value is false.
+  ## * ruleRequireVm       - If true, the rule requires Nim Vm to run. Default
+  ##                         value is false.
   return nnkStmtList.newTree(children = [nnkPragma.newTree(children = [
       newIdentNode(i = "used")]), nnkProcDef.newTree(children = [
       nnkPostfix.newTree(children = [newIdentNode(i = "*"), newIdentNode(
