@@ -130,6 +130,7 @@ lvlError. The settings below checks for:
 6. If all variables' declarations have declared type and value for them.
 7. If any local variable declaration can be updated to let or const.
 8. If any local variable declaration hides previously declared variable.
+9. If any `if` statement can be upgraded.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -140,6 +141,7 @@ lvlError. The settings below checks for:
     check varDeclared full
     check varUplevel
     check localHides
+    check ifStatements
 
 Search rules
 ------------
@@ -230,3 +232,4 @@ the program.
     check varDeclared full
     check varUplevel
     check localHides
+    check ifStatements
