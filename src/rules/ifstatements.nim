@@ -23,42 +23,73 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## --Insert here the description of the rule--
+## The rule to check do if statements in the code don't contain some
+## expressions. Checked things:
+##
+## * Empty statements. `If` statements, which contains only `discard` statement.
+## * A branch `else` after a finishing statement like `return`, `continue`,
+##   `break` or `raise`. Example::
+##
+##     if a == 1:
+##       return
+##     else:
+##       doSomething()
+##
+## * A negative condition in `if` statements with a branch `else`. Example::
+##
+##     if a != 1:
+##       doSomething()
+##     else:
+##       doSomething2()
+##
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? ifstatements
+##   [ruleType] ?not? ifStatements
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
-##   rules, please refer to the program's documentation. --Insert description
-##   how rules types works with the rule--.
+##   rules, please refer to the program's documentation. Check type will raise
+##   an error if there is a `if` statement which violates any of the checks. Search
+##   type will list all statements which violates any of checks or raise an
+##   error if nothing found. Count type will simply list the amount of the
+##   statements which violates the checks. Fix type will try to fix the code
+##   which violates checks: will remove empty statements, move outside the `if`
+##   block code after finishing statement or replace negative condition in the
+##   statement with positive and move the code blocks. Fix type not works with
+##   negation.
 ## * optional word *not* means negation for the rule. Adding word *not* will
-##   change to inform only about --Insert description how negation affects the
-##   rule--.
-## * ifstatements is the name of the rule. It is case-insensitive, thus it can be
+##   change to inform only about the `if` statements which not violate the checks.
+##   Probably useable only with search and count type of rule.
+## * ifStatements is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *ifstatements*, *ifstatements* or *iFsTaTeMeNts*.
 ##
 ## Disabling the rule
 ## ------------------
 ## It is possible to disable the rule for a selected part of the checked code
-## by using pragma *ruleOff: "ifstatements"* in the element from which the rule
+## by using pragma *ruleOff: "ifStatements"* in the element from which the rule
 ## should be disabled or in code before it. For example, if the rule should
 ## be disabled for procedure `proc main()`, the full declaration of it should
 ## be::
 ##
-##     proc main () {.ruleOff: "ifstatements".}
+##     proc main () {.ruleOff: "ifStatements".}
 ##
-## To enable the rule again, the pragma *ruleOn: "ifstatements"* should be added in
+## To enable the rule again, the pragma *ruleOn: "ifStatements"* should be added in
 ## the element which should be checked or in code before it. For example, if
 ## the rule should be re-enabled for `const a = 1`, the full declaration should
 ## be::
 ##
-##     const a {.ruleOn: "ifstatements".} = 1
+##     const a {.ruleOn: "ifStatements".} = 1
 ##
 ## Examples
 ## --------
 ##
-## --Insert rules examples--
+## 1. Check if all `if` statements are correct::
+##
+##     check ifStatements
+##
+## 2. Fix all `if` statements::
+##
+##     fix ifStatements
 
 # External modules imports
 import compiler/idents
