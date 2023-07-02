@@ -89,6 +89,7 @@ type
     minOptions*: Natural
     fixProc*: proc (astNode, parentNode: PNode; rule: RuleOptions;
         data: string): bool
+    requireVm*: bool
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
@@ -405,7 +406,7 @@ macro checkRule*(code: untyped): untyped =
 macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
     rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[
     RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
-    ruleMinOptions: int = 0; ruleShowForCheck: bool = false): untyped =
+    ruleMinOptions: int = 0; ruleShowForCheck, ruleRequireVm: bool = false): untyped =
   ## Set the rule's settings, like name, options, etc
   ##
   ## * ruleName            - The name of the rule
@@ -451,7 +452,8 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       children = [newIdentNode(i = "options"), ruleOptions]),
       nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
       ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "minOptions"), ruleMinOptions])])])), nnkStmtList.newTree(children = [
+      i = "minOptions"), ruleMinOptions]), nnkExprColonExpr.newTree(children = [newIdentNode(
+      i = "requireVm"), ruleRequireVm])])])), nnkStmtList.newTree(children = [
       nnkCall.newTree(children = [nnkDotExpr.newTree(children = [newIdentNode(
       i = "rulesList"), newIdentNode(i = "add")]), nnkExprEqExpr.newTree(
       children = [newIdentNode(i = "y"), newIdentNode(i = "ruleSettings")])])]),
