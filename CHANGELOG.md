@@ -19,6 +19,8 @@ of the program.
   should be checked.
 - `fix` type of rule to `hasDoc` rule. It can now delete documentation or
   add a template of documentation to the checked code.
+- New rule `ifStatements` to check `if` statements in code for various things,
+  like empty statements, negative conditions, etc.
 
 ### Changed
 - Updated the project's documentation.
