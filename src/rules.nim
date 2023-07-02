@@ -82,7 +82,6 @@ type
     ## * optionValues - If the rule has option type custom, the values for the option
     ## * minOptions   - The minumal amount of options required by the rule
     ## * fixProc      - The procedure used to auto fix the rule
-    ## * requireVm    - If true, the rule require Nim VM to run
     name*: string
     checkProc*: proc (astNode, parentNode: PNode; rule: var RuleOptions)
     options*: seq[RuleOptionsTypes]
@@ -90,7 +89,6 @@ type
     minOptions*: Natural
     fixProc*: proc (astNode, parentNode: PNode; rule: RuleOptions;
         data: string): bool
-    requireVm*: bool
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
@@ -408,8 +406,7 @@ macro checkRule*(code: untyped): untyped =
 macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
     rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[
     RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
-    ruleMinOptions: int = 0; ruleShowForCheck,
-    ruleRequireVm: bool = false): untyped =
+    ruleMinOptions: int = 0; ruleShowForCheck: bool = false): untyped =
   ## Set the rule's settings, like name, options, etc
   ##
   ## * ruleName            - The name of the rule
@@ -428,8 +425,6 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
   ##                         default 0
   ## * ruleShowForCheck    - If true, show the summary message for check type of
   ##                         the rule. Default value is false.
-  ## * ruleRequireVm       - If true, the rule requires Nim Vm to run. Default
-  ##                         value is false.
   return nnkStmtList.newTree(children = [nnkPragma.newTree(children = [
       newIdentNode(i = "used")]), nnkProcDef.newTree(children = [
       nnkPostfix.newTree(children = [newIdentNode(i = "*"), newIdentNode(
@@ -459,8 +454,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       children = [newIdentNode(i = "options"), ruleOptions]),
       nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
       ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "minOptions"), ruleMinOptions]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "requireVm"), ruleRequireVm])])])), nnkStmtList.newTree(children = [
+      i = "minOptions"), ruleMinOptions])])])), nnkStmtList.newTree(children = [
       nnkCall.newTree(children = [nnkDotExpr.newTree(children = [newIdentNode(
       i = "rulesList"), newIdentNode(i = "add")]), nnkExprEqExpr.newTree(
       children = [newIdentNode(i = "y"), newIdentNode(i = "ruleSettings")])])]),
