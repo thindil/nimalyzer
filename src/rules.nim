@@ -380,7 +380,8 @@ template endCheck*(code: untyped): untyped =
             let messageLevel: Level = (if showForCheck: lvlError else: lvlNotice)
             message(text = (if messagePrefix.len > 0: messagePrefix else: "") &
                 capitalizeAscii(s = notFoundMessage.fmt),
-                returnValue = rule.amount, level = messageLevel, decrease = false)
+                returnValue = rule.amount, level = messageLevel,
+                decrease = false)
           rule.amount = 0
       elif rule.amount == 0:
         rule.amount = 1
@@ -407,7 +408,8 @@ macro checkRule*(code: untyped): untyped =
 macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
     rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[
     RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
-    ruleMinOptions: int = 0; ruleShowForCheck, ruleRequireVm: bool = false): untyped =
+    ruleMinOptions: int = 0; ruleShowForCheck,
+    ruleRequireVm: bool = false): untyped =
   ## Set the rule's settings, like name, options, etc
   ##
   ## * ruleName            - The name of the rule
