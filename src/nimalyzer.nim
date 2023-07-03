@@ -35,11 +35,12 @@ import config, rules, utils
 # Load the program's rules
 macro importRules(): untyped =
   result = nnkStmtList.newTree()
-  for rule in splitLines(s = slurp("rules" & DirSep & "rulesList.txt")):
+  for rule in splitLines(s = slurp(filename = "rules" & DirSep &
+      "rulesList.txt")):
     if rule.len == 0:
       break
-    result.add(newTree(nnkImportStmt, newLit(getProjectPath() & DirSep &
-        "rules" & DirSep & rule)))
+    result.add(child = newTree(kind = nnkImportStmt, children = [newLit(
+        s = getProjectPath() & DirSep & "rules" & DirSep & rule)]))
 importRules()
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
