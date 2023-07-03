@@ -63,7 +63,7 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
       let rulesFile: File = open(filename = "src" & DirSep & "rules" & DirSep &
           "rulesList.txt", mode = fmWrite)
       for fileName in walkFiles(pattern = "src" & DirSep & "rules" & DirSep & "*.nim"):
-        let (_, name, _) = splitFile(fileName)
+        let (_, name, _) = splitFile(path = fileName)
         rulesFile.writeLine(x = [name])
       rulesFile.close
       echo "The program's rule '" & name & "' created in file '" & fileName & "'."
