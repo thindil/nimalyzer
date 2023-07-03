@@ -26,14 +26,21 @@
 ## This is the main module of the program.
 
 # Standard library imports
-import std/os
+import std/[macros, os, strutils]
 # External modules imports
 import compiler/[idents, llstream, options, parser, pathutils]
 # Internal modules imports
 import config, rules, utils
-# The program's built-in rules
-import rules/[hasdoc, hasentity, haspragma, localhides, namedparams, namingconv,
-    paramsused, vardeclared, varuplevel, ifstatements]
+
+# Load the program's rules
+macro importRules(): untyped =
+  result = nnkStmtList.newTree()
+  for rule in splitLines(s = slurp("rules" & DirSep & "rulesList.txt")):
+    if rule.len == 0:
+      break
+    result.add(newTree(nnkImportStmt, newLit(getProjectPath() & DirSep &
+        "rules" & DirSep & rule)))
+importRules()
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     contractual.} =

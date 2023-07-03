@@ -1,0 +1,10 @@
+hasdoc
+hasentity
+haspragma
+ifstatements
+localhides
+namedparams
+namingconv
+paramsused
+vardeclared
+varuplevel
