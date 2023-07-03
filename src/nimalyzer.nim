@@ -34,6 +34,11 @@ import config, rules, utils
 
 # Load the program's rules
 macro importRules(): untyped =
+  ## Import the program'r rules into the program's code. It reads file
+  ## rulesList.txt and import each line from it as a module into the program.
+  ##
+  ## Returns the list of import statements with the program's rules code as
+  ## modules.
   result = nnkStmtList.newTree()
   for rule in splitLines(s = slurp(filename = "rules" & DirSep &
       "rulesList.txt")):
