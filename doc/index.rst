@@ -85,3 +85,21 @@ program's rule react with `fix` type of the rule can be found in the
 the program works on AST representation of the checked code, there is a big
 chance that the code will be reformatted after changes. It is a good idea to
 have set auto-formatting after executing `fix` type of rules.
+
+Adding or removing rules
+========================
+
+All the program's rules are stored in *rules* directory inside *src*
+directory. To add a new rule it is recommended to use tool **genrule** (or
+**genrule.exe** on Windows). To create the tool, execute in the main project's
+directory, where Nimble file is: `nimble tools`. Then execute command:
+`bin/genrule`. The program will ask a couple of questions, create a new rule
+from the template file located in *tools* directory and update the list of
+rules in file *rulesList.txt* in *rules* directory. Now you can start working
+on your new rule.
+
+To delete an existing rule, it is enough to remove its name from the list in
+the file *rulesList.txt* in *rules* directory inside *src* directory. But
+deleting the Nim file which contains the rule code is good too. Otherwise, when
+a new rule will be added with **genrule** tool, it will re-add the deleted rule
+to the list.
