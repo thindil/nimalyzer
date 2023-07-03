@@ -60,8 +60,13 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
       ruleCode = ruleCode.replace(sub = "--ruleName--", by = name)
       ruleCode = ruleCode.replace(sub = "--rulename--", by = name.toLowerAscii)
       writeFile(filename = fileName, content = ruleCode)
-      echo "The program's rule '" & name & "' created in file '" & fileName &
-        "'. Don't forget to update the file src/nimalyzer.nim either."
+      let rulesFile: File = open(filename = "src" & DirSep & "rules" & DirSep &
+          "rulesList.txt", mode = fmWrite)
+      for fileName in walkFiles(pattern = "src" & DirSep & "rules" & DirSep & "*.nim"):
+        let (_, name, _) = splitFile(fileName)
+        rulesFile.writeLine(x = [name])
+      rulesFile.close
+      echo "The program's rule '" & name & "' created in file '" & fileName & "'."
     except IOError, OSError:
       quit(errormsg = "Can't create the new rule. Reason: " &
           getCurrentExceptionMsg())
