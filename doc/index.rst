@@ -137,3 +137,26 @@ ruleConfig
 * `ruleOptionValues` - the list of values for the `custom` type of the rule's
   options. It is a Nim sequence of strings. The setting is required only
   when setting `ruleOptions` contains `custom` type of the options.
+* `ruleMinOptions` - the minimal amount of options required by the rule.
+  Default value is 0, which means the rule requires zero or more options. The
+  setting is optional.
+* `ruleShowForCheck` - if true, show the rule summary message for **check**
+  type of the rule. By default it is disabled, default falue *false*. The
+  setting is optional.
+
+checkRule
+---------
+
+`checkRule` is the macro which is runs to check the Nim code. It is split on
+several parts. Each part must have at least `discard` statement. All the
+checking parts are:
+
+* `initCheck` - the initialization of checking the Nim code with the rule. This
+  part of code is run only once. It is a good place to initialize some global
+  variables, etc.
+* `startCheck` - the fragment which will be executed each time, before check any
+  AST node of the Nim code.
+* `checking` - the part in which the Nim code is checked. Executed for each AST
+  node of the Nim code.
+* `endCheck` - the part executed at the end of checking, same as `initCheck`,
+  executed only once. It shows the rule's summary, etc.
