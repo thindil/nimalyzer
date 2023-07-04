@@ -103,3 +103,37 @@ the file *rulesList.txt* in *rules* directory inside *src* directory. But
 deleting the Nim file which contains the rule code is good too. Otherwise, when
 a new rule will be added with **genrule** tool, it will re-add the deleted rule
 to the list.
+
+The structure of a rule's code
+==============================
+
+Each module which contains code of the program's rules is split on several
+parts.
+
+ruleConfig
+----------
+
+`ruleConfig` contains configuration of the rule. Available settings are:
+
+* `ruleName` - the name of the rule. Required.
+* `ruleFoundMessage` - the message shown when the rule return positive
+  result of analyzing the code. Required.
+* `ruleNotFoundMessage` - the message shown when the rule returns negative
+  result of analyzing the code. Required.
+* `rulePositiveMessage` - the message shown when the rule meet the code's
+  element which follows the rule's requirements, for example, a procedure with
+  documentation, etc. Required.
+* `ruleNegativeMessage` - the message shown when the rule meet the code's
+  element which doesn't follow the rule's requirements, for example, a
+  procedure without documentation, etc. Required.
+* `ruleOptions` - the list of options which the rule accepts. If not set,
+  default value, the rule will not accept any arguments in a
+  configuration file. It is a Nim sequence with possible values: `node` for
+  AST Node, `str` for string values, `int` for integer values and `custom`
+  for string values which can contain only the selected values, similar to
+  enumerations. In the last case the setting `ruleOptionValues` must be set
+  too. At the moment a rule can have only one `custom` option type. The
+  setting is optional.
+* `ruleOptionValues` - the list of values for the `custom` type of the rule's
+  options. It is a Nim sequence of strings. The setting is required only
+  when setting `ruleOptions` contains `custom` type of the options.
