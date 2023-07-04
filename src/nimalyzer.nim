@@ -45,7 +45,8 @@ macro importRules(): untyped =
     if rule.len == 0:
       break
     result.add(child = newTree(kind = nnkImportStmt, children = [newLit(
-        s = getProjectPath() & DirSep & "rules" & DirSep & rule)]))
+        s = getProjectPath().parentDir & DirSep & "src" & DirSep & "rules" &
+        DirSep & rule)]))
 importRules()
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
