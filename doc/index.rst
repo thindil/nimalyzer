@@ -115,17 +115,17 @@ ruleConfig
 
 `ruleConfig` contains configuration of the rule. Available settings are:
 
-* `ruleName` - the name of the rule. Required.
+* `ruleName` - the name of the rule. Required. String value.
 * `ruleFoundMessage` - the message shown when the rule return positive
-  result of analyzing the code. Required.
+  result of analyzing the code. Required. String value.
 * `ruleNotFoundMessage` - the message shown when the rule returns negative
-  result of analyzing the code. Required.
+  result of analyzing the code. Required. String value.
 * `rulePositiveMessage` - the message shown when the rule meet the code's
   element which follows the rule's requirements, for example, a procedure with
-  documentation, etc. Required.
+  documentation, etc. Required. String value.
 * `ruleNegativeMessage` - the message shown when the rule meet the code's
   element which doesn't follow the rule's requirements, for example, a
-  procedure without documentation, etc. Required.
+  procedure without documentation, etc. Required. String value.
 * `ruleOptions` - the list of options which the rule accepts. If not set,
   default value, the rule will not accept any arguments in a
   configuration file. It is a Nim sequence with possible values: `node` for
@@ -139,10 +139,10 @@ ruleConfig
   when setting `ruleOptions` contains `custom` type of the options.
 * `ruleMinOptions` - the minimal amount of options required by the rule.
   Default value is 0, which means the rule requires zero or more options. The
-  setting is optional.
+  setting is optional. Natural value.
 * `ruleShowForCheck` - if true, show the rule summary message for **check**
   type of the rule. By default it is disabled, default falue *false*. The
-  setting is optional.
+  setting is optional. Boolean value.
 
 checkRule
 ---------
@@ -160,3 +160,25 @@ checking parts are:
   node of the Nim code.
 * `endCheck` - the part executed at the end of checking, same as `initCheck`,
   executed only once. It shows the rule's summary, etc.
+
+`checkRule` has access to the following variables:
+
+* `astNode` - the currently checked Nim code as AST node as pointer. While the
+  pointer can't be changed, the node (and Nim code itself) can be modified.
+* `parentNode` - the parent AST node of the currently checked Nim code. Same as
+  `astNode`, the pointer can't be changed but the Nim code is modifable.
+* `rule` - the rule data structure as an object. It contains fields:
+  * `options` - the list of the rule options entered by the user in the
+    configuration file. It is a sequence of strings.
+  * `parent` - if true, the currently checked Nim code is the main AST node of
+    the code to check. Boolean value
+  * `fileName`
+  * `negation`
+  * `ruleType`
+  * `amount`
+  * `enabled`
+  * `fixCommand`
+  * `identsCache`
+  * `forceFixCommand`
+* `isParent`
+* `messagePrefix`
