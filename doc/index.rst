@@ -133,7 +133,7 @@ ruleConfig
   for string values which can contain only the selected values, similar to
   enumerations. In the last case the setting `ruleOptionValues` must be set
   too. At the moment a rule can have only one `custom` option type. The
-  setting is optional.
+  setting is optional. Enumeration.
 * `ruleOptionValues` - the list of values for the `custom` type of the rule's
   options. It is a Nim sequence of strings. The setting is required only
   when setting `ruleOptions` contains `custom` type of the options.
@@ -148,8 +148,9 @@ checkRule
 ---------
 
 `checkRule` is the macro which is runs to check the Nim code. It is split on
-several parts. Each part must have at least `discard` statement. All the
-checking parts are:
+several parts. Each part must have at least `discard` statement. The
+`checkRule` is a recursive statement, it executes itself from the main AST node
+of the code to each its child. All the checking parts are:
 
 * `initCheck` - the initialization of checking the Nim code with the rule. This
   part of code is run only once. It is a good place to initialize some global
@@ -167,18 +168,31 @@ checking parts are:
   pointer can't be changed, the node (and Nim code itself) can be modified.
 * `parentNode` - the parent AST node of the currently checked Nim code. Same as
   `astNode`, the pointer can't be changed but the Nim code is modifable.
-* `rule` - the rule data structure as an object. It contains fields:
+* `rule` - the rule data structure as an object. All its content can be
+  modified. It contains fields:
   * `options` - the list of the rule options entered by the user in the
     configuration file. It is a sequence of strings.
   * `parent` - if true, the currently checked Nim code is the main AST node of
-    the code to check. Boolean value
-  * `fileName`
-  * `negation`
-  * `ruleType`
-  * `amount`
-  * `enabled`
-  * `fixCommand`
-  * `identsCache`
-  * `forceFixCommand`
-* `isParent`
-* `messagePrefix`
+    the code to check. Boolean value.
+  * `fileName` - the name of the file which contains the checked Nim code.
+    String value.
+  * `negation` - if true, the rule is configured as a negation (with word *not*
+    in the configuration file). Boolean value.
+  * `ruleType` - the type of the rule: `check`, `fix`, `search` or `count`.
+    Enumeration.
+  * `amount` - the amount of results found in the previous iterations of
+    checking the Nim code. Integer value.
+  * `enabled` - if true, the rule is enabled for the currently checked Nim
+    code and the check is performed. Boolean value.
+  * `fixCommand` - the command executed by `fix` type of the rule. Sets by the
+    user in the configuration file. String value.
+  * `identsCache` - the Nim idents cache needed for some internal rule code. It
+    is recomended to not change it.
+  * `forceFixCommand` - if true, the rule should use `fixCommand` for `fix`
+    type of the rule instead of its own code. Sets by the user in the
+    configuration file. Boolean value
+* `isParent` - if true, the rule is in the main AST node of the currently
+  checked Nim code. Boolean, read only value.
+* `messagePrefix` - the prefix added to each log's message. Its content depends
+  on the level of the program's messages set in the configuration file. String,
+  read only value.
