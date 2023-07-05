@@ -196,3 +196,16 @@ of the code to each its child. All the checking parts are:
 * `messagePrefix` - the prefix added to each log's message. Its content depends
   on the level of the program's messages set in the configuration file. String,
   read only value.
+
+`checkRule` can use the follwing procedures and templates:
+
+* `message(text: string; returnValue: var int; level: Level = lvlError; decrease: bool = true)` - prints
+  the selected `text` as the program's log's message and modify the rule
+  results amount `rule.amount` via  `returnValue` parameter. If `decrease`
+  parameter is set to true, the `returnValue` will be decreased, otherwise
+  increased. `level` is the level of the log message.
+* `errorMessage(text: string; e: ref Exception = nil): int`
+* `setRuleState(node: PNode; ruleName: string; oldState: var bool)`
+* `setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
+    node: PNode; ruleData: string = ""; params: varargs[string])`
+* `getNodesToCheck(parentNode, node: PNode): PNode`
