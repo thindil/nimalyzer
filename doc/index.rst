@@ -206,7 +206,7 @@ of the code to each its child. All the checking parts are:
     is recomended to not change it.
   * `forceFixCommand` - if true, the rule should use `fixCommand` for `fix`
     type of the rule instead of its own code. Sets by the user in the
-    configuration file. Boolean value
+    configuration file. Boolean value.
 * `isParent` - if true, the rule is in the main AST node of the currently
   checked Nim code. Boolean, read only value.
 * `messagePrefix` - the prefix added to each log's message. Its content depends
@@ -229,7 +229,7 @@ of the code to each its child. All the checking parts are:
   pragmas in the code. `node` is the AST node of the Nim code currently
   checked, `ruleName` is usually set to the configuration variable `ruleName`
   and `oldState` is the modified state of the rule, usually set to
-  `rule.state`.
+  `rule.state`, it can be modified by `setRuleState` call.
 * `setResult*(checkResult: bool; positiveMessage, negativeMessage: string; node: PNode; ruleData: string = ""; params: varargs[string])` - sets
   the result of checking the Nim code as the AST `node`. `checkResult` is the
   result of checking of the Nim code, for example, true if the code's
@@ -246,3 +246,47 @@ of the code to each its child. All the checking parts are:
 * `getNodesToCheck(parentNode, node: PNode): PNode` - get the flattened into
   one list, the list of AST nodes, starting from currently checked `node` of
   the Nim code.
+
+fixRule
+-------
+
+`fixRule` is the macro which will be executed for `fix` type of the rule. It
+must contains at least `discard` statement. If it is set to `discard` only
+statement, then the command set by the configuration `fixCommand` setting will
+be executed. Otherwise the code inside the macro will be used, unless the
+program's configuration option `forceFixCommand` is set. The macro returns
+`true` if the Nim code was modified so the program can save the new version of
+the Nim code to the file, otherwise `false`. If `fixCommand` executed, the
+macro always returns `false`.
+
+
+`fixRule` has access to the following variables:
+
+* `astNode` - the currently checked Nim code as AST node as pointer. While the
+  pointer can't be changed, the node (and Nim code itself) can be modified.
+* `parentNode` - the parent AST node of the currently checked Nim code. Same as
+  `astNode`, the pointer can't be changed but the Nim code is modifable.
+* `rule` - the rule data structure as an object. It contains fields:
+  * `options` - the list of the rule options entered by the user in the
+    configuration file. It is a sequence of strings.
+  * `parent` - if true, the currently checked Nim code is the main AST node of
+    the code to check. Boolean value.
+  * `fileName` - the name of the file which contains the checked Nim code.
+    String value.
+  * `negation` - if true, the rule is configured as a negation (with word *not*
+    in the configuration file). Boolean value.
+  * `ruleType` - the type of the rule: `check`, `fix`, `search` or `count`.
+    Enumeration.
+  * `amount` - the amount of results found in the previous iterations of
+    checking the Nim code. Integer value.
+  * `enabled` - if true, the rule is enabled for the currently checked Nim
+    code and the check is performed. Boolean value.
+  * `fixCommand` - the command executed by `fix` type of the rule. Sets by the
+    user in the configuration file. String value.
+  * `identsCache` - the Nim idents cache needed for some internal rule code. It
+    is recomended to not change it.
+  * `forceFixCommand` - if true, the rule should use `fixCommand` for `fix`
+    type of the rule instead of its own code. Sets by the user in the
+    configuration file. Boolean value.
+* `data` - additional data sent to the `fixRule` macro, usualy via `setResult`
+  call. String value.
