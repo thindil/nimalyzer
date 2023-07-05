@@ -144,7 +144,7 @@ ruleConfig
   Default value is 0, which means the rule requires zero or more options. The
   setting is optional. Natural value.
 * `ruleShowForCheck` - if true, show the rule summary message for **check**
-  type of the rule. By default it is disabled, default value *false*. The
+  type of the rule. By default, it is disabled, default value *false*. The
   setting is optional. Boolean value.
 
 Constants
@@ -186,7 +186,7 @@ of the code to each its child. All the checking parts are:
 * `astNode` - the currently checked Nim code as AST node as pointer. While the
   pointer can't be changed, the node (and Nim code itself) can be modified.
 * `parentNode` - the parent AST node of the currently checked Nim code. Same as
-  `astNode`, the pointer can't be changed but the Nim code is modifiable.
+  `astNode`, the pointer can't be changed, but the Nim code is modifiable.
 * `rule` - the rule data structure as an object. All its content can be
   modified. It contains fields:
   * `options` - the list of the rule options entered by the user in the
@@ -202,7 +202,7 @@ of the code to each its child. All the checking parts are:
   * `amount` - the amount of results found in the previous iterations of
     checking the Nim code. Integer value.
   * `enabled` - if true, the rule is enabled for the currently checked Nim
-    code and the check is performed. Boolean value.
+    code. Boolean value.
   * `fixCommand` - the command executed by `fix` type of the rule. Sets by the
     user in the configuration file. String value.
   * `identsCache` - the Nim idents cache needed for some internal rule code. It
@@ -256,9 +256,9 @@ fixRule
 `fixRule` is the macro which will be executed for `fix` type of the rule. It
 must contains at least `discard` statement. If it is set to `discard` only
 statement, then the command set by the configuration `fixCommand` setting will
-be executed. Otherwise the code inside the macro will be used, unless the
+be executed. Otherwise, the code inside the macro will be used, unless the
 program's configuration option `forceFixCommand` is set. The macro returns
-`true` if the Nim code was modified so the program can save the new version of
+`true` if the Nim code was modified, so the program can save the new version of
 the Nim code to the file, otherwise `false`. If `fixCommand` executed, the
 macro always returns `false`.
 
@@ -268,7 +268,7 @@ macro always returns `false`.
 * `astNode` - the currently checked Nim code as AST node as pointer. While the
   pointer can't be changed, the node (and Nim code itself) can be modified.
 * `parentNode` - the parent AST node of the currently checked Nim code. Same as
-  `astNode`, the pointer can't be changed but the Nim code is modifiable.
+  `astNode`, the pointer can't be changed, but the Nim code is modifiable.
 * `rule` - the rule data structure as an object. It contains fields:
   * `options` - the list of the rule options entered by the user in the
     configuration file. It is a sequence of strings.
@@ -283,7 +283,7 @@ macro always returns `false`.
   * `amount` - the amount of results found in the previous iterations of
     checking the Nim code. Integer value.
   * `enabled` - if true, the rule is enabled for the currently checked Nim
-    code and the check is performed. Boolean value.
+    code. Boolean value.
   * `fixCommand` - the command executed by `fix` type of the rule. Sets by the
     user in the configuration file. String value.
   * `identsCache` - the Nim idents cache needed for some internal rule code. It
