@@ -204,8 +204,27 @@ of the code to each its child. All the checking parts are:
   results amount `rule.amount` via  `returnValue` parameter. If `decrease`
   parameter is set to true, the `returnValue` will be decreased, otherwise
   increased. `level` is the level of the log message.
-* `errorMessage(text: string; e: ref Exception = nil): int`
-* `setRuleState(node: PNode; ruleName: string; oldState: var bool)`
-* `setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
-    node: PNode; ruleData: string = ""; params: varargs[string])`
+* `errorMessage(text: string; e: ref Exception = nil): int` - prints the
+  selected `text` as the program's error message. If parameter `e` isn't `nil`,
+  it also shows the message and stack trace, in debug builds only, for the
+  current exception.
+* `setRuleState(node: PNode; ruleName: string; oldState: var bool)` - checks and
+  sets the state, enabled or disabled, of the rule, based on the program's
+  pragmas in the code. `node` is the AST node of the Nim code currently
+  checked, `ruleName` is usually set to the configuration variable `ruleName`
+  and `oldState` is the modified state of the rule, usually set to
+  `rule.state`.
+* `setResult*(checkResult: bool; positiveMessage, negativeMessage: string; node: PNode; ruleData: string = ""; params: varargs[string])` - sets
+  the result of checking the Nim code as the AST `node`. `checkResult` is the
+  result of checking of the Nim code, for example, true if the code's
+  documentation found or if procedure has the selected pragma. `positiveMessage`
+  will be shown when `checkResult` fullfills the rule's settings, like
+  negation, type, etc. `negativeMessage` will be shown when `checkResilt` not
+  fullfils the rule's settings. Both usualy are set to the rule's configuration
+  options like `positiveMessage` and `negativeMessage`. `ruleData` is an
+  additional data used by `fix` type of the rule. `params` contains list of
+  additional data, used in the program's messages, `positiveMessage` and
+  `negativeMessage`. To use any of `params`, use template `{params[number]}`
+  in messages, where **[number]** is the number of the param on the list,
+  starting from zero.
 * `getNodesToCheck(parentNode, node: PNode): PNode`
