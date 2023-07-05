@@ -144,6 +144,22 @@ ruleConfig
   type of the rule. By default it is disabled, default falue *false*. The
   setting is optional. Boolean value.
 
+Constants
+---------
+
+Each rule has available following constants to use in its code:
+
+* `showForCheck` - Boolean value, set by the configuration's option
+  `ruleShowForCheck`.
+* `foundMessage` - String value, set by the configuration's option
+  `ruleFoundMessage`.
+* `notFoundMessage` - String value, set by the configuration's option
+  `ruleNotFoundMessage`.
+* `positiveMessage` - String value, set by the configuration's option
+  `rulePositiveMessage`.
+* `negativeMessage` - String value, set by the configuration's option
+  `ruleNegativeMessage`.
+
 checkRule
 ---------
 
@@ -227,4 +243,6 @@ of the code to each its child. All the checking parts are:
   `negativeMessage`. To use any of `params`, use template `{params[number]}`
   in messages, where **[number]** is the number of the param on the list,
   starting from zero.
-* `getNodesToCheck(parentNode, node: PNode): PNode`
+* `getNodesToCheck(parentNode, node: PNode): PNode` - get the flattened into
+  one list, the list of AST nodes, starting from currently checked `node` of
+  the Nim code.
