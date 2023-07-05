@@ -2,6 +2,9 @@
 Nimalyzer documentation
 =======================
 
+.. default-role:: code
+.. contents::
+
 General information
 ===================
 
@@ -141,7 +144,7 @@ ruleConfig
   Default value is 0, which means the rule requires zero or more options. The
   setting is optional. Natural value.
 * `ruleShowForCheck` - if true, show the rule summary message for **check**
-  type of the rule. By default it is disabled, default falue *false*. The
+  type of the rule. By default it is disabled, default value *false*. The
   setting is optional. Boolean value.
 
 Constants
@@ -183,7 +186,7 @@ of the code to each its child. All the checking parts are:
 * `astNode` - the currently checked Nim code as AST node as pointer. While the
   pointer can't be changed, the node (and Nim code itself) can be modified.
 * `parentNode` - the parent AST node of the currently checked Nim code. Same as
-  `astNode`, the pointer can't be changed but the Nim code is modifable.
+  `astNode`, the pointer can't be changed but the Nim code is modifiable.
 * `rule` - the rule data structure as an object. All its content can be
   modified. It contains fields:
   * `options` - the list of the rule options entered by the user in the
@@ -213,7 +216,7 @@ of the code to each its child. All the checking parts are:
   on the level of the program's messages set in the configuration file. String,
   read only value.
 
-`checkRule` can use the follwing procedures and templates:
+`checkRule` can use the following procedures and templates:
 
 * `message(text: string; returnValue: var int; level: Level = lvlError; decrease: bool = true)` - prints
   the selected `text` as the program's log's message and modify the rule
@@ -241,7 +244,7 @@ of the code to each its child. All the checking parts are:
   additional data used by `fix` type of the rule. `params` contains list of
   additional data, used in the program's messages, `positiveMessage` and
   `negativeMessage`. To use any of `params`, use template `{params[number]}`
-  in messages, where **[number]** is the number of the param on the list,
+  in messages, where **[number]** is the number of the parameter on the list,
   starting from zero.
 * `getNodesToCheck(parentNode, node: PNode): PNode` - get the flattened into
   one list, the list of AST nodes, starting from currently checked `node` of
@@ -265,7 +268,7 @@ macro always returns `false`.
 * `astNode` - the currently checked Nim code as AST node as pointer. While the
   pointer can't be changed, the node (and Nim code itself) can be modified.
 * `parentNode` - the parent AST node of the currently checked Nim code. Same as
-  `astNode`, the pointer can't be changed but the Nim code is modifable.
+  `astNode`, the pointer can't be changed but the Nim code is modifiable.
 * `rule` - the rule data structure as an object. It contains fields:
   * `options` - the list of the rule options entered by the user in the
     configuration file. It is a sequence of strings.
@@ -288,5 +291,5 @@ macro always returns `false`.
   * `forceFixCommand` - if true, the rule should use `fixCommand` for `fix`
     type of the rule instead of its own code. Sets by the user in the
     configuration file. Boolean value.
-* `data` - additional data sent to the `fixRule` macro, usualy via `setResult`
+* `data` - additional data sent to the `fixRule` macro, usually via `setResult`
   call. String value.
