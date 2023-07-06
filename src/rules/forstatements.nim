@@ -76,13 +76,23 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
     if node.kind == nkForStmt:
-      var checkResult: bool = false
-      if node[^2].kind == nkCall:
-        for index, child in node:
-          echo "nkCall:", child, " INDEX:", index
-      elif node[^2].kind == nkDotExpr:
-        for index, child in node:
-          echo "nkDotExpr:", child, " INDEX:", index
+      var
+        checkResult: bool = false
+        callName: string = ""
+      if node[^2].kind == nkCall and (($node[^2]).startsWith("pairs") or ($node[
+          ^2]).startsWith("items")):
+        checkResult = true
+        callName = $node[^2][0]
+      elif node[^2].kind == nkDotExpr and (($node[^2]).endsWith("pairs") or (
+          $node[^2]).endsWith("items")):
+        checkResult = true
+        callName = $node[^2][^1]
+      if rule.ruleType in {search, count}:
+        checkResult = not checkResult
+      setResult(checkResult = checkResult, positiveMessage = positiveMessage,
+          negativeMessage = negativeMessage, node = node, params = [
+          $node.info.line, (if rule.negation: "uses '" & callName &
+          "'" else: "don't use 'pairs' or 'items'") & " for iteration."])
   endCheck:
     discard
 
