@@ -80,12 +80,12 @@ checkRule:
       var
         checkResult: bool = false
         callName: string = ""
-      if nodeToCheck[^2].kind == nkCall and (($nodeToCheck[^2]).startsWith("pairs") or ($nodeToCheck[
-          ^2]).startsWith("items")):
+      if nodeToCheck[^2].kind == nkCall and (($nodeToCheck[^2]).startsWith(
+          "pairs") or ($nodeToCheck[^2]).startsWith("items")):
         checkResult = true
         callName = $nodeToCheck[^2][0]
-      elif nodeToCheck[^2].kind == nkDotExpr and (($nodeToCheck[^2]).endsWith("pairs") or (
-          $nodeToCheck[^2]).endsWith("items")):
+      elif nodeToCheck[^2].kind == nkDotExpr and (($nodeToCheck[^2]).endsWith(
+          "pairs") or ($nodeToCheck[^2]).endsWith("items")):
         checkResult = true
         callName = $nodeToCheck[^2][^1]
       if rule.ruleType in {search, count}:
