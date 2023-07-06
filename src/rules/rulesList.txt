@@ -1,3 +1,4 @@
+forstatements
 hasdoc
 hasentity
 haspragma
