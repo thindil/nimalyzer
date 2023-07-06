@@ -81,11 +81,11 @@ checkRule:
         checkResult: bool = false
         callName: string = ""
       if nodeToCheck[^2].kind == nkCall and (($nodeToCheck[^2]).startsWith(
-          "pairs") or ($nodeToCheck[^2]).startsWith("items")):
+          prefix = "pairs") or ($nodeToCheck[^2]).startsWith(prefix = "items")):
         checkResult = true
         callName = $nodeToCheck[^2][0]
       elif nodeToCheck[^2].kind == nkDotExpr and (($nodeToCheck[^2]).endsWith(
-          "pairs") or ($nodeToCheck[^2]).endsWith("items")):
+          suffix = ".pairs") or ($nodeToCheck[^2]).endsWith(suffix = ".items")):
         checkResult = true
         callName = $nodeToCheck[^2][^1]
       if rule.ruleType in {search, count}:
