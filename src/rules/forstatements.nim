@@ -75,23 +75,24 @@ checkRule:
   startCheck:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
-    if node.kind == nkForStmt:
+    if node.kind == nkForStmt or (node.kind == nkStmtList and node[0].kind == nkForStmt):
+      let nodeToCheck: PNode = (if node.kind == nkForStmt: node else: node[0])
       var
         checkResult: bool = false
         callName: string = ""
-      if node[^2].kind == nkCall and (($node[^2]).startsWith("pairs") or ($node[
+      if nodeToCheck[^2].kind == nkCall and (($nodeToCheck[^2]).startsWith("pairs") or ($nodeToCheck[
           ^2]).startsWith("items")):
         checkResult = true
-        callName = $node[^2][0]
-      elif node[^2].kind == nkDotExpr and (($node[^2]).endsWith("pairs") or (
-          $node[^2]).endsWith("items")):
+        callName = $nodeToCheck[^2][0]
+      elif nodeToCheck[^2].kind == nkDotExpr and (($nodeToCheck[^2]).endsWith("pairs") or (
+          $nodeToCheck[^2]).endsWith("items")):
         checkResult = true
-        callName = $node[^2][^1]
+        callName = $nodeToCheck[^2][^1]
       if rule.ruleType in {search, count}:
         checkResult = not checkResult
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
-          negativeMessage = negativeMessage, node = node, params = [
-          $node.info.line, (if rule.negation: "uses '" & callName &
+          negativeMessage = negativeMessage, node = nodeToCheck, params = [
+          $nodeToCheck.info.line, (if rule.negation: "uses '" & callName &
           "'" else: "don't use 'pairs' or 'items'") & " for iteration."])
   endCheck:
     discard
