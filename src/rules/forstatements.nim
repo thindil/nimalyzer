@@ -74,10 +74,15 @@ checkRule:
     discard
   startCheck:
     let negation: string = (if rule.negation: "'t" else: "")
-    discard
   checking:
     if node.kind == nkForStmt:
-      echo "KIND:", node.kind, " NODE:", node
+      var checkResult: bool = false
+      if node[^2].kind == nkCall:
+        for index, child in node:
+          echo "nkCall:", child, " INDEX:", index
+      elif node[^2].kind == nkDotExpr:
+        for index, child in node:
+          echo "nkDotExpr:", child, " INDEX:", index
   endCheck:
     discard
 
