@@ -93,9 +93,19 @@ checkRule:
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
           negativeMessage = negativeMessage, node = nodeToCheck, params = [
           $nodeToCheck.info.line, (if rule.negation: "uses '" & callName &
-          "'" else: "don't use 'pairs' or 'items'") & " for iteration."])
+          "'" else: "don't use 'pairs' or 'items'") & " for iterators."])
   endCheck:
     discard
 
 fixRule:
-  discard
+  # Remove iterators pairs or items from for statement
+  if rule.negation:
+    if astNode[^2].kind == nkCall:
+      echo "CALL:", astNode[^2][^1], " KIND:", astNode[^2][^1].kind
+    else:
+      echo "DOT:", astNode[^2][0], " KIND:", astNode[^2][0].kind
+    echo astNode
+    return false
+  # Add iterators pairs or items from for statement
+  else:
+    return false
