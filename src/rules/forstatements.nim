@@ -110,10 +110,9 @@ fixRule:
           identifier = $astNode[^2][0]), info = astNode[^2][0].info)
     return true
   # Add iterators pairs or items from for statement
-  else:
-    astNode[^2] = newTree(kind = nkDotExpr, children = [newIdentNode(
-        ident = getIdent(ic = rule.identsCache, identifier = $astNode[^2]),
-        info = astNode[^2].info), newIdentNode(ident = getIdent(
-        ic = rule.identsCache, identifier = (if astNode.len ==
-        4: "pairs" else: "items")), info = astNode[^2].info)])
-    return true
+  astNode[^2] = newTree(kind = nkDotExpr, children = [newIdentNode(
+      ident = getIdent(ic = rule.identsCache, identifier = $astNode[^2]),
+      info = astNode[^2].info), newIdentNode(ident = getIdent(
+      ic = rule.identsCache, identifier = (if astNode.len ==
+      4: "pairs" else: "items")), info = astNode[^2].info)])
+  return true
