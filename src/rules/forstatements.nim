@@ -60,6 +60,8 @@
 ##
 ## --Insert rules examples--
 
+# External modules imports
+import compiler/idents
 # Import default rules' modules
 import ../rules
 
@@ -101,11 +103,12 @@ fixRule:
   # Remove iterators pairs or items from for statement
   if rule.negation:
     if astNode[^2].kind == nkCall:
-      echo "CALL:", astNode[^2][^1], " KIND:", astNode[^2][^1].kind
+      astNode[^2] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+          identifier = $astNode[^2][^1]), info = astNode[^2][^1].info)
     else:
-      echo "DOT:", astNode[^2][0], " KIND:", astNode[^2][0].kind
-    echo astNode
-    return false
+      astNode[^2] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+          identifier = $astNode[^2][0]), info = astNode[^2][0].info)
+    return true
   # Add iterators pairs or items from for statement
   else:
     return false
