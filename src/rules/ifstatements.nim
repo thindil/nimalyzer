@@ -120,9 +120,8 @@ checkRule:
           setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
               negativeMessage = negativeMessage, node = node,
-              ruleData = "negation", params = [ $node.info.line,
-              "the if statement " & (
-              if rule.negation: "doesn't start" else: "starts") &
+              ruleData = "negation", params = [$node.info.line,
+              (if rule.negation: "doesn't start" else: "starts") &
               " with a negative condition."])
         if rule.amount == oldAmount:
           # Check if the last if branch can be moved outside the if statement
@@ -149,8 +148,8 @@ checkRule:
             setResult(checkResult = checkResult,
                 positiveMessage = positiveMessage,
                 negativeMessage = negativeMessage, node = node,
-                ruleData = "discard", params = [ $node.info.line,
-                "the if statement branch " & (
+                ruleData = "discard", params = [$node.info.line,
+                "the statement branch " & (
                 if rule.negation: "doesn't contain" else: "contains") &
                 " only discard statement."])
             break
