@@ -87,7 +87,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       if rules[0].kind == ConfigKind.message:
         message(text = rules[0].text)
         rules.delete(i = 0)
-      for i, source in sources.pairs:
+      for i, source in sources:
         message(text = "[" & $(i + 1) & "/" & $sources.len & "] Parsing '" &
             source & "'")
         var codeParser: Parser = Parser()
