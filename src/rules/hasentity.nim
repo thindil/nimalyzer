@@ -148,7 +148,7 @@ checkRule:
                 int.low
           if node.kind == parentKind:
             if childIndex == int.low:
-              for child in node.items:
+              for child in node:
                 if child.kind != nodeKind:
                   continue
                 let childName: string = try:
