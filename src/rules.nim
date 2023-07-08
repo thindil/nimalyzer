@@ -154,7 +154,7 @@ proc setRuleState*(node: PNode; ruleName: string;
     node != nil
   body:
     if node.kind == nkPragma:
-      for child in node.items:
+      for child in node:
         try:
           let pragma: seq[string] = split(s = $child, sep = ": ")
           if pragma.len == 2 and pragma[1].toLowerAscii == "\"" &
@@ -252,7 +252,7 @@ proc validateOptions*(rule: RuleSettings; options: seq[
           " requires at maximum " & $rule.options.len & " options, but " &
           $options.len & " provided: '" & options.join(sep = ", ") & "'.").bool
     # Check if all options have proper values
-    for index, option in options.pairs:
+    for index, option in options:
       case rule.options[index]
       of str:
         continue
@@ -528,13 +528,13 @@ proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
     parentNode != nil
     node != nil
   body:
-    for nodes in parentNode.items:
-      for baseNode in nodes.items:
+    for nodes in parentNode:
+      for baseNode in nodes:
         if baseNode == node:
           return flattenStmts(n = parentNode)
-        for child in baseNode.items:
+        for child in baseNode:
           if child == node:
             return flattenStmts(n = nodes)
-          for subChild in child.items:
+          for subChild in child:
             if subChild == node:
               return flattenStmts(n = baseNode)
