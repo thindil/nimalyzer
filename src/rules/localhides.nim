@@ -102,9 +102,9 @@ proc checkChild(nodes: PNode; varName: string): PNode {.raises: [], tags: [
   body:
     result = nil
     try:
-      for childNode in nodes.items:
+      for childNode in nodes:
         if childNode.kind in {nkVarSection, nkLetSection, nkConstSection}:
-          for declaration in childNode.items:
+          for declaration in childNode:
             if declaration[0].kind == nkIdent:
               if varName == $declaration[0]:
                 return declaration
@@ -143,7 +143,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     var
       startChecking: bool = false
       hiddenLine: Natural = 0
-    for child in nodesToCheck.items:
+    for child in nodesToCheck:
       if not startChecking and child == section:
         startChecking = true
         continue
@@ -167,7 +167,7 @@ checkRule:
       # Sometimes the compiler detects declarations as children of the node
       if node.kind in {nkVarSection, nkLetSection, nkConstSection}:
         # Check each variable declaration if meet the rule requirements
-        for declaration in node.items:
+        for declaration in node:
           setCheckResult(node = declaration, section = node,
               parent = parentNode, messagePrefix = messagePrefix, rule = rule)
       # And sometimes the compiler detects declarations as the node
@@ -202,7 +202,7 @@ fixRule:
       var
         startChecking: bool = false
         hiddingChild: PNode = nil
-      for child in nodes.items:
+      for child in nodes:
         if not startChecking:
           startChecking = true
           continue
