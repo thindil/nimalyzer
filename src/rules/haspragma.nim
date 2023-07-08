@@ -239,7 +239,7 @@ fixRule:
   var pragmas: PNode = astNode[pragmasPos]
   # Remove the selected pragma from the declaration
   if rule.negation:
-    for index, node in pragmas.pairs:
+    for index, node in pragmas:
       let pragma: string = $node
       if '*' notin [data[0], data[^1]] and pragma == data:
         delSon(father = pragmas, idx = index)
@@ -260,7 +260,7 @@ fixRule:
         result = true
         break
     if pragmas.len == 0:
-      for index, child in astNode.pairs:
+      for index, child in astNode:
         if child == pragmas:
           astNode[index] = newNode(kind = nkEmpty)
           result = true
