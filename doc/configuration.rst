@@ -122,15 +122,16 @@ hasPragma will check if procedures doesn't have the selected pragmas. The messag
 level for info about the line of code which violates the rule is
 lvlError. The settings below checks for:
 
-1. If all procedures in the source code have pragma "contractual", "raises" and "tags". The last two can be empty or have listed values.
-2. If all parameters of all procedures are used in the code.
-3. If all parameters of all macros used in the code.
-4. If all calls in the code uses named parameters.
-5. If all public declarations and module have documentation, but without checking fields of objects' declarations.
-6. If all variables' declarations have declared type and value for them.
-7. If any local variable declaration can be updated to let or const.
-8. If any local variable declaration hides previously declared variable.
-9. If any `if` statement can be upgraded.
+1.  If all procedures in the source code have pragma "contractual", "raises" and "tags". The last two can be empty or have listed values.
+2.  If all parameters of all procedures are used in the code.
+3.  If all parameters of all macros used in the code.
+4.  If all calls in the code uses named parameters.
+5.  If all public declarations and module have documentation, but without checking fields of objects' declarations.
+6.  If all variables' declarations have declared type and value for them.
+7.  If any local variable declaration can be updated to let or const.
+8.  If any local variable declaration hides previously declared variable.
+9.  If any `if` statement can be upgraded.
+10. If any `for` statement can be upgraded.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -142,6 +143,7 @@ lvlError. The settings below checks for:
     check varUplevel
     check localHides
     check ifStatements
+    check not forStatements
 
 Search rules
 ------------
@@ -233,3 +235,4 @@ the program.
     check varUplevel
     check localHides
     check ifStatements
+    check not forStatements
