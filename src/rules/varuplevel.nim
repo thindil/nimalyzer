@@ -138,7 +138,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
             nodes != nil
           body:
             result = false
-            for child in nodes.items:
+            for child in nodes:
               try:
                 if (child.kind == nkIdent and $child == varName) or (
                     child.kind in {nkAsgn, nkDotExpr} and $child[0] == varName):
@@ -151,7 +151,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
 
         # Check if the declaration can be updated
         var startChecking: bool = false
-        for child in nodesToCheck.items:
+        for child in nodesToCheck:
           if not startChecking and child == section:
             startChecking = true
             continue
@@ -175,7 +175,7 @@ checkRule:
       # Sometimes the compiler detects declarations as children of the node
       if node.kind in {nkVarSection, nkLetSection}:
         # Check each variable declaration if meet the rule requirements
-        for declaration in node.items:
+        for declaration in node:
           setCheckResult(node = declaration, section = node,
               parent = parentNode, messagePrefix = messagePrefix, rule = rule)
       # And sometimes the compiler detects declarations as the node
@@ -203,7 +203,7 @@ fixRule:
       nodes != nil
     body:
       var nodeIndex, declIndex: int = -1
-      for index, node in nodes.pairs:
+      for index, node in nodes:
         if node.kind in {nkVarSection, nkLetSection}:
           nodeIndex = index
           for index, declaration in node.pairs:
@@ -225,16 +225,16 @@ fixRule:
         nodes.sons = nodes.sons[0 .. nodeIndex - 1] & newSection & nodes.sons[
             nodeIndex .. ^1]
 
-  for nodes in parentNode.items:
-    for baseNode in nodes.items:
+  for nodes in parentNode:
+    for baseNode in nodes:
       if baseNode == astNode:
         updateNode(nodes = parentNode)
         return true
-      for child in baseNode.items:
+      for child in baseNode:
         if child == astNode:
           updateNode(nodes = nodes)
           return true
-        for subChild in child.items:
+        for subChild in child:
           if subChild == astNode:
             updateNode(nodes = baseNode)
             return true
