@@ -118,7 +118,7 @@ checkRule:
       # Sometimes the compiler detects declarations as children of the node
       if node.kind in nodesToCheck:
         # Check each variable declaration if meet the rule requirements
-        for declaration in node.items:
+        for declaration in node:
           if declaration.kind == nkEmpty:
             continue
           let nameToCheck: string = (if declaration.kind in {nkCharLit ..
