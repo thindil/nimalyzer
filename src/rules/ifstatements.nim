@@ -23,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## The rule to check do if statements in the code don't contain some
+## The rule to check do `if` statements in the code don't contain some
 ## expressions. Checked things:
 ##
 ## * Empty statements. `If` statements, which contains only `discard` statement.
@@ -66,19 +66,21 @@
 ## Disabling the rule
 ## ------------------
 ## It is possible to disable the rule for a selected part of the checked code
-## by using pragma *ruleOff: "ifStatements"* in the element from which the rule
-## should be disabled or in code before it. For example, if the rule should
-## be disabled for procedure `proc main()`, the full declaration of it should
-## be::
+## by using pragma *ruleOff: "ifStatements"* in the code before it. For example,
+## if the rule should be disabled for the statement, the full declaration of it
+## should be::
 ##
-##     proc main () {.ruleOff: "ifStatements".}
+##     {.ruleOff: "ifStatements".}
+##     if a == 1:
+##       echo a
 ##
-## To enable the rule again, the pragma *ruleOn: "ifStatements"* should be added in
-## the element which should be checked or in code before it. For example, if
-## the rule should be re-enabled for `const a = 1`, the full declaration should
-## be::
+## To enable the rule again, the pragma *ruleOn: "ifStatements"* should be added
+## in the code before it. For example, if the rule should be re-enabled for the
+## statement, the full declaration should be::
 ##
-##     const a {.ruleOn: "ifStatements".} = 1
+##     {.ruleOn: "ifStatements".}
+##     if a == 1:
+##       echo a
 ##
 ## Examples
 ## --------
