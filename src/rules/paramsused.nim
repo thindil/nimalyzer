@@ -132,7 +132,7 @@ checkRule:
               let
                 varName: string = split(s = $child[i])[0]
                 body: PNode = flattenStmts(n = node[6])
-              for childNode in body.items:
+              for childNode in body:
                 index = find(s = $childNode, sub = varName)
                 if index > -1:
                   break
