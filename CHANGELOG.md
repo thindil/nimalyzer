@@ -21,6 +21,8 @@ of the program.
   add a template of documentation to the checked code.
 - New rule `ifStatements` to check `if` statements in code for various things,
   like empty statements, negative conditions, etc.
+- New rule `forStatements` to check `for` statements in code do they use `pairs`
+  and `items` iterators or not.
 
 ### Changed
 - Updated the project's documentation.
