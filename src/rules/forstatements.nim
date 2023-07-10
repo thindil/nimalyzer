@@ -106,7 +106,7 @@ checkRule:
           suffix = ".pairs") or ($nodeToCheck[^2]).endsWith(suffix = ".items")):
         checkResult = true
         callName = $nodeToCheck[^2][^1]
-      if rule.ruleType in {search, count}:
+      if rule.ruleType == RuleTypes.count:
         checkResult = not checkResult
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
           negativeMessage = negativeMessage, node = nodeToCheck, params = [
