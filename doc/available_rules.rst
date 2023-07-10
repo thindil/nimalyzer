@@ -5,6 +5,61 @@ Available rules
 .. default-role:: code
 .. contents::
 
+Forstatements rule
+==================
+The rule to check do `for` statements in the code don't contain some
+expressions. At the moment, it can check only if the `for` statement iterator
+has or doesn't have the direct call to `pairs` or `items` iterators.
+
+The syntax in a configuration file is::
+
+  [ruleType] ?not? forStatements
+
+* ruleType is the type of rule which will be executed. Proper values are:
+  *check*, *search*, *count* and *fix*. For more information about the types of
+  rules, please refer to the program's documentation. Check type will raise
+  an error if there is a `for` statement which violates the check. Search
+  type will list all statements which violates the check or raise an
+  error if nothing found. Count type will simply list the amount of the
+  statements which violates the check. Fix type will try to fix the code
+  which violates check: it will add the direct call for proper iterator or
+  remove it, for negation type of the rule.
+* optional word *not* means negation for the rule. Adding word *not* will
+  change to inform only about the `for` statements which not violates the
+  rule's check.
+* forStatements is the name of the rule. It is case-insensitive, thus it can be
+  set as *forstatements*, *forStatements* or *fOrStAtEmEnTs*.
+
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "forStatements"* in the code before it. For
+example, if the rule should be disabled for the selected statement, the full
+declaration of it should be::
+
+    {.ruleOff: "forStatements".}
+    for i in [1..5]:
+      echo i
+
+To enable the rule again, the pragma *ruleOn: "forStatements"* should be
+added in the code before it. For example, if the rule should be re-enabled
+for the statement, the full declaration should be::
+
+    {.ruleOn: "forStatements".}
+    for i in [1..5]:
+      echo i
+
+Examples
+--------
+
+1. Check if all `for` statements have direct calls for iterators::
+
+    check forStatements
+
+2. Remove all direct calls for iterators from `for` statements::
+
+    fix not forStatements
+
 Hasdoc rule
 ===========
 The rule to check if all public declarations (variables, procedures, etc)
@@ -240,7 +295,7 @@ Examples
 
 Ifstatements rule
 =================
-The rule to check do if statements in the code don't contain some
+The rule to check do `if` statements in the code don't contain some
 expressions. Checked things:
 
 * Empty statements. `If` statements, which contains only `discard` statement.
@@ -283,19 +338,21 @@ The syntax in a configuration file is::
 Disabling the rule
 ------------------
 It is possible to disable the rule for a selected part of the checked code
-by using pragma *ruleOff: "ifStatements"* in the element from which the rule
-should be disabled or in code before it. For example, if the rule should
-be disabled for procedure `proc main()`, the full declaration of it should
-be::
+by using pragma *ruleOff: "ifStatements"* in the code before it. For example,
+if the rule should be disabled for the statement, the full declaration of it
+should be::
 
-    proc main () {.ruleOff: "ifStatements".}
+    {.ruleOff: "ifStatements".}
+    if a == 1:
+      echo a
 
-To enable the rule again, the pragma *ruleOn: "ifStatements"* should be added in
-the element which should be checked or in code before it. For example, if
-the rule should be re-enabled for `const a = 1`, the full declaration should
-be::
+To enable the rule again, the pragma *ruleOn: "ifStatements"* should be added
+in the code before it. For example, if the rule should be re-enabled for the
+statement, the full declaration should be::
 
-    const a {.ruleOn: "ifStatements".} = 1
+    {.ruleOn: "ifStatements".}
+    if a == 1:
+      echo a
 
 Examples
 --------
