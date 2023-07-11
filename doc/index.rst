@@ -45,7 +45,7 @@ It is possible to disable a selected rule for a part of a module with the pragma
 1. Import the module *pragmas* from *nimalyzer*: `import nimalyzer/pragmas`
 
 2. Insert in the desired place in the code the pragma to disable rule. For
-   example: `{.ruleOff: "hasDoc".}`. Usualy, the pragma can be placed before or
+   example: `{.ruleOff: "hasDoc".}`. Usually, the pragma can be placed before or
    in the fragment of the code in which it should be disabled, but some rules
    can enter restrictions about it. Please refer to the rules' documentation
    where to place the pragma.
@@ -123,10 +123,10 @@ ruleConfig
   result of analyzing the code. Required. String value.
 * `ruleNotFoundMessage` - the message shown when the rule returns negative
   result of analyzing the code. Required. String value.
-* `rulePositiveMessage` - the message shown when the rule meet the code's
+* `rulePositiveMessage` - the message shown when the rule meets the code's
   element which follows the rule's requirements, for example, a procedure with
   documentation, etc. Required. String value.
-* `ruleNegativeMessage` - the message shown when the rule meet the code's
+* `ruleNegativeMessage` - the message shown when the rule meets the code's
   element which doesn't follow the rule's requirements, for example, a
   procedure without documentation, etc. Required. String value.
 * `ruleOptions` - the list of options which the rule accepts. If not set,
@@ -134,8 +134,8 @@ ruleConfig
   configuration file. It is a Nim sequence with possible values: `node` for
   AST Node, `str` for string values, `int` for integer values and `custom`
   for string values which can contain only the selected values, similar to
-  enumerations. In the last case the setting `ruleOptionValues` must be set
-  too. At the moment a rule can have only one `custom` option type. The
+  enumerations. In the last case, the setting `ruleOptionValues` must be set
+  too. At the moment, a rule can have only one `custom` option type. The
   setting is optional. Enumeration.
 * `ruleOptionValues` - the list of values for the `custom` type of the rule's
   options. It is a Nim sequence of strings. The setting is required only
@@ -150,7 +150,7 @@ ruleConfig
 Constants
 ---------
 
-Each rule has available following constants to use in its code:
+Each rule has available the following constants to use in its code:
 
 * `showForCheck` - Boolean value, set by the configuration's option
   `ruleShowForCheck`.
@@ -206,7 +206,7 @@ of the code to each its child. All the checking parts are:
   * `fixCommand` - the command executed by `fix` type of the rule. Sets by the
     user in the configuration file. String value.
   * `identsCache` - the Nim idents cache needed for some internal rule code. It
-    is recomended to not change it.
+    is recommended to not change it.
   * `forceFixCommand` - if true, the rule should use `fixCommand` for `fix`
     type of the rule instead of its own code. Sets by the user in the
     configuration file. Boolean value.
@@ -237,9 +237,9 @@ of the code to each its child. All the checking parts are:
   the result of checking the Nim code as the AST `node`. `checkResult` is the
   result of checking of the Nim code, for example, true if the code's
   documentation found or if procedure has the selected pragma. `positiveMessage`
-  will be shown when `checkResult` fullfills the rule's settings, like
+  will be shown when `checkResult` fulfills the rule's settings, like
   negation, type, etc. `negativeMessage` will be shown when `checkResilt` not
-  fullfils the rule's settings. Both usualy are set to the rule's configuration
+  fulfils the rule's settings. Both are usually set to the rule's configuration
   options like `positiveMessage` and `negativeMessage`. `ruleData` is an
   additional data used by `fix` type of the rule. `params` contains list of
   additional data, used in the program's messages, `positiveMessage` and
@@ -254,7 +254,7 @@ fixRule
 -------
 
 `fixRule` is the macro which will be executed for `fix` type of the rule. It
-must contains at least `discard` statement. If it is set to `discard` only
+must contain at least `discard` statement. If it is set to `discard` only
 statement, then the command set by the configuration `fixCommand` setting will
 be executed. Otherwise, the code inside the macro will be used, unless the
 program's configuration option `forceFixCommand` is set. The macro returns
@@ -287,7 +287,7 @@ macro always returns `false`.
   * `fixCommand` - the command executed by `fix` type of the rule. Sets by the
     user in the configuration file. String value.
   * `identsCache` - the Nim idents cache needed for some internal rule code. It
-    is recomended to not change it.
+    is recommended to not change it.
   * `forceFixCommand` - if true, the rule should use `fixCommand` for `fix`
     type of the rule instead of its own code. Sets by the user in the
     configuration file. Boolean value.
