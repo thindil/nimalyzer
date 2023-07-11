@@ -18,7 +18,6 @@ requires "contracts >= 0.2.2"
 
 # Tasks
 
-# Disable checking BareExcept warning for Nim 1.6.12
 task debug, "builds the project in debug mode":
   exec "nim c -d:debug --styleCheck:hint --spellSuggest:auto --errorMax:0 --outdir:" &
       binDir & " " & srcDir & DirSep & "nimalyzer.nim"
