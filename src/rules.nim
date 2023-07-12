@@ -34,7 +34,7 @@ import contracts
 import pragmas
 
 # Export needed modules, so rules don't need to import them
-export logging, strutils, ast, renderer, contracts, pragmas, os
+export logging, strutils, ast, renderer, contracts, pragmas, os, idents
 
 type
 
