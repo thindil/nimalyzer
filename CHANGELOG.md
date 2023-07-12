@@ -6,6 +6,9 @@ of the program.
 
 ## [Unreleased]
 
+### Changed
+- Made the program's configuration files syntax case-insensitive.
+
 ### Fixed
 - Typos in the program's documentation.
 
