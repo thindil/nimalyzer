@@ -76,8 +76,6 @@
 ##
 ##     fix not forStatements
 
-# External modules imports
-import compiler/idents
 # Import default rules' modules
 import ../rules
 
