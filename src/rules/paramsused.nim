@@ -161,4 +161,6 @@ checkRule:
     let negation: string = (if rule.negation: " not" else: "")
 
 fixRule:
-  discard
+  # Don't change anything if rule has negation
+  if rule.negation:
+    return false
