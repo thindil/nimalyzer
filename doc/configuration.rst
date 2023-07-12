@@ -10,7 +10,7 @@ General information
 
 - All lines which start with hash sign (#) are treated as comments and ignored by the program.
 - The configuration doesn't need to be in exact order, but some entries are required by the program to run.
-- All names of settings are case-sensitive, thus, it must be *verbosity* or *output* and not *Verbosity* or *OUTPUT*.
+- All names of settings are case-insensitive, thus, it can be *verbosity* or *output* and *Verbosity* or *OUTPUT*.
 - The list of available program's rules is available in the project's documentation.
 
 Available settings
@@ -219,7 +219,7 @@ extension in "src/rules" directory.
 ::
     files src/rules/*.nim
 
-Here is the list of check rules to check by the progams in the second section
+Here is the list of check rules to check by the program in the second section
 of the configuration. They are almost the same as for the previous list of
 the check rules, but the first rule checks also templates and macros. We also
 set again message to show it only once as there is no rules configured for
