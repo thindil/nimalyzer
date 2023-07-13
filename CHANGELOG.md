@@ -6,6 +6,10 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- `fix` type of rule to `paramsUsed` rule. It now can remove unused parameters
+  from procedures' declaration.
+
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
 
