@@ -92,24 +92,33 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
     if node.kind == nkForStmt or (node.kind == nkStmtList and node[0].kind == nkForStmt):
-      let nodeToCheck: PNode = (if node.kind == nkForStmt: node else: node[0])
+      let
+        nodeToCheck: PNode = (if node.kind == nkForStmt: node else: node[0])
       var
         checkResult: bool = false
         callName: string = ""
-      if nodeToCheck[^2].kind == nkCall and (($nodeToCheck[^2]).startsWith(
-          prefix = "pairs") or ($nodeToCheck[^2]).startsWith(prefix = "items")):
-        checkResult = true
+        message: string = (if rule.negation: "uses '" & callName &
+            "'" else: "don't use 'pairs' or 'items'") & " for iterators."
+      # Check if the for statement uses iterators pairs and items
+      if nodeToCheck[^2].kind == nkCall:
         callName = $nodeToCheck[^2][0]
-      elif nodeToCheck[^2].kind == nkDotExpr and (($nodeToCheck[^2]).endsWith(
-          suffix = ".pairs") or ($nodeToCheck[^2]).endsWith(suffix = ".items")):
-        checkResult = true
+        if ($nodeToCheck[^2]).startsWith(prefix = "pairs") or ($nodeToCheck[
+            ^2]).startsWith(prefix = "items"):
+          checkResult = true
+      elif nodeToCheck[^2].kind == nkDotExpr:
         callName = $nodeToCheck[^2][^1]
+        if ($nodeToCheck[^2]).endsWith(suffix = ".pairs") or ($nodeToCheck[
+            ^2]).endsWith(suffix = ".items"):
+          checkResult = true
+      # Check if the for statement contains only discard statement
+      if not checkResult and nodeToCheck[^1][0].kind != nkDiscardStmt:
+        checkResult = true
+        message = (if rule.negation: "doesn't contain" else: "contains") & " only discard statement."
       if rule.ruleType == RuleTypes.count:
         checkResult = not checkResult
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
           negativeMessage = negativeMessage, node = nodeToCheck, params = [
-          $nodeToCheck.info.line, (if rule.negation: "uses '" & callName &
-          "'" else: "don't use 'pairs' or 'items'") & " for iterators."])
+          $nodeToCheck.info.line, message])
   endCheck:
     discard
 
