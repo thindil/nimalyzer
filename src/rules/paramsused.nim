@@ -85,7 +85,7 @@ ruleConfig(ruleName = "paramsused",
   rulePositiveMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all parameters.",
   ruleNegativeMessage = "procedure {params[0]} line: {params[1]} doesn't use parameter '{params[2]}'.",
   ruleOptions = @[custom],
-  ruleOptionValues = @["procedures", "templates", "macros" ,"all"],
+  ruleOptionValues = @["procedures", "templates", "macros", "all"],
   ruleMinOptions = 1)
 
 checkRule:
@@ -140,8 +140,10 @@ checkRule:
               if index == -1:
                 if not rule.negation:
                   setResult(checkResult = false, positiveMessage = "",
-                      negativeMessage = negativeMessage, node = node, params = [
-                      procName, $node.info.line, varName])
+                      negativeMessage = negativeMessage, ruleData = varName,
+                      node = node, params = [procName, $node.info.line, varName])
+                  if rule.ruleType == fix:
+                    return
                 else:
                   setResult(checkResult = false, positiveMessage = "",
                       negativeMessage = positiveMessage, node = node, params = [
@@ -164,3 +166,12 @@ fixRule:
   # Don't change anything if rule has negation
   if rule.negation:
     return false
+  # Remove unused parameters
+  block removeUnusedParam:
+    for index, child in astNode[3]:
+      if child.kind == nkIdentDefs:
+        for iindex, ident in child:
+          if $ident == data:
+            astNode[3][index].delSon(idx = iindex)
+            break removeUnusedParam
+  return true
