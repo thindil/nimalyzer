@@ -538,8 +538,11 @@ The syntax in a configuration file is::
   an error if there is a procedure which doesn't use all its parameters.
   Search type will list all procedures which uses their all parameters and
   raise error if nothing was found. Count type will simply list the amount
-  of procedures which uses all their parameters. Fix type will execute the
-  default shell command set by the program's setting **fixCommand**.
+  of procedures which uses all their parameters. Fix type will remove the
+  unused parameter from the procedure's declaration. It will also stop
+  checking after remove. The fix type of the rule does nothing with negation.
+  Please read general information about the fix type of rules about potential
+  issues.
 * optional word *not* means negation for the rule. Adding word *not* will
   change to inform only about procedures which have all parameters used.
   Probably useable only with search and count type of rule.
