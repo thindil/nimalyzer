@@ -83,7 +83,10 @@ ruleConfig(ruleName = "forstatements",
   ruleFoundMessage = "for statements which can{negation} be upgraded",
   ruleNotFoundMessage = "for statements which can{negation} be upgraded not found.",
   rulePositiveMessage = "for statement, line: {params[0]} {params[1]}",
-  ruleNegativeMessage = "for statement, line: {params[0]} {params[1]}")
+  ruleNegativeMessage = "for statement, line: {params[0]} {params[1]}",
+  ruleOptions = @[custom],
+  ruleOptionValues = @["all", "iterators", "empty"],
+  ruleMinOptions = 1)
 
 checkRule:
   initCheck:
@@ -100,20 +103,23 @@ checkRule:
         message: string = (if rule.negation: "uses '" & callName &
             "'" else: "don't use 'pairs' or 'items'") & " for iterators."
       # Check if the for statement uses iterators pairs and items
-      if nodeToCheck[^2].kind == nkCall:
-        callName = $nodeToCheck[^2][0]
-        if ($nodeToCheck[^2]).startsWith(prefix = "pairs") or ($nodeToCheck[
-            ^2]).startsWith(prefix = "items"):
-          checkResult = true
-      elif nodeToCheck[^2].kind == nkDotExpr:
-        callName = $nodeToCheck[^2][^1]
-        if ($nodeToCheck[^2]).endsWith(suffix = ".pairs") or ($nodeToCheck[
-            ^2]).endsWith(suffix = ".items"):
-          checkResult = true
+      if rule.options[0].toLowerAscii in ["all", "iterators"] and nodeToCheck[
+          ^2].kind in {nkCall, nkDotExpr}:
+        if nodeToCheck[^2].kind == nkCall:
+          callName = $nodeToCheck[^2][0]
+          if ($nodeToCheck[^2]).startsWith(prefix = "pairs") or ($nodeToCheck[
+              ^2]).startsWith(prefix = "items"):
+            checkResult = true
+        elif nodeToCheck[^2].kind == nkDotExpr:
+          callName = $nodeToCheck[^2][^1]
+          if ($nodeToCheck[^2]).endsWith(suffix = ".pairs") or ($nodeToCheck[
+              ^2]).endsWith(suffix = ".items"):
+            checkResult = true
       # Check if the for statement contains only discard statement
-      if not checkResult and nodeToCheck[^1][0].kind != nkDiscardStmt:
-        checkResult = true
+      elif rule.options[0].toLowerAscii in ["all", "empty"]:
         message = (if rule.negation: "doesn't contain" else: "contains") & " only discard statement."
+        if nodeToCheck[^1][0].kind != nkDiscardStmt:
+          checkResult = true
       if rule.ruleType == RuleTypes.count:
         checkResult = not checkResult
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
