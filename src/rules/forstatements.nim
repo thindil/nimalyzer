@@ -99,12 +99,9 @@ checkRule:
         nodeToCheck: PNode = (if node.kind == nkForStmt: node else: node[0])
       var
         checkResult: bool = false
-        callName: string = ""
-        message: string = (if rule.negation: "uses '" & callName &
-            "'" else: "don't use 'pairs' or 'items'") & " for iterators."
+        callName, message: string = ""
       # Check if the for statement uses iterators pairs and items
-      if rule.options[0].toLowerAscii in ["all", "iterators"] and nodeToCheck[
-          ^2].kind in {nkCall, nkDotExpr}:
+      if rule.options[0].toLowerAscii in ["all", "iterators"]:
         if nodeToCheck[^2].kind == nkCall:
           callName = $nodeToCheck[^2][0]
           if ($nodeToCheck[^2]).startsWith(prefix = "pairs") or ($nodeToCheck[
@@ -115,8 +112,10 @@ checkRule:
           if ($nodeToCheck[^2]).endsWith(suffix = ".pairs") or ($nodeToCheck[
               ^2]).endsWith(suffix = ".items"):
             checkResult = true
+        message = (if rule.negation: "uses '" & callName &
+            "'" else: "don't use 'pairs' or 'items'") & " for iterators."
       # Check if the for statement contains only discard statement
-      elif rule.options[0].toLowerAscii in ["all", "empty"]:
+      if not checkResult and rule.options[0].toLowerAscii in ["all", "empty"]:
         message = (if rule.negation: "doesn't contain" else: "contains") & " only discard statement."
         if nodeToCheck[^1][0].kind != nkDiscardStmt:
           checkResult = true
