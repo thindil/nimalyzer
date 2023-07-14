@@ -131,7 +131,8 @@ lvlError. The settings below checks for:
 7.  If any local variable declaration can be updated to let or const.
 8.  If any local variable declaration hides previously declared variable.
 9.  If any `if` statement can be upgraded.
-10. If any `for` statement can be upgraded.
+10. If any `for` statement uses iterators `pairs` or `items`.
+11. If there are no empty `for` statements.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -143,7 +144,8 @@ lvlError. The settings below checks for:
     check varUplevel
     check localHides
     check ifStatements
-    check not forStatements
+    check not forStatements iterators
+    check forStatements empty
 
 Search rules
 ------------
@@ -235,4 +237,5 @@ the program.
     check varUplevel
     check localHides
     check ifStatements
-    check not forStatements
+    check not forStatements iterators
+    check forStatements empty
