@@ -1,7 +1,7 @@
 discard """
   exitcode: 0
   output: '''INFO: Checking the rule's options validation.
-FATAL: The rule forstatements requires at maximum 0 options, but 1 provided: 'randomoption'.
+FATAL: The rule forstatements requires at maximum 1 options, but 2 provided: 'randomoption, anotheroption'.
 INFO: Checking check type of the rule with the invalid code.
 ERROR: for statement, line: 1 don't use 'pairs' or 'items' for iterators.
 INFO: Checking check type of the rule with the valid code.
@@ -35,8 +35,8 @@ import ../../src/rules/forstatements
 import ../helpers.nim
 
 const
-  validOptions: seq[string] = @[]
-  invalidOptions = @["randomoption"]
+  validOptions: seq[string] = @["iterators"]
+  invalidOptions = @["randomoption", "anotheroption"]
   invalidNimCode = "for i in [1 .. 6]: echo i"
   validNimCode = "for i in [1 .. 6].items: echo i"
 
