@@ -13,7 +13,7 @@ has or doesn't have the direct call to `pairs` or `items` iterators.
 
 The syntax in a configuration file is::
 
-  [ruleType] ?not? forStatements
+  [ruleType] ?not? forStatements [checkType]
 
 * ruleType is the type of rule which will be executed. Proper values are:
   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -29,6 +29,11 @@ The syntax in a configuration file is::
   rule's check.
 * forStatements is the name of the rule. It is case-insensitive, thus it can be
   set as *forstatements*, *forStatements* or *fOrStAtEmEnTs*.
+* checkType is the type of checks to perform on the `for` statements. Proper
+  values are: *all*, *iterators*, *empty*. Setting it to all will perform
+  all rule's checks on statements. Iterators value will check only if the
+  `for` statements use `pairs` and `items` iterators. Empty value will check
+  if the `for` statements doesn't contain only a `discard` statement.
 
 Disabling the rule
 ------------------
@@ -38,7 +43,7 @@ example, if the rule should be disabled for the selected statement, the full
 declaration of it should be::
 
     {.ruleOff: "forStatements".}
-    for i in [1..5]:
+    for i in 1 .. 5:
       echo i
 
 To enable the rule again, the pragma *ruleOn: "forStatements"* should be
@@ -46,7 +51,7 @@ added in the code before it. For example, if the rule should be re-enabled
 for the statement, the full declaration should be::
 
     {.ruleOn: "forStatements".}
-    for i in [1..5]:
+    for i in 1 .. 5:
       echo i
 
 Examples
@@ -54,11 +59,11 @@ Examples
 
 1. Check if all `for` statements have direct calls for iterators::
 
-    check forStatements
+    check forStatements iterators
 
-2. Remove all direct calls for iterators from `for` statements::
+2. Remove all empty `for` statements::
 
-    fix not forStatements
+    fix not forStatements empty
 
 Hasdoc rule
 ===========
