@@ -9,6 +9,8 @@ of the program.
 ### Added
 - `fix` type of rule to `paramsUsed` rule. It now can remove unused parameters
   from procedures' declaration.
+- **BREAKING**: rule `forStatements` needs now option to set what kind of checks
+  will be performed.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
