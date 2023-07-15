@@ -7,9 +7,11 @@ Available rules
 
 Forstatements rule
 ==================
-The rule to check do `for` statements in the code don't contain some
-expressions. At the moment, it can check only if the `for` statement iterator
-has or doesn't have the direct call to `pairs` or `items` iterators.
+The rule to check do `for` statements in the code contains or not some
+expressions. Checked things:
+
+* Empty statements. `For` statements, which contains only `discard` statement.
+* Do `for` statements explicitly calls iterators `pairs` or `items`.
 
 The syntax in a configuration file is::
 
