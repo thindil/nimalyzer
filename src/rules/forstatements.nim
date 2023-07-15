@@ -40,8 +40,8 @@
 ##   type will list all statements which violates the check or raise an
 ##   error if nothing found. Count type will simply list the amount of the
 ##   statements which violates the check. Fix type will try to fix the code
-##   which violates check: it will add the direct call for proper iterator or
-##   remove it, for negation type of the rule.
+##   which violates check. The negation of fix type doesn't work with checkType
+##   set to "empty".
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about the `for` statements which not violates the
 ##   rule's check.
