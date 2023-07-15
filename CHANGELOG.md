@@ -11,6 +11,7 @@ of the program.
   from procedures' declaration.
 - **BREAKING**: rule `forStatements` needs now option to set what kind of checks
   will be performed.
+- Ability to check for empty `for` statements to `forStatements` rule.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
