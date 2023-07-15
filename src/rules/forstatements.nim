@@ -104,7 +104,7 @@ checkRule:
         nodeToCheck: PNode = (if node.kind == nkForStmt: node else: node[0])
       var
         checkResult: bool = false
-        callName, message: string = ""
+        callName, message, checkType: string = ""
       # Check if the for statement uses iterators pairs and items
       if rule.options[0].toLowerAscii in ["all", "iterators"]:
         if nodeToCheck[^2].kind == nkCall:
@@ -119,33 +119,47 @@ checkRule:
             checkResult = true
         message = (if rule.negation: "uses '" & callName &
             "'" else: "don't use 'pairs' or 'items'") & " for iterators."
+        checkType = "iterator"
       # Check if the for statement contains only discard statement
       if not checkResult and rule.options[0].toLowerAscii in ["all", "empty"]:
         message = (if rule.negation: "doesn't contain" else: "contains") & " only discard statement."
+        checkType = "empty"
         if nodeToCheck[^1][0].kind != nkDiscardStmt:
           checkResult = true
       if rule.ruleType == RuleTypes.count:
         checkResult = not checkResult
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
-          negativeMessage = negativeMessage, node = nodeToCheck, params = [
-          $nodeToCheck.info.line, message])
+          negativeMessage = negativeMessage, ruleData = checkType,
+          node = nodeToCheck, params = [ $nodeToCheck.info.line, message])
+      if rule.ruleType == fix and not checkResult:
+        return
   endCheck:
     discard
 
 fixRule:
-  # Remove iterators pairs or items from for statement
-  if rule.negation:
-    if astNode[^2].kind == nkCall:
-      astNode[^2] = newIdentNode(ident = getIdent(ic = rule.identsCache,
-          identifier = $astNode[^2][^1]), info = astNode[^2][^1].info)
-    else:
-      astNode[^2] = newIdentNode(ident = getIdent(ic = rule.identsCache,
-          identifier = $astNode[^2][0]), info = astNode[^2][0].info)
+  case data
+  of "iterator":
+    # Remove iterators pairs or items from for statement
+    if rule.negation:
+      if astNode[^2].kind == nkCall:
+        astNode[^2] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+            identifier = $astNode[^2][^1]), info = astNode[^2][^1].info)
+      else:
+        astNode[^2] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+            identifier = $astNode[^2][0]), info = astNode[^2][0].info)
+      return true
+    # Add iterators pairs or items from for statement
+    astNode[^2] = newTree(kind = nkDotExpr, children = [newIdentNode(
+        ident = getIdent(ic = rule.identsCache, identifier = $astNode[^2]),
+        info = astNode[^2].info), newIdentNode(ident = getIdent(
+        ic = rule.identsCache, identifier = (if astNode.len ==
+        4: "pairs" else: "items")), info = astNode[^2].info)])
     return true
-  # Add iterators pairs or items from for statement
-  astNode[^2] = newTree(kind = nkDotExpr, children = [newIdentNode(
-      ident = getIdent(ic = rule.identsCache, identifier = $astNode[^2]),
-      info = astNode[^2].info), newIdentNode(ident = getIdent(
-      ic = rule.identsCache, identifier = (if astNode.len ==
-      4: "pairs" else: "items")), info = astNode[^2].info)])
-  return true
+  of "empty":
+    if rule.negation:
+      return false
+    # Remove empty if statement
+    for index, child in parentNode:
+      if child == astNode:
+        parentNode.delSon(idx = index)
+        return true
