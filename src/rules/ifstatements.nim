@@ -100,7 +100,10 @@ ruleConfig(ruleName = "ifstatements",
   ruleFoundMessage = "if statements which can{negation} be upgraded",
   ruleNotFoundMessage = "if statements which can{negation} be upgraded not found.",
   rulePositiveMessage = "if statement, line: {params[0]} {params[1]}",
-  ruleNegativeMessage = "if statement, line: {params[0]} {params[1]}")
+  ruleNegativeMessage = "if statement, line: {params[0]} {params[1]}",
+  ruleOptions = @[custom],
+  ruleOptionValues = @["all", "negative", "moveable" ,"empty"],
+  ruleMinOptions = 1)
 
 checkRule:
   initCheck:
@@ -112,18 +115,19 @@ checkRule:
       var oldAmount: int = rule.amount
       if node.len > 1:
         # Check if the if statement starts with negative condition and has else branch
-        let conditions: seq[string] = ($node[0]).split
-        if conditions[2] == "not" or conditions[3] in ["notin", "!="]:
-          var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
-          if rule.ruleType == RuleTypes.count and not rule.negation:
-            checkResult = not checkResult
-          setResult(checkResult = checkResult,
-              positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage, node = node,
-              ruleData = "negation", params = [$node.info.line,
-              (if rule.negation: "doesn't start" else: "starts") &
-              " with a negative condition."])
-        if rule.amount == oldAmount:
+        if rule.options[0].toLowerAscii in ["all", "negative"]:
+          let conditions: seq[string] = ($node[0]).split
+          if conditions[2] == "not" or conditions[3] in ["notin", "!="]:
+            var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
+            if rule.ruleType == RuleTypes.count and not rule.negation:
+              checkResult = not checkResult
+            setResult(checkResult = checkResult,
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, node = node,
+                ruleData = "negation", params = [$node.info.line,
+                (if rule.negation: "doesn't start" else: "starts") &
+                " with a negative condition."])
+        if rule.options[0].toLowerAscii in ["all", "moveable"] and rule.amount == oldAmount:
           # Check if the last if branch can be moved outside the if statement
           let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][^1][
               ^1] else: node[^2][^1])
@@ -137,7 +141,7 @@ checkRule:
                 ruleData = "outside", params = [$node.info.line,
                 "the content of the last branch can" & negation &
                 " be moved outside the if statement."])
-      if rule.amount == oldAmount:
+      if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
         # Check if the if statement contains empty branches (with discard only)
         var checkResult: bool = true
         for child in node:
