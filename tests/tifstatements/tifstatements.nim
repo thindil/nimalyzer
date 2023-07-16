@@ -1,7 +1,7 @@
 discard """
   exitcode: 0
   output: '''INFO: Checking the rule's options validation.
-FATAL: The rule ifstatements requires at maximum 0 options, but 1 provided: 'randomoption'.
+FATAL: The rule ifstatements requires at maximum 1 options, but 2 provided: 'randomoption, anotheroption'.
 INFO: Checking check type of the rule with the invalid code.
 ERROR: if statement, line: 1 starts with a negative condition.
 INFO: Checking check type of the rule with the valid code.
@@ -36,8 +36,8 @@ import ../../src/rules/ifstatements
 import ../helpers.nim
 
 const
-  validOptions: seq[string] = @[]
-  invalidOptions = @["randomoption"]
+  validOptions: seq[string] = @["all"]
+  invalidOptions = @["randomoption", "anotheroption"]
   invalidNimCode = "if a != 1: echo \"not equal\" else: echo \"equal\""
   validNimCode = "if a == 1: echo \"equal\" else: echo \"not equal\""
 
