@@ -9,8 +9,8 @@ of the program.
 ### Added
 - `fix` type of rule to `paramsUsed` rule. It now can remove unused parameters
   from procedures' declaration.
-- **BREAKING**: rule `forStatements` needs now option to set what kind of checks
-  will be performed.
+- **BREAKING**: rules `forStatements` and `ifStatements` need now option to set
+  what kind of checks will be performed.
 - Ability to check for empty `for` statements to `forStatements` rule.
 
 ### Changed
