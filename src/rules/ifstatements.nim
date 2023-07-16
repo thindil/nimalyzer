@@ -44,7 +44,7 @@
 ##
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? ifStatements
+##   [ruleType] ?not? ifStatements [checkType]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -62,6 +62,13 @@
 ##   Probably useable only with search and count type of rule.
 ## * ifStatements is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *ifstatements*, *ifstatements* or *iFsTaTeMeNts*.
+## * checkType is the type of checks to perform on the `if` statements. Proper
+##   values are: *all*, *negative*, *moveable*, *empty*. Setting it to all will
+##   perform all rule's checks on statements. Negative value will check only if the
+##   `if` statements don't have a negative condition with branch `else`. Moveable
+##   value will check only if the content of `else` branch can be moved outside
+##   the statement. Empty value will check if the `if` statements doesn't
+##   contain only a `discard` statement.
 ##
 ## Disabling the rule
 ## ------------------
@@ -87,11 +94,11 @@
 ##
 ## 1. Check if all `if` statements are correct::
 ##
-##     check ifStatements
+##     check ifStatements all
 ##
-## 2. Fix all `if` statements::
+## 2. Remove all empty `if` statements::
 ##
-##     fix ifStatements
+##     fix ifStatements empty
 
 # Import default rules' modules
 import ../rules
