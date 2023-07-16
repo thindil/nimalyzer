@@ -15,6 +15,7 @@ of the program.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
+- Updated README.md.
 
 ### Fixed
 - Typos in the program's documentation.
