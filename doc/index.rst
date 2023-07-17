@@ -233,7 +233,7 @@ of the code to each its child. All the checking parts are:
   checked, `ruleName` is usually set to the configuration variable `ruleName`
   and `oldState` is the modified state of the rule, usually set to
   `rule.state`, it can be modified by `setRuleState` call.
-* `setResult*(checkResult: bool; positiveMessage, negativeMessage: string; node: PNode; ruleData: string = ""; params: varargs[string])` - sets
+* `setResult(checkResult: bool; positiveMessage, negativeMessage: string; node: PNode; ruleData: string = ""; params: varargs[string])` - sets
   the result of checking the Nim code as the AST `node`. `checkResult` is the
   result of checking of the Nim code, for example, true if the code's
   documentation found or if procedure has the selected pragma. `positiveMessage`
@@ -293,3 +293,17 @@ macro always returns `false`.
     configuration file. Boolean value.
 * `data` - additional data sent to the `fixRule` macro, usually via `setResult`
   call. String value.
+
+Helpers
+-------
+
+Additional procedures to use in the program's rules' code.
+
+* `getNodesToCheck(parentNode, node: PNode): PNode` - get flattened list of AST
+  child nodes of `node` from `parentNode`.
+
+See Also
+--------
+
+The documentation of module `rules <rules.html>`_ contains information about
+all available data structures and subprograms in the program's rules' code.
