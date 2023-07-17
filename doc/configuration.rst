@@ -143,7 +143,7 @@ lvlError. The settings below checks for:
     check varDeclared full
     check varUplevel
     check localHides
-    check ifStatements
+    check ifStatements all
     check not forStatements iterators
     check forStatements empty
 
@@ -236,6 +236,6 @@ the program.
     check varDeclared full
     check varUplevel
     check localHides
-    check ifStatements
+    check ifStatements all
     check not forStatements iterators
     check forStatements empty
