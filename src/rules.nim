@@ -507,13 +507,15 @@ macro fixRule*(code: untyped): untyped =
       nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
       i = "RuleOptions"), newEmptyNode()]), nnkIdentDefs.newTree(children = [
       newIdentNode(i = "data"), newIdentNode(i = "string"), newEmptyNode()])]),
-      nnkPragma.newTree(nnkExprColonExpr.newTree(newIdentNode("raises"),
-      nnkBracket.newTree()), newIdentNode("contractual")), newEmptyNode(),
-      nnkStmtList.newTree(children = [nnkCall.newTree(newIdentNode(
-      "require"), nnkStmtList.newTree(nnkInfix.newTree(newIdentNode("!="),
-      newIdentNode("astNode"), newNilLit()), nnkInfix.newTree(newIdentNode(
-      "!="), newIdentNode("parentNode"), newNilLit()))), nnkCall.newTree(
-      newIdentNode("body"),
+      nnkPragma.newTree(children = [nnkExprColonExpr.newTree(children = [
+      newIdentNode(i = "raises"), nnkBracket.newTree()]), newIdentNode(
+      i = "contractual")]), newEmptyNode(), nnkStmtList.newTree(children = [
+      nnkCall.newTree(children = [newIdentNode(i = "require"),
+      nnkStmtList.newTree(children = [nnkInfix.newTree(children = [
+      newIdentNode(i = "!="), newIdentNode(i = "astNode"), newNilLit()]),
+      nnkInfix.newTree(children = [newIdentNode(i = "!="), newIdentNode(
+      i = "parentNode"), newNilLit()])])]), nnkCall.newTree(children = [
+      newIdentNode(i = "body"),
     if code[0].kind == nnkDiscardStmt:
       fixStatement
     else:
@@ -521,7 +523,7 @@ macro fixRule*(code: untyped): untyped =
           nnkElifBranch.newTree(children = [nnkDotExpr.newTree(children = [
           newIdentNode(i = "rule"), newIdentNode(i = "forceFixCommand")]),
           fixStatement]), nnkElse.newTree(children = [code])])])
-    )])])])
+    ])])])])
 
 proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
     contractual.} =
