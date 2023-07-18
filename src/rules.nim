@@ -397,11 +397,14 @@ macro checkRule*(code: untyped): untyped =
       children = [newIdentNode(i = "rule"), nnkVarTy.newTree(
       children = newIdentNode(i = "RuleOptions")), newEmptyNode()])]),
       nnkPragma.newTree(children = [nnkExprColonExpr.newTree(children = [
-      newIdentNode(i = "raises"), nnkBracket.newTree()]),
-      nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "tags"), nnkBracket.newTree(children = newIdentNode(
-      i = "RootEffect"))]), newIdentNode(i = "contractual")]), newEmptyNode(),
-      nnkStmtList.newTree(children = code)])])
+      newIdentNode(i = "raises"), nnkBracket.newTree()]), newIdentNode(
+      i = "contractual")]), newEmptyNode(), nnkStmtList.newTree(children = [
+      nnkCall.newTree(children = [newIdentNode(i = "require"),
+      nnkStmtList.newTree(children = [nnkInfix.newTree(children = [
+      newIdentNode(i = "!="), newIdentNode(i = "astNode"), newNilLit()]),
+      nnkInfix.newTree(children = [newIdentNode(i = "!="), newIdentNode(
+      i = "parentNode"), newNilLit()])])]), nnkCall.newTree(children = [
+      newIdentNode(i = "body"), code])])])])
 
 macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
     rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[
