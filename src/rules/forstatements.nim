@@ -143,20 +143,30 @@ fixRule:
   of "iterator":
     # Remove iterators pairs or items from for statement
     if rule.negation:
-      if astNode[^2].kind == nkCall:
-        astNode[^2] = newIdentNode(ident = getIdent(ic = rule.identsCache,
-            identifier = $astNode[^2][^1]), info = astNode[^2][^1].info)
-      else:
-        astNode[^2] = newIdentNode(ident = getIdent(ic = rule.identsCache,
-            identifier = $astNode[^2][0]), info = astNode[^2][0].info)
-      return true
+      try:
+        if astNode[^2].kind == nkCall:
+          astNode[^2] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+              identifier = $astNode[^2][^1]), info = astNode[^2][^1].info)
+        else:
+          astNode[^2] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+              identifier = $astNode[^2][0]), info = astNode[^2][0].info)
+        return true
+      except Exception:
+        discard errorMessage(text = "Can't remove iterators from for statement. Reason: " &
+            getCurrentExceptionMsg())
+        return false
     # Add iterators pairs or items from for statement
-    astNode[^2] = newTree(kind = nkDotExpr, children = [newIdentNode(
-        ident = getIdent(ic = rule.identsCache, identifier = $astNode[^2]),
-        info = astNode[^2].info), newIdentNode(ident = getIdent(
-        ic = rule.identsCache, identifier = (if astNode.len ==
-        4: "pairs" else: "items")), info = astNode[^2].info)])
-    return true
+    try:
+      astNode[^2] = newTree(kind = nkDotExpr, children = [newIdentNode(
+          ident = getIdent(ic = rule.identsCache, identifier = $astNode[^2]),
+          info = astNode[^2].info), newIdentNode(ident = getIdent(
+          ic = rule.identsCache, identifier = (if astNode.len ==
+          4: "pairs" else: "items")), info = astNode[^2].info)])
+      return true
+    except KeyError, Exception:
+      discard errorMessage(text = "Can't add iterator from for statement. Reason: " &
+          getCurrentExceptionMsg())
+      return false
   of "empty":
     if rule.negation:
       return false
