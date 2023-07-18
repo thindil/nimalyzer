@@ -170,7 +170,8 @@ checkRule:
             if rule.ruleType == fix:
               for pragma in rule.options[1 .. ^1]:
                 setResult(checkResult = false,
-                    positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+                    positiveMessage = positiveMessage,
+                    negativeMessage = negativeMessage,
                     node = node,
                     ruleData = pragma, params = [
                     procName, $node.info.line, pragma])
@@ -238,25 +239,30 @@ fixRule:
   # Remove the selected pragma from the declaration
   if rule.negation:
     for index, node in pragmas:
-      let pragma: string = $node
-      if '*' notin [data[0], data[^1]] and pragma == data:
-        delSon(father = pragmas, idx = index)
-        result = true
-        break
-      elif data[^1] == '*' and data[0] != '*' and pragma.startsWith(
-          prefix = data[0..^2]):
-        delSon(father = pragmas, idx = index)
-        result = true
-        break
-      elif data[0] == '*' and data[^1] != '*' and pragma.endsWith(
-          suffix = data[1..^1]):
-        delSon(father = pragmas, idx = index)
-        result = true
-        break
-      elif '*' in [data[0], data[^1]] and pragma.contains(sub = data[1..^2]):
-        delSon(father = pragmas, idx = index)
-        result = true
-        break
+      try:
+        let pragma: string = $node
+        if '*' notin [data[0], data[^1]] and pragma == data:
+          delSon(father = pragmas, idx = index)
+          result = true
+          break
+        elif data[^1] == '*' and data[0] != '*' and pragma.startsWith(
+            prefix = data[0..^2]):
+          delSon(father = pragmas, idx = index)
+          result = true
+          break
+        elif data[0] == '*' and data[^1] != '*' and pragma.endsWith(
+            suffix = data[1..^1]):
+          delSon(father = pragmas, idx = index)
+          result = true
+          break
+        elif '*' in [data[0], data[^1]] and pragma.contains(sub = data[1..^2]):
+          delSon(father = pragmas, idx = index)
+          result = true
+          break
+      except KeyError, Exception:
+        discard errorMessage(text = "Can't remove the selected pragma(s). Reason: " &
+            getCurrentExceptionMsg())
+        return false
     if pragmas.len == 0:
       for index, child in astNode:
         if child == pragmas:
