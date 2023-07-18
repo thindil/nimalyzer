@@ -446,31 +446,32 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       i = "RuleOptions"), newEmptyNode()]), nnkIdentDefs.newTree(children = [
       newIdentNode(i = "data"), newIdentNode(i = "string"), newEmptyNode()])]),
       nnkPragma.newTree(children = [nnkExprColonExpr.newTree(children = [
-      newIdentNode(i = "raises"), nnkBracket.newTree()])]), newEmptyNode(), newEmptyNode()])]), nnkLetSection.newTree(
-      children = nnkIdentDefs.newTree(children = [nnkPostfix.newTree(
-      children = [newIdentNode(i = "*"), newIdentNode(i = "ruleSettings")]),
-      newIdentNode(i = "RuleSettings"), nnkObjConstr.newTree(children = [
-      newIdentNode(i = "RuleSettings"), nnkExprColonExpr.newTree(children = [
-      newIdentNode(i = "name"), ruleName]), nnkExprColonExpr.newTree(
-      children = [newIdentNode(i = "checkProc"), newIdentNode(
-      i = "ruleCheck")]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "fixProc"), newIdentNode(i = "ruleFix")]), nnkExprColonExpr.newTree(
-      children = [newIdentNode(i = "options"), ruleOptions]),
-      nnkExprColonExpr.newTree(children = [newIdentNode(i = "optionValues"),
-      ruleOptionValues]), nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "minOptions"), ruleMinOptions])])])), nnkStmtList.newTree(children = [
-      nnkCall.newTree(children = [nnkDotExpr.newTree(children = [newIdentNode(
-      i = "rulesList"), newIdentNode(i = "add")]), nnkExprEqExpr.newTree(
-      children = [newIdentNode(i = "y"), newIdentNode(i = "ruleSettings")])])]),
-      nnkConstSection.newTree(children = [nnkConstDef.newTree(children = [
-      newIdentNode(i = "showForCheck"), newIdentNode(i = "bool"),
-      ruleShowForCheck]), nnkConstDef.newTree(children = [newIdentNode(
-      i = "foundMessage"), newIdentNode(i = "string"), ruleFoundMessage]),
-      nnkConstDef.newTree(children = [newIdentNode(i = "notFoundMessage"),
-      newIdentNode(i = "string"), ruleNotFoundMessage]), nnkConstDef.newTree(
-      children = [newIdentNode(i = "positiveMessage"), newIdentNode(
-      i = "string"), rulePositiveMessage]), nnkConstDef.newTree(children = [
-      newIdentNode(i = "negativeMessage"), newIdentNode(i = "string"),
+      newIdentNode(i = "raises"), nnkBracket.newTree()])]), newEmptyNode(),
+      newEmptyNode()])]), nnkLetSection.newTree(children = nnkIdentDefs.newTree(
+      children = [nnkPostfix.newTree(children = [newIdentNode(i = "*"),
+      newIdentNode(i = "ruleSettings")]), newIdentNode(i = "RuleSettings"),
+      nnkObjConstr.newTree(children = [newIdentNode(i = "RuleSettings"),
+      nnkExprColonExpr.newTree(children = [newIdentNode(i = "name"), ruleName]),
+      nnkExprColonExpr.newTree(children = [newIdentNode(i = "checkProc"),
+      newIdentNode(i = "ruleCheck")]), nnkExprColonExpr.newTree(children = [
+      newIdentNode(i = "fixProc"), newIdentNode(i = "ruleFix")]),
+      nnkExprColonExpr.newTree(children = [newIdentNode(i = "options"),
+      ruleOptions]), nnkExprColonExpr.newTree(children = [newIdentNode(
+      i = "optionValues"), ruleOptionValues]), nnkExprColonExpr.newTree(
+      children = [newIdentNode(i = "minOptions"), ruleMinOptions])])])),
+      nnkStmtList.newTree(children = [nnkCall.newTree(children = [
+      nnkDotExpr.newTree(children = [newIdentNode(i = "rulesList"),
+      newIdentNode(i = "add")]), nnkExprEqExpr.newTree(children = [newIdentNode(
+      i = "y"), newIdentNode(i = "ruleSettings")])])]), nnkConstSection.newTree(
+      children = [nnkConstDef.newTree(children = [newIdentNode(
+      i = "showForCheck"), newIdentNode(i = "bool"), ruleShowForCheck]),
+      nnkConstDef.newTree(children = [newIdentNode(i = "foundMessage"),
+      newIdentNode(i = "string"), ruleFoundMessage]), nnkConstDef.newTree(
+      children = [newIdentNode(i = "notFoundMessage"), newIdentNode(
+      i = "string"), ruleNotFoundMessage]), nnkConstDef.newTree(children = [
+      newIdentNode(i = "positiveMessage"), newIdentNode(i = "string"),
+      rulePositiveMessage]), nnkConstDef.newTree(children = [newIdentNode(
+      i = "negativeMessage"), newIdentNode(i = "string"),
       ruleNegativeMessage])])])
 
 macro fixRule*(code: untyped): untyped =
