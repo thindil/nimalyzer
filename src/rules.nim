@@ -445,7 +445,8 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
       i = "RuleOptions"), newEmptyNode()]), nnkIdentDefs.newTree(children = [
       newIdentNode(i = "data"), newIdentNode(i = "string"), newEmptyNode()])]),
-      newEmptyNode(), newEmptyNode(), newEmptyNode()])]), nnkLetSection.newTree(
+      nnkPragma.newTree(children = [nnkExprColonExpr.newTree(children = [
+      newIdentNode(i = "raises"), nnkBracket.newTree()])]), newEmptyNode(), newEmptyNode()])]), nnkLetSection.newTree(
       children = nnkIdentDefs.newTree(children = [nnkPostfix.newTree(
       children = [newIdentNode(i = "*"), newIdentNode(i = "ruleSettings")]),
       newIdentNode(i = "RuleSettings"), nnkObjConstr.newTree(children = [
