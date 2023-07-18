@@ -529,7 +529,7 @@ proc getNodesToCheck*(parentNode, node: PNode): PNode {.raises: [], tags: [],
     contractual.} =
   ## Get the list of AST nodes to check by rule
   ##
-  ## * parentNode - the parent AST node whichi will be searching for the node
+  ## * parentNode - the parent AST node which will be checked for the node
   ## * node       - the AST node which will be looking for
   ##
   ## Returns the flattened list of nodes to check or nil if nothing found
