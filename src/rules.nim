@@ -436,11 +436,13 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       children = [newIdentNode(i = "astNode"), newIdentNode(i = "parentNode"),
       newIdentNode(i = "PNode"), newEmptyNode()]), nnkIdentDefs.newTree(
       children = [newIdentNode(i = "rule"), nnkVarTy.newTree(children = [
-      newIdentNode(i = "RuleOptions")]), newEmptyNode()])]), newEmptyNode(),
-      newEmptyNode(), newEmptyNode()]), nnkStmtList.newTree(children = [
-      nnkProcDef.newTree(children = [newIdentNode(i = "ruleFix"), newEmptyNode(),
-      newEmptyNode(), nnkFormalParams.newTree(children = [newIdentNode(
-      i = "bool"), nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
+      newIdentNode(i = "RuleOptions")]), newEmptyNode()])]), nnkPragma.newTree(
+      children = [nnkExprColonExpr.newTree(children = [newIdentNode(
+      i = "raises"), nnkBracket.newTree()])]), newEmptyNode(), newEmptyNode()]),
+      nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
+      newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
+      nnkFormalParams.newTree(children = [newIdentNode(i = "bool"),
+      nnkIdentDefs.newTree(children = [newIdentNode(i = "astNode"),
       newIdentNode(i = "parentNode"), newIdentNode(i = "PNode"), newEmptyNode()]),
       nnkIdentDefs.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
       i = "RuleOptions"), newEmptyNode()]), nnkIdentDefs.newTree(children = [
