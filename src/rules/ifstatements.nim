@@ -123,17 +123,22 @@ checkRule:
       if node.len > 1:
         # Check if the if statement starts with negative condition and has else branch
         if rule.options[0].toLowerAscii in ["all", "negative"]:
-          let conditions: seq[string] = ($node[0]).split
-          if conditions[2] == "not" or conditions[3] in ["notin", "!="]:
-            var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
-            if rule.ruleType == RuleTypes.count and not rule.negation:
-              checkResult = not checkResult
-            setResult(checkResult = checkResult,
-                positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node,
-                ruleData = "negation", params = [$node.info.line,
-                (if rule.negation: "doesn't start" else: "starts") &
-                " with a negative condition."])
+          try:
+            let conditions: seq[string] = ($node[0]).split
+            if conditions[2] == "not" or conditions[3] in ["notin", "!="]:
+              var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
+              if rule.ruleType == RuleTypes.count and not rule.negation:
+                checkResult = not checkResult
+              setResult(checkResult = checkResult,
+                  positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage, node = node,
+                  ruleData = "negation", params = [$node.info.line,
+                  (if rule.negation: "doesn't start" else: "starts") &
+                  " with a negative condition."])
+          except Exception as e:
+            rule.amount = errorMessage(
+                text = "Can't check the if statement.", e = e)
+            return
         if rule.options[0].toLowerAscii in ["all", "moveable"] and
             rule.amount == oldAmount:
           # Check if the last if branch can be moved outside the if statement
