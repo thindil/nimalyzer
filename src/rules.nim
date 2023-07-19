@@ -397,7 +397,7 @@ macro checkRule*(code: untyped): untyped =
       children = [newIdentNode(i = "rule"), nnkVarTy.newTree(
       children = newIdentNode(i = "RuleOptions")), newEmptyNode()])]),
       nnkPragma.newTree(children = [nnkExprColonExpr.newTree(children = [
-      newIdentNode(i = "raises"), nnkBracket.newTree()]), newIdentNode(
+      newIdentNode(i = "raises"), nnkBracket.newTree(newIdentNode("ValueError"))]), newIdentNode(
       i = "contractual")]), newEmptyNode(), nnkStmtList.newTree(children = [
       nnkCall.newTree(children = [newIdentNode(i = "require"),
       nnkStmtList.newTree(children = [nnkInfix.newTree(children = [
@@ -438,7 +438,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       children = [newIdentNode(i = "rule"), nnkVarTy.newTree(children = [
       newIdentNode(i = "RuleOptions")]), newEmptyNode()])]), nnkPragma.newTree(
       children = [nnkExprColonExpr.newTree(children = [newIdentNode(
-      i = "raises"), nnkBracket.newTree()])]), newEmptyNode(), newEmptyNode()]),
+      i = "raises"), nnkBracket.newTree(newIdentNode("ValueError"))])]), newEmptyNode(), newEmptyNode()]),
       nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
       newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
       nnkFormalParams.newTree(children = [newIdentNode(i = "bool"),
