@@ -109,7 +109,7 @@ ruleConfig(ruleName = "ifstatements",
   rulePositiveMessage = "if statement, line: {params[0]} {params[1]}",
   ruleNegativeMessage = "if statement, line: {params[0]} {params[1]}",
   ruleOptions = @[custom],
-  ruleOptionValues = @["all", "negative", "moveable" ,"empty"],
+  ruleOptionValues = @["all", "negative", "moveable", "empty"],
   ruleMinOptions = 1)
 
 checkRule:
@@ -134,10 +134,11 @@ checkRule:
                 ruleData = "negation", params = [$node.info.line,
                 (if rule.negation: "doesn't start" else: "starts") &
                 " with a negative condition."])
-        if rule.options[0].toLowerAscii in ["all", "moveable"] and rule.amount == oldAmount:
+        if rule.options[0].toLowerAscii in ["all", "moveable"] and
+            rule.amount == oldAmount:
           # Check if the last if branch can be moved outside the if statement
-          let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][^1][
-              ^1] else: node[^2][^1])
+          let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][
+              ^1][^1] else: node[^2][^1])
           if lastNode.kind in nkLastBlockStmts:
             var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
             if rule.ruleType == RuleTypes.count and not rule.negation:
@@ -200,11 +201,16 @@ fixRule:
     return true
   # Replace the negative expression in the if statemet
   of "negation":
-    if $astNode[0][0][0] == "not":
-      astNode[0][0][0] = newNode(kind = nkEmpty)
-    else:
-      astNode[0][0][0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
-          identifier = "=="), info = astNode[0][0].info)
+    try:
+      if $astNode[0][0][0] == "not":
+        astNode[0][0][0] = newNode(kind = nkEmpty)
+      else:
+        astNode[0][0][0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+            identifier = "=="), info = astNode[0][0].info)
+    except KeyError, Exception:
+      discard errorMessage(text = "Can't replace negative statement in an if expression. Reason: " &
+          getCurrentExceptionMsg())
+      return false
     let
       negativeNode: PNode = newTree(kind = astNode[0][1].kind,
           children = astNode[0][1].sons)
