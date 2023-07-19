@@ -109,16 +109,21 @@ checkRule:
         callName, message, checkType: string = ""
       # Check if the for statement uses iterators pairs and items
       if rule.options[0].toLowerAscii in ["all", "iterators"]:
-        if nodeToCheck[^2].kind == nkCall:
-          callName = $nodeToCheck[^2][0]
-          if ($nodeToCheck[^2]).startsWith(prefix = "pairs") or ($nodeToCheck[
-              ^2]).startsWith(prefix = "items"):
-            checkResult = true
-        elif nodeToCheck[^2].kind == nkDotExpr:
-          callName = $nodeToCheck[^2][^1]
-          if ($nodeToCheck[^2]).endsWith(suffix = ".pairs") or ($nodeToCheck[
-              ^2]).endsWith(suffix = ".items"):
-            checkResult = true
+        try:
+          if nodeToCheck[^2].kind == nkCall:
+              callName = $nodeToCheck[^2][0]
+              if ($nodeToCheck[^2]).startsWith(prefix = "pairs") or ($nodeToCheck[
+                  ^2]).startsWith(prefix = "items"):
+                checkResult = true
+          elif nodeToCheck[^2].kind == nkDotExpr:
+            callName = $nodeToCheck[^2][^1]
+            if ($nodeToCheck[^2]).endsWith(suffix = ".pairs") or ($nodeToCheck[
+                ^2]).endsWith(suffix = ".items"):
+              checkResult = true
+        except Exception as e:
+          rule.amount = errorMessage(
+              text = "Can't check the for statement.", e = e)
+          return
         message = (if rule.negation: "uses '" & callName &
             "'" else: "don't use 'pairs' or 'items'") & " for iterators."
         checkType = "iterator"
