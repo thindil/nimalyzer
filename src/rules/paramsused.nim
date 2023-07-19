@@ -174,7 +174,12 @@ fixRule:
     for index, child in astNode[3]:
       if child.kind == nkIdentDefs:
         for iindex, ident in child:
-          if $ident == data:
-            astNode[3][index].delSon(idx = iindex)
-            break removeUnusedParam
+          try:
+            if $ident == data:
+              astNode[3][index].delSon(idx = iindex)
+              break removeUnusedParam
+          except KeyError, Exception:
+            discard errorMessage(text = "Can't remove unused parameter. Reason: " &
+                getCurrentExceptionMsg())
+            return false
   return true
