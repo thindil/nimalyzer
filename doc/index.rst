@@ -169,7 +169,9 @@ checkRule
 `checkRule` is the macro which is runs to check the Nim code. It is split on
 several parts. Each part must have at least `discard` statement. The
 `checkRule` is a recursive statement, it executes itself from the main AST node
-of the code to each its child. All the checking parts are:
+of the code to each its child. Additionally, the statement can raise only
+the ValueError exception, all other exceptions must be caught in the code. All
+the checking parts are:
 
 * `initCheck` - the initialization of checking the Nim code with the rule. This
   part of code is run only once. It is a good place to initialize some global
@@ -260,7 +262,8 @@ be executed. Otherwise, the code inside the macro will be used, unless the
 program's configuration option `forceFixCommand` is set. The macro returns
 `true` if the Nim code was modified, so the program can save the new version of
 the Nim code to the file, otherwise `false`. If `fixCommand` executed, the
-macro always returns `false`.
+macro always returns `false`. Additionally, the statement can't raise any
+exception, all must be caught in the code.
 
 
 `fixRule` has access to the following variables:
