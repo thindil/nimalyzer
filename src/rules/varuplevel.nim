@@ -185,9 +185,7 @@ checkRule:
             messagePrefix = messagePrefix, rule = rule)
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
-          "can't check declaration of variable " & $node[0] &
-          " line: " &
-          $node.info.line & ". Reason: ", e = getCurrentException())
+          "can't check declaration of variable.", e = getCurrentException())
   endCheck:
     let negation: string = (if rule.negation: "'t" else: "")
 
