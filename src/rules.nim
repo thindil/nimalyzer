@@ -398,7 +398,7 @@ macro checkRule*(code: untyped): untyped =
       children = newIdentNode(i = "RuleOptions")), newEmptyNode()])]),
       nnkPragma.newTree(children = [nnkExprColonExpr.newTree(children = [
       newIdentNode(i = "raises"), nnkBracket.newTree(children = [newIdentNode(
-      i = "ValueError")])]), newIdentNode(i = "contractual")]), newEmptyNode(),
+      i = "ValueError")])]), newIdentNode(i = "contractual"), newIdentNode(i = "sideEffect")]), newEmptyNode(),
       nnkStmtList.newTree(children = [nnkCall.newTree(children = [newIdentNode(
       i = "require"), nnkStmtList.newTree(children = [nnkInfix.newTree(
       children = [newIdentNode(i = "!="), newIdentNode(i = "astNode"),
@@ -439,7 +439,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       newIdentNode(i = "RuleOptions")]), newEmptyNode()])]), nnkPragma.newTree(
       children = [nnkExprColonExpr.newTree(children = [newIdentNode(
       i = "raises"), nnkBracket.newTree(children = [newIdentNode(
-      i = "ValueError")])])]), newEmptyNode(), newEmptyNode()]),
+      i = "ValueError")])]), newIdentNode(i = "sideEffect")]), newEmptyNode(), newEmptyNode()]),
       nnkStmtList.newTree(children = [nnkProcDef.newTree(children = [
       newIdentNode(i = "ruleFix"), newEmptyNode(), newEmptyNode(),
       nnkFormalParams.newTree(children = [newIdentNode(i = "bool"),
@@ -449,7 +449,7 @@ macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
       i = "RuleOptions"), newEmptyNode()]), nnkIdentDefs.newTree(children = [
       newIdentNode(i = "data"), newIdentNode(i = "string"), newEmptyNode()])]),
       nnkPragma.newTree(children = [nnkExprColonExpr.newTree(children = [
-      newIdentNode(i = "raises"), nnkBracket.newTree()])]), newEmptyNode(),
+      newIdentNode(i = "raises"), nnkBracket.newTree()]), newIdentNode(i = "sideEffect")]), newEmptyNode(),
       newEmptyNode()])]), nnkLetSection.newTree(children = nnkIdentDefs.newTree(
       children = [nnkPostfix.newTree(children = [newIdentNode(i = "*"),
       newIdentNode(i = "ruleSettings")]), newIdentNode(i = "RuleSettings"),
@@ -517,7 +517,7 @@ macro fixRule*(code: untyped): untyped =
       newIdentNode(i = "data"), newIdentNode(i = "string"), newEmptyNode()])]),
       nnkPragma.newTree(children = [nnkExprColonExpr.newTree(children = [
       newIdentNode(i = "raises"), nnkBracket.newTree()]), newIdentNode(
-      i = "contractual")]), newEmptyNode(), nnkStmtList.newTree(children = [
+      i = "contractual"), newIdentNode(i = "sideEffect")]), newEmptyNode(), nnkStmtList.newTree(children = [
       nnkCall.newTree(children = [newIdentNode(i = "require"),
       nnkStmtList.newTree(children = [nnkInfix.newTree(children = [
       newIdentNode(i = "!="), newIdentNode(i = "astNode"), newNilLit()]),
