@@ -12,6 +12,7 @@ of the program.
 - **BREAKING**: rules `forStatements` and `ifStatements` need now option to set
   what kind of checks will be performed.
 - Ability to check for empty `for` statements to `forStatements` rule.
+- Coloring output of the program in console.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
