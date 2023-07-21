@@ -29,6 +29,7 @@
 import std/[macros, os, strutils]
 # External modules imports
 import compiler/[idents, llstream, options, parser, pathutils]
+import colored_logger
 # Internal modules imports
 import config, rules, utils
 
@@ -54,8 +55,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
   ## The main procedure of the program
   # Set the logger, where the program output will be send
   body:
-    let logger: ConsoleLogger = newConsoleLogger(
-        fmtStr = "[$time] - $levelname: ")
+    let logger: ConsoleLogger = newColoredLogger(
+        fmtStr = "[$time] $levelname ")
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
     try:
