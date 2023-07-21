@@ -52,6 +52,7 @@ You will need:
   it. Otherwise, you may need to install it manually either with *nimble install
   compiler@[yourCompilerVersion]* or with your package manager.
 * [Contracts package](https://github.com/Udiknedormin/NimContracts)
+* [Colored_logger package](https://github.com/4zv4l/colored_logger)
 
 You can install them manually or by using [Nimble](https://github.com/nim-lang/nimble).
 In that second option, type `nimble install nimalyzer` to install the program
