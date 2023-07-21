@@ -228,7 +228,7 @@ set again message to show it only once as there is no rules configured for
 the program.
 ::
     message Checking the program's rules
-    check hasPragma all contractual "raises: [*" "tags: [*"
+    check hasPragma all contractual "raises: [*"
     check paramsUsed procedures
     check paramsUsed macros
     check namedParams
