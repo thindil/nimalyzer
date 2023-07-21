@@ -15,6 +15,7 @@ binDir = "bin"
 
 requires "nim >= 1.6.10"
 requires "contracts >= 0.2.2"
+requires "coloredlogger >= 0.1.0"
 
 # Tasks
 
