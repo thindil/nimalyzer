@@ -34,9 +34,9 @@ The maximum amount of the program's reports after which the program will stop wo
 The reports means found violations of *check*, *fix* types of rules and any
 findings for *search* rules. The summary of *count* rules doesn't count to the
 limit. For example, setting this value to 20 will stop the program after it find
-20 places in the code where a rule type *check* is violated. **NOTICE:** if you
-    reset the configuration with the `reset` setting, `maxReports` setting will be
-    reset too. The default value for the setting is max value for Nim integer,
+20 places in the code where a rule type *check* is violated. **NOTICE:** if
+you reset the configuration with the `reset` setting, `maxReports` setting will
+be reset too. The default value for the setting is max value for Nim integer,
 around 4 billions.
 ::
 maxReports 20
