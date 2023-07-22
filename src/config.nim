@@ -62,10 +62,10 @@ const fixCommand: string = when defined(macos) or defined(macosx) or defined(
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
 
-proc parseConfig*(configFile: string; sections: var int): tuple[
-    sources: seq[string]; rules: seq[ConfigData];
-        fixCommand: string] {.sideEffect, raises: [], tags: [
-    ReadIOEffect, RootEffect], contractual.} =
+proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
+    string]; rules: seq[ConfigData]; fixCommand: string;
+    maxReports: Natural] {.sideEffect, raises: [], tags: [ReadIOEffect,
+    RootEffect], contractual.} =
   ## Parse the configuration file and get all the program's settings
   ##
   ## * configFile - the path to the configuration file which will be parsed
@@ -99,6 +99,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
           message(text = "Added file '" & fileName &
               "' to the list of files to check.", level = lvlDebug)
     result.fixCommand = fixCommand
+    result.maxReports = Positive.high
     try:
       # Read the program's configuration
       var
@@ -134,6 +135,14 @@ proc parseConfig*(configFile: string; sections: var int): tuple[
                 "'.", level = lvlDebug)
           except ValueError:
             abortProgram(message = "Invalid value set in configuration file for the program verbosity level.")
+        # Set the max amount of the reported problems
+        elif lowerLine.startsWith(prefix = "maxreports"):
+          try:
+            result.maxReports = parseInt(s = line[11..^1])
+            message(text = "Setting the program's max reports to " & line[
+                11..^1] & ".", level = lvlDebug)
+          except ValueError:
+            abortProgram(message = "Invalid value set in configuration file for the maximum amount of the program's reports.")
         # Set the file to which the program's output will be logged
         elif lowerLine.startsWith(prefix = "output"):
           let fileName: string = unixToNativePath(path = line[7..^1])

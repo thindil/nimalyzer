@@ -72,6 +72,7 @@ type
     fixCommand*: string
     identsCache*: IdentCache
     forceFixCommand*: bool
+    maxResults*: Natural
 
   RuleSettings* = object
     ## Contains information about the program's rule configuration
@@ -195,6 +196,9 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
       if rule.ruleType in {check, fix} and positiveMessage.len > 0:
         message(text = messagePrefix & positiveMessage.multiReplace(
             replacements = replacements), returnValue = rule.amount)
+        rule.maxResults.dec
+        if rule.maxResults == 0:
+          return
       else:
         rule.amount.dec
       if rule.ruleType == fix:
@@ -208,6 +212,9 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
         message(text = messagePrefix & positiveMessage.multiReplace(
             replacements = replacements), returnValue = rule.amount,
             level = lvlNotice, decrease = false)
+        rule.maxResults.dec
+        if rule.maxResults == 0:
+          return
       else:
         rule.amount.inc
   # The entity not meet rule's requirements
@@ -220,11 +227,17 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
           message(text = messagePrefix & negativeMessage.multiReplace(
               replacements = replacements), returnValue = rule.amount)
           rule.amount = int.low
+          rule.maxResults.dec
+          if rule.maxResults == 0:
+            return
         else:
           if rule.negation:
             message(text = messagePrefix & negativeMessage.multiReplace(
                 replacements = replacements), returnValue = rule.amount,
                 level = lvlNotice, decrease = false)
+            rule.maxResults.dec
+            if rule.maxResults == 0:
+              return
       if rule.ruleType == fix:
         if ruleFix(astNode = node, parentNode = astNode, rule = rule,
             data = ruleData):
