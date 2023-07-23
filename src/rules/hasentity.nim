@@ -152,7 +152,7 @@ checkRule:
                 if child.kind != nodeKind:
                   continue
                 let childName: string = try:
-                    $child[0]
+                    $child[namePos]
                   except KeyError, Exception:
                     ""
                 if rule.options[1].len == 0 or startsWith(s = childName,
@@ -176,11 +176,11 @@ checkRule:
                     rule.options[0], childName, $node.info.line])
         # Check the node itself
         elif node.kind == nodeKind:
-          if rule.options[1].len == 0 or startsWith(s = $node[0],
+          if rule.options[1].len == 0 or startsWith(s = $node[namePos],
               prefix = rule.options[1]):
             setResult(checkResult = true, positiveMessage = positiveMessage,
                 negativeMessage = negativeMessage, node = node, params = [
-                rule.options[0], $node[0], $node.info.line])
+                rule.options[0], $node[namePos], $node.info.line])
       except KeyError, Exception:
         rule.amount = errorMessage(
             text = "Error during checking hasEntity rule: ",
