@@ -39,7 +39,7 @@ you reset the configuration with the `reset` setting, `maxReports` setting will
 be reset too. The default value for the setting is max value for Nim integer,
 around 4 billions.
 ::
-maxReports 20
+    maxreports 20
 
 Output
 ------
