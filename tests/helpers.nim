@@ -39,7 +39,8 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
     validCode = parseString(validNimCode, nimCache, nimConfig)
     invalidCode = parseString(invalidNimCode, nimCache, nimConfig)
     ruleOptions = RuleOptions(parent: true, fileName: "test.nim",
-        negation: false, ruleType: check, options: validOptions, amount: 0, enabled: true)
+        negation: false, ruleType: check, options: validOptions, amount: 0,
+        enabled: true, maxResults: Natural.high)
 
   # check rule tests
   info("Checking check type of the rule with the invalid code.")
