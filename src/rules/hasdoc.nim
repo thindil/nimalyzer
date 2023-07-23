@@ -145,12 +145,12 @@ checkRule:
       else:
         # Set the name of the declared entity which is checked for documentation
         var declName: string = try:
-              $node[0]
+              $node[namePos]
             except KeyError, Exception:
               ""
         if declName.len == 0:
           declName = try:
-              $astNode[0]
+              $astNode[namePos]
             except KeyError, Exception:
               ""
         if declName.len == 0:
