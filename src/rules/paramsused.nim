@@ -126,9 +126,7 @@ checkRule:
       else:
         var index: int = -1
         # Check each parameter
-        for child in node[3]:
-          if child.kind in {nkEmpty, nkIdent}:
-            continue
+        for child in node[3].sons[1 .. ^1]:
           index = -1
           for i in 0..child.len - 3:
             try:
