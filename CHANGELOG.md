@@ -13,6 +13,8 @@ of the program.
   what kind of checks will be performed.
 - Ability to check for empty `for` statements to `forStatements` rule.
 - Coloring output of the program in console.
+- Configuration setting `maxreports` to limit the amount of reported problems
+  by the program.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
@@ -20,6 +22,7 @@ of the program.
 
 ### Fixed
 - Typos in the program's documentation.
+- Checking usage of parameters by `paramsUsed` rule.
 
 ## [0.5.0] - 2023-07-10
 
