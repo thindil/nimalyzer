@@ -129,7 +129,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     parent != nil
   body:
     let
-      varName: string = $node[0]
+      varName: string = $node[namePos]
       astNode: PNode = parent
     # The declaration is inside as injected a template or variable is ignored
     # or the declaration doesn't have initialization, ignore it and move to
@@ -151,8 +151,8 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
           hiddenLine = hiddingChild.info.line
           break
     setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
-        negativeMessage = negativeMessage, node = node, ruleData = $node[0],
-        params = [$node[0], $node.info.line, $hiddenLine])
+        negativeMessage = negativeMessage, node = node, ruleData = $node[namePos],
+        params = [$node[namePos], $node.info.line, $hiddenLine])
 {.pop ruleOff: "paramsUsed".}
 
 checkRule:
@@ -207,7 +207,7 @@ fixRule:
         hiddingChild = checkChild(nodes = child, varName = data)
         if hiddingChild != nil:
           # Add prefix to the local variable
-          hiddingChild[0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+          hiddingChild[namePos] = newIdentNode(ident = getIdent(ic = rule.identsCache,
               identifier = "local" & data), info = hiddingChild.info)
         fixLocal(nodes = child)
 
