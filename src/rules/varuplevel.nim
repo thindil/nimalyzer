@@ -102,7 +102,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     parent != nil
   body:
     let
-      varName: string = $node[0]
+      varName: string = $node[namePos]
       astNode: PNode = parent
     # The declaration is global, or inside as injected a template or variable
     # is ignored or the declaration doesn't have initialization, ignore it
@@ -115,7 +115,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     if section.kind == nkLetSection:
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          node = node, ruleData = "const", params = [$node[0], $node.info.line, "constant"])
+          node = node, ruleData = "const", params = [$node[namePos], $node.info.line, "constant"])
     # Check if var declaration can be updated
     else:
       # No default value, can't be updated
@@ -141,7 +141,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
             for child in nodes:
               try:
                 if (child.kind == nkIdent and $child == varName) or (
-                    child.kind in {nkAsgn, nkDotExpr} and $child[0] == varName):
+                    child.kind in {nkAsgn, nkDotExpr} and $child[namePos] == varName):
                   return true
                 result = checkChild(nodes = child)
                 if result:
@@ -161,7 +161,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
               break
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          node = node, ruleData = "let", params = [$node[0], $node.info.line, "let"])
+          node = node, ruleData = "let", params = [$node[namePos], $node.info.line, "let"])
 {.pop ruleOff: "paramsUsed".}
 
 checkRule:
