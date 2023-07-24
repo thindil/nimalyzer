@@ -141,7 +141,7 @@ checkRule:
       let
         pragmas: PNode = getDeclPragma(n = node)
         procName: string = try:
-            $node[0]
+            $node[namePos]
           except KeyError, Exception:
             ""
       if procName.len == 0:
