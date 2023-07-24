@@ -122,7 +122,7 @@ checkRule:
           if declaration.kind == nkEmpty:
             continue
           let nameToCheck: string = (if declaration.kind in {nkCharLit ..
-              nkTripleStrLit, nkSym, nkIdent}: $declaration else: $declaration[0])
+              nkTripleStrLit, nkSym, nkIdent}: $declaration else: $declaration[namePos])
           setResult(checkResult = match(s = nameToCheck, pattern = convention),
               positiveMessage = positiveMessage,
               negativeMessage = negativeMessage, node = declaration, params = [
@@ -131,9 +131,9 @@ checkRule:
             break
       # And sometimes the compiler detects declarations as the node
       elif node.kind == nkIdentDefs and astNode.kind in nodesToCheck:
-        setResult(checkResult = match(s = $node[0], pattern = convention),
+        setResult(checkResult = match(s = $node[namePos], pattern = convention),
             positiveMessage = positiveMessage, node = node,
-            negativeMessage = negativeMessage, params = [$node[0],
+            negativeMessage = negativeMessage, params = [$node[namePos],
             $node.info.line])
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
