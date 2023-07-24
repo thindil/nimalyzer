@@ -118,7 +118,7 @@ checkRule:
             text = "Can't get the name of the procedure.")
         return
       # No parameters, skip
-      if node[3].len < 2:
+      if node[paramsPos].len < 2:
         if rule.negation:
           rule.amount.dec
         else:
@@ -126,13 +126,13 @@ checkRule:
       else:
         var index: int = -1
         # Check each parameter
-        for child in node[3].sons[1 .. ^1]:
+        for child in node[paramsPos].sons[1 .. ^1]:
           index = -1
           for i in 0..child.len - 3:
             try:
               let
                 varName: string = split(s = $child[i])[0]
-                body: PNode = flattenStmts(n = node[6])
+                body: PNode = flattenStmts(n = node[bodyPos])
               for childNode in body:
                 index = find(s = $childNode, sub = varName)
                 if index > -1:
@@ -169,12 +169,12 @@ fixRule:
     return false
   # Remove unused parameters
   block removeUnusedParam:
-    for index, child in astNode[3]:
+    for index, child in astNode[paramsPos]:
       if child.kind == nkIdentDefs:
         for iindex, ident in child:
           try:
             if $ident == data:
-              astNode[3][index].delSon(idx = iindex)
+              astNode[paramsPos][index].delSon(idx = iindex)
               break removeUnusedParam
           except KeyError, Exception:
             discard errorMessage(text = "Can't remove unused parameter. Reason: " &
