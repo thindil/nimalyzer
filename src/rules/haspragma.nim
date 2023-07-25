@@ -122,6 +122,7 @@ ruleConfig(ruleName = "haspragma",
   ruleOptionValues = @["procedures", "templates", "all"],
   ruleMinOptions = 2)
 
+{.hint[XCannotRaiseY]: off.}
 checkRule:
   initCheck:
     discard
@@ -239,6 +240,7 @@ checkRule:
     if not rule.enabled and rule.amount == 0:
       rule.amount = 1
       return
+{.hint[XCannotRaiseY]: on.}
 
 fixRule:
   var pragmas: PNode = astNode[pragmasPos]
