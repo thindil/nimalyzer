@@ -157,6 +157,9 @@ checkRule:
                 " doesn't have declared any pragmas.",
                 returnValue = rule.amount, level = lvlNotice,
                 decrease = false)
+            rule.maxResults.dec
+            if rule.maxResults == 0:
+              return
           else:
             rule.amount.inc
         else:
@@ -166,6 +169,9 @@ checkRule:
                 " doesn't have declared any pragmas.",
                 returnValue = rule.amount)
             rule.amount = int.low
+            rule.maxResults.dec
+            if rule.maxResults == 0:
+              return
           else:
             if rule.ruleType == fix:
               for pragma in rule.options[1 .. ^1]:
