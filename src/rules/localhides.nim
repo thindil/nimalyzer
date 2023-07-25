@@ -185,6 +185,7 @@ fixRule:
   # Don't change anything if rule has negation
   if rule.negation:
     return false
+  # Rename the local variable which has the same name as the global.
   let nodesToCheck: PNode = getNodesToCheck(parentNode = parentNode,
       node = astNode)
 
