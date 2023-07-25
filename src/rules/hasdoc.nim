@@ -98,6 +98,7 @@ ruleConfig(ruleName = "hasdoc",
 
 var docTemplate: string = ""
 
+{.hint[XCannotRaiseY]: off.}
 checkRule:
   initCheck:
     if rule.enabled:
@@ -177,6 +178,7 @@ checkRule:
             return
   endCheck:
     discard
+{.hint[XCannotRaiseY]: on.}
 
 fixRule:
   # Remove the documentation
