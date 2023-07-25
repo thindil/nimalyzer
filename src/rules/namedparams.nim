@@ -87,13 +87,12 @@ proc check(node, astNode: PNode; rule: var RuleOptions;
     if not rule.enabled:
       return
     let callName: string = try:
-          $node[0]
+          $node[namePos]
         except KeyError, Exception:
           ""
     if callName.len == 0:
-      message(text = "Can't get the name of the call.", level = lvlFatal,
-          returnValue = rule.amount)
-      rule.amount.inc
+      rule.amount = errorMessage(text = "Can't get the name of the call. Reason: ",
+          e = getCurrentException())
       return
     # Ignore checking for defined procedure. It looks like it doesn't like named
     # parameters
