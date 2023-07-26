@@ -108,8 +108,8 @@ ruleConfig(ruleName = "ifstatements",
   ruleNotFoundMessage = "if statements which can{negation} be upgraded not found.",
   rulePositiveMessage = "if statement, line: {params[0]} {params[1]}",
   ruleNegativeMessage = "if statement, line: {params[0]} {params[1]}",
-  ruleOptions = @[custom],
-  ruleOptionValues = @["all", "negative", "moveable", "empty"],
+  ruleOptions = @[custom, integer],
+  ruleOptionValues = @["all", "negative", "moveable", "empty", "min", "max"],
   ruleMinOptions = 1)
 
 checkRule:
@@ -139,9 +139,9 @@ checkRule:
             rule.amount = errorMessage(
                 text = "Can't check the if statement.", e = e)
             return
+        # Check if the last if branch can be moved outside the if statement
         if rule.options[0].toLowerAscii in ["all", "moveable"] and
             rule.amount == oldAmount:
-          # Check if the last if branch can be moved outside the if statement
           let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][
               ^1][^1] else: node[^2][^1])
           if lastNode.kind in nkLastBlockStmts:
@@ -154,8 +154,8 @@ checkRule:
                 ruleData = "outside", params = [$node.info.line,
                 "the content of the last branch can" & negation &
                 " be moved outside the if statement."])
+      # Check if the if statement contains empty branches (with discard only)
       if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
-        # Check if the if statement contains empty branches (with discard only)
         var checkResult: bool = true
         for child in node:
           if child[^1].kind == nkStmtList and child[^1].len == 1:
@@ -172,12 +172,27 @@ checkRule:
             break
         if rule.ruleType == fix and not checkResult:
           return
+      # Check the amount of the if statement branches (min and max)
+      if rule.options[0].toLowerAscii in ["min", "max"] and rule.amount == oldAmount:
+        var checkResult: bool = true
+        if rule.options[0].toLowerAscii == "min":
+          if node.len < rule.options[1].parseInt():
+            checkResult = false
+        elif node.len > rule.options[1].parseInt():
+          checkResult = false
+        setResult(checkResult = checkResult,
+            positiveMessage = positiveMessage,
+            negativeMessage = negativeMessage, node = node,
+            ruleData = "amount", params = [$node.info.line,
+            "the statement " & (if rule.negation: "doesn't have " else: "has ") &
+            (if rule.options[0].toLowerAscii == "max": "more " else: "less ") &
+                "than " & rule.options[1] & " branches."])
   endCheck:
     discard
 
 fixRule:
-  # Don't change anything if rule has negation
-  if rule.negation:
+  # Don't change anything if rule has negation or check for amount of branches
+  if rule.negation or data == "amount":
     return false
   case data
   # Remove empty if statement
