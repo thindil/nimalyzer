@@ -155,6 +155,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         params = [$node[namePos], $node.info.line, $hiddenLine])
 {.pop ruleOff: "paramsUsed".}
 
+{.hint[XCannotRaiseY]: off.}
 checkRule:
   initCheck:
     discard
@@ -180,6 +181,7 @@ checkRule:
           $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
     discard
+{.hint[XCannotRaiseY]: on.}
 
 fixRule:
   # Don't change anything if rule has negation
