@@ -23,6 +23,7 @@ of the program.
 ### Fixed
 - Typos in the program's documentation.
 - Checking usage of parameters in declarations by `paramsUsed` rule.
+- Typos in the program's messages.
 
 ## [0.5.0] - 2023-07-10
 
