@@ -42,9 +42,12 @@
 ##     else:
 ##       doSomething2()
 ##
+## * The maximum and minimum amount of `if` statements' branches. The check
+##   must be set explicitly, it isn't performed when option *all* is set.
+##
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? ifStatements [checkType]
+##   [ruleType] ?not? ifStatements [checkType] [amount]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -63,12 +66,19 @@
 ## * ifStatements is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *ifstatements*, *ifstatements* or *iFsTaTeMeNts*.
 ## * checkType is the type of checks to perform on the `if` statements. Proper
-##   values are: *all*, *negative*, *moveable*, *empty*. Setting it to all will
-##   perform all rule's checks on statements. Negative value will check only if the
-##   `if` statements don't have a negative condition with branch `else`. Moveable
-##   value will check only if the content of `else` branch can be moved outside
-##   the statement. Empty value will check if the `if` statements doesn't
-##   contain only a `discard` statement.
+##   values are: *all*, *negative*, *moveable*, *empty*, *min* and *max*.
+##   Setting it to all will perform all rule's checks on statements except for
+##   the check for maximum and minimum amount of branches. Negative value will
+##   check only if the `if` statements don't have a negative condition with branch
+##   `else`. Moveable value will check only if the content of `else` branch can
+##   be moved outside the statement. Empty value will check if the `if`
+##   statements doesn't contain only a `discard` statement. Min value will check
+##   if all `if` statements have at least the selected amount of branches. Max
+##   value will check if the `if` statements have maximum the selected amount of
+##   branches.
+## * amount parameter is required only for *min* and *max* types of checks and
+##   it is ignored for another. It is desired amount of branches for the `if`
+##   statements, minimal or maximum, depends on check's type.
 ##
 ## Disabling the rule
 ## ------------------
@@ -99,6 +109,10 @@
 ## 2. Remove all empty `if` statements::
 ##
 ##     fix ifStatements empty
+##
+## 3. Check if all `if` statements have at least 3 branches:
+##
+##     check ifStatements min 3
 
 # Import default rules' modules
 import ../rules
