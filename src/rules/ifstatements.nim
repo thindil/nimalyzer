@@ -114,7 +114,9 @@ ruleConfig(ruleName = "ifstatements",
 
 checkRule:
   initCheck:
-    discard
+    if rule.options[0] in ["min", "max"] and rule.options.len < 2:
+      rule.amount = errorMessage(text = "Can't check the amount of branches of if statements, no value for the branches' amount set in the configuration file.")
+      return
   startCheck:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
