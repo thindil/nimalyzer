@@ -80,9 +80,10 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
   ##                sections are separated with *reset* setting in the file.
   ##
   ## Returns tuple with the list of source code files to check, the list of
-  ## the program's rules to check plus custom messages to show, and the command
-  ## executed when rule doesn't set own code for fix type of rules. Also
-  ## returns the updated parameter sections. If the file was fully parsed, the
+  ## the program's rules to check plus custom messages to show, the command
+  ## executed when rule doesn't set own code for fix type of rules, and the
+  ## maximum amount of the program's reports to show. Also returns the
+  ## updated parameter sections. If the file was fully parsed, the
   ## parameter sections will have value -1. Otherwise, the parameter sections
   ## will be the number of the setting *reset* in the configuration file, so
   ## next time the procedure can start parsing from exactly this setting.
