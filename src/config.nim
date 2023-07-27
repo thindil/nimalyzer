@@ -36,7 +36,9 @@ type
     rule, message
 
   ConfigData* = object
-    ## Contains information about the configuration of the program's rule
+    ## Contains information about the configuration of the program's rule or a
+    ## custom message, depends on `kind` parameter. When the type of
+    ## configuration entry is the program's rule, it has following fields:
     ##
     ## * name            - The name of the rule
     ## * options         - The options list provided by the user in a configuration
@@ -46,6 +48,11 @@ type
     ## * index           - The index of the rule
     ## * forceFixCommand - If true, force use setting fixCommand for the rule
     ##                     instead of the rule's fix code
+    ##
+    ## When the type of configuration entry is a custom message it has following
+    ## field:
+    ##
+    ## * text - the text to show to the user
     case kind*: ConfigKind
     of rule:
       name*: string
