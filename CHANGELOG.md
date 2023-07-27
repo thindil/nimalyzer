@@ -15,6 +15,8 @@ of the program.
 - Coloring output of the program in console.
 - Configuration setting `maxreports` to limit the amount of reported problems
   by the program.
+- Ability to check the maximum and minimum amount of branches of `if`
+  statements to `ifStatements` rule.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
