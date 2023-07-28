@@ -114,14 +114,15 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
         configSection: int = sections
         forceFixCommand: bool = false
       for line in configFile.lines:
-        let lowerLine: string = line.toLowerAscii()
+        var configLine: seq[string] = line.split
+        configLine[0] = configLine[0].toLowerAscii
         # Comment line, skip
         if line.startsWith(prefix = '#') or line.len == 0:
           continue
         # If the configuration file contains a couple of sections of settings,
         # skip the current line until don't meet the proper section
         elif configSection > 0:
-          if lowerLine != "reset":
+          if configLine[0] != "reset":
             continue
           else:
             configSection.dec
@@ -130,74 +131,77 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             continue
         # If the configuration file contains "reset" setting, stop parsing it
         # and increase the amount of sections
-        elif lowerLine == "reset":
+        elif configLine[0] == "reset":
           sections.inc
           message(text = "Stopped parsing of the configuration file.",
               level = lvlDebug)
           return
         # Set the program's verbosity
-        elif lowerLine.startsWith(prefix = "verbosity"):
+        elif configLine[0] == "verbosity":
           try:
-            setLogFilter(lvl = parseEnum[Level](s = line[10..^1]))
-            message(text = "Setting the program's verbosity to '" & line[
-                10..^1] & "'.", level = lvlDebug)
+            setLogFilter(lvl = parseEnum[Level](s = configLine[1]))
+            message(text = "Setting the program's verbosity to '" & configLine[
+                1] & "'.", level = lvlDebug)
           except ValueError:
             abortProgram(message = "An invalid value set in the configuration file for the program's verbosity level.")
         # Set the max amount of the reported problems
-        elif lowerLine.startsWith(prefix = "maxreports"):
+        elif configLine[0] == "maxreports":
           try:
-            result.maxReports = parseInt(s = line[11..^1])
-            message(text = "Setting the program's max reports to " & line[
-                11..^1] & ".", level = lvlDebug)
+            result.maxReports = parseInt(s = configLine[1])
+            message(text = "Setting the program's max reports to " & configLine[
+                1] & ".", level = lvlDebug)
           except ValueError:
             abortProgram(message = "An invalid value set in the configuration file for the maximum amount of the program's reports.")
         # Set the file to which the program's output will be logged
-        elif lowerLine.startsWith(prefix = "output"):
-          let fileName: string = unixToNativePath(path = line[7..^1])
+        elif configLine[0] == "output":
+          let fileName: string = unixToNativePath(path = configLine[1 ..
+              ^1].join(sep = " "))
           addHandler(handler = newFileLogger(filename = fileName,
               fmtStr = "[$time] - $levelname: "))
           message(text = "Added the file '" & fileName & "' as a log file.",
               level = lvlDebug)
         # Set the command which will be executed when rule type fix encounter
         # a problem
-        elif lowerLine.startsWith(prefix = "fixcommand"):
-          result.fixCommand = line[11..^1]
+        elif configLine[0] == "fixcommand":
+          result.fixCommand = configLine[1 .. ^1].join(sep = " ")
           message(text = "The command to execute for fix rules' type set to '" &
               result.fixCommand & "'.", level = lvlDebug)
         # Set the source code file to check
-        elif lowerLine.startsWith(prefix = "source"):
-          let fileName: string = unixToNativePath(path = line[7..^1])
+        elif configLine[0] == "source":
+          let fileName: string = unixToNativePath(path = configLine[1 ..
+              ^1].join(sep = " "))
           addFile(fileName = fileName, sources = result.sources)
         # Set the source code files to check
-        elif lowerLine.startsWith(prefix = "files"):
+        elif configLine[0] == "files":
           try:
-            for fileName in walkFiles(pattern = line[6..^1]):
+            for fileName in walkFiles(pattern = configLine[1 .. ^1].join(sep = " ")):
               addFile(fileName = fileName, sources = result.sources)
           except OSError:
             abortProgram(message = "Can't parse the setting: '" & line &
                 "'. Reason: ", e = getCurrentException())
         # Set the source code files to check, the second option
-        elif lowerLine.startsWith(prefix = "directory"):
+        elif configLine[0] == "directory":
           try:
-            for fileName in walkDirRec(dir = line[10..^1]):
+            for fileName in walkDirRec(dir = configLine[1 .. ^1].join(sep = " ")):
               addFile(fileName = fileName, sources = result.sources)
           except OSError:
             abortProgram(message = "Can't add files to check. Reason: ",
                 e = getCurrentException())
         # Set the message to show during the program's work
-        elif lowerLine.startsWith(prefix = "message"):
+        elif configLine[0] == "message":
           if line.len < 9:
             abortProgram(message = "Can't parse the 'message' setting in the configuration file. No message's text set.")
-          let newMessage: ConfigData = ConfigData(kind: message, text: line[8..^1])
+          let newMessage: ConfigData = ConfigData(kind: message,
+              text: configLine[1 .. ^1].join(sep = " "))
           result.rules.add(y = newMessage)
           message(text = "Added the custom message: '" & result.rules[^1].text &
               "' to the program's output.", level = lvlDebug)
         # Set do the progam should force its rules to execute the command instead
         # of code for fix type of rules
-        elif lowerLine.startsWith(prefix = "forcefixcommand"):
+        elif configLine[0] == "forcefixcommand":
           if line.len < 17:
             abortProgram(message = "Can't parse the 'forcefixcommand' setting in the configuration file. No value set, should be 0, 1, true or false.");
-          if line[16..^1].toLowerAscii in ["0", "false"]:
+          if configLine[1].toLowerAscii in ["0", "false"]:
             forceFixCommand = false
             message(text = "Disabled forcing the next rules to use a fix command instead of the code.",
                 level = lvlDebug)
@@ -206,7 +210,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             message(text = "Enabled forcing the next rules to use a fix command instead of the code.",
                 level = lvlDebug)
         # Set the program's rule to test the code
-        elif availableRuleTypes.anyIt(pred = lowerLine.startsWith(prefix = it)):
+        elif availableRuleTypes.anyIt(pred = configLine[0] == it):
           var configRule: OptParser = initOptParser(cmdline = line)
           configRule.next
           let ruleType: RuleTypes = try:
