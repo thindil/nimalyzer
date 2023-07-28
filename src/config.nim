@@ -92,7 +92,13 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
   body:
 
     type ConfigSetting = object
-      name, value: string
+      ## Contains information about the setting from the program's
+      ## configuration's file.
+      ##
+      ## * name  - the name of the setting from the file
+      ## * value - the value of the setting from the file
+      name: string
+      value: string
 
     proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [
         ], tags: [RootEffect], contractual.} =
