@@ -17,6 +17,8 @@ of the program.
   by the program.
 - Ability to check the maximum and minimum amount of branches of `if`
   statements to `ifStatements` rule.
+- **BREAKING**: checking for invalid the program's configuration's settings in
+  a configuration files.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
