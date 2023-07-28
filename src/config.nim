@@ -64,10 +64,14 @@ type
     of message:
       text*: string
 
-const fixCommand: string = when defined(macos) or defined(macosx) or defined(
+const
+  fixCommand: string = when defined(macos) or defined(macosx) or defined(
     windows): "open" else: "xdg-open" & " {fileName}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
+  configOptions: array[14, string] = ["verbosity", "output", "source", "files",
+      "directory", "check", "search", "count", "fixcommand", "fix", "reset",
+      "message", "forcefixcommand", "maxreports"]
 
 proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
     string]; rules: seq[ConfigData]; fixCommand: string;
@@ -97,8 +101,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
       ##
       ## * name  - the name of the setting from the file
       ## * value - the value of the setting from the file
-      name: string
-      value: string
+      name, value: string
 
     proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [
         ], tags: [RootEffect], contractual.} =
@@ -131,6 +134,9 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
         # Comment line, skip
         if line.startsWith(prefix = '#') or line.len == 0:
           continue
+        # Check if the setting is a valid setting for the program
+        elif setting.name notin configOptions:
+          abortProgram(message = "An unknown setting in the configuration file: '" & setting.name & "'.")
         # If the configuration file contains a couple of sections of settings,
         # skip the current line until don't meet the proper section
         elif configSection > 0:
