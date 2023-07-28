@@ -69,9 +69,10 @@ const
     windows): "open" else: "xdg-open" & " {fileName}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
-  configOptions: array[14, string] = ["verbosity", "output", "source", "files",
+  configOptions*: array[14, string] = ["verbosity", "output", "source", "files",
       "directory", "check", "search", "count", "fixcommand", "fix", "reset",
       "message", "forcefixcommand", "maxreports"]
+    ## The list of available the program's configuration's options
 
 proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
     string]; rules: seq[ConfigData]; fixCommand: string;
