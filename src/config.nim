@@ -130,7 +130,9 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
       var
         configSection: int = sections
         forceFixCommand: bool = false
+        lineNumber: Natural = 0
       for line in configFile.lines:
+        lineNumber.inc
         let
           configLine: seq[string] = line.split
           setting: ConfigSetting = ConfigSetting(name: configLine[
@@ -142,7 +144,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
         # Check if the setting is a valid setting for the program
         elif setting.index == -1:
           abortProgram(message = "An unknown setting in the configuration file: '" &
-              setting.name & "'.")
+              setting.name & "', line: " & $lineNumber & ".")
         # If the configuration file contains a couple of sections of settings,
         # skip the current line until don't meet the proper section
         elif configSection > 0:
@@ -167,7 +169,8 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             message(text = "Setting the program's verbosity to '" &
                 setting.value & "'.", level = lvlDebug)
           except ValueError:
-            abortProgram(message = "An invalid value set in the configuration file for the program's verbosity level.")
+            abortProgram(message = "An invalid value set in the configuration file, line: " &
+                $lineNumber & " for the program's verbosity level.")
         # Set the max amount of the reported problems
         elif setting.name == "maxreports":
           try:
@@ -175,7 +178,8 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             message(text = "Setting the program's max reports to " &
                 setting.value & ".", level = lvlDebug)
           except ValueError:
-            abortProgram(message = "An invalid value set in the configuration file for the maximum amount of the program's reports.")
+            abortProgram(message = "An invalid value set in the configuration file, line: " &
+                $lineNumber & " for the maximum amount of the program's reports.")
         # Set the file to which the program's output will be logged
         elif setting.name == "output":
           let fileName: string = unixToNativePath(path = setting.value)
@@ -200,19 +204,21 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
               addFile(fileName = fileName, sources = result.sources)
           except OSError:
             abortProgram(message = "Can't parse the setting: '" & line &
-                "'. Reason: ", e = getCurrentException())
+                ", line: " & $lineNumber & "'. Reason: ",
+                e = getCurrentException())
         # Set the source code files to check, the second option
         elif setting.name == "directory":
           try:
             for fileName in walkDirRec(dir = setting.value):
               addFile(fileName = fileName, sources = result.sources)
           except OSError:
-            abortProgram(message = "Can't add files to check. Reason: ",
-                e = getCurrentException())
+            abortProgram(message = "Can't add files to check, line: " &
+                $lineNumber & ". Reason: ", e = getCurrentException())
         # Set the message to show during the program's work
         elif setting.name == "message":
           if setting.value.len == 0:
-            abortProgram(message = "Can't parse the 'message' setting in the configuration file. No message's text set.")
+            abortProgram(message = "Can't parse the 'message' setting in the configuration file, line: " &
+                $lineNumber & ". No message's text set.")
           let newMessage: ConfigData = ConfigData(kind: message,
               text: setting.value)
           result.rules.add(y = newMessage)
@@ -222,7 +228,8 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
         # of code for fix type of rules
         elif setting.name == "forcefixcommand":
           if setting.value.len == 0:
-            abortProgram(message = "Can't parse the 'forcefixcommand' setting in the configuration file. No value set, should be 0, 1, true or false.");
+            abortProgram(message = "Can't parse the 'forcefixcommand' setting in the configuration file, line: " &
+                $lineNumber & ". No value set, should be 0, 1, true or false.");
           if setting.value.toLowerAscii in ["0", "false"]:
             forceFixCommand = false
             message(text = "Disabled forcing the next rules to use a fix command instead of the code.",
@@ -255,7 +262,8 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
               newRule.index = index
               break
           if newRule.index == -1:
-            abortProgram(message = "No rule named '" & newRule.name & "' available.")
+            abortProgram(message = "No rule named '" & newRule.name &
+                "' available, line: " & $lineNumber & ".")
           while true:
             configRule.next()
             if configRule.kind == cmdEnd:
@@ -265,10 +273,10 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             if not validateOptions(rule = rulesList[newRule.index],
                 options = newRule.options):
               abortProgram(message = "Invalid options for rule '" &
-                  newRule.name & "'.")
+                  newRule.name & "', line: " & $lineNumber & ".")
           except KeyError:
-            abortProgram(message = "Can't validate the rule's parameters. Reason: ",
-                e = getCurrentException())
+            abortProgram(message = "Can't validate the rule's parameters, line: " &
+                $lineNumber & ". Reason: ", e = getCurrentException())
           result.rules.add(y = newRule)
           message(text = "Added the" & (if result.rules[
               ^1].negation: " negation " else: " ") & $result.rules[
