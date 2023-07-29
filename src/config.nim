@@ -102,6 +102,8 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
       ##
       ## * name  - the name of the setting from the file
       ## * value - the value of the setting from the file
+      ## * index - the index of the setting in configOptions list. If it is an
+      ##           invalid option, it is -1.
       name, value: string
       index: int
 
