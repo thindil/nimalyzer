@@ -103,6 +103,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
       ## * name  - the name of the setting from the file
       ## * value - the value of the setting from the file
       name, value: string
+      index: int
 
     proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [
         ], tags: [RootEffect], contractual.} =
@@ -131,13 +132,15 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
         let
           configLine: seq[string] = line.split
           setting: ConfigSetting = ConfigSetting(name: configLine[
-              0].toLowerAscii, value: configLine[1 .. ^1].join(sep = " "))
+              0].toLowerAscii, value: configLine[1 .. ^1].join(sep = " "),
+              index: configOptions.find(item = configLine[0].toLowerAscii))
         # Comment line, skip
         if line.startsWith(prefix = '#') or line.len == 0:
           continue
         # Check if the setting is a valid setting for the program
-        elif setting.name notin configOptions:
-          abortProgram(message = "An unknown setting in the configuration file: '" & setting.name & "'.")
+        elif setting.index == -1:
+          abortProgram(message = "An unknown setting in the configuration file: '" &
+              setting.name & "'.")
         # If the configuration file contains a couple of sections of settings,
         # skip the current line until don't meet the proper section
         elif configSection > 0:
