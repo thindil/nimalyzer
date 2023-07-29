@@ -61,6 +61,7 @@ type
       ruleType*: RuleTypes
       index*: int
       forceFixCommand*: bool
+      explaination*: string
     of message:
       text*: string
 
@@ -69,9 +70,9 @@ const
     windows): "open" else: "xdg-open" & " {fileName}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
-  configOptions*: array[14, string] = ["verbosity", "output", "source", "files",
+  configOptions*: array[15, string] = ["verbosity", "output", "source", "files",
       "directory", "check", "search", "count", "fixcommand", "fix", "reset",
-      "message", "forcefixcommand", "maxreports"]
+      "message", "forcefixcommand", "maxreports", "explaination"]
     ## The list of available the program's configuration's options
 
 proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
@@ -229,7 +230,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
         elif setting.name == "forcefixcommand":
           if setting.value.len == 0:
             abortProgram(message = "Can't parse the 'forcefixcommand' setting in the configuration file, line: " &
-                $lineNumber & ". No value set, should be 0, 1, true or false.");
+                $lineNumber & ". No value set, should be 0, 1, true or false.")
           if setting.value.toLowerAscii in ["0", "false"]:
             forceFixCommand = false
             message(text = "Disabled forcing the next rules to use a fix command instead of the code.",
@@ -238,6 +239,15 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             forceFixCommand = true
             message(text = "Enabled forcing the next rules to use a fix command instead of the code.",
                 level = lvlDebug)
+        # Set the explaination for the previous rule
+        elif setting.name == "explaination":
+          if result.rules.len == 0:
+            abortProgram(message = "The setting 'explaination', line: " &
+                $lineNumber & " is set before any rule setting.")
+          if setting.value.len == 0:
+            abortProgram(message = "Can't parse the 'explaination' setting in the configuration file, line: " &
+                $lineNumber & ". No explaination's text set.")
+          result.rules[result.rules.high].explaination = setting.value
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = setting.name == it):
           var configRule: OptParser = initOptParser(cmdline = line)
