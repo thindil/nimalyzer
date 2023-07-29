@@ -19,6 +19,8 @@ of the program.
   statements to `ifStatements` rule.
 - **BREAKING**: checking for invalid the program's configuration's settings in
   a configuration files.
+- Information about the line number to errors' messages during parsing the
+  program's configuration files.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
