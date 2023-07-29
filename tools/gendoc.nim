@@ -32,6 +32,7 @@
 import std/[os, strutils]
 # External modules imports
 import contracts
+import ../src/config
 
 proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
     ReadIOEffect].} =
@@ -111,13 +112,10 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
       # Get the documentation of the program's rules
       let configFile: File = open(filename = "config" & DirSep & "nimalyzer.cfg")
-      const settings: array[14, string] = ["verbosity", "output", "source",
-          "files", "directory", "check", "search", "count", "fixcommand", "fix",
-          "reset", "message", "forcefixcommand", "maxreports"]
       for line in configFile.lines:
         var newLine: string = line
         newLine.removePrefix(chars = {'#', ' '})
-        for prefix in settings:
+        for prefix in configOptions:
           if newLine.startsWith(prefix = prefix):
             newLine = newLine.indent(count = 4)
         configdocFile.writeLine(x = newLine)
