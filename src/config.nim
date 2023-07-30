@@ -48,7 +48,7 @@ type
     ## * index           - The index of the rule
     ## * forceFixCommand - If true, force use setting fixCommand for the rule
     ##                     instead of the rule's fix code
-    ## * explanation     - The explaination which will be show to the user if check
+    ## * explanation     - The explanation which will be show to the user if check
     ##                     or fix type of rule setting is violated by the checked
     ##                     code
     ##
@@ -75,7 +75,7 @@ const
     ## default it try to open the selected file in the default editor.
   configOptions*: array[15, string] = ["verbosity", "output", "source", "files",
       "directory", "check", "search", "count", "fixcommand", "fix", "reset",
-      "message", "forcefixcommand", "maxreports", "explaination"]
+      "message", "forcefixcommand", "maxreports", "explanation"]
     ## The list of available the program's configuration's options
 
 proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
@@ -242,14 +242,14 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             forceFixCommand = true
             message(text = "Enabled forcing the next rules to use a fix command instead of the code.",
                 level = lvlDebug)
-        # Set the explaination for the previous rule
-        elif setting.name == "explaination":
+        # Set the explanation for the previous rule
+        elif setting.name == "explanation":
           if result.rules.len == 0:
-            abortProgram(message = "The setting 'explaination', line: " &
+            abortProgram(message = "The setting 'explanation', line: " &
                 $lineNumber & " is set before any rule setting.")
           if setting.value.len == 0:
-            abortProgram(message = "Can't parse the 'explaination' setting in the configuration file, line: " &
-                $lineNumber & ". No explaination's text set.")
+            abortProgram(message = "Can't parse the 'explanation' setting in the configuration file, line: " &
+                $lineNumber & ". No explanation's text set.")
           result.rules[result.rules.high].explanation = setting.value
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = setting.name == it):
