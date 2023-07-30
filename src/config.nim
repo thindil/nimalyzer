@@ -48,6 +48,9 @@ type
     ## * index           - The index of the rule
     ## * forceFixCommand - If true, force use setting fixCommand for the rule
     ##                     instead of the rule's fix code
+    ## * explaination    - The explaination which will be show to the user if check
+    ##                     or fix type of rule setting is violated by the checked
+    ##                     code
     ##
     ## When the type of configuration entry is a custom message it has following
     ## field:
