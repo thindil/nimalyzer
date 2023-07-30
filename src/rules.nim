@@ -73,6 +73,7 @@ type
     identsCache*: IdentCache
     forceFixCommand*: bool
     maxResults*: Natural
+    explaination*: string
 
   RuleSettings* = object
     ## Contains information about the program's rule configuration
@@ -393,6 +394,10 @@ template endCheck*(code: untyped): untyped =
                 capitalizeAscii(s = notFoundMessage.fmt),
                 returnValue = rule.amount, level = messageLevel,
                 decrease = false)
+          rule.amount = 0
+        if rule.amount == 0 and rule.ruleType in {check, fix}:
+          message(text = "Explaination: " & rule.explaination,
+              returnValue = rule.amount, decrease = false)
           rule.amount = 0
       elif rule.amount == 0:
         rule.amount = 1

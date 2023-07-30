@@ -131,6 +131,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
                 currentRule.parent = true
                 currentRule.forceFixCommand = rule.forceFixCommand
                 currentRule.maxResults = maxResults
+                currentRule.explaination = rule.explaination
                 rulesList[rule.index].checkProc(astNode = astNode,
                     parentNode = astNode, rule = currentRule)
                 if currentRule.amount < 1:
