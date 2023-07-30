@@ -62,6 +62,9 @@ type
     ## * identsCache     - The Nim identifiers cache
     ## * forceFixCommand - If true, force the rule to use fixCommand instead of its
     ##                     fix code
+    ## * explanation     - The explanation which will be show to the user if check
+    ##                     or fix type of rule setting is violated by the checked
+    ##                     code
     options*: seq[string]
     parent*: bool
     fileName*: string
