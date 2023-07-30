@@ -48,7 +48,7 @@ type
     ## * index           - The index of the rule
     ## * forceFixCommand - If true, force use setting fixCommand for the rule
     ##                     instead of the rule's fix code
-    ## * explaination    - The explaination which will be show to the user if check
+    ## * explanation     - The explaination which will be show to the user if check
     ##                     or fix type of rule setting is violated by the checked
     ##                     code
     ##
@@ -64,7 +64,7 @@ type
       ruleType*: RuleTypes
       index*: int
       forceFixCommand*: bool
-      explaination*: string
+      explanation*: string
     of message:
       text*: string
 
@@ -250,7 +250,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
           if setting.value.len == 0:
             abortProgram(message = "Can't parse the 'explaination' setting in the configuration file, line: " &
                 $lineNumber & ". No explaination's text set.")
-          result.rules[result.rules.high].explaination = setting.value
+          result.rules[result.rules.high].explanation = setting.value
         # Set the program's rule to test the code
         elif availableRuleTypes.anyIt(pred = setting.name == it):
           var configRule: OptParser = initOptParser(cmdline = line)
