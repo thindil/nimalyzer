@@ -21,6 +21,9 @@ of the program.
   a configuration files.
 - Information about the line number to errors' messages during parsing the
   program's configuration files.
+- Configuration setting `explanation` which allow adding message to the
+  program's rules which shown when the checked code violates the rule's
+  setting.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
