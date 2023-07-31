@@ -149,16 +149,39 @@ lvlError. The settings below checks for:
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
+
+Explanation
+-----------
+Explanation allows setting a message which will be shown to the user when the
+program meets the code which violates the previously declared rule's settings.
+It works only for check and fix types of rules. In that situation, the message
+is included into the error information. The explanation setting should be always
+declared after the program's rule declaration. Several consecutive explanation
+settings will override the previous one, only the last is always taken. The
+setting shouldn't contain a new line characters.
+::
+    explanation Contracts helps in testing the program and all declared procedures should have declared contracts for them. The procedures should avoid raising exceptions and handle each possible exception by themselves for greater stability of the program. The information about the effects system by tags pragma can also help in understanding what exactly the procedure doing.
+
     check paramsUsed procedures
+    explanation Unused parameters only clutter the source code and can cause confusion.
     check paramsUsed macros
+    explanation Unused parameters only clutter the source code and can cause confusion.
     check namedParams
+    explanation Named parameters allow avoiding assigning invalid values to the calls but also allow to assing the calls' parameters in arbitrary order.
     check hasDoc all
+    explanation The documentation is a love's letter to your future self. :) Documentation make our lives easier, especially if we have return to the code after a longer period of time.
     check varDeclared full
+    explanation The full declaration of variables gives information about their types and sets the initial values for them which can prevent sometimes in hard to detect errors, when the default values change.
     check varUplevel
+    explanation The proper usage of var, let and const types of declaration make the code more readable and prevent from invalid assigning to a variable which shouldn't be assigned.
     check localHides
+    explanation If a local variable has the same name as a global one declared in the same scope, it can lead to hard to read code or even invalid assign to the variable.
     check ifStatements all
+    explanation All the rules enabled make the code more readable. Empty statements are just a dead code. If the statement contains a finishing statment, like return or raise, then it is better to move its following brach outside the statement for better readability. Also using positive conditions in the starting expression helps in preventing in some logical errors.
     check not forStatements iterators
+    explanation There is no need to write information about usage of pairs or items iterators, it can be read directly from the code from the first part of the for statement declaration.
     check forStatements empty
+    explanation Empty statements are just a dead code which made the code harder to read.
 
 Search rules
 ------------
@@ -243,13 +266,24 @@ the program.
 ::
     message Checking the program's rules
     check hasPragma all contractual "raises: [*"
+    explanation Contracts helps in testing the program and all declared procedures should have declared contracts for them. The procedures should avoid raising exceptions and handle each possible exception by themselves for greater stability of the program.
     check paramsUsed procedures
+    explanation Unused parameters only clutter the source code and can cause confusion.
     check paramsUsed macros
+    explanation Unused parameters only clutter the source code and can cause confusion.
     check namedParams
+    explanation Named parameters allow avoiding assigning invalid values to the calls but also allow to assing the calls' parameters in arbitrary order.
     check hasDoc all
+    explanation The documentation is a love's letter to your future self. :) Documentation make our lives easier, especially if we have return to the code after a longer period of time.
     check varDeclared full
+    explanation The full declaration of variables gives information about their types and sets the initial values for them which can prevent sometimes in hard to detect errors, when the default values change.
     check varUplevel
+    explanation The proper usage of var, let and const types of declaration make the code more readable and prevent from invalid assigning to a variable which shouldn't be assigned.
     check localHides
+    explanation If a local variable has the same name as a global one declared in the same scope, it can lead to hard to read code or even invalid assign to the variable.
     check ifStatements all
+    explanation All the rules enabled make the code more readable. Empty statements are just a dead code. If the statement contains a finishing statment, like return or raise, then it is better to move its following brach outside the statement for better readability. Also using positive conditions in the starting expression helps in preventing in some logical errors.
     check not forStatements iterators
+    explanation There is no need to write information about usage of pairs or items iterators, it can be read directly from the code from the first part of the for statement declaration.
     check forStatements empty
+    explanation Empty statements are just a dead code which made the code harder to read.
