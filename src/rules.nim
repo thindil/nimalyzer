@@ -398,8 +398,9 @@ template endCheck*(code: untyped): untyped =
                 returnValue = rule.amount, level = messageLevel,
                 decrease = false)
           rule.amount = 0
-        if rule.amount == 0 and rule.ruleType in {check, fix}:
-          message(text = "Explaination: " & rule.explanation,
+        if rule.amount == 0 and rule.ruleType in {check, fix} and
+            rule.explanation.len > 0:
+          message(text = "Explanation: " & rule.explanation,
               returnValue = rule.amount, decrease = false)
           rule.amount = 0
       elif rule.amount == 0:
