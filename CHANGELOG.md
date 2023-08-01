@@ -24,6 +24,8 @@ of the program.
 - Configuration setting `explanation` which allow adding message to the
   program's rules which shown when the checked code violates the rule's
   setting.
+- New rule `caseStatements` to check `case` statements in a code for minimum
+  and maximum amount of their branches.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
