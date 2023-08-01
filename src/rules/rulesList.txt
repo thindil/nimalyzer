@@ -1,4 +1,5 @@
 casestatements
+comments
 forstatements
 hasdoc
 hasentity
