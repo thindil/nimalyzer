@@ -89,8 +89,8 @@ checkRule:
       for line in lines(fileName = rule.fileName):
         lineNumber.inc
         var cleanLine: string = line.strip()
-        if cleanLine.startsWith('#') and cleanLine.len > 2:
-          cleanLine = cleanLine[cleanLine.find(' ') + 1 .. ^1]
+        if cleanLine.startsWith(prefix = '#') and cleanLine.len > 2:
+          cleanLine = cleanLine[cleanLine.find(sub = ' ') + 1 .. ^1]
           case rule.options[0]
           # Check comment against the selected pattern
           of "pattern":
