@@ -71,12 +71,13 @@ ruleConfig(ruleName = "comments",
   rulePositiveMessage = "Comment at line: {params[0]} match the pattern '{params[1]}'.",
   ruleNegativeMessage = "Comment at line: {params[0]} doesn't match the pattern '{params[1]}'.",
   ruleOptions = @[custom, str],
-  ruleOptionValues = @["pattern"],
-  ruleMinOptions = 2)
+  ruleOptionValues = @["pattern", "legal"],
+  ruleMinOptions = 1)
 
 checkRule:
   initCheck:
-    discard
+    if rule.options[0] == "pattern" and rule.options.len < 2:
+      rule.amount = errorMessage(text = "Can't check the comments pattern. No regular expression pattern specified in the rule's options.")
   startCheck:
     let
       negation: string = (if rule.negation: "doesn't " else: "")
@@ -89,10 +90,22 @@ checkRule:
         var cleanLine: string = line.strip()
         if cleanLine.startsWith('#') and cleanLine.len > 2:
           cleanLine = cleanLine[cleanLine.find(' ') + 1 .. ^1]
-          setResult(checkResult = match(s = cleanLine, pattern = convention),
-              positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage, node = node, params = [
-              $lineNumber, rule.options[1]])
+          case rule.options[0]
+          # Check comment against the selected pattern
+          of "pattern":
+            setResult(checkResult = match(s = cleanLine, pattern = convention),
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, node = node, params = [
+                $lineNumber, rule.options[1]])
+          # Check if comment contains word "copyright"
+          of "legal":
+            if "copyright" in cleanLine.toLowerAscii:
+              setResult(checkResult = true,
+                  positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage, node = node, params = [
+                  $lineNumber, rule.options[1]])
+          else:
+            discard
     except IOError:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
