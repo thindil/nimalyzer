@@ -60,14 +60,16 @@
 ##
 ## --Insert rules examples--
 
+# Standard library imports
+import std/re
 # Import default rules' modules
 import ../rules
 
 ruleConfig(ruleName = "comments",
   ruleFoundMessage = "comments which {negation}match the pattern found",
   ruleNotFoundMessage = "comments which {negation}match the pattern not found.",
-  rulePositiveMessage = "comment, line: {params[0]} match the pattern '{params[1]}'.",
-  ruleNegativeMessage = "comment, line: {params[0]} doesn't match the pattern '{params[1]}'.",
+  rulePositiveMessage = "Comment at line: {params[0]} match the pattern '{params[1]}'.",
+  ruleNegativeMessage = "Comment at line: {params[0]} doesn't match the pattern '{params[1]}'.",
   ruleOptions = @[custom, str],
   ruleOptionValues = @["pattern"],
   ruleMinOptions = 2)
@@ -76,13 +78,21 @@ checkRule:
   initCheck:
     discard
   startCheck:
-    let negation: string = (if rule.negation: "doesn't " else: "")
+    let
+      negation: string = (if rule.negation: "doesn't " else: "")
+      convention: Regex = rule.options[1].re
+    var lineNumber: Natural = 0
   checking:
     try:
       for line in lines(fileName = rule.fileName):
-        let cleanLine: string = line.strip()
+        lineNumber.inc
+        var cleanLine: string = line.strip()
         if cleanLine.startsWith('#') and cleanLine.len > 2:
-          echo cleanLine[2 .. ^1]
+          cleanLine = cleanLine[cleanLine.find(' ') + 1 .. ^1]
+          setResult(checkResult = match(s = cleanLine, pattern = convention),
+              positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage, node = node, params = [
+              $lineNumber, rule.options[1]])
     except IOError:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
