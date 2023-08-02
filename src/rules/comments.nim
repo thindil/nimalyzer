@@ -81,7 +81,8 @@ checkRule:
   startCheck:
     let
       negation: string = (if rule.negation: "doesn't " else: "")
-      convention: Regex = rule.options[1].re
+      convention: Regex = (if rule.options.len > 1: rule.options[
+          1].re else: "^.".re)
     var lineNumber: Natural = 0
   checking:
     try:
@@ -97,15 +98,24 @@ checkRule:
                 positiveMessage = positiveMessage,
                 negativeMessage = negativeMessage, node = node, params = [
                 $lineNumber, rule.options[1]])
-          # Check if comment contains word "copyright"
+          # Check the first 5 lines of file, do the comment contains word "copyright"
           of "legal":
+            if lineNumber == 5:
+              break
             if "copyright" in cleanLine.toLowerAscii:
-              setResult(checkResult = true,
-                  positiveMessage = positiveMessage,
-                  negativeMessage = negativeMessage, node = node, params = [
-                  $lineNumber, rule.options[1]])
+              setResult(checkResult = true, positiveMessage = "File '" &
+                  rule.fileName & "' contains a legal header.",
+                  negativeMessage = "File '" & rule.fileName &
+                  "' doesn't contain a legal header.", node = node, params = [
+                  $lineNumber])
+              break
           else:
             discard
+      if rule.options[0] == "legal" and lineNumber > 4:
+        setResult(checkResult = false, positiveMessage = "File '" &
+            rule.fileName & "' doesn't contain a legal header.",
+            negativeMessage = "File '" & rule.fileName &
+            "' contains a legal header.", node = node, params = [ $lineNumber])
     except IOError:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
