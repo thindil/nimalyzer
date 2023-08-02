@@ -78,7 +78,15 @@ checkRule:
   startCheck:
     let negation: string = (if rule.negation: "doesn't " else: "")
   checking:
-    discard
+    try:
+      for line in lines(fileName = rule.fileName):
+        let cleanLine: string = line.strip()
+        if cleanLine.startsWith('#') and cleanLine.len > 2:
+          echo cleanLine[2 .. ^1]
+    except IOError:
+      rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
+          rule.fileName & ". Reason: ", e = getCurrentException())
+    break
   endCheck:
     discard
 
