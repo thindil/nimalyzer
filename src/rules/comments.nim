@@ -79,6 +79,10 @@ checkRule:
     if rule.options[0] == "pattern" and rule.options.len < 2:
       rule.amount = errorMessage(text = "Can't check the comments pattern. No regular expression pattern specified in the rule's options.")
       return
+    if rule.options[0] == "legal" and not rule.negation and rule.ruleType ==
+        fix and rule.options.len < 2:
+      rule.amount = errorMessage(text = "Can't fix the comment. No file with the legal header specified in the rule's options.")
+      return
   startCheck:
     let
       negation: string = (if rule.negation: "doesn't " else: "")
@@ -136,7 +140,8 @@ fixRule:
       moveFile(rule.fileName, newFileName)
       let
         convention: Regex = rule.options[1].re
-        newCode: string = readFile(filename = newFileName).replace(sub = convention)
+        newCode: string = readFile(filename = newFileName).replace(
+            sub = convention)
       writeFile(filename = rule.fileName, content = newCode)
     except RegexError, OSError, IOError, Exception:
       discard errorMessage(text = "Can't fix file '" &
@@ -154,6 +159,24 @@ fixRule:
   of "legal":
     if rule.negation:
       return false
-    return false
+    let newFileName: string = rule.fileName & ".bak"
+    try:
+      moveFile(rule.fileName, newFileName)
+      let newCode: string = readFile(fileName = rule.options[1]) & "\n" &
+          readFile(filename = newFileName)
+      writeFile(filename = rule.fileName, content = newCode)
+    except RegexError, OSError, IOError, Exception:
+      discard errorMessage(text = "Can't fix file '" &
+          rule.fileName & ". Reason: ", e = getCurrentException())
+      try:
+        removeFile(rule.fileName)
+      except OSError:
+        discard
+      try:
+        moveFile(newFileName, rule.fileName)
+      except IOError, OSError, Exception:
+        discard
+      return false
   else:
     return false
+  return false
