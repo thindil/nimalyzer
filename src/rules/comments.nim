@@ -96,8 +96,8 @@ checkRule:
           of "pattern":
             setResult(checkResult = match(s = cleanLine, pattern = convention),
                 positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node, params = [
-                $lineNumber, rule.options[1]])
+                negativeMessage = negativeMessage, node = node,
+                ruleData = "pattern", params = [$lineNumber, rule.options[1]])
           # Check the first 5 lines of file, do the comment contains word "copyright"
           of "legal":
             if lineNumber == 5:
@@ -106,8 +106,8 @@ checkRule:
               setResult(checkResult = true, positiveMessage = "File '" &
                   rule.fileName & "' contains a legal header.",
                   negativeMessage = "File '" & rule.fileName &
-                  "' doesn't contain a legal header.", node = node, params = [
-                  $lineNumber])
+                  "' doesn't contain a legal header.", node = node,
+                  ruleData = "legal", params = [$lineNumber])
               break
           else:
             discard
@@ -115,7 +115,8 @@ checkRule:
         setResult(checkResult = false, positiveMessage = "File '" &
             rule.fileName & "' doesn't contain a legal header.",
             negativeMessage = "File '" & rule.fileName &
-            "' contains a legal header.", node = node, params = [ $lineNumber])
+            "' contains a legal header.", node = node, ruleData = "legal",
+            params = [$lineNumber])
     except IOError:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
@@ -124,4 +125,32 @@ checkRule:
     discard
 
 fixRule:
-  discard
+  case data
+  # If comment has the regex pattern in itself, remove it
+  of "pattern":
+    if not rule.negation:
+      return false
+    try:
+      let newFileName: string = rule.fileName & ".bak"
+      moveFile(rule.fileName, newFileName)
+      let
+        convention: Regex = rule.options[1].re
+        newFile: File = open(filename = rule.fileName, mode = fmWrite)
+      for line in lines(fileName = newFileName):
+        var cleanLine: string = line.strip()
+        if cleanLine.startsWith(prefix = '#') and cleanLine.len > 2:
+          cleanLine = cleanLine[cleanLine.find(sub = ' ') + 1 .. ^1]
+          if match(s = cleanLine, pattern = convention):
+            continue
+        newFile.writeLine(x = line)
+    except RegexError, OSError, IOError, Exception:
+      discard errorMessage(text = messagePrefix & "can't fix file '" &
+          rule.fileName & ". Reason: ", e = getCurrentException())
+      removeFile(rule.fileName)
+      moveFile(newFileName, rule.fileName)
+      return false
+  # If there is no legal header, add one from file or remove one
+  of "legal":
+    return false
+  else:
+    return false
