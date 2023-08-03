@@ -83,9 +83,9 @@ checkRule:
       negation: string = (if rule.negation: "doesn't " else: "")
       convention: Regex = (if rule.options.len > 1: rule.options[
           1].re else: "^.".re)
-    var lineNumber: Natural = 0
   checking:
     try:
+      var lineNumber: Natural = 0
       for line in lines(fileName = rule.fileName):
         lineNumber.inc
         var cleanLine: string = line.strip()
