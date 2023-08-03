@@ -149,8 +149,10 @@ fixRule:
       except IOError, OSError, Exception:
         discard
       return false
-  # If there is no legal header, add one from file or remove one
+  # If there is no legal header, add one from file
   of "legal":
+    if rule.negation:
+      return false
     return false
   else:
     return false
