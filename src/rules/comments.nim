@@ -78,6 +78,7 @@ checkRule:
   initCheck:
     if rule.options[0] == "pattern" and rule.options.len < 2:
       rule.amount = errorMessage(text = "Can't check the comments pattern. No regular expression pattern specified in the rule's options.")
+      return
   startCheck:
     let
       negation: string = (if rule.negation: "doesn't " else: "")
