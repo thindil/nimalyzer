@@ -46,10 +46,9 @@
 ## * caseStatements is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *casestatements*, *caseStatements* or *cAsEsTaTeMeNtS*.
 ## * checkType is the type of checks to perform on the `case` statements. Proper
-##   values are: *min* and *max*.
-##   Setting it min will check if all `case` statements have at least the selected
-##   amount of branches. Max value will check if the `case` statements have maximum
-##   the selected amount of branches.
+##   values are: *min* and *max*. Setting it min will check if all `case`
+##   statements have at least the selected amount of branches. Max value will
+##   check if the `case` statements have maximum the selected amount of branches.
 ## * amount parameter is required for both types of checks. It is desired amount
 ##   of branches for the `case` statements, minimal or maximum, depends on
 ##   check's type.
