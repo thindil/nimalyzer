@@ -137,7 +137,7 @@ fixRule:
       return false
     let newFileName: string = rule.fileName & ".bak"
     try:
-      moveFile(rule.fileName, newFileName)
+      moveFile(source = rule.fileName, dest = newFileName)
       let
         convention: Regex = rule.options[1].re
         newFile: File = open(filename = rule.fileName, mode = fmWrite)
@@ -153,11 +153,11 @@ fixRule:
       discard errorMessage(text = "Can't fix file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
       try:
-        removeFile(rule.fileName)
+        removeFile(file = rule.fileName)
       except OSError:
         discard
       try:
-        moveFile(newFileName, rule.fileName)
+        moveFile(source = newFileName, dest = rule.fileName)
       except IOError, OSError, Exception:
         discard
       return false
@@ -167,7 +167,7 @@ fixRule:
       return false
     let newFileName: string = rule.fileName & ".bak"
     try:
-      moveFile(rule.fileName, newFileName)
+      moveFile(source = rule.fileName, dest = newFileName)
       let newCode: string = readFile(fileName = rule.options[1]) & "\n" &
           readFile(filename = newFileName)
       writeFile(filename = rule.fileName, content = newCode)
@@ -175,11 +175,11 @@ fixRule:
       discard errorMessage(text = "Can't fix file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
       try:
-        removeFile(rule.fileName)
+        removeFile(file = rule.fileName)
       except OSError:
         discard
       try:
-        moveFile(newFileName, rule.fileName)
+        moveFile(source = newFileName, dest = rule.fileName)
       except IOError, OSError, Exception:
         discard
       return false
