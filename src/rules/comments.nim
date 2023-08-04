@@ -23,20 +23,34 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## --Insert here the description of the rule--
+## The rule to check if the selected file contains a comment with the selected
+## pattern or a legal header. In the second option, it looks for word *copyright*
+## in the first 5 lines of the file. The rule works differently than other rules,
+## because it doesn't use AST representation of the checked code but operates
+## directly on the file which contains the code.
+## **NOTE:** The file containing the legal header should contain only text of
+## the header without comment marks. They will be added automatically by the
+## rule.
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? comments
+##   [ruleType] ?not? comments [checkType] [data]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
-##   rules, please refer to the program's documentation. --Insert description
-##   how rules types works with the rule--.
+##   rules, please refer to the program's documentation. Check type will raise
+##   an error if there is a comment with the selected pattern (if pattern is
+##   checked) or there is no legal header in the code. Search type will list
+##   all comments which violates any of checks or raise an error if nothing
+##   found. Count type will simply list the amount of the comments which
+##   violates the checks. Fix remove the comment with the selected pattern
+##   from the code or add the selected legal header from file. In any other
+##   setting, the fix type will execute the default shell command set by the
+##   program's setting **fixCommand**.
 ## * optional word *not* means negation for the rule. Adding word *not* will
-##   change to inform only about --Insert description how negation affects the
-##   rule--.
+##   change to inform only about the comments which not violate the check.
 ## * comments is the name of the rule. It is case-insensitive, thus it can be
-##   set as *comments*, *comments* or *--rUlEnAmE--*.
+##   set as *comments*, *comments* or *--cOmMeNtS--*.
+## * 
 ##
 ## Disabling the rule
 ## ------------------
