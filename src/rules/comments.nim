@@ -130,6 +130,32 @@ checkRule:
     discard
 
 fixRule:
+
+  proc revertChanges(fileName: string, e: ref Exception): bool {.raises: [],
+      tags: [WriteIOEffect, ReadIOEffect, RootEffect], contractual.} =
+    ## Revert changes to the checked file from the old version and print
+    ## information about the issue
+    ##
+    ## * fileName - the name of the old file which will be restored
+    ## * e        - the exception which occured
+    ##
+    ## This procedure always returns false
+    require:
+      fileName.len > 0
+      e != nil
+    body:
+      discard errorMessage(text = "Can't fix file '" &
+          rule.fileName & ". Reason: ", e = e)
+      try:
+        removeFile(file = rule.fileName)
+      except OSError:
+        discard
+      try:
+        moveFile(source = fileName, dest = rule.fileName)
+      except IOError, OSError, Exception:
+        discard
+      return false
+
   case data
   # If comment has the regex pattern in itself, remove it
   of "pattern":
@@ -150,17 +176,7 @@ fixRule:
         newFile.writeLine(x = line)
       newFile.close
     except RegexError, OSError, IOError, Exception:
-      discard errorMessage(text = "Can't fix file '" &
-          rule.fileName & ". Reason: ", e = getCurrentException())
-      try:
-        removeFile(file = rule.fileName)
-      except OSError:
-        discard
-      try:
-        moveFile(source = newFileName, dest = rule.fileName)
-      except IOError, OSError, Exception:
-        discard
-      return false
+      return revertChanges(fileName = newFileName, e = getCurrentException())
   # If there is no legal header, add one from file
   of "legal":
     if rule.negation:
@@ -172,17 +188,7 @@ fixRule:
           readFile(filename = newFileName)
       writeFile(filename = rule.fileName, content = newCode)
     except RegexError, OSError, IOError, Exception:
-      discard errorMessage(text = "Can't fix file '" &
-          rule.fileName & ". Reason: ", e = getCurrentException())
-      try:
-        removeFile(file = rule.fileName)
-      except OSError:
-        discard
-      try:
-        moveFile(source = newFileName, dest = rule.fileName)
-      except IOError, OSError, Exception:
-        discard
-      return false
+      return revertChanges(fileName = newFileName, e = getCurrentException())
   else:
     return false
   return false
