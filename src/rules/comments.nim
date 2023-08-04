@@ -118,9 +118,9 @@ checkRule:
             discard
       if rule.options[0] == "legal" and lineNumber > 4:
         setResult(checkResult = false, positiveMessage = "File '" &
-            rule.fileName & "' doesn't contain a legal header.",
+            rule.fileName & "' contains a legal header.",
             negativeMessage = "File '" & rule.fileName &
-            "' contains a legal header.", node = node, ruleData = "legal",
+            "' doesn't contain a legal header.", node = node, ruleData = "legal",
             params = [$lineNumber])
     except IOError:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
@@ -167,7 +167,7 @@ fixRule:
       let
         convention: Regex = rule.options[1].re
         newFile: File = open(filename = rule.fileName, mode = fmWrite)
-      for line in lines(fileName = newFileName):
+      for line in newFileName.lines:
         var cleanLine: string = line.strip()
         if cleanLine.startsWith(prefix = '#') and cleanLine.len > 2:
           cleanLine = cleanLine[cleanLine.find(sub = ' ') + 1 .. ^1]
@@ -184,9 +184,12 @@ fixRule:
     let newFileName: string = rule.fileName & ".bak"
     try:
       moveFile(source = rule.fileName, dest = newFileName)
-      let newCode: string = readFile(fileName = rule.options[1]) & "\n" &
-          readFile(filename = newFileName)
-      writeFile(filename = rule.fileName, content = newCode)
+      let newFile: File = open(filename = rule.fileName, mode = fmWrite)
+      for line in rule.options[1].lines:
+        newFile.writeLine(x = "# " & line)
+      newFile.writeLine(x = "")
+      for line in newFileName.lines:
+        newFile.writeLine(x = line)
     except RegexError, OSError, IOError, Exception:
       return revertChanges(fileName = newFileName, e = getCurrentException())
   else:
