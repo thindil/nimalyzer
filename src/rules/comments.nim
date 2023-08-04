@@ -140,9 +140,15 @@ fixRule:
       moveFile(rule.fileName, newFileName)
       let
         convention: Regex = rule.options[1].re
-        newCode: string = readFile(filename = newFileName).replace(
-            sub = convention)
-      writeFile(filename = rule.fileName, content = newCode)
+        newFile: File = open(filename = rule.fileName, mode = fmWrite)
+      for line in lines(fileName = newFileName):
+        var cleanLine: string = line.strip()
+        if cleanLine.startsWith(prefix = '#') and cleanLine.len > 2:
+          cleanLine = cleanLine[cleanLine.find(sub = ' ') + 1 .. ^1]
+          if match(s = cleanLine, pattern = convention):
+            continue
+        newFile.writeLine(x = line)
+      newFile.close
     except RegexError, OSError, IOError, Exception:
       discard errorMessage(text = "Can't fix file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
