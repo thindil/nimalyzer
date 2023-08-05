@@ -77,7 +77,7 @@
 ## Examples
 ## --------
 ##
-## 1. Check if all `case` statements have at least 4 branches:
+## 1. Check if all `case` statements have at least 4 branches::
 ##
 ##     check caseStatements min 4
 
