@@ -84,6 +84,7 @@ jobs:
           nimble -y release
 
   build_linux:
+    if: ${{ always() }} # Just for test of GitHub action
     needs: tests
     timeout-minutes: 30
     runs-on: ubuntu-latest
