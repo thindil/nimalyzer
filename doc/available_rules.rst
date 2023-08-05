@@ -30,10 +30,9 @@ The syntax in a configuration file is::
 * caseStatements is the name of the rule. It is case-insensitive, thus it can be
   set as *casestatements*, *caseStatements* or *cAsEsTaTeMeNtS*.
 * checkType is the type of checks to perform on the `case` statements. Proper
-  values are: *min* and *max*.
-  Setting it min will check if all `case` statements have at least the selected
-  amount of branches. Max value will check if the `case` statements have maximum
-  the selected amount of branches.
+  values are: *min* and *max*. Setting it min will check if all `case`
+  statements have at least the selected amount of branches. Max value will
+  check if the `case` statements have maximum the selected amount of branches.
 * amount parameter is required for both types of checks. It is desired amount
   of branches for the `case` statements, minimal or maximum, depends on
   check's type.
@@ -62,9 +61,75 @@ statement, the full declaration should be::
 Examples
 --------
 
-1. Check if all `case` statements have at least 4 branches:
+1. Check if all `case` statements have at least 4 branches::
 
     check caseStatements min 4
+
+Comments rule
+=============
+The rule to check if the selected file contains a comment with the selected
+pattern or a legal header. In the second option, it looks for word *copyright*
+in the first 5 lines of the file. The rule works differently than other rules,
+because it doesn't use AST representation of the checked code but operates
+directly on the file which contains the code.
+The syntax in a configuration file is::
+
+  [ruleType] ?not? comments [checkType] [patternOrFileName]
+
+* ruleType is the type of rule which will be executed. Proper values are:
+  *check*, *search*, *count* and *fix*. For more information about the types of
+  rules, please refer to the program's documentation. Check type will raise
+  an error if there is a comment with the selected pattern (if pattern is
+  checked) or there is no legal header in the code. Search type will list
+  all comments which violates any of checks or raise an error if nothing
+  found. Count type will simply list the amount of the comments which
+  violates the checks. Fix remove the comment with the selected pattern
+  from the code or add the selected legal header from file. In any other
+  setting, the fix type will execute the default shell command set by the
+  program's setting **fixCommand**.
+* optional word *not* means negation for the rule. Adding word *not* will
+  change to inform only about the comments which not violate the check.
+* comments is the name of the rule. It is case-insensitive, thus it can be
+  set as *comments*, *comments* or *--cOmMeNtS--*.
+* checkType is the type of check to perform on the code's comments. Proper
+  values are: *pattern* and *legal*. Pattern will check all the comments in
+  the code against regular expression. Legal will check if the source code
+  file contains legal information header.
+* patternOrFileName parameter depends on the type of check. For *pattern*
+  type it is a regular expression against which the comments will be checked.
+  For *legal* type, it is the path to the file which contains the legal
+  header, which will be inserted into code. Thus, in that situation, the
+  parameter is required only for *fix* type of the rule. The file containing
+  the legal header should contain only text of the header without comment marks.
+  They will be added automatically by the rule.
+
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "comments"* in the element from which the rule
+should be disabled or in code before it. For example, if the rule should
+be disabled for procedure `proc main()`, the full declaration of it should
+be::
+
+    proc main () {.ruleOff: "comments".}
+
+To enable the rule again, the pragma *ruleOn: "comments"* should be added in
+the element which should be checked or in code before it. For example, if
+the rule should be re-enabled for `const a = 1`, the full declaration should
+be::
+
+    const a {.ruleOn: "comments".} = 1
+
+Examples
+--------
+
+1. Check if there is a comment which starts with FIXME word::
+
+   check comments pattern ^FIXME
+
+2. Add a legal header from file legal.txt::
+
+   fix comments legal legal.txt
 
 Forstatements rule
 ==================
