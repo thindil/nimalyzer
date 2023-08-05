@@ -28,12 +28,9 @@
 ## in the first 5 lines of the file. The rule works differently than other rules,
 ## because it doesn't use AST representation of the checked code but operates
 ## directly on the file which contains the code.
-## **NOTE:** The file containing the legal header should contain only text of
-## the header without comment marks. They will be added automatically by the
-## rule.
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? comments [checkType] [data]
+##   [ruleType] ?not? comments [checkType] [patternOrFileName]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -50,7 +47,17 @@
 ##   change to inform only about the comments which not violate the check.
 ## * comments is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *comments*, *comments* or *--cOmMeNtS--*.
-## * 
+## * checkType is the type of check to perform on the code's comments. Proper
+##   values are: *pattern* and *legal*. Pattern will check all the comments in
+##   the code against regular expression. Legal will check if the source code
+##   file contains legal information header.
+## * patternOrFileName parameter depends on the type of check. For *pattern*
+##   type it is a regular expression against which the comments will be checked.
+##   For *legal* type, it is the path to the file which contains the legal
+##   header, which will be inserted into code. Thus, in that situation, the
+##   parameter is required only for *fix* type of the rule. The file containing
+##   the legal header should contain only text of the header without comment marks.
+##   They will be added automatically by the rule.
 ##
 ## Disabling the rule
 ## ------------------
@@ -72,7 +79,13 @@
 ## Examples
 ## --------
 ##
-## --Insert rules examples--
+## 1. Check if there is a comment which starts with FIXME word::
+##
+##    check comments pattern ^FIXME
+##
+## 2. Add a legal header from file legal.txt::
+##
+##    fix comments legal legal.txt
 
 # Standard library imports
 import std/re
