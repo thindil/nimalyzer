@@ -38,7 +38,7 @@ template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
   var
     validCode = parseString(validNimCode, nimCache, nimConfig)
     invalidCode = parseString(invalidNimCode, nimCache, nimConfig)
-    ruleOptions = RuleOptions(parent: true, fileName: "test.nim",
+    ruleOptions = RuleOptions(parent: true, fileName: "tests/tcomments/test.nim",
         negation: false, ruleType: check, options: validOptions, amount: 0,
         enabled: true, maxResults: Natural.high)
 
