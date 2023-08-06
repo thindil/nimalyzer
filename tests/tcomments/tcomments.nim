@@ -1,42 +1,39 @@
 discard """
   exitcode: 0
   output: '''INFO: Checking the rule's options validation.
-FATAL: The rule hasdoc requires at maximum 2 options, but 3 provided: 'randomoption, anotheroption, thirdoption'.
+FATAL: The rule comments requires at maximum 2 options, but 3 provided: 'randomoption, anotheroption, thirdoption'.
 INFO: Checking check type of the rule with the invalid code.
-ERROR: Module doesn't have documentation.
-ERROR: Declaration of i* at 1 doesn't have documentation.
+ERROR: Comment at line: 2 doesn't match the pattern '^FIXME.*'.
 INFO: Checking check type of the rule with the valid code.
+ERROR: Comment at line: 2 doesn't match the pattern '^FIXME.*'.
 INFO: Checking negative check type of the rule with the valid code.
-ERROR: Module has documentation.
-ERROR: Declaration of i* at 2 has documentation.
+ERROR: Comment at line: 1 match the pattern '^FIXME.*'.
 INFO: Checking negative check type of the rule with the invalid code.
+ERROR: Comment at line: 1 match the pattern '^FIXME.*'.
 INFO: Checking search type of the rule with the invalid code.
-NOTICE: The documentation not found.
+NOTICE: Comment at line: 1 match the pattern '^FIXME.*'.
 INFO: Checking search type of the rule with the valid code.
-NOTICE: Module has documentation.
-NOTICE: Declaration of i* at 2 has documentation.
+NOTICE: Comment at line: 1 match the pattern '^FIXME.*'.
 INFO: Checking negative search type of the rule with the valid code.
-NOTICE: The documentation not found.
+NOTICE: Comment at line: 2 doesn't match the pattern '^FIXME.*'.
+NOTICE: Comments which doesn't match the pattern not found.
 INFO: Checking negative search type of the rule with the invalid code.
-NOTICE: Module doesn't have documentation.
-NOTICE: Declaration of i* at 1 doesn't have documentation.
-Negative search for invalid code for rule 'hasdoc' failed, expected result: 1, received: 2
+NOTICE: Comment at line: 2 doesn't match the pattern '^FIXME.*'.
+NOTICE: Comments which doesn't match the pattern not found.
 INFO: Checking count type of the rule with the invalid code.
-NOTICE: Declared public items with documentation found: 0
+NOTICE: Comments which match the pattern found found: 1
 INFO: Checking count type of the rule with the valid code.
-NOTICE: Declared public items with documentation found: 2
+NOTICE: Comments which match the pattern found found: 1
 INFO: Checking negative count type of the rule with the invalid code.
-NOTICE: Module doesn't have documentation.
-NOTICE: Declaration of i* at 1 doesn't have documentation.
-NOTICE: Declared public items with documentation found: 2
+NOTICE: Comment at line: 2 doesn't match the pattern '^FIXME.*'.
+NOTICE: Comments which doesn't match the pattern found found: 0
 INFO: Checking negative count type of the rule with the valid code.
-NOTICE: Declared public items with documentation found: 0
+NOTICE: Comment at line: 2 doesn't match the pattern '^FIXME.*'.
+NOTICE: Comments which doesn't match the pattern found found: 0
 INFO: Checking fix type of the rule.
-ERROR: Module doesn't have documentation.
-ERROR: Declaration of i* at 1 doesn't have documentation.
+ERROR: Comment at line: 2 doesn't match the pattern '^FIXME.*'.
 INFO: Checking negative fix type of the rule.
-ERROR: Module has documentation.
-ERROR: Declaration of i* at 2 has documentation.'''
+ERROR: Comment at line: 1 match the pattern '^FIXME.*'.'''
 """
 
 import ../../src/rules/comments
@@ -45,8 +42,7 @@ import ../helpers.nim
 const
   validOptions: seq[string] = @["pattern", "^FIXME.*"]
   invalidOptions = @["randomoption", "anotheroption", "thirdoption"]
-  invalidNimCode = """# FIXME comment to remove
-# Another comment"""
-  validNimCode = "# Another comment"
+  invalidNimCode = "var a = 1"
+  validNimCode = "var a = 1"
 
 runRuleTest()
