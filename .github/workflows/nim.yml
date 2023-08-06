@@ -96,7 +96,7 @@ jobs:
     - name: Setup Nim
       uses: jiro4989/setup-nim-action@v1
       with:
-        nim-version: 'stable'
+        nim-version: '2.0.0'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Update Nimble
