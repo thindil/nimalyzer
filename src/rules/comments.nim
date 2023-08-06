@@ -183,12 +183,12 @@ fixRule:
         discard
       return false
 
+  let newFileName: string = rule.fileName & ".bak"
   case data
   # If comment has the regex pattern in itself, remove it
   of "pattern":
     if not rule.negation:
       return false
-    let newFileName: string = rule.fileName & ".bak"
     try:
       moveFile(source = rule.fileName, dest = newFileName)
       let
@@ -208,7 +208,6 @@ fixRule:
   of "legal":
     if rule.negation:
       return false
-    let newFileName: string = rule.fileName & ".bak"
     try:
       moveFile(source = rule.fileName, dest = newFileName)
       let newFile: File = open(filename = rule.fileName, mode = fmWrite)
@@ -221,4 +220,8 @@ fixRule:
       return revertChanges(fileName = newFileName, e = getCurrentException())
   else:
     return false
+  try:
+    removeFile(file = newFileName)
+  except OSError:
+    discard
   return false
