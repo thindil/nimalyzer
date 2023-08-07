@@ -11,9 +11,9 @@ INFO: Checking negative check type of the rule with the invalid code.
 INFO: Checking search type of the rule with the invalid code.
 NOTICE: Comments which match the pattern not found.
 INFO: Checking search type of the rule with the valid code.
-NOTICE: Comments which match the pattern not found.
+NOTICE: Comment at line: 1 match the pattern '^FIXME'.
 INFO: Checking negative search type of the rule with the valid code.
-NOTICE: Comment at line: 1 doesn't match the pattern '^FIXME'.
+NOTICE: Comments which doesn't match the pattern not found.
 INFO: Checking negative search type of the rule with the invalid code.
 NOTICE: Comment at line: 1 doesn't match the pattern '^FIXME'.
 INFO: Checking count type of the rule with the invalid code.
@@ -27,9 +27,7 @@ INFO: Checking negative count type of the rule with the valid code.
 NOTICE: Comment at line: 1 doesn't match the pattern '^FIXME'.
 NOTICE: Comments which doesn't match the pattern found found: 1
 INFO: Checking fix type of the rule.
-ERROR: Comment at line: 2 doesn't match the pattern '^FIXME'.
-INFO: Checking negative fix type of the rule.
-ERROR: Comment at line: 1 match the pattern '^FIXME'.'''
+ERROR: Comment at line: 1 doesn't match the pattern '^FIXME'.'''
 """
 
 import std/logging
@@ -122,6 +120,7 @@ except AssertionDefect:
       "' failed, expected result: 0, received: " & $ruleOptions.amount
 info("Checking search type of the rule with the valid code.")
 ruleOptions.parent = true
+ruleOptions.fileName = "tests/tcomments/valid.nim"
 ruleCheck(validCode, validCode, ruleOptions)
 try:
   assert ruleOptions.amount > 0
@@ -142,6 +141,7 @@ except AssertionDefect:
       "' failed, expected result: 0, received: " & $ruleOptions.amount
 info("Checking negative search type of the rule with the invalid code.")
 ruleOptions.parent = true
+ruleOptions.fileName = "tests/tcomments/invalid.nim"
 ruleCheck(invalidCode, invalidCode, ruleOptions)
 try:
   assert ruleOptions.amount == 1
@@ -190,34 +190,20 @@ except AssertionDefect:
   echo "Negative counting of valid code for rule '" & ruleSettings.name &
       "' failed, expected result: 1, received: " & $ruleOptions.amount
 # fix rule tests
-#info("Checking fix type of the rule.")
-#ruleOptions.parent = true
-#ruleOptions.ruleType = fix
-#ruleOptions.negation = false
-#ruleOptions.amount = 0
-#ruleOptions.identsCache = nimCache
-#let oldInvalidCode = copyTree(invalidCode)
-#ruleCheck(invalidCode, invalidCode, ruleOptions)
-#try:
-#  assert $invalidCode == $validCode
-#except AssertionDefect:
-#  echo "Fixing the invalid code for rule '" & ruleSettings.name &
-#      "' failed. Invalid code: " & $invalidCode & "\nshould be: " & $validCode
-#invalidCode = copyTree(oldInvalidCode)
-## negative fix rule tests
-#info("Checking negative fix type of the rule.")
-#ruleOptions.parent = true
-#ruleOptions.negation = true
-#ruleOptions.amount = 0
-#let oldValidCode = copyTree(validCode)
-#ruleCheck(validCode, validCode, ruleOptions)
-#try:
-#  assert $invalidCode == $validCode
-#except AssertionDefect:
-#  echo "Fixing the valid code with negation for rule '" &
-#      ruleSettings.name & "' failed. Invalid code: " & $invalidCode &
-#      "\nshould be: " & $validCode
-#validCode = copyTree(oldValidCode)
+info("Checking fix type of the rule.")
+ruleOptions.parent = true
+ruleOptions.ruleType = fix
+ruleOptions.negation = false
+ruleOptions.amount = 0
+ruleOptions.identsCache = nimCache
+let oldInvalidCode = copyTree(invalidCode)
+ruleCheck(invalidCode, invalidCode, ruleOptions)
+try:
+  assert $invalidCode == $validCode
+except AssertionDefect:
+  echo "Fixing the invalid code for rule '" & ruleSettings.name &
+      "' failed. Invalid code: " & $invalidCode & "\nshould be: " & $validCode
+invalidCode = copyTree(oldInvalidCode)
 
 removeFile("tests/tcomments/invalid.nim")
 removeFile("tests/tcomments/valid.nim")
