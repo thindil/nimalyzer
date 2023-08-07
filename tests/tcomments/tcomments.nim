@@ -65,6 +65,9 @@ var
       negation: false, ruleType: check, options: validOptions, amount: 0,
       enabled: true, maxResults: Natural.high)
 
+writeFile("tests/tcomments/valid.nim", "# FIXME comment to delete")
+writeFile("tests/tcomments/invalid.nim", "# Another comment")
+
 # check rule tests
 info("Checking check type of the rule with the invalid code.")
 ruleCheck(invalidCode, invalidCode, ruleOptions)
@@ -215,3 +218,6 @@ except AssertionDefect:
 #      ruleSettings.name & "' failed. Invalid code: " & $invalidCode &
 #      "\nshould be: " & $validCode
 #validCode = copyTree(oldValidCode)
+
+removeFile("tests/tcomments/invalid.nim")
+removeFile("tests/tcomments/valid.nim")
