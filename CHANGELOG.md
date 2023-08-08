@@ -26,6 +26,8 @@ of the program.
   setting.
 - New rule `caseStatements` to check `case` statements in a code for minimum
   and maximum amount of their branches.
+- New rule `comments` to check the comments in a code with the selected regular
+  expression or do a code contains a legal header
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
