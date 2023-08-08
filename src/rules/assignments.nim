@@ -79,20 +79,27 @@ checkRule:
     discard
   checking:
     try:
+      var checkResult: bool = true
       case rule.options[0].toLowerAscii
       of "shorthand":
         if node.kind == nkInfix:
-          setResult(checkResult = rule.negation,
-              positiveMessage = positiveMessage,
+          checkResult = not rule.negation
+          if rule.ruleType in {search, count}:
+            checkResult = not checkResult
+          setResult(checkResult = checkResult,
+              positiveMessage = negativeMessage,
               negativeMessage = negativeMessage, node = node,
               ruleData = "shorthand", params = [$node[1], $node.info.line,
               (if rule.negation: "a full assignment" else: "a shorthand assignment")])
         elif node.kind == nkAsgn and $node[1][1] == $node[0]:
-          setResult(checkResult = rule.negation,
+          checkResult = rule.negation
+          if rule.ruleType in {search, count}:
+            checkResult = not checkResult
+          setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage, node = node,
+              negativeMessage = positiveMessage, node = node,
               ruleData = "shorthand", params = [$node[0], $node.info.line,
-              (if rule.negation: "a full assignment" else: "a shorthand assignment")])
+              (if rule.negation: "a shorthand assignment" else: "a full assignment")])
       else:
         discard
     except Exception:
@@ -100,7 +107,7 @@ checkRule:
           rule.fileName & ". Reason: ", e = getCurrentException())
       return
   endCheck:
-    let negation: string = (if rule.negation: "'t" else: "")
+    let negation: string = (if rule.negation and rule.ruleType in {check, fix}: "'t" else: "")
 
 fixRule:
   discard
