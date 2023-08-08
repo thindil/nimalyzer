@@ -78,7 +78,27 @@ checkRule:
   startCheck:
     discard
   checking:
-    discard
+    try:
+      case rule.options[0].toLowerAscii
+      of "shorthand":
+        if node.kind == nkInfix:
+          setResult(checkResult = rule.negation,
+              positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage, node = node,
+              ruleData = "shorthand", params = [$node[1], $node.info.line,
+              (if rule.negation: "a full assignment" else: "a shorthand assignment")])
+        elif node.kind == nkAsgn and $node[1][1] == $node[0]:
+          setResult(checkResult = rule.negation,
+              positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage, node = node,
+              ruleData = "shorthand", params = [$node[0], $node.info.line,
+              (if rule.negation: "a full assignment" else: "a shorthand assignment")])
+      else:
+        discard
+    except Exception:
+      rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
+          rule.fileName & ". Reason: ", e = getCurrentException())
+      return
   endCheck:
     let negation: string = (if rule.negation: "'t" else: "")
 
