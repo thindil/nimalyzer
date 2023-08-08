@@ -146,6 +146,7 @@ lvlError. The settings below checks for:
 9.  If any `if` statement can be upgraded.
 10. If any `for` statement uses iterators `pairs` or `items`.
 11. If there are no empty `for` statements.
+12. If all source code files have the legal header.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -191,6 +192,9 @@ setting shouldn't contain a new line characters.
 
     check forStatements empty
     explanation Empty statements are just a dead code which made the code harder to read.
+
+    check comments legal
+    explanation Each source code file should have the legal information, required by BSD-3 license.
 
 Search rules
 ------------
@@ -306,3 +310,6 @@ the program.
 
     check forStatements empty
     explanation Empty statements are just a dead code which made the code harder to read.
+
+    check comments legal
+    explanation Each source code file should have the legal information, required by BSD-3 license.
