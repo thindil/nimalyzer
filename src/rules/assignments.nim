@@ -75,7 +75,7 @@ ruleConfig(ruleName = "assignments",
 checkRule:
   initCheck:
     rule.amount = 0
-    if rule.negation:
+    if rule.negation and rule.ruleType == RuleTypes.count:
       rule.amount.inc
   startCheck:
     discard
