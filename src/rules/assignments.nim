@@ -66,8 +66,8 @@ import ../rules
 ruleConfig(ruleName = "assignments",
   ruleFoundMessage = "assignments which can{negation} be upgraded",
   ruleNotFoundMessage = "assignments which can{negation} be upgraded not found.",
-  rulePositiveMessage = "assignments to '{params[0]}' line: {params[1]} can be updated to {params[2]}.",
-  ruleNegativeMessage = "assignments to '{params[0]}' line: {params[1]} can't be updated to {params[2]}.",
+  rulePositiveMessage = "assignments to '{params[0]}' line: {params[1]} {params[3]} {params[2]}.",
+  ruleNegativeMessage = "assignments to '{params[0]}' line: {params[1]} {params[4]} {params[2]}.",
   ruleOptions = @[custom],
   ruleOptionValues = @["shorthand"],
   ruleMinOptions = 1)
@@ -82,17 +82,22 @@ checkRule:
       case rule.options[0].toLowerAscii
       of "shorthand":
         if node.kind == nkInfix:
-          setResult(checkResult = true,
-              positiveMessage = positiveMessage,
+          setResult(checkResult = true, positiveMessage = positiveMessage,
               negativeMessage = negativeMessage, node = node,
-              ruleData = "shorthand", params = [$node[1], $node.info.line,
-              (if rule.negation: "a full assignment" else: "a shorthand assignment")])
+              ruleData = "shorthand", params = [$node[1], $node.info.line, (
+              if rule.negation: "a full assignment" else: "a shorthand assignment"),
+              (if rule.ruleType in {check,
+              fix}: "can be updated to" else: "is"), (if rule.ruleType in {
+              check, fix}: "can't be updated to" else: "isn't")])
         elif node.kind == nkAsgn and $node[1][1] == $node[0]:
           setResult(checkResult = false,
               positiveMessage = negativeMessage,
               negativeMessage = positiveMessage, node = node,
               ruleData = "shorthand", params = [$node[0], $node.info.line,
-              (if rule.negation: "a full assignment" else: "a shorthand assignment")])
+              (if rule.negation: "a full assignment" else: "a shorthand assignment"),
+              (if rule.ruleType in {check,
+              fix}: "can be updated to" else: "is"), (if rule.ruleType in {
+              check, fix}: "can't be updated to" else: "isn't")])
       else:
         discard
     except Exception:
@@ -100,7 +105,7 @@ checkRule:
           rule.fileName & ". Reason: ", e = getCurrentException())
       return
   endCheck:
-    let negation: string = (if rule.negation and rule.ruleType in {check, fix}: "'t" else: "")
+    let negation: string = (if rule.negation: "'t" else: "")
 
 fixRule:
   discard
