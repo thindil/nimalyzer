@@ -64,8 +64,8 @@
 import ../rules
 
 ruleConfig(ruleName = "assignments",
-  ruleFoundMessage = "assignments which can{negation} be upgraded",
-  ruleNotFoundMessage = "assignments which can{negation} be upgraded not found.",
+  ruleFoundMessage = "assignments which are{negation} shorthand assignment",
+  ruleNotFoundMessage = "assignments which are{negation} shorthand assigments not found.",
   rulePositiveMessage = "assignments to '{params[0]}' line: {params[1]} {params[3]} {params[2]}.",
   ruleNegativeMessage = "assignments to '{params[0]}' line: {params[1]} {params[4]} {params[2]}.",
   ruleOptions = @[custom],
@@ -74,7 +74,9 @@ ruleConfig(ruleName = "assignments",
 
 checkRule:
   initCheck:
-    discard
+    rule.amount = 0
+    if rule.negation:
+      rule.amount.inc
   startCheck:
     discard
   checking:
