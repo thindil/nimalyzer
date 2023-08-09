@@ -66,7 +66,7 @@ import ../rules
 ruleConfig(ruleName = "assignments",
   ruleFoundMessage = "assignments which can{negation} be upgraded",
   ruleNotFoundMessage = "assignments which can{negation} be upgraded not found.",
-  rulePositiveMessage = "assignments to {params[0]} line: {params[1]} can be updated to {params[2]}.",
+  rulePositiveMessage = "assignments to '{params[0]}' line: {params[1]} can be updated to {params[2]}.",
   ruleNegativeMessage = "assignments to '{params[0]}' line: {params[1]} can't be updated to {params[2]}.",
   ruleOptions = @[custom],
   ruleOptionValues = @["shorthand"],
@@ -79,27 +79,20 @@ checkRule:
     discard
   checking:
     try:
-      var checkResult: bool = true
       case rule.options[0].toLowerAscii
       of "shorthand":
         if node.kind == nkInfix:
-          checkResult = not rule.negation
-          if rule.ruleType in {search, count}:
-            checkResult = not checkResult
-          setResult(checkResult = checkResult,
-              positiveMessage = negativeMessage,
+          setResult(checkResult = true,
+              positiveMessage = positiveMessage,
               negativeMessage = negativeMessage, node = node,
               ruleData = "shorthand", params = [$node[1], $node.info.line,
               (if rule.negation: "a full assignment" else: "a shorthand assignment")])
         elif node.kind == nkAsgn and $node[1][1] == $node[0]:
-          checkResult = rule.negation
-          if rule.ruleType in {search, count}:
-            checkResult = not checkResult
-          setResult(checkResult = checkResult,
-              positiveMessage = positiveMessage,
+          setResult(checkResult = false,
+              positiveMessage = negativeMessage,
               negativeMessage = positiveMessage, node = node,
               ruleData = "shorthand", params = [$node[0], $node.info.line,
-              (if rule.negation: "a shorthand assignment" else: "a full assignment")])
+              (if rule.negation: "a full assignment" else: "a shorthand assignment")])
       else:
         discard
     except Exception:
