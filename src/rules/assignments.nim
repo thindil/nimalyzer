@@ -110,4 +110,27 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
 
 fixRule:
-  discard
+  for index, child in parentNode:
+    if child == astNode:
+      if rule.negation:
+        let newAssignment: PNode = newTree(kind = nkAsgn, children = [])
+        try:
+          echo $child[1]
+          echo $child[0]
+          echo $child
+          newAssignment.add(son = newIdentNode(ident = getIdent(ic = rule.identsCache,
+              identifier = $child[1]), info = astNode[0][0].info))
+          parentNode[index] = newAssignment
+        except KeyError, Exception:
+          discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
+              getCurrentExceptionMsg())
+          return false
+      else:
+        discard
+      try:
+        echo parentNode
+        echo astNode
+      except:
+        discard
+      return false
+  return false
