@@ -135,7 +135,7 @@ fixRule:
           return false
       else:
         try:
-          for i, part in astNode:
+          for i, part in astNode[1]:
             if i > 0:
               newInfix.add(son = part)
             else:
@@ -146,7 +146,7 @@ fixRule:
           return true
         except KeyError, Exception:
           discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
-              getStackTrace())
+              getCurrentExceptionMsg())
           return false
       return false
   return false
