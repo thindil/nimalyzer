@@ -26,7 +26,9 @@ NOTICE: Assignments which are't shorthand assignment found: 2
 INFO: Checking negative count type of the rule with the valid code.
 NOTICE: Assignments which are't shorthand assignment found: 0
 INFO: Checking fix type of the rule.
-INFO: The tests for fix type of rule are disabled.'''
+ERROR: assignments to 'i' line: 2 can be updated to a shorthand assignment.
+INFO: Checking negative fix type of the rule.
+ERROR: assignments to 'i' line: 2 can be updated to a full assignment.'''
 """
 
 import ../../src/rules/assignments
@@ -40,4 +42,4 @@ i = i + 1"""
   validNimCode = """var i = 1
 i += 1"""
 
-runRuleTest(disabledChecks = {fixTests})
+runRuleTest()
