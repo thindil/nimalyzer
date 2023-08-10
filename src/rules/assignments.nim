@@ -112,18 +112,19 @@ checkRule:
 fixRule:
   for index, child in parentNode:
     if child == astNode:
+      let newInfix: PNode = newTree(kind = nkInfix, children = [])
       if rule.negation:
-        let
-          newAssignment: PNode = newTree(kind = nkAsgn, children = [])
-          newInfix: PNode = newTree(kind = nkInfix, children = [])
+        let newAssignment: PNode = newTree(kind = nkAsgn, children = [])
         try:
-          newAssignment.add(son = newIdentNode(ident = getIdent(ic = rule.identsCache,
-              identifier = $astNode[1]), info = astNode.info))
-          for index, part in astNode:
-            if index > 0:
+          newAssignment.add(son = newIdentNode(ident = getIdent(
+              ic = rule.identsCache, identifier = $astNode[1]),
+              info = astNode.info))
+          for i, part in astNode:
+            if i > 0:
               newInfix.add(son = part)
             else:
-              newInfix.add(son = newIdentNode(ident = getIdent(ic = rule.identsCache,
+              newInfix.add(son = newIdentNode(ident = getIdent(
+              ic = rule.identsCache,
               identifier = $($part)[0 .. ^2]), info = astNode.info))
           newAssignment.add(son = newInfix)
           parentNode[index] = newAssignment
@@ -131,7 +132,21 @@ fixRule:
         except KeyError, Exception:
           discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
               getCurrentExceptionMsg())
+          return false
       else:
-        discard
+        try:
+          for i, part in astNode:
+            if i > 0:
+              newInfix.add(son = part)
+            else:
+              newInfix.add(son = newIdentNode(ident = getIdent(
+              ic = rule.identsCache,
+              identifier = $part & "="), info = astNode.info))
+          parentNode[index] = newInfix
+          return true
+        except KeyError, Exception:
+          discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
+              getStackTrace())
+          return false
       return false
   return false
