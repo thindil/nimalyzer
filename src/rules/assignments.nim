@@ -124,7 +124,7 @@ fixRule:
               newInfix.add(son = part)
             else:
               newInfix.add(son = newIdentNode(ident = getIdent(ic = rule.identsCache,
-              identifier = $($part)[0]), info = astNode.info))
+              identifier = $($part)[0 .. ^2]), info = astNode.info))
           newAssignment.add(son = newInfix)
           parentNode[index] = newAssignment
           return true
