@@ -110,15 +110,21 @@ checkRule:
               (if rule.ruleType in {check,
               fix}: "can be updated to" else: "is"), (if rule.ruleType in {
               check, fix}: "can't be updated to" else: "isn't")])
-        elif node.kind == nkAsgn and $node[1][1] == $node[0]:
-          setResult(checkResult = false,
-              positiveMessage = negativeMessage,
-              negativeMessage = positiveMessage, node = node,
-              ruleData = "shorthand", params = [$node[0], $node.info.line,
-              (if rule.negation: "a full assignment" else: "a shorthand assignment"),
-              (if rule.ruleType in {check,
-              fix}: "can be updated to" else: "is"), (if rule.ruleType in {
-              check, fix}: "can't be updated to" else: "isn't")])
+        elif node.kind == nkAsgn:
+          try:
+            if node.sons[1].len < 2:
+              continue
+          except:
+            continue
+          if $node[1][1] == $node[0]:
+            setResult(checkResult = false,
+                positiveMessage = negativeMessage,
+                negativeMessage = positiveMessage, node = node,
+                ruleData = "shorthand", params = [$node[0], $node.info.line,
+                (if rule.negation: "a full assignment" else: "a shorthand assignment"),
+                (if rule.ruleType in {check,
+                fix}: "can be updated to" else: "is"), (if rule.ruleType in {
+                check, fix}: "can't be updated to" else: "isn't")])
       else:
         discard
     except Exception:
