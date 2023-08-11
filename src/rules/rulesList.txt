@@ -1,6 +1,7 @@
 assignments
 casestatements
 comments
+complexity
 forstatements
 hasdoc
 hasentity
