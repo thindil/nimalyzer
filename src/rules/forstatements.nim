@@ -144,8 +144,7 @@ checkRule:
     discard
 
 fixRule:
-  case data
-  of "iterator":
+  if data == "iterator":
     # Remove iterators pairs or items from for statement
     if rule.negation:
       try:
@@ -172,7 +171,7 @@ fixRule:
       discard errorMessage(text = "Can't add iterator from for statement. Reason: " &
           getCurrentExceptionMsg())
       return false
-  of "empty":
+  else:
     if rule.negation:
       return false
     # Remove empty if statement

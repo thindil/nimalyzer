@@ -101,33 +101,29 @@ checkRule:
     discard
   checking:
     try:
-      case rule.options[0].toLowerAscii
-      of "shorthand":
-        if node.kind == nkInfix:
-          setResult(checkResult = true, positiveMessage = positiveMessage,
-              negativeMessage = negativeMessage, node = node,
-              ruleData = "shorthand", params = [$node[1], $node.info.line, (
-              if rule.negation: "a full assignment" else: "a shorthand assignment"),
+      if node.kind == nkInfix:
+        setResult(checkResult = true, positiveMessage = positiveMessage,
+            negativeMessage = negativeMessage, node = node,
+            ruleData = "shorthand", params = [$node[1], $node.info.line, (
+            if rule.negation: "a full assignment" else: "a shorthand assignment"),
+            (if rule.ruleType in {check,
+            fix}: "can be updated to" else: "is"), (if rule.ruleType in {
+            check, fix}: "can't be updated to" else: "isn't")])
+      elif node.kind == nkAsgn:
+        try:
+          if node.sons[1].len < 3:
+            continue
+        except:
+          continue
+        if $node[1][1] == $node[0]:
+          setResult(checkResult = false,
+              positiveMessage = negativeMessage,
+              negativeMessage = positiveMessage, node = node,
+              ruleData = "shorthand", params = [$node[0], $node.info.line,
+              (if rule.negation: "a full assignment" else: "a shorthand assignment"),
               (if rule.ruleType in {check,
               fix}: "can be updated to" else: "is"), (if rule.ruleType in {
               check, fix}: "can't be updated to" else: "isn't")])
-        elif node.kind == nkAsgn:
-          try:
-            if node.sons[1].len < 3:
-              continue
-          except:
-            continue
-          if $node[1][1] == $node[0]:
-            setResult(checkResult = false,
-                positiveMessage = negativeMessage,
-                negativeMessage = positiveMessage, node = node,
-                ruleData = "shorthand", params = [$node[0], $node.info.line,
-                (if rule.negation: "a full assignment" else: "a shorthand assignment"),
-                (if rule.ruleType in {check,
-                fix}: "can be updated to" else: "is"), (if rule.ruleType in {
-                check, fix}: "can't be updated to" else: "isn't")])
-      else:
-        discard
     except Exception:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
