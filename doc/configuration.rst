@@ -147,6 +147,7 @@ lvlError. The settings below checks for:
 10. If any `for` statement uses iterators `pairs` or `items`.
 11. If there are no empty `for` statements.
 12. If all source code files have the legal header.
+13. If any assignment can be updated to shorthand assignment.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -195,6 +196,9 @@ setting shouldn't contain a new line characters.
 
     check comments legal
     explanation Each source code file should have the legal information, required by BSD-3 license.
+
+    check assignments shorthand
+    explanation Shorthand assignments are shorter to write and can be more readable, especially with long names of variables.
 
 Search rules
 ------------
@@ -313,3 +317,6 @@ the program.
 
     check comments legal
     explanation Each source code file should have the legal information, required by BSD-3 license.
+
+    check assignments shorthand
+    explanation Shorthand assignments are shorter to write and can be more readable, especially with long names of variables.
