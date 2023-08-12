@@ -113,7 +113,7 @@ checkRule:
               check, fix}: "can't be updated to" else: "isn't")])
         elif node.kind == nkAsgn:
           try:
-            if node.sons[1].len < 2:
+            if node.sons[1].len < 3:
               continue
           except:
             continue
