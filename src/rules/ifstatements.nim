@@ -134,7 +134,7 @@ checkRule:
   startCheck:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
-    if node.kind == nkIfStmt:
+    if node.kind in {nkIfStmt, nkElifBranch}:
       var oldAmount: int = rule.amount
       if node.len > 1:
         # Check if the if statement starts with negative condition and has else branch
