@@ -159,15 +159,16 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             message(text = "Restarting parsing of the configuration file.",
                 level = lvlDebug)
             continue
+        case setting.name
         # If the configuration file contains "reset" setting, stop parsing it
         # and increase the amount of sections
-        if setting.name == "reset":
+        of "reset":
           sections.inc
           message(text = "Stopped parsing of the configuration file.",
               level = lvlDebug)
           return
         # Set the program's verbosity
-        elif setting.name == "verbosity":
+        of "verbosity":
           try:
             setLogFilter(lvl = parseEnum[Level](s = setting.value))
             message(text = "Setting the program's verbosity to '" &
@@ -176,7 +177,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             abortProgram(message = "An invalid value set in the configuration file, line: " &
                 $lineNumber & " for the program's verbosity level.")
         # Set the max amount of the reported problems
-        elif setting.name == "maxreports":
+        of "maxreports":
           try:
             result.maxReports = parseInt(s = setting.value)
             message(text = "Setting the program's max reports to " &
@@ -185,7 +186,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             abortProgram(message = "An invalid value set in the configuration file, line: " &
                 $lineNumber & " for the maximum amount of the program's reports.")
         # Set the file to which the program's output will be logged
-        elif setting.name == "output":
+        of "output":
           let fileName: string = unixToNativePath(path = setting.value)
           addHandler(handler = newFileLogger(filename = fileName,
               fmtStr = "[$time] - $levelname: "))
@@ -193,16 +194,16 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
               level = lvlDebug)
         # Set the command which will be executed when rule type fix encounter
         # a problem
-        elif setting.name == "fixcommand":
+        of "fixcommand":
           result.fixCommand = setting.value
           message(text = "The command to execute for fix rules' type set to '" &
               result.fixCommand & "'.", level = lvlDebug)
         # Set the source code file to check
-        elif setting.name == "source":
+        of "source":
           let fileName: string = unixToNativePath(path = setting.value)
           addFile(fileName = fileName, sources = result.sources)
         # Set the source code files to check
-        elif setting.name == "files":
+        of "files":
           try:
             for fileName in walkFiles(pattern = setting.value):
               addFile(fileName = fileName, sources = result.sources)
@@ -211,7 +212,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
                 ", line: " & $lineNumber & "'. Reason: ",
                 e = getCurrentException())
         # Set the source code files to check, the second option
-        elif setting.name == "directory":
+        of "directory":
           try:
             for fileName in walkDirRec(dir = setting.value):
               addFile(fileName = fileName, sources = result.sources)
@@ -219,7 +220,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             abortProgram(message = "Can't add files to check, line: " &
                 $lineNumber & ". Reason: ", e = getCurrentException())
         # Set the message to show during the program's work
-        elif setting.name == "message":
+        of "message":
           if setting.value.len == 0:
             abortProgram(message = "Can't parse the 'message' setting in the configuration file, line: " &
                 $lineNumber & ". No message's text set.")
@@ -230,7 +231,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
               "' to the program's output.", level = lvlDebug)
         # Set do the progam should force its rules to execute the command instead
         # of code for fix type of rules
-        elif setting.name == "forcefixcommand":
+        of "forcefixcommand":
           if setting.value.len == 0:
             abortProgram(message = "Can't parse the 'forcefixcommand' setting in the configuration file, line: " &
                 $lineNumber & ". No value set, should be 0, 1, true or false.")
@@ -243,7 +244,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             message(text = "Enabled forcing the next rules to use a fix command instead of the code.",
                 level = lvlDebug)
         # Set the explanation for the previous rule
-        elif setting.name == "explanation":
+        of "explanation":
           if result.rules.len == 0:
             abortProgram(message = "The setting 'explanation', line: " &
                 $lineNumber & " is set before any rule setting.")
@@ -251,8 +252,10 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             abortProgram(message = "Can't parse the 'explanation' setting in the configuration file, line: " &
                 $lineNumber & ". No explanation's text set.")
           result.rules[result.rules.high].explanation = setting.value
+        else:
+          discard
         # Set the program's rule to test the code
-        elif availableRuleTypes.anyIt(pred = setting.name == it):
+        if availableRuleTypes.anyIt(pred = setting.name == it):
           var configRule: OptParser = initOptParser(cmdline = line)
           configRule.next
           let ruleType: RuleTypes = try:
