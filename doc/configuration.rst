@@ -203,6 +203,9 @@ setting shouldn't contain a new line characters.
     check caseStatements min 3
     explanation Short case statements can be replaced by if statements for better readablity.
 
+    check ifStatements max 3
+    explanation Long if statements can be replaced by case statements for better readability.
+
 Search rules
 ------------
 Search rules are similar to the check rules. The main difference is that they
@@ -326,3 +329,6 @@ the program.
 
     check caseStatements min 3
     explanation Short case statements can be replaced by if statements for better readablity.
+
+    check ifStatements max 3
+    explanation Long if statements can be replaced by case statements for better readability.
