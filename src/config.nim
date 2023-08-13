@@ -146,12 +146,12 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
         if line.startsWith(prefix = '#') or line.len == 0:
           continue
         # Check if the setting is a valid setting for the program
-        elif setting.index == -1:
+        if setting.index == -1:
           abortProgram(message = "An unknown setting in the configuration file: '" &
               setting.name & "', line: " & $lineNumber & ".")
         # If the configuration file contains a couple of sections of settings,
         # skip the current line until don't meet the proper section
-        elif configSection > 0:
+        if configSection > 0:
           if configLine[0] != "reset":
             continue
           else:
@@ -161,7 +161,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             continue
         # If the configuration file contains "reset" setting, stop parsing it
         # and increase the amount of sections
-        elif setting.name == "reset":
+        if setting.name == "reset":
           sections.inc
           message(text = "Stopped parsing of the configuration file.",
               level = lvlDebug)
