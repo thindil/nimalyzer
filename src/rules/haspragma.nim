@@ -193,6 +193,7 @@ checkRule:
             discard
         # Check the node for each selected pragma
         for pragma in rule.options[1 .. ^1]:
+          {.ruleOff: "ifStatements".}
           if pragma[^1] == '*' and pragma[0] != '*':
             var hasPragma: bool = false
             for procPragma in strPragmas:
@@ -236,6 +237,7 @@ checkRule:
                 negativeMessage = negativeMessage, node = node,
                 ruleData = pragma, params = [
                 procName, $node.info.line, pragma])
+          {.ruleOn: "ifStatements".}
   endCheck:
     if not rule.enabled and rule.amount == 0:
       rule.amount = 1
