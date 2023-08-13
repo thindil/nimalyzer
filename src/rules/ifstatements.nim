@@ -141,7 +141,8 @@ checkRule:
         if rule.options[0].toLowerAscii in ["all", "negative"]:
           try:
             let conditions: seq[string] = ($node[0]).split
-            if conditions[2] == "not" or conditions[3] in ["notin", "!="]:
+            if (conditions.len > 2 and conditions[2] == "not") or (
+                conditions.len > 3 and conditions[3] in ["notin", "!="]):
               var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
               if rule.ruleType == RuleTypes.count and not rule.negation:
                 checkResult = not checkResult
