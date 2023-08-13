@@ -200,6 +200,9 @@ setting shouldn't contain a new line characters.
     check assignments shorthand
     explanation Shorthand assignments are shorter to write and can be more readable, especially with long names of variables.
 
+    check caseStatements min 3
+    explanation Short case statements can be replaced by if statements for better readablity.
+
 Search rules
 ------------
 Search rules are similar to the check rules. The main difference is that they
@@ -320,3 +323,6 @@ the program.
 
     check assignments shorthand
     explanation Shorthand assignments are shorter to write and can be more readable, especially with long names of variables.
+
+    check caseStatements min 3
+    explanation Short case statements can be replaced by if statements for better readablity.
