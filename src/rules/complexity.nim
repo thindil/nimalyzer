@@ -64,10 +64,13 @@
 import ../rules
 
 ruleConfig(ruleName = "complexity",
-  ruleFoundMessage = "",
-  ruleNotFoundMessage = "",
-  rulePositiveMessage = "",
-  ruleNegativeMessage = "")
+  ruleFoundMessage = "Code blocks with the complexity {moreOrLess} than the selected found",
+  ruleNotFoundMessage = "Code blocks with the complexity {moreOrLess} than the selected not found.",
+  rulePositiveMessage = "{params[0]} at line: {params[1]} has {params[2]} complexity more than {params[3]}.",
+  ruleNegativeMessage = "{params[0]} at line: {params[1]} has {params[2]} complexity less than {params[3]}.",
+  ruleOptions = @[custom, integer],
+  ruleOptionValues = @["cyclomatic"],
+  ruleMinOptions = 2)
 
 checkRule:
   initCheck:
@@ -77,7 +80,7 @@ checkRule:
   checking:
     discard
   endCheck:
-    discard
+    let moreOrLess: string = (if rule.negation: "more" else: "less")
 
 fixRule:
   discard
