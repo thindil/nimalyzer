@@ -23,10 +23,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## The rule to check do `if` statements in the code don't contain some
+## The rule to check do `if` and `when` statements in the code don't contain some
 ## expressions. Checked things:
 ##
-## * Empty statements. `If` statements, which contains only `discard` statement.
+## * Empty statements. `If` and `when` statements, which contains only `discard` statement.
 ## * A branch `else` after a finishing statement like `return`, `continue`,
 ##   `break` or `raise`. Example::
 ##
@@ -35,14 +35,14 @@
 ##     else:
 ##       doSomething()
 ##
-## * A negative condition in `if` statements with a branch `else`. Example::
+## * A negative condition in `if` and `when` statements with a branch `else`. Example::
 ##
 ##     if a != 1:
 ##       doSomething()
 ##     else:
 ##       doSomething2()
 ##
-## * The maximum and minimum amount of `if` statements' branches. The check
+## * The maximum and minimum amount of `if` and `when` statements' branches. The check
 ##   must be set explicitly, it isn't performed when option *all* is set.
 ##
 ## The syntax in a configuration file is::
@@ -52,16 +52,16 @@
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check type will raise
-##   an error if there is a `if` statement which violates any of the checks. Search
+##   an error if there is a `if` or `when` statement which violates any of the checks. Search
 ##   type will list all statements which violates any of checks or raise an
 ##   error if nothing found. Count type will simply list the amount of the
 ##   statements which violates the checks. Fix type will try to fix the code
 ##   which violates checks: will remove empty statements, move outside the `if`
-##   block code after finishing statement or replace negative condition in the
+##   or `when` block code after finishing statement or replace negative condition in the
 ##   statement with positive and move the code blocks. Fix type not works with
 ##   negation.
 ## * optional word *not* means negation for the rule. Adding word *not* will
-##   change to inform only about the `if` statements which not violate the checks.
+##   change to inform only about the `if` and `when` statements which not violate the checks.
 ##   Probably useable only with search and count type of rule.
 ## * ifStatements is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *ifstatements*, *ifstatements* or *iFsTaTeMeNts*.
@@ -69,15 +69,15 @@
 ##   values are: *all*, *negative*, *moveable*, *empty*, *min* and *max*.
 ##   Setting it to all will perform all rule's checks on statements except for
 ##   the check for maximum and minimum amount of branches. Negative value will
-##   check only if the `if` statements don't have a negative condition with branch
+##   check only if the `if` and `when` statements don't have a negative condition with branch
 ##   `else`. Moveable value will check only if the content of `else` branch can
-##   be moved outside the statement. Empty value will check if the `if`
+##   be moved outside the statement. Empty value will check if the `if` or `when`
 ##   statements doesn't contain only a `discard` statement. Min value will check
-##   if all `if` statements have at least the selected amount of branches. Max
-##   value will check if the `if` statements have maximum the selected amount of
+##   if all `if` or `when` statements have at least the selected amount of branches. Max
+##   value will check if the `if` or `when` statements have maximum the selected amount of
 ##   branches.
 ## * amount parameter is required only for *min* and *max* types of checks and
-##   it is ignored for another. It is desired amount of branches for the `if`
+##   it is ignored for another. It is desired amount of branches for the `if` or `when`
 ##   statements, minimal or maximum, depends on check's type.
 ##
 ## Disabling the rule
@@ -102,15 +102,15 @@
 ## Examples
 ## --------
 ##
-## 1. Check if all `if` statements are correct::
+## 1. Check if all `if` and `when` statements are correct::
 ##
 ##     check ifStatements all
 ##
-## 2. Remove all empty `if` statements::
+## 2. Remove all empty `if` and `when` statements::
 ##
 ##     fix ifStatements empty
 ##
-## 3. Check if all `if` statements have at least 3 branches:
+## 3. Check if all `if` and `when` statements have at least 3 branches:
 ##
 ##     check ifStatements min 3
 
