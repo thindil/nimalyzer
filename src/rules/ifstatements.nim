@@ -180,6 +180,8 @@ checkRule:
       if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
         var checkResult: bool = true
         for child in node:
+          if child.kind == nkIdent:
+            continue
           if child[^1].kind == nkStmtList and child[^1].len == 1:
             checkResult = child[^1][0].kind != nkDiscardStmt
             if rule.ruleType == RuleTypes.count and not rule.negation:
