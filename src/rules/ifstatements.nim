@@ -159,8 +159,13 @@ checkRule:
         # Check if the last if branch can be moved outside the if statement
         if rule.options[0].toLowerAscii in ["all", "moveable"] and
             rule.amount == oldAmount:
-          let lastNode: PNode = (if node[^2][^1].kind == nkStmtList: node[^2][
-              ^1][^1] else: node[^2][^1])
+          let lastNode: PNode = try:
+              if node[^2][^1].kind == nkStmtList:
+                node[^2][^1][^1]
+              else:
+                node[^2][^1]
+            except:
+              node[^2]
           if lastNode.kind in nkLastBlockStmts:
             var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
             if rule.ruleType == RuleTypes.count and not rule.negation:
