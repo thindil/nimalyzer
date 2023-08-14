@@ -68,15 +68,29 @@ ruleConfig(ruleName = "complexity",
   ruleNotFoundMessage = "Code blocks with the complexity {moreOrLess} than the selected not found.",
   rulePositiveMessage = "{params[0]} at line: {params[1]} has {params[2]} complexity more than {params[3]}.",
   ruleNegativeMessage = "{params[0]} at line: {params[1]} has {params[2]} complexity less than {params[3]}.",
-  ruleOptions = @[custom, integer],
+  ruleOptions = @[custom, str, integer],
   ruleOptionValues = @["cyclomatic"],
-  ruleMinOptions = 2)
+  ruleMinOptions = 3)
 
 checkRule:
   initCheck:
     discard
   startCheck:
-    discard
+    let nodesToCheck: set[TNodeKind] = case rule.options[1].toLowerAscii
+      of "all":
+        callableDefs + {nkForStmt, nkWhileStmt, nkIfStmt, nkElifBranch, nkWhenStmt}
+      of "routines":
+        routineDefs
+      of "loops":
+        {nkForStmt, nkWhileStmt}
+      of "conditions":
+        {nkIfStmt, nkElifBranch, nkWhenStmt}
+      else:
+        {}
+    if nodesToCheck == {}:
+      rule.amount = errorMessage(text = "Can't check the complexity of the code, unknown type of a code to check: '" &
+          rule.options[1] & "'. Should be one of: 'all', 'routines', 'loops', 'conditions'")
+      return
   checking:
     discard
   endCheck:
