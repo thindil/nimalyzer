@@ -97,7 +97,7 @@ checkRule:
   initCheck:
     discard
   startCheck:
-    let negation: string = (if rule.negation: "'t" else: "")
+    discard
   checking:
     if node.kind == nkCaseStmt:
       var checkResult: bool = true
@@ -114,7 +114,7 @@ checkRule:
           (if rule.options[0].toLowerAscii == "max": "more " else: "less ") &
               "than " & rule.options[1] & " branches."])
   endCheck:
-    discard
+    let negation: string = (if rule.negation: "'t" else: "")
 
 fixRule:
   discard
