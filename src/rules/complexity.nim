@@ -76,6 +76,13 @@ proc countCyclomatic(complexity: var Positive; node: PNode) =
   for child in node:
     if child.kind in {nkCharLit .. nkIdent}:
       continue
+    if child.kind in {nkForStmt, nkWhileStmt, nkIfStmt, nkElifBranch, nkElifExpr, nkElseExpr, nkElse}:
+      complexity.inc
+    elif child.kind notin {nkIdent, nkReturnStmt, nkCall, nkInfix}:
+      try:
+        echo "KIND:", child.kind, " CHILD:", child
+      except:
+        discard
     countCyclomatic(complexity = complexity, node = child)
 
 checkRule:
