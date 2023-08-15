@@ -72,6 +72,12 @@ ruleConfig(ruleName = "complexity",
   ruleOptionValues = @["cyclomatic"],
   ruleMinOptions = 3)
 
+proc countCyclomatic(complexity: var Positive; node: PNode) =
+  for child in node:
+    if child.kind in {nkCharLit .. nkIdent}:
+      continue
+    countCyclomatic(complexity = complexity, node = child)
+
 checkRule:
   initCheck:
     discard
@@ -93,7 +99,8 @@ checkRule:
       return
   checking:
     if node.kind in nodesToCheck:
-      var complexity: Natural = node.len + 1
+      var complexity: Positive = node.len + 1
+      countCyclomatic(complexity = complexity, node = node)
       setResult(checkResult = complexity <= rule.options[2].parseInt,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
           node = node, params = [$node.info.line, rule.options[0], rule.options[2]])
