@@ -64,10 +64,10 @@
 import ../rules
 
 ruleConfig(ruleName = "complexity",
-  ruleFoundMessage = "Code blocks with the complexity {moreOrLess} than the selected found",
-  ruleNotFoundMessage = "Code blocks with the complexity {moreOrLess} than the selected not found.",
-  rulePositiveMessage = "{params[0]} at line: {params[1]} has {params[2]} complexity more than {params[3]}.",
-  ruleNegativeMessage = "{params[0]} at line: {params[1]} has {params[2]} complexity less than {params[3]}.",
+  ruleFoundMessage = "Code blocks with the complexity {moreOrLess} the selected found",
+  ruleNotFoundMessage = "Code blocks with the complexity {moreOrLess} the selected not found.",
+  rulePositiveMessage = "Code block at line: {params[0]} has {params[1]} complexity less or equal to {params[2]}.",
+  ruleNegativeMessage = "Code block at line: {params[0]} has {params[1]} complexity more than {params[2]}.",
   ruleOptions = @[custom, str, integer],
   ruleOptionValues = @["cyclomatic"],
   ruleMinOptions = 3)
@@ -92,9 +92,13 @@ checkRule:
           rule.options[1] & "'. Should be one of: 'all', 'routines', 'loops', 'conditions'")
       return
   checking:
-    discard
+    if node.kind in nodesToCheck:
+      var complexity: Natural = node.len + 1
+      setResult(checkResult = complexity <= rule.options[2].parseInt,
+          positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+          node = node, params = [$node.info.line, rule.options[0], rule.options[2]])
   endCheck:
-    let moreOrLess: string = (if rule.negation: "more" else: "less")
+    let moreOrLess: string = (if rule.negation: "more than" else: "less or equal to")
 
 fixRule:
   discard
