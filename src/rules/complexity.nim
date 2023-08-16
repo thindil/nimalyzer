@@ -23,20 +23,32 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## --Insert here the description of the rule--
+## Count the complexity of the selected code. Possible complexity formulas:
+## cyclomatic.
+##
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? complexity
+##   [ruleType] ?not? complexity [checkType] [codeType] [value]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
-##   rules, please refer to the program's documentation. --Insert description
-##   how rules types works with the rule--.
+##   rules, please refer to the program's documentation. Check type will raise
+##   an error if the selected type of code block has complexity above the selected
+##   value. Search type will list all code blocks of the selected
+##   type with the complexity above the selected value and raise error if nothing
+##   was found. Count type will simply list the amount of the selected code
+##   blocks with complexity above the value. Fix type will execute the default
+##   shell command set by the program's setting **fixCommand**.
 ## * optional word *not* means negation for the rule. Adding word *not* will
-##   change to inform only about --Insert description how negation affects the
-##   rule--.
+##   change to inform only about code blocks with complexity below the selected
+##   value.
 ## * complexity is the name of the rule. It is case-insensitive, thus it can be
-##   set as *complexity*, *complexity* or *--rUlEnAmE--*.
+##   set as *complexity*, *complexity* or *--cOmPlExItY--*.
+## * checkType is the type of complexity to check. Proper value is *cyclomatic*.
+##   Setting it to cyclomatic value will set the rule to count cyclomatic
+##   complexity of the selected code blocks.
+## * codeType -  the type of code blocks to check by the rule. Proper values
+##   are: *all*, *routines*, *loops*, *conditions*.
 ##
 ## Disabling the rule
 ## ------------------
