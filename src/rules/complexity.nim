@@ -74,6 +74,12 @@ ruleConfig(ruleName = "complexity",
 
 proc countCyclomatic(complexity: var Positive; node: PNode) {.raises: [KeyError,
     Exception], tags: [RootEffect], contractual.} =
+  ## Count the cyclomatic complexity of the selected code's branch
+  ##
+  ## * complexity - the current complexity of the checked code
+  ## * node       - the code's branch which will be checked for complexity
+  ##
+  ## Returns updated parameter complexity
   require:
     node != nil
   body:
