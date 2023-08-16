@@ -74,9 +74,10 @@ ruleConfig(ruleName = "complexity",
 
 proc countCyclomatic(complexity: var Positive; node: PNode) =
   for child in node:
-    if child.kind in {nkCharLit .. nkIdent}:
+    if child.kind in {nkCharLit .. nkSym}:
       continue
-    if child.kind in {nkForStmt, nkWhileStmt, nkElifBranch, nkWhenStmt, nkIfExpr}:
+    if child.kind in {nkForStmt, nkWhileStmt, nkElifBranch, nkWhenStmt,
+        nkIfExpr} or (child.kind == nkIdent and $child in ["and", "or"]):
       complexity.inc
     countCyclomatic(complexity = complexity, node = child)
 
@@ -102,12 +103,20 @@ checkRule:
   checking:
     if node.kind in nodesToCheck:
       var complexity: Positive = 2
-      for child in node:
-        countCyclomatic(complexity = complexity, node = child)
-      setResult(checkResult = complexity <= rule.options[2].parseInt,
-          positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          node = node, params = [$node.info.line, rule.options[0], rule.options[
-          2], $complexity])
+      try:
+        for child in node:
+          countCyclomatic(complexity = complexity, node = child)
+        setResult(checkResult = complexity <= rule.options[2].parseInt,
+            positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage,
+            node = node, params = [$node.info.line, rule.options[0],
+                rule.options[
+            2], $complexity])
+      except Exception:
+        rule.amount = errorMessage(text = messagePrefix &
+            "can't check code block at " & $node.info.line & " line. Reason: ",
+            e = getCurrentException())
+        return
   endCheck:
     let moreOrLess: string = (if rule.negation: "more than" else: "less or equal to")
 
