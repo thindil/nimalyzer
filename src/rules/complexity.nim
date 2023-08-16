@@ -66,8 +66,8 @@ import ../rules
 ruleConfig(ruleName = "complexity",
   ruleFoundMessage = "Code blocks with the complexity {moreOrLess} the selected found",
   ruleNotFoundMessage = "Code blocks with the complexity {moreOrLess} the selected not found.",
-  rulePositiveMessage = "Code block at line: {params[0]} has {params[1]} complexity less or equal to {params[2]}.",
-  ruleNegativeMessage = "Code block at line: {params[0]} has {params[1]} complexity more than {params[2]}.",
+  rulePositiveMessage = "Code block at line: {params[0]} has {params[1]} complexity less or equal to {params[2]} ({params[3]}).",
+  ruleNegativeMessage = "Code block at line: {params[0]} has {params[1]} complexity more than {params[2]} ({params[3]}).",
   ruleOptions = @[custom, str, integer],
   ruleOptionValues = @["cyclomatic"],
   ruleMinOptions = 3)
@@ -76,8 +76,7 @@ proc countCyclomatic(complexity: var Positive; node: PNode) =
   for child in node:
     if child.kind in {nkCharLit .. nkIdent}:
       continue
-    if child.kind in {nkForStmt, nkWhileStmt, nkIfStmt, nkElifBranch,
-        nkElifExpr, nkElseExpr, nkElse, nkWhenStmt}:
+    if child.kind in {nkForStmt, nkWhileStmt, nkElifBranch, nkWhenStmt, nkIfExpr}:
       complexity.inc
     countCyclomatic(complexity = complexity, node = child)
 
@@ -102,11 +101,13 @@ checkRule:
       return
   checking:
     if node.kind in nodesToCheck:
-      var complexity: Positive = node.len + 1
-      countCyclomatic(complexity = complexity, node = node)
+      var complexity: Positive = 2
+      for child in node:
+        countCyclomatic(complexity = complexity, node = child)
       setResult(checkResult = complexity <= rule.options[2].parseInt,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          node = node, params = [$node.info.line, rule.options[0], rule.options[2]])
+          node = node, params = [$node.info.line, rule.options[0], rule.options[
+          2], $complexity])
   endCheck:
     let moreOrLess: string = (if rule.negation: "more than" else: "less or equal to")
 
