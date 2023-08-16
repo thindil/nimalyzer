@@ -72,14 +72,17 @@ ruleConfig(ruleName = "complexity",
   ruleOptionValues = @["cyclomatic"],
   ruleMinOptions = 3)
 
-proc countCyclomatic(complexity: var Positive; node: PNode) =
-  for child in node:
-    if child.kind in {nkCharLit .. nkSym}:
-      continue
-    if child.kind in {nkForStmt, nkWhileStmt, nkElifBranch, nkWhenStmt,
-        nkIfExpr} or (child.kind == nkIdent and $child in ["and", "or"]):
-      complexity.inc
-    countCyclomatic(complexity = complexity, node = child)
+proc countCyclomatic(complexity: var Positive; node: PNode) {.contractual.} =
+  require:
+    node != nil
+  body:
+    for child in node:
+      if child.kind in {nkCharLit .. nkSym}:
+        continue
+      if child.kind in {nkForStmt, nkWhileStmt, nkElifBranch, nkWhenStmt,
+          nkIfExpr} or (child.kind == nkIdent and $child in ["and", "or"]):
+        complexity.inc
+      countCyclomatic(complexity = complexity, node = child)
 
 checkRule:
   initCheck:
