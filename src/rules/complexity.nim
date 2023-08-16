@@ -72,7 +72,8 @@ ruleConfig(ruleName = "complexity",
   ruleOptionValues = @["cyclomatic"],
   ruleMinOptions = 3)
 
-proc countCyclomatic(complexity: var Positive; node: PNode) {.contractual.} =
+proc countCyclomatic(complexity: var Positive; node: PNode) {.raises: [KeyError,
+    Exception], tags: [RootEffect], contractual.} =
   require:
     node != nil
   body:
