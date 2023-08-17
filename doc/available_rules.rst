@@ -189,6 +189,73 @@ Examples
 
    fix comments legal legal.txt
 
+Complexity rule
+===============
+Count the complexity of the selected code. Possible complexity formulas:
+cyclomatic.
+
+The syntax in a configuration file is::
+
+  [ruleType] ?not? complexity [checkType] [codeType] [value]
+
+* ruleType is the type of rule which will be executed. Proper values are:
+  *check*, *search*, *count* and *fix*. For more information about the types of
+  rules, please refer to the program's documentation. Check type will raise
+  an error if the selected type of code block has complexity above the selected
+  value. Search type will list all code blocks of the selected
+  type with the complexity above the selected value and raise error if nothing
+  was found. Count type will simply list the amount of the selected code
+  blocks with complexity above the value. Fix type will execute the default
+  shell command set by the program's setting **fixCommand**.
+* optional word *not* means negation for the rule. Adding word *not* will
+  change to inform only about code blocks with complexity below the selected
+  value.
+* complexity is the name of the rule. It is case-insensitive, thus it can be
+  set as *complexity*, *complexity* or *--cOmPlExItY--*.
+* checkType is the type of complexity to check. Proper value is *cyclomatic*.
+  Setting it to cyclomatic value will set the rule to count cyclomatic
+  complexity of the selected code blocks.
+* codeType -  the type of code blocks to check by the rule. Proper values
+  are: *all*, *routines*, *loops*, *conditions*. Setting it to all will count
+  the complexity of all code blocks in the code. Routines value will check
+  only routines (like procedures, functions, iterators, etc.) declarations.
+  Loops value will check only loops (for and while). Conditions value will
+  check only conditional statements (if and when).
+* Value is the maximum or minimum for negation type of the rule, value of
+  complexity allowed for the selected code blocks. For cyclomatic complexity
+  the value should be: 1-10 for low risk code, 11-20 for medium risk code,
+  21-50 for high risk code and 50+ for very high risk code.
+
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "complexity"* in the code before it. For example,
+if the rule should be disabled for the procedure main declaration, the full
+declaration of it should be::
+
+    {.ruleOff: "complexity".}
+    proc main() =
+      discard
+
+To enable the rule again, the pragma *ruleOn: "complexity"* should be added in
+the code before it. For example, if the rule should be re-enabled for if statement,
+the full declaration should be::
+
+    {.ruleOn: "complexity".}
+    if a == 1:
+      echo a
+
+Examples
+--------
+
+1. Check if all code blocks are maximum high risk code in cyclomatic complexity::
+
+    check complexity cyclomatic all 50
+
+2. Search for procedures declaration which cyclomatic complexity is below medium risk::
+
+    search not complexity cyclomatic routines 20
+
 Forstatements rule
 ==================
 The rule to check do `for` statements in the code contains or not some
