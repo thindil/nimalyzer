@@ -30,6 +30,8 @@ of the program.
   expression or do a code contains a legal header.
 - New rule `assignments` to check the assignments in a code do they are
   shorthand assignments or not.
+- New rule `complexity` to check code blocks in a code for their cyclomatic
+  complexity.
 
 ### Changed
 - Made the program's configuration files syntax case-insensitive.
