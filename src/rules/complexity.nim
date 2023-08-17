@@ -48,29 +48,45 @@
 ##   Setting it to cyclomatic value will set the rule to count cyclomatic
 ##   complexity of the selected code blocks.
 ## * codeType -  the type of code blocks to check by the rule. Proper values
-##   are: *all*, *routines*, *loops*, *conditions*.
+##   are: *all*, *routines*, *loops*, *conditions*. Setting it to all will count
+##   the complexity of all code blocks in the code. Routines value will check
+##   only routines (like procedures, functions, iterators, etc.) declarations.
+##   Loops value will check only loops (for and while). Conditions value will
+##   check only conditional statements (if and when).
+## * Value is the maximum or minimum for negation type of the rule, value of
+##   complexity allowed for the selected code blocks. For cyclomatic complexity
+##   the value should be: 1-10 for low risk code, 11-20 for medium risk code,
+##   21-50 for high risk code and 50+ for very high risk code.
 ##
 ## Disabling the rule
 ## ------------------
 ## It is possible to disable the rule for a selected part of the checked code
-## by using pragma *ruleOff: "complexity"* in the element from which the rule
-## should be disabled or in code before it. For example, if the rule should
-## be disabled for procedure `proc main()`, the full declaration of it should
-## be::
+## by using pragma *ruleOff: "complexity"* in the code before it. For example,
+## if the rule should be disabled for the procedure main declaration, the full
+## declaration of it should be::
 ##
-##     proc main () {.ruleOff: "complexity".}
+##     {.ruleOff: "complexity".}
+##     proc main() =
+##       discard
 ##
 ## To enable the rule again, the pragma *ruleOn: "complexity"* should be added in
-## the element which should be checked or in code before it. For example, if
-## the rule should be re-enabled for `const a = 1`, the full declaration should
-## be::
+## the code before it. For example, if the rule should be re-enabled for if statement,
+## the full declaration should be::
 ##
-##     const a {.ruleOn: "complexity".} = 1
+##     {.ruleOn: "complexity".}
+##     if a == 1:
+##       echo a
 ##
 ## Examples
 ## --------
 ##
-## --Insert rules examples--
+## 1. Check if all code blocks are maximum high risk code in cyclomatic complexity::
+##
+##     check complexity cyclomatic all 50
+##
+## 2. Search for procedures declaration which cyclomatic complexity is below medium risk::
+##
+##     search not complexity cyclomatic routines 20
 
 # Import default rules' modules
 import ../rules
