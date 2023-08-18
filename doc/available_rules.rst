@@ -46,7 +46,7 @@ full declaration of it should be::
     i = i + 1
 
 To enable the rule again, the pragma *ruleOn: "assignments"* should be added in
-the code before it. For example, if the rule should be re-enabled for ` a += 1`,
+the code before it. For example, if the rule should be re-enabled for `a += 1`,
 the full declaration should be::
 
     {.ruleOn: "assignments".}

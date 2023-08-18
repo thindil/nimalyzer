@@ -148,6 +148,9 @@ lvlError. The settings below checks for:
 11. If there are no empty `for` statements.
 12. If all source code files have the legal header.
 13. If any assignment can be updated to shorthand assignment.
+14. If any `case` statement can be replaced with `if` statement due to small amount of branches.
+15. If any `if` statement can be replaced with `case` statement due to large amount of branches.
+16. If any code block doesn't exceed limit of cyclomatic complexity.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -205,6 +208,9 @@ setting shouldn't contain a new line characters.
 
     check ifStatements max 3
     explanation Long if statements can be replaced by case statements for better readability.
+
+    check complexity cyclomatic all 40
+    explanation A code with high cyclomatic complexity is hard to understand and maintain. Please reduce the amount of the code branches (like, loops, if or case statements).
 
 Search rules
 ------------
@@ -288,6 +294,7 @@ set again message to show it only once as there is no rules configured for
 the program.
 ::
     message Checking the program's rules
+
     check hasPragma all contractual "raises: [*"
     explanation Contracts helps in testing the program and all declared procedures should have declared contracts for them. The procedures should avoid raising exceptions and handle each possible exception by themselves for greater stability of the program.
 
@@ -332,3 +339,6 @@ the program.
 
     check ifStatements max 3
     explanation Long if statements can be replaced by case statements for better readability.
+
+    check complexity cyclomatic all 40
+    explanation A code with high cyclomatic complexity is hard to understand and maintain. Please reduce the amount of the code branches (like, loops, if or case statements).
