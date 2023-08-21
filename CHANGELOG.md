@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 Tag **BREAKING** means the change break compatibility with a previous version
 of the program.
 
+## [Unreleased]
+
+### Fixed
+- Don't install file *rulesList.txt*. It is needed only for compilation of the
+  program.
+
 ## [0.6.0] - 2023-08-18
 
 ### Added
