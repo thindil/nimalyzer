@@ -9,7 +9,7 @@ license = "BSD-3-Clause"
 srcDir = "src"
 bin = @["nimalyzer"]
 binDir = "bin"
-
+skipFiles = @["src" & DirSep & "rules" & DirSep & "rulesList.txt"]
 
 # Dependencies
 
