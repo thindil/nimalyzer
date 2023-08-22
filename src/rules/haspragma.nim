@@ -119,7 +119,7 @@ ruleConfig(ruleName = "haspragma",
   rulePositiveMessage = "procedure {params[0]} line: {params[1]} has declared pragma: {params[2]}.",
   ruleNegativeMessage = "procedure {params[0]} line: {params[1]} doesn't have declared pragma: {params[2]}.",
   ruleOptions = @[custom, str, str, str, str, str, str, str, str],
-  ruleOptionValues = @["procedures", "templates", "all"],
+  ruleOptionValues = @["procedures", "templates", "all", "unborrowed"],
   ruleMinOptions = 2)
 
 {.hint[XCannotRaiseY]: off.}
@@ -130,7 +130,7 @@ checkRule:
     let nodesToCheck: set[TNodeKind] = case rule.options[0]
       of "all":
         routineDefs
-      of "procedures":
+      of "procedures", "unborrowed":
         {nkProcDef, nkFuncDef, nkMethodDef}
       of "templates":
         {nkTemplateDef}
@@ -184,6 +184,7 @@ checkRule:
                     procName, $node.info.line, pragma])
             else:
               rule.amount.dec
+      # Node has pragmas
       else:
         var strPragmas: seq[string] = @[]
         for pragma in pragmas:
@@ -191,53 +192,54 @@ checkRule:
             strPragmas.add(y = $pragma)
           except KeyError, Exception:
             discard
-        # Check the node for each selected pragma
-        for pragma in rule.options[1 .. ^1]:
-          {.ruleOff: "ifStatements".}
-          if pragma[^1] == '*' and pragma[0] != '*':
-            var hasPragma: bool = false
-            for procPragma in strPragmas:
-              if procPragma.startsWith(prefix = pragma[0..^2]):
-                hasPragma = true
-                break
-            setResult(checkResult = hasPragma,
-                positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node,
-                ruleData = pragma, params = [
-                procName, $node.info.line, pragma])
-          elif pragma[0] == '*' and pragma[^1] != '*':
-            var hasPragma: bool = false
-            for procPragma in strPragmas:
-              if procPragma.endsWith(suffix = pragma[1..^1]):
-                hasPragma = true
-                break
-            setResult(checkResult = hasPragma,
-                positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node,
-                ruleData = pragma, params = [
-                procName, $node.info.line, pragma])
-          elif '*' in [pragma[0], pragma[^1]]:
-            var hasPragma: bool = false
-            for procPragma in strPragmas:
-              if procPragma.contains(sub = pragma[1..^2]):
-                hasPragma = true
-                break
-            setResult(checkResult = hasPragma,
-                positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node,
-                ruleData = pragma, params = [
-                procName, $node.info.line, pragma])
-          elif '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
-            setResult(checkResult = false, positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node,
-                ruleData = pragma, params = [
-                procName, $node.info.line, pragma])
-          else:
-            setResult(checkResult = true, positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node,
-                ruleData = pragma, params = [
-                procName, $node.info.line, pragma])
-          {.ruleOn: "ifStatements".}
+        if rule.options[0].toLowerAscii != "unborrowed" or "borrow" notin strPragmas:
+          # Check the node for each selected pragma
+          for pragma in rule.options[1 .. ^1]:
+            {.ruleOff: "ifStatements".}
+            if pragma[^1] == '*' and pragma[0] != '*':
+              var hasPragma: bool = false
+              for procPragma in strPragmas:
+                if procPragma.startsWith(prefix = pragma[0..^2]):
+                  hasPragma = true
+                  break
+              setResult(checkResult = hasPragma,
+                  positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage, node = node,
+                  ruleData = pragma, params = [
+                  procName, $node.info.line, pragma])
+            elif pragma[0] == '*' and pragma[^1] != '*':
+              var hasPragma: bool = false
+              for procPragma in strPragmas:
+                if procPragma.endsWith(suffix = pragma[1..^1]):
+                  hasPragma = true
+                  break
+              setResult(checkResult = hasPragma,
+                  positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage, node = node,
+                  ruleData = pragma, params = [
+                  procName, $node.info.line, pragma])
+            elif '*' in [pragma[0], pragma[^1]]:
+              var hasPragma: bool = false
+              for procPragma in strPragmas:
+                if procPragma.contains(sub = pragma[1..^2]):
+                  hasPragma = true
+                  break
+              setResult(checkResult = hasPragma,
+                  positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage, node = node,
+                  ruleData = pragma, params = [
+                  procName, $node.info.line, pragma])
+            elif '*' notin [pragma[0], pragma[^1]] and pragma notin strPragmas:
+              setResult(checkResult = false, positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage, node = node,
+                  ruleData = pragma, params = [
+                  procName, $node.info.line, pragma])
+            else:
+              setResult(checkResult = true, positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage, node = node,
+                  ruleData = pragma, params = [
+                  procName, $node.info.line, pragma])
+            {.ruleOn: "ifStatements".}
   endCheck:
     if not rule.enabled and rule.amount == 0:
       rule.amount = 1
