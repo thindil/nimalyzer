@@ -123,6 +123,9 @@ checkRule:
           rule.amount.dec
         else:
           rule.amount.inc
+      # No body, definition only, skip
+      if node[bodyPos].len == 0:
+        continue
       else:
         var index: int = -1
         # Check each parameter
