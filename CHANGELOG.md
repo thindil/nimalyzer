@@ -6,6 +6,10 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- The option to check only unborrowed procedures, functions and methods for
+  pragmas with `hasPragma` rule.
+
 ### Fixed
 - Don't install file *rulesList.txt*. It is needed only for compilation of the
   program.
