@@ -489,6 +489,8 @@ syntax in a configuration file is::
   selected pragmas. Possible values: `procedures`: check all procedures,
   functions and methods. `templates`: check templates only. `all`: check
   all routines declarations (procedures, functions, templates, macros, etc.).
+  `unborrowed`: check all procedures, functions and methods which are not
+  borrowed from other modules.
 * listOfPragmas is the list of pragmas for which the rule will be looking
   for. Each pragma must be separated with whitespace, like::
 
