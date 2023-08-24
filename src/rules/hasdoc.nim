@@ -165,6 +165,8 @@ checkRule:
                 node.comment.len > 0
               elif node.kind == nkObjectTy:
                 node[2].comment.len > 0
+              elif node.kind in callableDefs and node[bodyPos].len == 0:
+                node.comment.len > 0
               else:
                 node[^1].len > 0 and node[^1][0].kind == nkCommentStmt
             if node.kind == nkTemplateDef and not hasDoc:
