@@ -14,6 +14,8 @@ of the program.
 - Don't install file *rulesList.txt*. It is needed only for compilation of the
   program.
 - Checking usage of parameters of procedures by paramsUsed rule.
+- Detecting a documentation of definition of procedures, functions, etc. with
+  `hasDoc` rule.
 
 ## [0.6.0] - 2023-08-18
 
