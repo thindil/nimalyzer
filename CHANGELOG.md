@@ -13,6 +13,7 @@ of the program.
 ### Fixed
 - Don't install file *rulesList.txt*. It is needed only for compilation of the
   program.
+- Checking usage of parameters of procedures by paramsUsed rule.
 
 ## [0.6.0] - 2023-08-18
 
