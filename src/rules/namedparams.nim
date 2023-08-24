@@ -84,7 +84,7 @@ proc check(node, astNode: PNode; rule: var RuleOptions;
   require:
     node != nil
   body:
-    if not rule.enabled:
+    if not rule.enabled or rule.maxResults == 0:
       return
     let callName: string = try:
           $node[namePos]
