@@ -354,23 +354,23 @@ macro checking*(code: untyped): untyped =
       newIdentNode(i = "name")])]), nnkExprEqExpr.newTree(children = [
       newIdentNode(i = "oldState"), nnkDotExpr.newTree(children = [newIdentNode(
       i = "rule"), newIdentNode(i = "enabled")])])])])]),
-      nnkIfStmt.newTree(
-      nnkElifBranch.newTree(
-        nnkInfix.newTree(
-          newIdentNode("=="),
-          nnkDotExpr.newTree(
-            newIdentNode("rule"),
-            newIdentNode("maxResults")
-          ),
-          newLit(0)
-        ),
-        nnkStmtList.newTree(
-          nnkReturnStmt.newTree(
+      nnkIfStmt.newTree(children = [
+      nnkElifBranch.newTree(children = [
+        nnkInfix.newTree(children = [
+          newIdentNode(i = "=="),
+          nnkDotExpr.newTree(children = [
+            newIdentNode(i = "rule"),
+            newIdentNode(i = "maxResults")
+          ]),
+          newLit(i = 0)
+        ]),
+        nnkStmtList.newTree(children = [
+          nnkReturnStmt.newTree(children = [
             newEmptyNode()
-          )
-        )
-      )
-      ),
+          ])
+        ])
+      ])
+      ]),
       nnkIfStmt.newTree(
       children = [nnkElifBranch.newTree(children = [nnkDotExpr.newTree(
       children = [newIdentNode(i = "rule"), newIdentNode(i = "enabled")]),
