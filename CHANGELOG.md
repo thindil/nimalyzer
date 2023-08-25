@@ -18,6 +18,8 @@ of the program.
   `hasDoc` rule.
 - Crash when checking for named parameters in call by `namesParams` rule when
   there is more results than allowed.
+- Crash when there is more results than set by the user in a configuration
+  file.
 
 ## [0.6.0] - 2023-08-18
 
