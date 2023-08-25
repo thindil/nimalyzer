@@ -353,27 +353,14 @@ macro checking*(code: untyped): untyped =
       nnkDotExpr.newTree(children = [newIdentNode(i = "ruleSettings"),
       newIdentNode(i = "name")])]), nnkExprEqExpr.newTree(children = [
       newIdentNode(i = "oldState"), nnkDotExpr.newTree(children = [newIdentNode(
-      i = "rule"), newIdentNode(i = "enabled")])])])])]),
-      nnkIfStmt.newTree(children = [
-      nnkElifBranch.newTree(children = [
-        nnkInfix.newTree(children = [
-          newIdentNode(i = "=="),
-          nnkDotExpr.newTree(children = [
-            newIdentNode(i = "rule"),
-            newIdentNode(i = "maxResults")
-          ]),
-          newLit(i = 0)
-        ]),
-        nnkStmtList.newTree(children = [
-          nnkReturnStmt.newTree(children = [
-            newEmptyNode()
-          ])
-        ])
-      ])
-      ]),
-      nnkIfStmt.newTree(
-      children = [nnkElifBranch.newTree(children = [nnkDotExpr.newTree(
-      children = [newIdentNode(i = "rule"), newIdentNode(i = "enabled")]),
+      i = "rule"), newIdentNode(i = "enabled")])])])])]), nnkIfStmt.newTree(
+      children = [nnkElifBranch.newTree(children = [nnkInfix.newTree(
+      children = [newIdentNode(i = "=="), nnkDotExpr.newTree(children = [
+      newIdentNode(i = "rule"), newIdentNode(i = "maxResults")]), newLit(
+      i = 0)]), nnkStmtList.newTree(children = [nnkReturnStmt.newTree(
+      children = [newEmptyNode()])])])]), nnkIfStmt.newTree(children = [
+      nnkElifBranch.newTree(children = [nnkDotExpr.newTree(children = [
+      newIdentNode(i = "rule"), newIdentNode(i = "enabled")]),
       nnkStmtList.newTree(children = code)])]), nnkForStmt.newTree(children = [
       newIdentNode(i = "child"), nnkDotExpr.newTree(children = [newIdentNode(
       i = "node"), newIdentNode(i = "items")]), nnkStmtList.newTree(children = [
