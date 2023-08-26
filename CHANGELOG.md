@@ -20,6 +20,7 @@ of the program.
   there is more results than allowed.
 - Crash when there is more results than set by the user in a configuration
   file.
+- Detecting a documentation of types with `hasDoc` rule.
 
 ## [0.6.0] - 2023-08-18
 
