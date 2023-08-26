@@ -126,7 +126,7 @@ checkRule:
       of "callables":
         {nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef, nkTemplateDef, nkIteratorDef}
       of "types":
-        {nkTypeDef, nkEnumTy, nkConstTy, nkTypeSection, nkObjectTy}
+        {nkTypeSection, nkTypeDef, nkEnumTy, nkObjectTy, nkConstTy}
       of "typesfields":
         {nkIdentDefs}
       else:
@@ -135,13 +135,17 @@ checkRule:
   checking:
     # Check only elements which can have documentation
     if node.kind in nodesToCheck:
-      # Special check for constant and variables declaration section
-      if node.kind in {nkConstSection, nkVarSection}:
+      # Special check for sections
+      if node.kind in {nkConstSection, nkVarSection, nkTypeSection, nkTypeDef}:
         ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
       # Don't check documentation for fields of objects, unless the user set
       # the option for it
-      if (node.kind == nkIdentDefs and parentNode.kind == nkTypeDef) and
-          rule.options[0].toLowerAscii != "typesfields":
+      if (node.kind == nkIdentDefs and parentNode.kind in {nkTypeDef,
+          nkObjectTy, nkRecCase}) and rule.options[0].toLowerAscii != "typesfields":
+        continue
+      # Don't check deeper types declarations or we get many error messages
+      # about the same
+      if node.kind in {nkEnumTy, nkObjectTy}:
         continue
       else:
         # Set the name of the declared entity which is checked for documentation
@@ -167,6 +171,12 @@ checkRule:
                 node[2].comment.len > 0
               elif node.kind in callableDefs and node[bodyPos].len == 0:
                 node.comment.len > 0
+              elif node.kind == nkTypeDef and node[2].kind notin {nkEnumTy, nkObjectTy}:
+                node.comment.len > 0
+              elif node.kind == nkTypeDef and node[2].kind == nkEnumTy:
+                node[2].comment.len > 0
+              elif node.kind == nkTypeDef and node[2].kind == nkObjectTy:
+                node[2][2].comment.len > 0
               else:
                 node[^1].len > 0 and node[^1][0].kind == nkCommentStmt
             if node.kind == nkTemplateDef and not hasDoc:
