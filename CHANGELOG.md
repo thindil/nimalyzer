@@ -21,6 +21,8 @@ of the program.
 - Crash when there is more results than set by the user in a configuration
   file.
 - Detecting a documentation of types with `hasDoc` rule.
+- Installing the program should also contains file *pragmas.nim* for ability to
+  disable and enable rules.
 
 ## [0.6.0] - 2023-08-18
 
