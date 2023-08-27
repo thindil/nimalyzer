@@ -9,8 +9,7 @@ license = "BSD-3-Clause"
 srcDir = "src"
 bin = @["nimalyzer"]
 binDir = "bin"
-skipFiles = @["rulesList.txt"]
-installFiles = @["pragmas.nim"]
+installExt = @["nim"]
 
 # Dependencies
 
