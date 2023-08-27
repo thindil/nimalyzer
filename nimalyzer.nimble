@@ -10,6 +10,7 @@ srcDir = "src"
 bin = @["nimalyzer"]
 binDir = "bin"
 skipFiles = @["rulesList.txt"]
+installFiles = @["pragmas.nim"]
 
 # Dependencies
 
