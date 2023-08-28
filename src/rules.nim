@@ -31,10 +31,10 @@ import std/[logging, macros, os, strformat, strutils]
 import compiler/[ast, idents, renderer, trees]
 import contracts
 # Nimalyzer pragmas imports
-import pragmas
+import nimalyzer
 
 # Export needed modules, so rules don't need to import them
-export logging, strutils, ast, renderer, contracts, pragmas, os, idents
+export logging, strutils, ast, renderer, contracts, nimalyzer, os, idents
 
 type
 
