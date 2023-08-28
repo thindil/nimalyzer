@@ -42,9 +42,9 @@ It is possible to disable a selected rule for a part of a module with the pragma
 *ruleOff: [name of pragma]* and re-enable it later with the pragma *ruleOn:
 [name of pragma]*. To do it you have to:
 
-1. Import the module *pragmas* from *nimalyzer*: `import pragmas`, if you have
-   installed nimalyzer with Nimble, otherwise, point to the module *pragmas*
-   where it is installed.
+1. Import the module *nimalyzer* : `import nimalyzer`, if you have installed
+   nimalyzer with Nimble, otherwise, point to the module *nimalyzer* where it
+   is installed.
 
 2. Insert in the desired place in the code the pragma to disable rule. For
    example: `{.ruleOff: "hasDoc".}`. Usually, the pragma can be placed before or
