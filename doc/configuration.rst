@@ -91,7 +91,7 @@ executed (working directory).
 ::
     source src/config.nim
     source src/nimalyzer.nim
-    source src/pragmas.nim
+    source src/main.nim
     source src/rules.nim
     source src/utils.nim
     source tools/gendoc.nim
@@ -109,6 +109,17 @@ The setting below will check all files in directory "src" and its
 subdirectories.
 ::
     directory src
+
+Ignore
+------
+The ignore directive allows to remove the selected file from the list of files to
+analyze. The path to the file should be exactly the same as set by 'source',
+'files' or 'directory' settings. The syntax is: ignore [file path]. If the
+previous setting for the file was an absolute path, the ignore setting must be
+an absolute path too. The setting below will remove file "src/rules.nim" from
+the list of files to check.
+::
+    ignore src/rules.nim
 
 Message
 -------
