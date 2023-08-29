@@ -73,9 +73,9 @@ const
     windows): "open" else: "xdg-open" & " {fileName}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
-  configOptions*: array[15, string] = ["verbosity", "output", "source", "files",
+  configOptions*: array[16, string] = ["verbosity", "output", "source", "files",
       "directory", "check", "search", "count", "fixcommand", "fix", "reset",
-      "message", "forcefixcommand", "maxreports", "explanation"]
+      "message", "forcefixcommand", "maxreports", "explanation", "ignore"]
     ## The list of available the program's configuration's options
 
 proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
@@ -219,6 +219,14 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
           except OSError:
             abortProgram(message = "Can't add files to check, line: " &
                 $lineNumber & ". Reason: ", e = getCurrentException())
+        # Remove the selected file from the list of source code files to check
+        of "ignore":
+          for index, fileName in result.sources:
+            if fileName == setting.value:
+              result.sources.del(i = index)
+              message(text = "Removed the file '" & fileName &
+                  "' from the list of files to check.", level = lvlDebug)
+              break
         # Set the message to show during the program's work
         of "message":
           if setting.value.len == 0:
