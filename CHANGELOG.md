@@ -9,6 +9,8 @@ of the program.
 ### Added
 - The option to check only unborrowed procedures, functions and methods for
   pragmas with `hasPragma` rule.
+- The configuration setting `ignore` for remove the selected file from the
+  list of files to check.
 
 ### Changed
 - Updated the project's documentation.
