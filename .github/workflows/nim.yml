@@ -27,7 +27,7 @@ jobs:
       run: nimble debug
 
     - name: Check with Nimalyzer
-      run: bin/main config/nimalyzer.cfg
+      run: bin/nimalyzer config/nimalyzer.cfg
 
     - name: Upload the log
       uses: actions/upload-artifact@v3
