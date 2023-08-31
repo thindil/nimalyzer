@@ -29,7 +29,7 @@ task release, "builds the project in release mode":
   exec "nimble install -d -y"
   exec "nim c -d:release --passc:-flto --passl:-s --outdir:" & binDir &
       " --out:" & binDir & DirSep & execName & " src" & DirSep &
-      "main.nim -o " & execName
+      "main.nim"
 
 task test, "run the project unit tests":
   exec "testament all"
