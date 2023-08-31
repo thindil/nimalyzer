@@ -310,11 +310,43 @@ macro initCheck*(code: untyped): untyped =
       nnkIfExpr.newTree(children = [nnkElifExpr.newTree(
       children = [nnkInfix.newTree(children = [newIdentNode(i = "<"),
       nnkCall.newTree(children = [newIdentNode(i = "getLogFilter")]),
-      newIdentNode(i = "lvlNotice")]), nnkStmtList.newTree(children = newLit(
-      s = ""))]), nnkElseExpr.newTree(children = nnkStmtList.newTree(
-      children = [nnkInfix.newTree(children = [newIdentNode(i = "&"),
-      nnkDotExpr.newTree(children = [newIdentNode(i = "rule"), newIdentNode(
-      i = "fileName")]), newLit(s = ": ")])]))])])]), nnkIfStmt.newTree(
+      newIdentNode(i = "lvlNotice")]), nnkStmtList.newTree(children = nnkInfix.newTree(
+                newIdentNode("&"),
+                nnkInfix.newTree(
+                  newIdentNode("&"),
+                  newLit("rule: "),
+                  nnkDotExpr.newTree(
+                    newIdentNode("ruleSettings"),
+                    newIdentNode("name")
+                  )
+                ),
+                newLit(", ")
+              )
+              )]), nnkElseExpr.newTree(children = nnkStmtList.newTree(
+      children = [nnkInfix.newTree(
+                newIdentNode("&"),
+                nnkInfix.newTree(
+                  newIdentNode("&"),
+                  nnkInfix.newTree(
+                    newIdentNode("&"),
+                    nnkInfix.newTree(
+                      newIdentNode("&"),
+                      nnkDotExpr.newTree(
+                        newIdentNode("rule"),
+                        newIdentNode("fileName")
+                      ),
+                      newLit(": ")
+                    ),
+                    newLit("rule: ")
+                  ),
+                  nnkDotExpr.newTree(
+                    newIdentNode("ruleSettings"),
+                    newIdentNode("name")
+                  )
+                ),
+                newLit(", ")
+              )
+        ]))])])]), nnkIfStmt.newTree(
       children = nnkElifBranch.newTree(children = [newIdentNode(i = "isParent"),
       nnkStmtList.newTree(children = [nnkAsgn.newTree(
       children = [nnkDotExpr.newTree(children = [newIdentNode(i = "rule"),
