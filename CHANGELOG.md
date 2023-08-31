@@ -11,6 +11,7 @@ of the program.
   pragmas with `hasPragma` rule.
 - The configuration setting `ignore` for remove the selected file from the
   list of files to check.
+- The rule's name to the program's rules' messages.
 
 ### Changed
 - Updated the project's documentation.
