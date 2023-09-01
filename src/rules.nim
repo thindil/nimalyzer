@@ -302,55 +302,30 @@ macro initCheck*(code: untyped): untyped =
   ##
   ## * code - the custom code which will be executed during initialization of
   ##          the check
-  return nnkStmtList.newTree(children = [nnkLetSection.newTree(
-      children = [nnkIdentDefs.newTree(children = [newIdentNode(i = "isParent"),
+  return nnkStmtList.newTree(children = [nnkLetSection.newTree(children = [
+      nnkIdentDefs.newTree(children = [newIdentNode(i = "isParent"),
       newIdentNode(i = "bool"), nnkDotExpr.newTree(children = [newIdentNode(
       i = "rule"), newIdentNode(i = "parent")])]), nnkIdentDefs.newTree(
       children = [newIdentNode(i = "messagePrefix"), newIdentNode(i = "string"),
-      nnkIfExpr.newTree(children = [nnkElifExpr.newTree(
-      children = [nnkInfix.newTree(children = [newIdentNode(i = "<"),
-      nnkCall.newTree(children = [newIdentNode(i = "getLogFilter")]),
-      newIdentNode(i = "lvlNotice")]), nnkStmtList.newTree(children = nnkInfix.newTree(
-                children = [newIdentNode(i = "&"),
-                nnkInfix.newTree(children = [
-                  newIdentNode(i = "&"),
-                  newLit(s = "rule: "),
-                  nnkDotExpr.newTree(children = [
-                    newIdentNode(i = "ruleSettings"),
-                    newIdentNode(i = "name")
-                  ])
-                ]),
-                newLit(s = ", ")
-              ])
-              )]), nnkElseExpr.newTree(children = nnkStmtList.newTree(
-      children = [nnkInfix.newTree(children = [
-                newIdentNode(i = "&"),
-                nnkInfix.newTree(children = [
-                  newIdentNode(i = "&"),
-                  nnkInfix.newTree(children = [
-                    newIdentNode(i = "&"),
-                    nnkInfix.newTree(children = [
-                      newIdentNode(i = "&"),
-                      nnkDotExpr.newTree(children = [
-                        newIdentNode(i = "rule"),
-                        newIdentNode(i = "fileName")
-                      ]),
-                      newLit(s = ": ")
-                    ]),
-                    newLit(s = "rule: ")
-                  ]),
-                  nnkDotExpr.newTree(children = [
-                    newIdentNode(i = "ruleSettings"),
-                    newIdentNode(i = "name")
-                  ])
-                ]),
-                newLit(s = ", ")
-              ])
-        ]))])])]), nnkIfStmt.newTree(
-      children = nnkElifBranch.newTree(children = [newIdentNode(i = "isParent"),
-      nnkStmtList.newTree(children = [nnkAsgn.newTree(
-      children = [nnkDotExpr.newTree(children = [newIdentNode(i = "rule"),
-      newIdentNode(i = "parent")]), newIdentNode(i = "false")]), code])]))])
+      nnkIfExpr.newTree(children = [nnkElifExpr.newTree(children = [
+      nnkInfix.newTree(children = [newIdentNode(i = "<"), nnkCall.newTree(
+      children = [newIdentNode(i = "getLogFilter")]), newIdentNode(
+      i = "lvlNotice")]), nnkStmtList.newTree(children = nnkInfix.newTree(
+      children = [newIdentNode(i = "&"), nnkInfix.newTree(children = [
+      newIdentNode(i = "&"), newLit(s = "rule: "), nnkDotExpr.newTree(
+      children = [newIdentNode(i = "ruleSettings"), newIdentNode(
+      i = "name")])]), newLit(s = ", ")]))]), nnkElseExpr.newTree(
+      children = nnkStmtList.newTree(children = [nnkInfix.newTree(children = [
+      newIdentNode(i = "&"), nnkInfix.newTree(children = [newIdentNode(i = "&"),
+      nnkInfix.newTree(children = [newIdentNode(i = "&"), nnkInfix.newTree(
+      children = [newIdentNode(i = "&"), nnkDotExpr.newTree(children = [
+      newIdentNode(i = "rule"), newIdentNode(i = "fileName")]), newLit(
+      s = ": ")]), newLit(s = "rule: ")]), nnkDotExpr.newTree(children = [
+      newIdentNode(i = "ruleSettings"), newIdentNode(i = "name")])]), newLit(
+      s = ", ")])]))])])]), nnkIfStmt.newTree(children = nnkElifBranch.newTree(
+      children = [newIdentNode(i = "isParent"), nnkStmtList.newTree(children = [
+      nnkAsgn.newTree(children = [nnkDotExpr.newTree(children = [newIdentNode(
+      i = "rule"), newIdentNode(i = "parent")]), newIdentNode(i = "false")]), code])]))])
 
 template startCheck*(code: untyped): untyped =
   ## Run the custom code each time when the check for a node starts
