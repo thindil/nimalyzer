@@ -122,7 +122,8 @@ checkRule:
       of "all":
         {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef,
             nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef, nkEnumTy,
-            nkConstSection, nkConstTy, nkVarSection, nkTypeSection, nkObjectTy}
+            nkConstSection, nkConstTy, nkVarSection, nkTypeSection, nkObjectTy,
+            nkLetSection}
       of "callables":
         {nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef, nkTemplateDef, nkIteratorDef}
       of "types":
@@ -136,7 +137,7 @@ checkRule:
     # Check only elements which can have documentation
     if node.kind in nodesToCheck:
       # Special check for sections
-      if node.kind in {nkConstSection, nkVarSection, nkTypeSection, nkTypeDef}:
+      if node.kind in {nkConstSection, nkVarSection, nkTypeSection, nkTypeDef, nkLetSection}:
         ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
       # Don't check documentation for fields of objects, unless the user set
       # the option for it
