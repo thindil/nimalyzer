@@ -15,6 +15,8 @@ of the program.
 
 ### Changed
 - Updated the project's documentation.
+- **BREAKING**: name of module required to import for use the program's pragmas
+  in the checked code.
 
 ### Fixed
 - Don't install file *rulesList.txt*. It is needed only for compilation of the
