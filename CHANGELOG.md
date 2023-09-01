@@ -29,6 +29,7 @@ of the program.
 - Detecting a documentation of types with `hasDoc` rule.
 - Installing the program should also contains file *pragmas.nim* for ability to
   disable and enable rules.
+- Detecting a documentation of variables in `let` section with `hasDoc` rule.
 
 ## [0.6.0] - 2023-08-18
 
