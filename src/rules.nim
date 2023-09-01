@@ -311,41 +311,41 @@ macro initCheck*(code: untyped): untyped =
       children = [nnkInfix.newTree(children = [newIdentNode(i = "<"),
       nnkCall.newTree(children = [newIdentNode(i = "getLogFilter")]),
       newIdentNode(i = "lvlNotice")]), nnkStmtList.newTree(children = nnkInfix.newTree(
-                newIdentNode("&"),
-                nnkInfix.newTree(
-                  newIdentNode("&"),
-                  newLit("rule: "),
-                  nnkDotExpr.newTree(
-                    newIdentNode("ruleSettings"),
-                    newIdentNode("name")
-                  )
-                ),
-                newLit(", ")
-              )
+                children = [newIdentNode(i = "&"),
+                nnkInfix.newTree(children = [
+                  newIdentNode(i = "&"),
+                  newLit(s = "rule: "),
+                  nnkDotExpr.newTree(children = [
+                    newIdentNode(i = "ruleSettings"),
+                    newIdentNode(i = "name")
+                  ])
+                ]),
+                newLit(s = ", ")
+              ])
               )]), nnkElseExpr.newTree(children = nnkStmtList.newTree(
-      children = [nnkInfix.newTree(
-                newIdentNode("&"),
-                nnkInfix.newTree(
-                  newIdentNode("&"),
-                  nnkInfix.newTree(
-                    newIdentNode("&"),
-                    nnkInfix.newTree(
-                      newIdentNode("&"),
-                      nnkDotExpr.newTree(
-                        newIdentNode("rule"),
-                        newIdentNode("fileName")
-                      ),
-                      newLit(": ")
-                    ),
-                    newLit("rule: ")
-                  ),
-                  nnkDotExpr.newTree(
-                    newIdentNode("ruleSettings"),
-                    newIdentNode("name")
-                  )
-                ),
-                newLit(", ")
-              )
+      children = [nnkInfix.newTree(children = [
+                newIdentNode(i = "&"),
+                nnkInfix.newTree(children = [
+                  newIdentNode(i = "&"),
+                  nnkInfix.newTree(children = [
+                    newIdentNode(i = "&"),
+                    nnkInfix.newTree(children = [
+                      newIdentNode(i = "&"),
+                      nnkDotExpr.newTree(children = [
+                        newIdentNode(i = "rule"),
+                        newIdentNode(i = "fileName")
+                      ]),
+                      newLit(s = ": ")
+                    ]),
+                    newLit(s = "rule: ")
+                  ]),
+                  nnkDotExpr.newTree(children = [
+                    newIdentNode(i = "ruleSettings"),
+                    newIdentNode(i = "name")
+                  ])
+                ]),
+                newLit(s = ", ")
+              ])
         ]))])])]), nnkIfStmt.newTree(
       children = nnkElifBranch.newTree(children = [newIdentNode(i = "isParent"),
       nnkStmtList.newTree(children = [nnkAsgn.newTree(
