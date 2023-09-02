@@ -3,17 +3,17 @@ discard """
   output: '''INFO: Checking the rule's options validation.
 FATAL: The rule hasentity requires at least 2 options, but only 1 provided: ''.
 INFO: Checking check type of the rule with the invalid code.
-ERROR: Doesn't have declared nkProcDef with name 'MyProc'.
+ERROR: rule: hasentity, Doesn't have declared nkProcDef with name 'MyProc'.
 INFO: Checking check type of the rule with the valid code.
 INFO: Checking negative check type of the rule with the valid code.
-ERROR: Has declared nkProcDef with name 'MyProc' at line: 1.
+ERROR: rule: hasentity, Has declared nkProcDef with name 'MyProc' at line: 1.
 INFO: Checking negative check type of the rule with the invalid code.
 INFO: Checking search type of the rule with the invalid code.
-ERROR: Doesn't have declared nkProcDef with name 'MyProc'.
+ERROR: rule: hasentity, Doesn't have declared nkProcDef with name 'MyProc'.
 INFO: Checking search type of the rule with the valid code.
-NOTICE: Has declared nkProcDef with name 'MyProc' at line: 1.
+NOTICE: rule: hasentity, Has declared nkProcDef with name 'MyProc' at line: 1.
 INFO: Checking negative search type of the rule with the valid code.
-NOTICE: Doesn't have declared nkProcDef with name 'MyProc'.
+NOTICE: rule: hasentity, Doesn't have declared nkProcDef with name 'MyProc'.
 INFO: Checking negative search type of the rule with the invalid code.
 INFO: Checking count type of the rule with the invalid code.
 NOTICE: Declared nkProcDef with name 'MyProc' found: 0
