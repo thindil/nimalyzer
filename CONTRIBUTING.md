@@ -45,13 +45,11 @@ we first discuss your proposition. In any other case, fell free to fix my code.
 
 ### Coding standard
 
-The project follows the default coding standards for [Nim](https://nim-lang.org/docs/nep1.html),
+The project follows the default coding standard for [Nim](https://nim-lang.org/docs/nep1.html),
 with additional extensions:
 
 * All calls to subprograms must use named parameters.
 * All subprograms must have pragmas: `raises` and `tags`.
-* All subprograms should have pragma: `gcSafe`, unless they depends on unsafe
-  subprograms.
 * Subprograms shouldn't propagate exceptions, pragma `raises: []` unless they
   are low level subprograms, like type initialization, etc. The main procedure
   of the program can't raise any exception.
@@ -64,8 +62,7 @@ with additional extensions:
   documentation.
 * All variables must have declared type and initial value for them.
 * The code must be validated with the *nimalyzer* itself, by running it with
-  configuration files *config/nimalyzer.cfg* for the program's code and
-  *config/rules.cfg* for the program's rules' code.
+  configuration files *config/nimalyzer.cfg* for the program's code.
 
 ### Code submission
 
