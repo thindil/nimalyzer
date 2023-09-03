@@ -3,25 +3,25 @@ discard """
   output: '''INFO: Checking the rule's options validation.
 FATAL: The rule namingconv requires at least 2 options, but only 0 provided: ''.
 INFO: Checking check type of the rule with the invalid code.
-ERROR: name of 'IsThe' line: 1 doesn't follow naming convention.
+ERROR: rule: namingconv, name of 'IsThe' line: 1 doesn't follow naming convention.
 INFO: Checking check type of the rule with the valid code.
 INFO: Checking negative check type of the rule with the valid code.
-ERROR: name of 'isThe' line: 1 follow naming convention.
+ERROR: rule: namingconv, name of 'isThe' line: 1 follow naming convention.
 INFO: Checking negative check type of the rule with the invalid code.
 INFO: Checking search type of the rule with the invalid code.
-NOTICE: Declarations which follow naming convention not found.
+NOTICE: rule: namingconv, Declarations which follow naming convention not found.
 INFO: Checking search type of the rule with the valid code.
-NOTICE: name of 'isThe' line: 1 follow naming convention.
+NOTICE: rule: namingconv, name of 'isThe' line: 1 follow naming convention.
 INFO: Checking negative search type of the rule with the valid code.
-NOTICE: Declarations which not follow naming convention not found.
+NOTICE: rule: namingconv, Declarations which not follow naming convention not found.
 INFO: Checking negative search type of the rule with the invalid code.
-NOTICE: name of 'IsThe' line: 1 doesn't follow naming convention.
+NOTICE: rule: namingconv, name of 'IsThe' line: 1 doesn't follow naming convention.
 INFO: Checking count type of the rule with the invalid code.
 NOTICE: Declarations which follow naming convention found: 0
 INFO: Checking count type of the rule with the valid code.
 NOTICE: Declarations which follow naming convention found: 1
 INFO: Checking negative count type of the rule with the invalid code.
-NOTICE: name of 'IsThe' line: 1 doesn't follow naming convention.
+NOTICE: rule: namingconv, name of 'IsThe' line: 1 doesn't follow naming convention.
 NOTICE: Declarations which not follow naming convention found: 1
 INFO: Checking negative count type of the rule with the valid code.
 NOTICE: Declarations which not follow naming convention found: 0

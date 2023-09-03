@@ -3,25 +3,25 @@ discard """
   output: '''INFO: Checking the rule's options validation.
 FATAL: The rule namedparams requires at maximum 0 options, but 1 provided: 'randomoption'.
 INFO: Checking check type of the rule with the invalid code.
-ERROR: call quit line: 1 doesn't have named parameter number: 1'.
+ERROR: rule: namedparams, call quit line: 1 doesn't have named parameter number: 1'.
 INFO: Checking check type of the rule with the valid code.
 INFO: Checking negative check type of the rule with the valid code.
-ERROR: call myProc line: 1 doesn't have named parameter number: 1'.
+ERROR: rule: namedparams, call myProc line: 1 doesn't have named parameter number: 1'.
 INFO: Checking negative check type of the rule with the invalid code.
 INFO: Checking search type of the rule with the invalid code.
-NOTICE: Calls which have all named parameters not found.
+NOTICE: rule: namedparams, Calls which have all named parameters not found.
 INFO: Checking search type of the rule with the valid code.
-NOTICE: call myProc line: 1 doesn't have named parameter number: 1'.
+NOTICE: rule: namedparams, call myProc line: 1 doesn't have named parameter number: 1'.
 INFO: Checking negative search type of the rule with the valid code.
-NOTICE: Calls which not have all named parameters not found.
+NOTICE: rule: namedparams, Calls which not have all named parameters not found.
 INFO: Checking negative search type of the rule with the invalid code.
-NOTICE: call quit line: 1 doesn't have named parameter number: 1'.
+NOTICE: rule: namedparams, call quit line: 1 doesn't have named parameter number: 1'.
 INFO: Checking count type of the rule with the invalid code.
 NOTICE: Calls which have all named parameters found: 0
 INFO: Checking count type of the rule with the valid code.
 NOTICE: Calls which have all named parameters found: 1
 INFO: Checking negative count type of the rule with the invalid code.
-NOTICE: call quit line: 1 doesn't have named parameter number: 1'.
+NOTICE: rule: namedparams, call quit line: 1 doesn't have named parameter number: 1'.
 NOTICE: Calls which not have all named parameters found: 1
 INFO: Checking negative count type of the rule with the valid code.
 NOTICE: Calls which not have all named parameters found: 0
