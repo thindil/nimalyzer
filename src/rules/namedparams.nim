@@ -119,7 +119,8 @@ checkRule:
   startCheck:
     setRuleState(node = astNode, ruleName = "namedparams",
         oldState = rule.enabled)
-    if astNode.kind in {nkCall, nkDotCall}:
+    if astNode.kind in {nkCall, nkDotCall} and (astNode.sons.len > 1 and
+        astNode.sons[1].kind != nkStmtList):
       check(node = astNode, astNode = parentNode, rule = rule,
           messagePrefix = messagePrefix)
   checking:
