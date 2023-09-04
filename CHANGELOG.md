@@ -25,7 +25,7 @@ of the program.
 - Checking usage of parameters of procedures by paramsUsed rule.
 - Detecting a documentation of definition of procedures, functions, etc. with
   `hasDoc` rule.
-- Crash when checking for named parameters in call by `namesParams` rule when
+- Crash when checking for named parameters in call by `namedParams` rule when
   there is more results than allowed.
 - Crash when there is more results than set by the user in a configuration
   file.
@@ -33,6 +33,7 @@ of the program.
 - Installing the program should also contains file *pragmas.nim* for ability to
   disable and enable rules.
 - Detecting a documentation of variables in `let` section with `hasDoc` rule.
+- Detecting calls by `namedParams` rule.
 
 ## [0.6.0] - 2023-08-18
 
