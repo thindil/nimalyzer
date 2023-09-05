@@ -35,6 +35,7 @@ of the program.
 - Detecting a documentation of variables in `let` section with `hasDoc` rule.
 - Detecting calls by `namedParams` rule.
 - Detecting empty `if` statements with `ifStatements` rule.
+- Detecting empty `for` statements with `forStatements` rule.
 
 ## [0.6.0] - 2023-08-18
 
