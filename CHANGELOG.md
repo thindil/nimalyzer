@@ -34,6 +34,7 @@ of the program.
   disable and enable rules.
 - Detecting a documentation of variables in `let` section with `hasDoc` rule.
 - Detecting calls by `namedParams` rule.
+- Detecting empty `if` statements with `ifStatements` rule.
 
 ## [0.6.0] - 2023-08-18
 
