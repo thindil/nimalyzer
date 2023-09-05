@@ -111,10 +111,10 @@ checkRule:
       if rule.options[0].toLowerAscii in ["all", "iterators"]:
         try:
           if nodeToCheck[^2].kind == nkCall:
-              callName = $nodeToCheck[^2][0]
-              if ($nodeToCheck[^2]).startsWith(prefix = "pairs") or ($nodeToCheck[
-                  ^2]).startsWith(prefix = "items"):
-                checkResult = true
+            callName = $nodeToCheck[^2][0]
+            if ($nodeToCheck[^2]).startsWith(prefix = "pairs") or ($nodeToCheck[
+                ^2]).startsWith(prefix = "items"):
+              checkResult = true
           elif nodeToCheck[^2].kind == nkDotExpr:
             callName = $nodeToCheck[^2][^1]
             if ($nodeToCheck[^2]).endsWith(suffix = ".pairs") or ($nodeToCheck[
@@ -131,8 +131,8 @@ checkRule:
       if not checkResult and rule.options[0].toLowerAscii in ["all", "empty"]:
         message = (if rule.negation: "doesn't contain" else: "contains") & " only discard statement."
         checkType = "empty"
-        if nodeToCheck[^1][0].kind != nkDiscardStmt:
-          checkResult = true
+        checkResult = nodeToCheck[^1][0].kind != nkDiscardStmt or nodeToCheck[
+            ^1][0][0].kind != nkEmpty
       if rule.ruleType == RuleTypes.count:
         checkResult = not checkResult
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
