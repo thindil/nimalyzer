@@ -183,7 +183,8 @@ checkRule:
           if child.kind == nkIdent:
             continue
           if child[^1].kind == nkStmtList and child[^1].len == 1:
-            checkResult = child[^1][0].kind != nkDiscardStmt
+            checkResult = child[^1][0].kind != nkDiscardStmt or child[^1][0][
+                0].kind != nkEmpty
             if rule.ruleType == RuleTypes.count and not rule.negation:
               checkResult = not checkResult
             setResult(checkResult = checkResult,
