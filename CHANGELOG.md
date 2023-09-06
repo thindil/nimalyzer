@@ -36,6 +36,8 @@ of the program.
 - Detecting calls by `namedParams` rule.
 - Detecting empty `if` statements with `ifStatements` rule.
 - Detecting empty `for` statements with `forStatements` rule.
+- Don't check the last parameter of a call if it is a statements' list with
+  `namedParams` rule.
 
 ## [0.6.0] - 2023-08-18
 
