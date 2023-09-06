@@ -100,7 +100,10 @@ proc check(node, astNode: PNode; rule: var RuleOptions;
       return
     try:
       for i in 1..<node.sons.len:
-        setResult(checkResult = node[i].kind == nkExprEqExpr,
+        var checkResult: bool = node[i].kind == nkExprEqExpr
+        if i == node.sons.high and node[i].kind == nkStmtList:
+          checkResult = true
+        setResult(checkResult = checkResult,
             positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, node = node, params = [callName,
             $node.info.line, $i])
