@@ -128,6 +128,9 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     section != nil
     parent != nil
   body:
+    # An empty node, don't check
+    if node.len == 0:
+      return
     let
       varName: string = $node[namePos]
       astNode: PNode = parent
