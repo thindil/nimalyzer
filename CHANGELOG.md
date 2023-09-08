@@ -39,6 +39,7 @@ of the program.
 - Don't check the last parameter of a call if it is a statements' list with
   `namedParams` rule.
 - Crash when checking declarations of variables with `varDeclared` rule.
+- Crash when checking variables with `localHides` rule.
 
 ## [0.6.0] - 2023-08-18
 
