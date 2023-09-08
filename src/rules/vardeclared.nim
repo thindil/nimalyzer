@@ -103,6 +103,8 @@ checkRule:
           continue
         # Check each variable declaration if meet the rule requirements
         for declaration in node.items:
+          if declaration.len == 0:
+            continue
           # Check if declaration of variable sets its type
           if rule.options[0] in ["full", "type"]:
             setResult(checkResult = declaration[1].kind != nkEmpty,
