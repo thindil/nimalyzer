@@ -38,6 +38,7 @@ of the program.
 - Detecting empty `for` statements with `forStatements` rule.
 - Don't check the last parameter of a call if it is a statements' list with
   `namedParams` rule.
+- Crash when checking declarations of variables with `varDeclared` rule.
 
 ## [0.6.0] - 2023-08-18
 
