@@ -107,14 +107,14 @@ checkRule:
             continue
           # Check if declaration of variable sets its type
           if rule.options[0] in ["full", "type"]:
-            setResult(checkResult = declaration[1].kind != nkEmpty,
+            setResult(checkResult = declaration[^2].kind != nkEmpty,
                 positiveMessage = positiveMessage,
                 negativeMessage = negativeMessage, node = declaration,
                 params = [$declaration[namePos], $declaration.info.line, "type",
                 $declaration[1]])
           # Check if declaration of variable sets its value
           if rule.options[0] in ["full", "value"]:
-            setResult(checkResult = declaration[2].kind != nkEmpty,
+            setResult(checkResult = declaration[^1].kind != nkEmpty,
                 positiveMessage = positiveMessage,
                 negativeMessage = negativeMessage, node = declaration,
                 params = [$declaration[namePos], $declaration.info.line, "value",
