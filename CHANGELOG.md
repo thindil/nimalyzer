@@ -22,7 +22,7 @@ of the program.
 ### Fixed
 - Don't install file *rulesList.txt*. It is needed only for compilation of the
   program.
-- Checking usage of parameters of procedures by paramsUsed rule.
+- Checking usage of parameters of procedures by `paramsUsed` rule.
 - Detecting a documentation of definition of procedures, functions, etc. with
   `hasDoc` rule.
 - Crash when checking for named parameters in call by `namedParams` rule when
@@ -40,6 +40,7 @@ of the program.
   `namedParams` rule.
 - Crash when checking declarations of variables with `varDeclared` rule.
 - Crash when checking variables with `localHides` rule.
+- Checking declarations of multiple variables with `varDeclared` rule.
 
 ## [0.6.0] - 2023-08-18
 
