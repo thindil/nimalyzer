@@ -30,8 +30,8 @@ of the program.
 - Crash when there is more results than set by the user in a configuration
   file.
 - Detecting a documentation of types with `hasDoc` rule.
-- Installing the program should also contains file *pragmas.nim* for ability to
-  disable and enable rules.
+- Installing the program should also contains file *nimalyzer.nim* for ability
+  to disable and enable rules.
 - Detecting a documentation of variables in `let` section with `hasDoc` rule.
 - Detecting calls by `namedParams` rule.
 - Detecting empty `if` statements with `ifStatements` rule.
