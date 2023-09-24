@@ -150,7 +150,7 @@ checkRule:
         continue
       else:
         try:
-          if {':', '='} in $node[namePos]:
+          if '=' in $node[namePos]:
             continue
         except:
           discard
