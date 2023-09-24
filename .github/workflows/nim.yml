@@ -82,7 +82,7 @@ jobs:
         run: |
           sudo sed -i '' -e 's/quarterly/latest/g' /etc/pkg/FreeBSD.conf
           sudo pkg install -y git nimble
-          export PATH=$PATH:/home/thindil/.local/bin:/home/thindil/.nimble/bin:/usr/local/nim/bin
+          export PATH=$PATH:/home/runner/.nimble/bin:/usr/local/nim/bin
           nimble -y release
 
   build_linux:
