@@ -149,9 +149,14 @@ checkRule:
       if node.kind in {nkEnumTy, nkObjectTy}:
         continue
       else:
+        try:
+          if {':', '='} in $node[namePos]:
+            continue
+        except:
+          discard
         # Set the name of the declared entity which is checked for documentation
         var declName: string = try:
-              $node[namePos]
+              ($node[namePos]).split[0]
             except KeyError, Exception:
               ""
         if declName.len == 0:
