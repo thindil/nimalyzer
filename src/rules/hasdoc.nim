@@ -177,12 +177,16 @@ checkRule:
                 node[2].comment.len > 0
               elif node.kind in callableDefs and node[bodyPos].len == 0:
                 node.comment.len > 0
-              elif node.kind == nkTypeDef and node[2].kind notin {nkEnumTy, nkObjectTy}:
-                node.comment.len > 0
-              elif node.kind == nkTypeDef and node[2].kind == nkEnumTy:
-                node[2].comment.len > 0
-              elif node.kind == nkTypeDef and node[2].kind == nkObjectTy:
-                node[2][2].comment.len > 0
+              elif node.kind == nkTypeDef:
+                case node[2].kind
+                of nkEnumTy:
+                  node[2].comment.len > 0
+                of nkObjectTy:
+                  node[2][2].comment.len > 0
+                of nkRefTy:
+                  node[2][0][2].comment.len > 0
+                else:
+                  node.comment.len > 0
               else:
                 node[^1].len > 0 and node[^1][0].kind == nkCommentStmt
             if node.kind == nkTemplateDef and not hasDoc:
