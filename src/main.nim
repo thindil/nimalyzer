@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023-2024 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
     try:
-      info(args = "Starting nimalyzer ver 0.7.1")
+      info(args = "Starting nimalyzer ver 0.8")
     except Exception:
       abortProgram(message = "Can't log messages.")
     # No configuration file specified, quit from the program
