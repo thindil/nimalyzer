@@ -63,25 +63,24 @@ jobs:
         nimble release
 
   build_freebsd:
+    if: ${{ always() }}
     needs: tests
-    runs-on: macos-latest
-    timeout-minutes: 30
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
     - name: Release build
-      uses: cross-platform-actions/action@v0.13.0
+      uses: vmactions/freebsd-vm@v1
       with:
-        shell: sh
-        operating_system: freebsd
-        architecture: x86-64
-        version: '13.2'
+        usesh: true
+        prepare: |
+          sed -i '' -e 's/quarterly/latest/g' /etc/pkg/FreeBSD.conf
+          pkg install -y git nimble ca_root_nss
         run: |
-          sudo sed -i '' -e 's/quarterly/latest/g' /etc/pkg/FreeBSD.conf
-          sudo pkg install -y git nimble
-          export PATH=$PATH:/home/runner/.nimble/bin:/usr/local/nim/bin
+          export PATH=$PATH:$HOME/.nimble/bin:/usr/local/nim/bin
+          git config --global --add safe.directory /home/runner/work/nimalyzer/nimalyzer
           nimble -y release
 
   build_linux:
