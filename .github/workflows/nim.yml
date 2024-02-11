@@ -40,6 +40,7 @@ jobs:
       run: nimble test
 
   build_windows:
+    if: ${{ always() }}
     needs: tests
     timeout-minutes: 30
     runs-on: windows-latest
@@ -65,6 +66,7 @@ jobs:
   build_freebsd:
     if: ${{ always() }}
     needs: tests
+    timeout-minutes: 30
     runs-on: ubuntu-latest
 
     steps:
@@ -84,6 +86,7 @@ jobs:
           nimble -y release
 
   build_linux:
+    if: ${{ always() }}
     needs: tests
     timeout-minutes: 30
     runs-on: ubuntu-latest
