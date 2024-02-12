@@ -130,32 +130,29 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
         ruleOptions.amount == 1
 
     test "Checking fix type of the rule":
+      if fixTests in disabledChecks:
+        skip()
       checkpoint "Checking fix type of the rule."
-      if fixTests notin disabledChecks:
-        ruleOptions.parent = true
-        ruleOptions.ruleType = fix
-        ruleOptions.negation = false
-        ruleOptions.amount = 0
-        ruleOptions.identsCache = nimCache
-        let oldInvalidCode = copyTree(invalidCode)
-        ruleCheck(invalidCode, invalidCode, ruleOptions)
-        check:
-          $invalidCode == $validCode
-        invalidCode = copyTree(oldInvalidCode)
-#    # negative fix rule tests
-#    info("Checking negative fix type of the rule.")
-#    if negativeFix in disabledChecks:
-#      info("The tests for negative fix type of rule are disabled.")
-#    else:
-#      ruleOptions.parent = true
-#      ruleOptions.negation = true
-#      ruleOptions.amount = 0
-#      let oldValidCode = copyTree(validCode)
-#      ruleCheck(validCode, validCode, ruleOptions)
-#      try:
-#        assert $invalidCode == $validCode
-#      except AssertionDefect:
-#        echo "Fixing the valid code with negation for rule '" &
-#            ruleSettings.name & "' failed. Invalid code: " & $invalidCode &
-#            "\nshould be: " & $validCode
-#      validCode = copyTree(oldValidCode)
+      ruleOptions.parent = true
+      ruleOptions.ruleType = fix
+      ruleOptions.negation = false
+      ruleOptions.amount = 0
+      ruleOptions.identsCache = nimCache
+      let oldInvalidCode = copyTree(invalidCode)
+      ruleCheck(invalidCode, invalidCode, ruleOptions)
+      check:
+        $invalidCode == $validCode
+      invalidCode = copyTree(oldInvalidCode)
+
+    test "Checking negative fix type of the rule":
+      if fixTests in disabledChecks or negativeFix in disabledChecks:
+        skip()
+      checkpoint "Checking negative fix type of the rule."
+      ruleOptions.parent = true
+      ruleOptions.negation = true
+      ruleOptions.amount = 0
+      let oldValidCode = copyTree(validCode)
+      ruleCheck(validCode, validCode, ruleOptions)
+      check:
+        $invalidCode == $validCode
+      validCode = copyTree(oldValidCode)
