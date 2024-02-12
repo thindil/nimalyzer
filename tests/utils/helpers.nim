@@ -43,7 +43,7 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
       check:
         validateOptions(ruleSettings, validOptions)
 
-    test "Check rule test.":
+    test "Checking check type of the rule":
       checkpoint "Checking the check type of the rule with the invalid code"
       ruleCheck(invalidCode, invalidCode, ruleOptions)
       check:
@@ -54,50 +54,36 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
       check:
         ruleOptions.amount > 0
 
-#  # negative check rule tests
-#  info("Checking negative check type of the rule with the valid code.")
-#  ruleOptions.parent = true
-#  ruleOptions.negation = true
-#  ruleOptions.amount = 0
-#  ruleCheck(validCode, validCode, ruleOptions)
-#  try:
-#    assert ruleOptions.amount == 0
-#  except AssertionDefect:
-#    echo "Negative check of valid code for rule '" & ruleSettings.name &
-#        "' failed, expected result: 0, received: " & $ruleOptions.amount
-#  info("Checking negative check type of the rule with the invalid code.")
-#  ruleOptions.parent = true
-#  ruleCheck(invalidCode, invalidCode, ruleOptions)
-#  try:
-#    assert ruleOptions.amount > 0
-#  except AssertionDefect:
-#    echo "Negative check of invalid code for rule '" & ruleSettings.name &
-#        "' failed, expected result larger than 0, received: " &
-#        $ruleOptions.amount
-#  # search rule tests
-#  info("Checking search type of the rule with the invalid code.")
-#  ruleOptions.parent = true
-#  ruleOptions.ruleType = search
-#  ruleOptions.negation = false
-#  ruleOptions.amount = 0
-#  ruleCheck(invalidCode, invalidCode, ruleOptions)
-#  if invalidSearch notin disabledChecks:
-#    try:
-#      assert ruleOptions.amount == 0
-#    except AssertionDefect:
-#      echo "Search for invalid code for rule '" & ruleSettings.name &
-#          "' failed, expected result: 0, received: " & $ruleOptions.amount
-#  else:
-#    info("The test for searching for invalid code is disabled.")
-#  info("Checking search type of the rule with the valid code.")
-#  ruleOptions.parent = true
-#  ruleCheck(validCode, validCode, ruleOptions)
-#  try:
-#    assert ruleOptions.amount > 0
-#  except AssertionDefect:
-#    echo "Search for valid code for rule '" & ruleSettings.name &
-#        "' failed, expected result greater than 0, received: " &
-#        $ruleOptions.amount
+    test "Checking negative check type of the rule":
+      checkpoint "Checking the negative check type of the rule with the valid code"
+      ruleOptions.parent = true
+      ruleOptions.negation = true
+      ruleOptions.amount = 0
+      ruleCheck(validCode, validCode, ruleOptions)
+      check:
+        ruleOptions.amount == 0
+      checkpoint "Checking the negative check type of the rule with the invalid code"
+      ruleOptions.parent = true
+      ruleCheck(invalidCode, invalidCode, ruleOptions)
+      check:
+        ruleOptions.amount > 0
+
+    test "Checking search type of the rule":
+      checkpoint "Checking search type of the rule with the invalid code."
+      ruleOptions.parent = true
+      ruleOptions.ruleType = search
+      ruleOptions.negation = false
+      ruleOptions.amount = 0
+      ruleCheck(invalidCode, invalidCode, ruleOptions)
+      if invalidSearch notin disabledChecks:
+        check:
+          ruleOptions.amount == 0
+      checkpoint "Checking search type of the rule with the valid code."
+      ruleOptions.parent = true
+      ruleCheck(validCode, validCode, ruleOptions)
+      check:
+        ruleOptions.amount > 0
+
 #  # negative search rule tests
 #  info("Checking negative search type of the rule with the valid code.")
 #  ruleOptions.parent = true
