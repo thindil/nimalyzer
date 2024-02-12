@@ -114,44 +114,34 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
       check:
         ruleOptions.amount == 1
 
-#  # negative count rule tests
-#  info("Checking negative count type of the rule with the invalid code.")
-#  ruleOptions.parent = true
-#  ruleOptions.negation = true
-#  ruleOptions.amount = 0
-#  ruleCheck(invalidCode, invalidCode, ruleOptions)
-#  try:
-#    assert ruleOptions.amount == 1
-#  except AssertionDefect:
-#    echo "Negative counting of invalid code for rule '" & ruleSettings.name &
-#        "' failed, expected result: 1, received: " & $ruleOptions.amount
-#  info("Checking negative count type of the rule with the valid code.")
-#  ruleOptions.parent = true
-#  ruleOptions.amount = 0
-#  ruleCheck(validCode, validCode, ruleOptions)
-#  try:
-#    assert ruleOptions.amount == 1
-#  except AssertionDefect:
-#    echo "Negative counting of valid code for rule '" & ruleSettings.name &
-#        "' failed, expected result: 1, received: " & $ruleOptions.amount
-#  # fix rule tests
-#  info("Checking fix type of the rule.")
-#  if fixTests in disabledChecks:
-#    info("The tests for fix type of rule are disabled.")
-#  else:
-#    ruleOptions.parent = true
-#    ruleOptions.ruleType = fix
-#    ruleOptions.negation = false
-#    ruleOptions.amount = 0
-#    ruleOptions.identsCache = nimCache
-#    let oldInvalidCode = copyTree(invalidCode)
-#    ruleCheck(invalidCode, invalidCode, ruleOptions)
-#    try:
-#      assert $invalidCode == $validCode
-#    except AssertionDefect:
-#      echo "Fixing the invalid code for rule '" & ruleSettings.name &
-#          "' failed. Invalid code: " & $invalidCode & "\nshould be: " & $validCode
-#    invalidCode = copyTree(oldInvalidCode)
+    test "Checking negative count type of the rule":
+      checkpoint "Checking negative count type of the rule with the invalid code."
+      ruleOptions.parent = true
+      ruleOptions.negation = true
+      ruleOptions.amount = 0
+      ruleCheck(invalidCode, invalidCode, ruleOptions)
+      check:
+        ruleOptions.amount == 1
+      checkpoint "Checking negative count type of the rule with the valid code."
+      ruleOptions.parent = true
+      ruleOptions.amount = 0
+      ruleCheck(validCode, validCode, ruleOptions)
+      check:
+        ruleOptions.amount == 1
+
+    test "Checking fix type of the rule":
+      checkpoint "Checking fix type of the rule."
+      if fixTests notin disabledChecks:
+        ruleOptions.parent = true
+        ruleOptions.ruleType = fix
+        ruleOptions.negation = false
+        ruleOptions.amount = 0
+        ruleOptions.identsCache = nimCache
+        let oldInvalidCode = copyTree(invalidCode)
+        ruleCheck(invalidCode, invalidCode, ruleOptions)
+        check:
+          $invalidCode == $validCode
+        invalidCode = copyTree(oldInvalidCode)
 #    # negative fix rule tests
 #    info("Checking negative fix type of the rule.")
 #    if negativeFix in disabledChecks:
