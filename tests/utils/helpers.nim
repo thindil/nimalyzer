@@ -84,46 +84,36 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
       check:
         ruleOptions.amount > 0
 
-#  # negative search rule tests
-#  info("Checking negative search type of the rule with the valid code.")
-#  ruleOptions.parent = true
-#  ruleOptions.negation = true
-#  ruleOptions.amount = 0
-#  ruleCheck(validCode, validCode, ruleOptions)
-#  try:
-#    assert ruleOptions.amount == 0
-#  except AssertionDefect:
-#    echo "Negative search for valid code for rule '" & ruleSettings.name &
-#        "' failed, expected result: 0, received: " & $ruleOptions.amount
-#  info("Checking negative search type of the rule with the invalid code.")
-#  ruleOptions.parent = true
-#  ruleCheck(invalidCode, invalidCode, ruleOptions)
-#  try:
-#    assert ruleOptions.amount == 1
-#  except AssertionDefect:
-#    echo "Negative search for invalid code for rule '" & ruleSettings.name &
-#        "' failed, expected result: 1, received: " & $ruleOptions.amount
-#  # count rule tests
-#  info("Checking count type of the rule with the invalid code.")
-#  ruleOptions.parent = true
-#  ruleOptions.ruleType = count
-#  ruleOptions.negation = false
-#  ruleOptions.amount = 0
-#  ruleCheck(invalidCode, invalidCode, ruleOptions)
-#  try:
-#    assert ruleOptions.amount == 1
-#  except AssertionDefect:
-#    echo "Counting of invalid code for rule '" & ruleSettings.name &
-#        "' failed, expected result: 1, received: " & $ruleOptions.amount
-#  info("Checking count type of the rule with the valid code.")
-#  ruleOptions.parent = true
-#  ruleOptions.amount = 0
-#  ruleCheck(validCode, validCode, ruleOptions)
-#  try:
-#    assert ruleOptions.amount == 1
-#  except AssertionDefect:
-#    echo "Counting of valid code for rule '" & ruleSettings.name &
-#        "' failed, expected result: 1, received: " & $ruleOptions.amount
+    test "Checking negative search type of the rule":
+      checkpoint "Checking negative search type of the rule with the valid code."
+      ruleOptions.parent = true
+      ruleOptions.negation = true
+      ruleOptions.amount = 0
+      ruleCheck(validCode, validCode, ruleOptions)
+      check:
+        ruleOptions.amount == 0
+      checkpoint "Checking negative search type of the rule with the invalid code."
+      ruleOptions.parent = true
+      ruleCheck(invalidCode, invalidCode, ruleOptions)
+      check:
+        ruleOptions.amount == 1
+
+    test "Checking count type of the rule":
+      checkpoint "Checking count type of the rule with the invalid code."
+      ruleOptions.parent = true
+      ruleOptions.ruleType = count
+      ruleOptions.negation = false
+      ruleOptions.amount = 0
+      ruleCheck(invalidCode, invalidCode, ruleOptions)
+      check:
+        ruleOptions.amount == 1
+      checkpoint "Checking count type of the rule with the valid code."
+      ruleOptions.parent = true
+      ruleOptions.amount = 0
+      ruleCheck(validCode, validCode, ruleOptions)
+      check:
+        ruleOptions.amount == 1
+
 #  # negative count rule tests
 #  info("Checking negative count type of the rule with the invalid code.")
 #  ruleOptions.parent = true
