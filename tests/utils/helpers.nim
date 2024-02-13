@@ -74,15 +74,17 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
       ruleOptions.ruleType = search
       ruleOptions.negation = false
       ruleOptions.amount = 0
-      ruleCheck(invalidCode, invalidCode, ruleOptions)
-      if invalidSearch notin disabledChecks:
+      if invalidSearch in disabledChecks:
+        skip()
+      else:
+        ruleCheck(invalidCode, invalidCode, ruleOptions)
         check:
           ruleOptions.amount == 0
-      checkpoint "Checking search type of the rule with the valid code."
-      ruleOptions.parent = true
-      ruleCheck(validCode, validCode, ruleOptions)
-      check:
-        ruleOptions.amount > 0
+        checkpoint "Checking search type of the rule with the valid code."
+        ruleOptions.parent = true
+        ruleCheck(validCode, validCode, ruleOptions)
+        check:
+          ruleOptions.amount > 0
 
     test "Checking negative search type of the rule":
       checkpoint "Checking negative search type of the rule with the valid code."
@@ -132,27 +134,29 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
     test "Checking fix type of the rule":
       if fixTests in disabledChecks:
         skip()
-      checkpoint "Checking fix type of the rule."
-      ruleOptions.parent = true
-      ruleOptions.ruleType = fix
-      ruleOptions.negation = false
-      ruleOptions.amount = 0
-      ruleOptions.identsCache = nimCache
-      let oldInvalidCode = copyTree(invalidCode)
-      ruleCheck(invalidCode, invalidCode, ruleOptions)
-      check:
-        $invalidCode == $validCode
-      invalidCode = copyTree(oldInvalidCode)
+      else:
+        checkpoint "Checking fix type of the rule."
+        ruleOptions.parent = true
+        ruleOptions.ruleType = fix
+        ruleOptions.negation = false
+        ruleOptions.amount = 0
+        ruleOptions.identsCache = nimCache
+        let oldInvalidCode = copyTree(invalidCode)
+        ruleCheck(invalidCode, invalidCode, ruleOptions)
+        check:
+          $invalidCode == $validCode
+        invalidCode = copyTree(oldInvalidCode)
 
     test "Checking negative fix type of the rule":
       if fixTests in disabledChecks or negativeFix in disabledChecks:
         skip()
-      checkpoint "Checking negative fix type of the rule."
-      ruleOptions.parent = true
-      ruleOptions.negation = true
-      ruleOptions.amount = 0
-      let oldValidCode = copyTree(validCode)
-      ruleCheck(validCode, validCode, ruleOptions)
-      check:
-        $invalidCode == $validCode
-      validCode = copyTree(oldValidCode)
+      else:
+        checkpoint "Checking negative fix type of the rule."
+        ruleOptions.parent = true
+        ruleOptions.negation = true
+        ruleOptions.amount = 0
+        let oldValidCode = copyTree(validCode)
+        ruleCheck(validCode, validCode, ruleOptions)
+        check:
+          $invalidCode == $validCode
+        validCode = copyTree(oldValidCode)
