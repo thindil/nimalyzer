@@ -63,49 +63,38 @@ suite "Unit tests for comments rule":
     check:
       ruleOptions.amount > 0
 
-## search rule tests
-#info("Checking search type of the rule with the invalid code.")
-#ruleOptions.parent = true
-#ruleOptions.ruleType = search
-#ruleOptions.negation = false
-#ruleOptions.amount = 0
-#ruleOptions.fileName = "tests/tcomments/invalid.nim"
-#ruleCheck(invalidCode, invalidCode, ruleOptions)
-#try:
-#  assert ruleOptions.amount == 0
-#except AssertionDefect:
-#  echo "Search for invalid code for rule '" & ruleSettings.name &
-#      "' failed, expected result: 0, received: " & $ruleOptions.amount
-#info("Checking search type of the rule with the valid code.")
-#ruleOptions.parent = true
-#ruleOptions.fileName = "tests/tcomments/valid.nim"
-#ruleCheck(validCode, validCode, ruleOptions)
-#try:
-#  assert ruleOptions.amount > 0
-#except AssertionDefect:
-#  echo "Search for valid code for rule '" & ruleSettings.name &
-#      "' failed, expected result greater than 0, received: " &
-#      $ruleOptions.amount
-## negative search rule tests
-#info("Checking negative search type of the rule with the valid code.")
-#ruleOptions.parent = true
-#ruleOptions.negation = true
-#ruleOptions.amount = 0
-#ruleCheck(validCode, validCode, ruleOptions)
-#try:
-#  assert ruleOptions.amount == 0
-#except AssertionDefect:
-#  echo "Negative search for valid code for rule '" & ruleSettings.name &
-#      "' failed, expected result: 0, received: " & $ruleOptions.amount
-#info("Checking negative search type of the rule with the invalid code.")
-#ruleOptions.parent = true
-#ruleOptions.fileName = "tests/tcomments/invalid.nim"
-#ruleCheck(invalidCode, invalidCode, ruleOptions)
-#try:
-#  assert ruleOptions.amount == 1
-#except AssertionDefect:
-#  echo "Negative search for invalid code for rule '" & ruleSettings.name &
-#      "' failed, expected result: 1, received: " & $ruleOptions.amount
+  test "Checking search type of the rule":
+    checkpoint "Checking search type of the rule with the invalid code."
+    ruleOptions.parent = true
+    ruleOptions.ruleType = search
+    ruleOptions.negation = false
+    ruleOptions.amount = 0
+    ruleOptions.fileName = "tests/tcomments/invalid.nim"
+    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    check:
+      ruleOptions.amount == 0
+    checkpoint "Checking search type of the rule with the valid code."
+    ruleOptions.parent = true
+    ruleOptions.fileName = "tests/tcomments/valid.nim"
+    ruleCheck(validCode, validCode, ruleOptions)
+    check:
+      ruleOptions.amount > 0
+
+  test "Checking negative search type of the rule":
+    checkpoint "Checking negative search type of the rule with the valid code."
+    ruleOptions.parent = true
+    ruleOptions.negation = true
+    ruleOptions.amount = 0
+    ruleCheck(validCode, validCode, ruleOptions)
+    check:
+      ruleOptions.amount == 0
+    checkpoint "Checking negative search type of the rule with the invalid code."
+    ruleOptions.parent = true
+    ruleOptions.fileName = "tests/tcomments/invalid.nim"
+    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    check:
+      ruleOptions.amount == 1
+
 ## count rule tests
 #info("Checking count type of the rule with the invalid code.")
 #ruleOptions.parent = true
