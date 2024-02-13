@@ -9,4 +9,4 @@ i = i + 1"""
   validNimCode = """var i = 1
 i += 1"""
 
-runRuleTest("assignments")
+runRuleTest("assignments rule")

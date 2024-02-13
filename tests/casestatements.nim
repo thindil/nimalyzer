@@ -13,4 +13,4 @@ const
   of 2:
     echo a"""
 
-runRuleTest(moduleName = "casestatements", disabledChecks = {invalidSearch, fixTests})
+runRuleTest(moduleName = "casestatements rule", disabledChecks = {invalidSearch, fixTests})

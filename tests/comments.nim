@@ -5,7 +5,7 @@ import ../src/rules
 import utils/helpers
 import unittest2
 
-suite "Unit tests for comments module":
+suite "Unit tests for comments rule":
 
   checkpoint "Initializing the tests"
   const

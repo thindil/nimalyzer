@@ -22,7 +22,7 @@ proc setNim*(): tuple[cache: IdentCache, config: ConfigRef] =
 
 template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = {}) =
 
-  suite "Unit tests for " & moduleName & " module":
+  suite "Unit tests for " & moduleName:
 
     checkpoint "Initializing the tests"
     setLogger()
