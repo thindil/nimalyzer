@@ -75,6 +75,7 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
       ruleOptions.negation = false
       ruleOptions.amount = 0
       if invalidSearch in disabledChecks:
+        echo "Test for search type of the rule with invalid code skipped"
         skip()
       else:
         ruleCheck(invalidCode, invalidCode, ruleOptions)
@@ -133,6 +134,7 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
 
     test "Checking fix type of the rule":
       if fixTests in disabledChecks:
+        echo "Test for fix type of the rule skipped."
         skip()
       else:
         checkpoint "Checking fix type of the rule."
@@ -149,6 +151,7 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
 
     test "Checking negative fix type of the rule":
       if fixTests in disabledChecks or negativeFix in disabledChecks:
+        echo "Test for negative fix type of the rule skipped."
         skip()
       else:
         checkpoint "Checking negative fix type of the rule."
