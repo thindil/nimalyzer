@@ -21,12 +21,12 @@ suite "Unit tests for comments rule":
   var
     validCode = parseString(validNimCode, nimCache, nimConfig)
     invalidCode = parseString(invalidNimCode, nimCache, nimConfig)
-    ruleOptions = RuleOptions(parent: true, fileName: "tests/tcomments/invalid.nim",
+    ruleOptions = RuleOptions(parent: true, fileName: "tests/utils/invalid.nim",
         negation: false, ruleType: check, options: validOptions, amount: 0,
         enabled: true, maxResults: Natural.high)
 
-  writeFile("tests/tcomments/valid.nim", "# FIXME comment to delete")
-  writeFile("tests/tcomments/invalid.nim", "# Another comment")
+  writeFile("tests/utils/valid.nim", "# FIXME comment to delete")
+  writeFile("tests/utils/invalid.nim", "# Another comment")
 
   test "Checking the rule's options validation.":
     checkpoint "Validate invalid rule's options"
@@ -43,7 +43,7 @@ suite "Unit tests for comments rule":
       ruleOptions.amount == 0
     checkpoint "Checking the check type of the rule with the valid code"
     ruleOptions.parent = true
-    ruleOptions.fileName = "tests/tcomments/valid.nim"
+    ruleOptions.fileName = "tests/utils/valid.nim"
     ruleCheck(validCode, validCode, ruleOptions)
     check:
       ruleOptions.amount > 0
@@ -58,7 +58,7 @@ suite "Unit tests for comments rule":
       ruleOptions.amount == 0
     checkpoint "Checking the negative check type of the rule with the invalid code"
     ruleOptions.parent = true
-    ruleOptions.fileName = "tests/tcomments/invalid.nim"
+    ruleOptions.fileName = "tests/utils/invalid.nim"
     ruleCheck(invalidCode, invalidCode, ruleOptions)
     check:
       ruleOptions.amount > 0
@@ -69,13 +69,13 @@ suite "Unit tests for comments rule":
     ruleOptions.ruleType = search
     ruleOptions.negation = false
     ruleOptions.amount = 0
-    ruleOptions.fileName = "tests/tcomments/invalid.nim"
+    ruleOptions.fileName = "tests/utils/invalid.nim"
     ruleCheck(invalidCode, invalidCode, ruleOptions)
     check:
       ruleOptions.amount == 0
     checkpoint "Checking search type of the rule with the valid code."
     ruleOptions.parent = true
-    ruleOptions.fileName = "tests/tcomments/valid.nim"
+    ruleOptions.fileName = "tests/utils/valid.nim"
     ruleCheck(validCode, validCode, ruleOptions)
     check:
       ruleOptions.amount > 0
@@ -90,52 +90,42 @@ suite "Unit tests for comments rule":
       ruleOptions.amount == 0
     checkpoint "Checking negative search type of the rule with the invalid code."
     ruleOptions.parent = true
-    ruleOptions.fileName = "tests/tcomments/invalid.nim"
+    ruleOptions.fileName = "tests/utils/invalid.nim"
     ruleCheck(invalidCode, invalidCode, ruleOptions)
     check:
       ruleOptions.amount == 1
 
-## count rule tests
-#info("Checking count type of the rule with the invalid code.")
-#ruleOptions.parent = true
-#ruleOptions.ruleType = count
-#ruleOptions.negation = false
-#ruleOptions.amount = 0
-#ruleCheck(invalidCode, invalidCode, ruleOptions)
-#try:
-#  assert ruleOptions.amount == 1
-#except AssertionDefect:
-#  echo "Counting of invalid code for rule '" & ruleSettings.name &
-#      "' failed, expected result: 1, received: " & $ruleOptions.amount
-#info("Checking count type of the rule with the valid code.")
-#ruleOptions.parent = true
-#ruleOptions.amount = 0
-#ruleCheck(validCode, validCode, ruleOptions)
-#try:
-#  assert ruleOptions.amount == 1
-#except AssertionDefect:
-#  echo "Counting of valid code for rule '" & ruleSettings.name &
-#      "' failed, expected result: 1, received: " & $ruleOptions.amount
-## negative count rule tests
-#info("Checking negative count type of the rule with the invalid code.")
-#ruleOptions.parent = true
-#ruleOptions.negation = true
-#ruleOptions.amount = 0
-#ruleCheck(invalidCode, invalidCode, ruleOptions)
-#try:
-#  assert ruleOptions.amount == 1
-#except AssertionDefect:
-#  echo "Negative counting of invalid code for rule '" & ruleSettings.name &
-#      "' failed, expected result: 1, received: " & $ruleOptions.amount
-#info("Checking negative count type of the rule with the valid code.")
-#ruleOptions.parent = true
-#ruleOptions.amount = 0
-#ruleCheck(validCode, validCode, ruleOptions)
-#try:
-#  assert ruleOptions.amount == 1
-#except AssertionDefect:
-#  echo "Negative counting of valid code for rule '" & ruleSettings.name &
-#      "' failed, expected result: 1, received: " & $ruleOptions.amount
+  test "Checking count type of the rule":
+    checkpoint "Checking count type of the rule with the invalid code."
+    ruleOptions.parent = true
+    ruleOptions.ruleType = count
+    ruleOptions.negation = false
+    ruleOptions.amount = 0
+    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    check:
+      ruleOptions.amount == 1
+    checkpoint "Checking count type of the rule with the valid code."
+    ruleOptions.parent = true
+    ruleOptions.amount = 0
+    ruleCheck(validCode, validCode, ruleOptions)
+    check:
+      ruleOptions.amount == 1
+
+  test "Checking negative count type of the rule":
+    checkpoint "Checking negative count type of the rule with the invalid code."
+    ruleOptions.parent = true
+    ruleOptions.negation = true
+    ruleOptions.amount = 0
+    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    check:
+      ruleOptions.amount == 1
+    checkpoint "Checking negative count type of the rule with the valid code."
+    ruleOptions.parent = true
+    ruleOptions.amount = 0
+    ruleCheck(validCode, validCode, ruleOptions)
+    check:
+      ruleOptions.amount == 1
+
 ## fix rule tests
 #info("Checking fix type of the rule.")
 #ruleOptions.parent = true
@@ -152,5 +142,5 @@ suite "Unit tests for comments rule":
 #      "' failed. Invalid code: " & $invalidCode & "\nshould be: " & $validCode
 #invalidCode = copyTree(oldInvalidCode)
 
-removeFile("tests/tcomments/invalid.nim")
-removeFile("tests/tcomments/valid.nim")
+removeFile("tests/utils/invalid.nim")
+removeFile("tests/utils/valid.nim")
