@@ -1,4 +1,3 @@
-import std/logging
 import compiler/parser
 import ../src/rules/comments
 import ../src/rules
@@ -126,21 +125,18 @@ suite "Unit tests for comments rule":
     check:
       ruleOptions.amount == 1
 
-## fix rule tests
-#info("Checking fix type of the rule.")
-#ruleOptions.parent = true
-#ruleOptions.ruleType = fix
-#ruleOptions.negation = false
-#ruleOptions.amount = 0
-#ruleOptions.identsCache = nimCache
-#let oldInvalidCode = copyTree(invalidCode)
-#ruleCheck(invalidCode, invalidCode, ruleOptions)
-#try:
-#  assert $invalidCode == $validCode
-#except AssertionDefect:
-#  echo "Fixing the invalid code for rule '" & ruleSettings.name &
-#      "' failed. Invalid code: " & $invalidCode & "\nshould be: " & $validCode
-#invalidCode = copyTree(oldInvalidCode)
+  test "Checking fix type of the rule.":
+    ruleOptions.parent = true
+    ruleOptions.ruleType = fix
+    ruleOptions.negation = false
+    ruleOptions.amount = 0
+    ruleOptions.identsCache = nimCache
+    let oldInvalidCode = copyTree(invalidCode)
+    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    check:
+      $invalidCode == $validCode
+    invalidCode = copyTree(oldInvalidCode)
 
-removeFile("tests/utils/invalid.nim")
-removeFile("tests/utils/valid.nim")
+  suiteTeardown:
+    removeFile("tests/utils/invalid.nim")
+    removeFile("tests/utils/valid.nim")
