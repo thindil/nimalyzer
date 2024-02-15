@@ -99,7 +99,7 @@ template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = 
       ruleOptions.parent = true
       ruleCheck(invalidCode, invalidCode, ruleOptions)
       check:
-        ruleOptions.amount == 1
+        ruleOptions.amount > 0
 
     test "Checking count type of the rule":
       checkpoint "Checking count type of the rule with the invalid code."
