@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 Tag **BREAKING** means the change break compatibility with a previous version
 of the program.
 
+## [Unreleased]
+
+### Changed
+- Using unittest2 package for the project's unit tests
+
 ## [0.7.1] - 2023-10-03
 
 ### Fixed
