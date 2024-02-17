@@ -34,20 +34,19 @@ import colored_logger
 import config, rules, utils
 
 # Load the program's rules
-macro importRules(): untyped =
-  ## Import the program'r rules into the program's code. It reads file
-  ## rulesList.txt and import each line from it as a module into the program.
+macro importRules() =
+  ## Import the program'r rules into the program's code. It walks trought
+  ## files in the directory rules and import each with extension `nim` into
+  ## the program.
   ##
   ## Returns the list of import statements with the program's rules code as
   ## modules.
-  result = nnkStmtList.newTree()
-  for rule in splitLines(s = slurp(filename = "rules" & DirSep &
-      "rulesList.txt")):
-    if rule.len == 0:
-      break
-    result.add(child = newTree(kind = nnkImportStmt, children = [newLit(
-        s = getProjectPath().parentDir & DirSep & "src" & DirSep & "rules" &
-        DirSep & rule)]))
+  result = newStmtList()
+  for file in walkDir(getProjectPath().parentDir & DirSep & "src" & DirSep & "rules"):
+    if file.path.endsWith(".nim"):
+      result.add nnkImportStmt.newTree(
+        newIdentNode(file.path)
+      )
 importRules()
 
 proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
