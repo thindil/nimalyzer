@@ -42,10 +42,10 @@ macro importRules() =
   ## Returns the list of import statements with the program's rules code as
   ## modules.
   result = newStmtList()
-  for file in walkDir(getProjectPath().parentDir & DirSep & "src" & DirSep & "rules"):
-    if file.path.endsWith(".nim"):
-      result.add nnkImportStmt.newTree(
-        newIdentNode(file.path)
+  for file in walkDir(dir = getProjectPath().parentDir & DirSep & "src" & DirSep & "rules"):
+    if file.path.endsWith(suffix = ".nim"):
+      result.add nnkImportStmt.newTree(children =
+        newIdentNode(i = file.path)
       )
 importRules()
 
