@@ -1,4 +1,4 @@
-import ../src/rules/ifstatements
+include ../src/rules/ifstatements
 import utils/helpers
 
 const
@@ -7,5 +7,4 @@ const
   invalidNimCode = "if a != 1: echo \"not equal\" else: echo \"equal\""
   validNimCode = "if a == 1: echo \"equal\" else: echo \"not equal\""
 
-runRuleTest(moduleName = "ifStatements rule", disabledChecks = {negativeFix,
-    invalidSearch})
+runRuleTest(disabledChecks = {negativeFix, invalidSearch})
