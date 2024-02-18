@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023-2024 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -60,12 +60,6 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
       ruleCode = ruleCode.replace(sub = "--ruleName--", by = name)
       ruleCode = ruleCode.replace(sub = "--rulename--", by = name.toLowerAscii)
       writeFile(filename = fileName, content = ruleCode)
-      let rulesFile: File = open(filename = "src" & DirSep & "rules" & DirSep &
-          "rulesList.txt", mode = fmWrite)
-      for fileName in walkFiles(pattern = "src" & DirSep & "rules" & DirSep & "*.nim"):
-        let (_, name, _) = splitFile(path = fileName)
-        rulesFile.writeLine(x = [name])
-      rulesFile.close
       echo "The program's rule '" & name & "' created in file '" & fileName & "'."
     except IOError, OSError:
       quit(errormsg = "Can't create the new rule. Reason: " &
