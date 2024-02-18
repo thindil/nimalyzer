@@ -7,7 +7,10 @@ of the program.
 ## [Unreleased]
 
 ### Changed
-- Using unittest2 package for the project's unit tests
+- Using unittest2 package for the project's unit tests.
+- **BREAKING**: adding or removing rules from the program doesn't need to
+  update file *rulesList.txt*. Now it is just adding or removing the Nim file
+  with the rule's code to *rules* directory.
 
 ## [0.7.1] - 2023-10-03
 
