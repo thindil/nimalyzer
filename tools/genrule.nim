@@ -23,10 +23,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## Simple program to get the project's documentation from the default
-## configuration file and the project's source code and convert it to the
-## project's reStructuredText documentation. The program works only when it is
-## started from the main directory of the project
+## Simple program to create an empty the program's new rule. It ask several
+## questions to the user and then create a proper file in the *src/rules*
+## directory. The program works only when it is started from the main
+## directory of the project.
 
 # Standard library imports
 import std/[os, strutils]
