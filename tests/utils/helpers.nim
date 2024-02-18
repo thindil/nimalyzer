@@ -19,9 +19,9 @@ proc setNim*(): tuple[cache: IdentCache, config: ConfigRef] =
   nimConfig.options.excl(y = optHints)
   return (nimCache, nimConfig)
 
-template runRuleTest*(moduleName: string; disabledChecks: set[DisabledChecks] = {}) =
+template runRuleTest*(disabledChecks: set[DisabledChecks] = {}) =
 
-  suite "Unit tests for " & moduleName:
+  suite "Unit tests for " & ruleSettings.name & " rule":
 
     checkpoint "Initializing the tests"
     setLogger()
