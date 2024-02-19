@@ -1,4 +1,4 @@
-import ../src/rules/complexity
+include ../src/rules/complexity
 import utils/helpers
 
 const
@@ -9,4 +9,4 @@ const
   validNimCode = """if i == 1:
   i += 1"""
 
-runRuleTest(moduleName = "complexity rule", disabledChecks = {fixTests})
+runRuleTest(disabledChecks = {fixTests})
