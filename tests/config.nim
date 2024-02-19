@@ -1,7 +1,8 @@
 {.warning[UnusedImport]:off.}
-import ../src/[config, main]
+import ../src/main
 import utils/helpers
 import unittest2
+include ../src/config
 
 suite "Unit tests for config module":
 
