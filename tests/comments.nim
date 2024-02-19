@@ -1,6 +1,5 @@
 import compiler/parser
-import ../src/rules/comments
-import ../src/rules
+include ../src/rules/comments
 import utils/helpers
 import unittest2
 
