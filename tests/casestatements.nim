@@ -1,4 +1,4 @@
-import ../src/rules/casestatements
+include ../src/rules/casestatements
 import utils/helpers
 
 const
@@ -13,4 +13,4 @@ const
   of 2:
     echo a"""
 
-runRuleTest(moduleName = "casestatements rule", disabledChecks = {invalidSearch, fixTests})
+runRuleTest(disabledChecks = {invalidSearch, fixTests})
