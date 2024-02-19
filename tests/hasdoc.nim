@@ -1,4 +1,4 @@
-import ../src/rules/hasdoc
+include ../src/rules/hasdoc
 import utils/helpers
 
 const
@@ -8,4 +8,4 @@ const
   validNimCode = """## Template doc.
 var i* = 0 ## Template doc."""
 
-runRuleTest(moduleName = "hasDoc rule")
+runRuleTest()
