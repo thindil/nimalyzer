@@ -1,4 +1,4 @@
-import ../src/rules/namingconv
+include ../src/rules/namingconv
 import utils/helpers
 
 const
@@ -7,4 +7,4 @@ const
   invalidNimCode = "var IsThe: int = 1"
   validNimCode = "var isThe: int = 1"
 
-runRuleTest(moduleName = "namingConv rule", disabledChecks = {fixTests})
+runRuleTest(disabledChecks = {fixTests})
