@@ -1,4 +1,4 @@
-import ../src/rules/localhides
+include ../src/rules/localhides
 import utils/helpers
 
 const
@@ -20,4 +20,4 @@ for i in 1 .. 10:
 # Disable check for invalid code search as it always returns error instead of
 # positive value. Also, disable check for negative fix type of rule as it
 # do nothing.
-runRuleTest(moduleName = "localHides rule", disabledChecks = {invalidSearch, negativeFix})
+runRuleTest(disabledChecks = {invalidSearch, negativeFix})
