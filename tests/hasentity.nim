@@ -1,4 +1,4 @@
-import ../src/rules/hasentity
+include ../src/rules/hasentity
 import utils/helpers
 
 const
@@ -7,4 +7,4 @@ const
   invalidNimCode = "quit"
   validNimCode = "proc MyProc() = discard"
 
-runRuleTest(moduleName = "hasEntity rule", disabledChecks = {fixTests})
+runRuleTest(disabledChecks = {fixTests})
