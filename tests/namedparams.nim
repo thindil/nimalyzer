@@ -1,4 +1,4 @@
-import ../src/rules/namedparams
+include ../src/rules/namedparams
 import utils/helpers
 
 const
@@ -7,4 +7,4 @@ const
   invalidNimCode = "quit(QuitSuccess)"
   validNimCode = "myProc(named = true)"
 
-runRuleTest(moduleName = "namedParams rule", disabledChecks = {fixTests})
+runRuleTest(disabledChecks = {fixTests})
