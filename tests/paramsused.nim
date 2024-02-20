@@ -1,4 +1,4 @@
-import ../src/rules/paramsused
+include ../src/rules/paramsused
 import utils/helpers
 
 const
@@ -7,4 +7,4 @@ const
   invalidNimCode = "proc MyProc(arg: int) = discard"
   validNimCode = "proc MyProc(arg: int) = echo $arg"
 
-runRuleTest(moduleName = "paramsUsed rule", disabledChecks = {fixTests})
+runRuleTest(disabledChecks = {fixTests})
