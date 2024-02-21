@@ -1,6 +1,5 @@
-import std/logging
-import compiler/[parser, trees]
-import ../src/rules
+import compiler/parser
+include ../src/rules
 import utils/helpers
 import unittest2
 
