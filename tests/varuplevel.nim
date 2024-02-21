@@ -1,4 +1,4 @@
-import ../src/rules/varuplevel
+include ../src/rules/varuplevel
 import utils/helpers
 
 const
@@ -13,4 +13,4 @@ var a: seq[int]
 a.add(1)
 const b: int = 3"""
 
-runRuleTest(moduleName = "varUplevel rule", disabledChecks = {invalidSearch, negativeFix})
+runRuleTest(disabledChecks = {invalidSearch, negativeFix})
