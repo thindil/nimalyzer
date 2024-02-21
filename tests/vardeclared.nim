@@ -1,4 +1,4 @@
-import ../src/rules/vardeclared
+include ../src/rules/vardeclared
 import utils/helpers
 
 const
@@ -7,4 +7,4 @@ const
   invalidNimCode = "var i = 1"
   validNimCode = "var i: int = 1"
 
-runRuleTest(moduleName = "varDeclared rule", disabledChecks = {fixTests})
+runRuleTest(disabledChecks = {fixTests})
