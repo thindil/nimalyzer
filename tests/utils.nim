@@ -1,4 +1,4 @@
-import ../src/utils
+include ../src/utils
 import utils/helpers
 import unittest2
 
