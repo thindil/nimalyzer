@@ -19,12 +19,9 @@ suite "Unit tests for comments rule":
   var
     validCode = parseString(validNimCode, nimCache, nimConfig)
     invalidCode = parseString(invalidNimCode, nimCache, nimConfig)
-    ruleOptions = RuleOptions(parent: true, fileName: "tests/utils/invalid.nim",
+    ruleOptions = RuleOptions(parent: true, fileName: "tests/invalid/comments.nim",
         negation: false, ruleType: check, options: validOptions, amount: 0,
         enabled: true, maxResults: Natural.high)
-
-  writeFile("tests/utils/valid.nim", "# FIXME comment to delete")
-  writeFile("tests/utils/invalid.nim", "# Another comment")
 
   test "Checking the rule's options validation.":
     checkpoint "Validate invalid rule's options"
@@ -41,7 +38,7 @@ suite "Unit tests for comments rule":
       ruleOptions.amount == 0
     checkpoint "Checking the check type of the rule with the valid code"
     ruleOptions.parent = true
-    ruleOptions.fileName = "tests/utils/valid.nim"
+    ruleOptions.fileName = "tests/valid/comments.nim"
     ruleCheck(validCode, validCode, ruleOptions)
     check:
       ruleOptions.amount > 0
@@ -56,7 +53,7 @@ suite "Unit tests for comments rule":
       ruleOptions.amount == 0
     checkpoint "Checking the negative check type of the rule with the invalid code"
     ruleOptions.parent = true
-    ruleOptions.fileName = "tests/utils/invalid.nim"
+    ruleOptions.fileName = "tests/invalid/comments.nim"
     ruleCheck(invalidCode, invalidCode, ruleOptions)
     check:
       ruleOptions.amount > 0
@@ -67,13 +64,13 @@ suite "Unit tests for comments rule":
     ruleOptions.ruleType = search
     ruleOptions.negation = false
     ruleOptions.amount = 0
-    ruleOptions.fileName = "tests/utils/invalid.nim"
+    ruleOptions.fileName = "tests/invalid/comments.nim"
     ruleCheck(invalidCode, invalidCode, ruleOptions)
     check:
       ruleOptions.amount == 0
     checkpoint "Checking search type of the rule with the valid code."
     ruleOptions.parent = true
-    ruleOptions.fileName = "tests/utils/valid.nim"
+    ruleOptions.fileName = "tests/valid/comments.nim"
     ruleCheck(validCode, validCode, ruleOptions)
     check:
       ruleOptions.amount > 0
@@ -88,7 +85,7 @@ suite "Unit tests for comments rule":
       ruleOptions.amount == 0
     checkpoint "Checking negative search type of the rule with the invalid code."
     ruleOptions.parent = true
-    ruleOptions.fileName = "tests/utils/invalid.nim"
+    ruleOptions.fileName = "tests/invalid/comments.nim"
     ruleCheck(invalidCode, invalidCode, ruleOptions)
     check:
       ruleOptions.amount == 1
@@ -135,7 +132,3 @@ suite "Unit tests for comments rule":
     check:
       $invalidCode == $validCode
     invalidCode = copyTree(oldInvalidCode)
-
-  suiteTeardown:
-    removeFile("tests/utils/invalid.nim")
-    removeFile("tests/utils/valid.nim")
