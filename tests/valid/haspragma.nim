@@ -1,0 +1,1 @@
+proc MyProc() {.raises: [].} = discard
