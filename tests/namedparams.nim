@@ -4,7 +4,5 @@ import utils/helpers
 const
   validOptions = @[]
   invalidOptions = @["randomoption"]
-  invalidNimCode = "quit(QuitSuccess)"
-  validNimCode = "myProc(named = true)"
 
-runRuleTest(disabledChecks = {fixTests})
+runRuleTest(files = @["namedparams"], disabledChecks = {fixTests})
