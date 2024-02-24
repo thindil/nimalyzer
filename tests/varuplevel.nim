@@ -4,13 +4,5 @@ import utils/helpers
 const
   validOptions = @[]
   invalidOptions = @["something"]
-  invalidNimCode = """
-var a: seq[int]
-a.add(1)
-let b: int = 3"""
-  validNimCode = """
-var a: seq[int]
-a.add(1)
-const b: int = 3"""
 
-runRuleTest(disabledChecks = {invalidSearch, negativeFix})
+runRuleTest(files = @["varuplevel"], disabledChecks = {invalidSearch, negativeFix})
