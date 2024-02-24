@@ -19,7 +19,8 @@ proc setNim*(): tuple[cache: IdentCache, config: ConfigRef] =
   nimConfig.options.excl(y = optHints)
   return (nimCache, nimConfig)
 
-template runRuleTest*(files: seq[string]; disabledChecks: set[DisabledChecks] = {}) =
+template runRuleTest*(files, validOptions, invalidOptions: seq[string];
+    disabledChecks: set[DisabledChecks] = {}) =
 
   suite "Unit tests for " & ruleSettings.name & " rule":
 
