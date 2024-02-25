@@ -1,8 +1,5 @@
 include ../src/rules/namedparams
 import utils/helpers
 
-const
-  validOptions = @[]
-  invalidOptions = @["randomoption"]
-
-runRuleTest(files = @["namedparams"], disabledChecks = {fixTests})
+runRuleTest(files = @["namedparams"], validOptions = @[], invalidOptions = @[
+    "randomoption"], disabledChecks = {fixTests})
