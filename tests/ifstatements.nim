@@ -1,9 +1,6 @@
 include ../src/rules/ifstatements
 import utils/helpers
 
-const
-  validOptions: seq[string] = @["all"]
-  invalidOptions = @["randomoption", "anotheroption", "andmoreoption"]
-
-runRuleTest(files = @["ifstatements"], disabledChecks = {negativeFix,
-    invalidSearch})
+runRuleTest(files = @["ifstatements"], validOptions = @["all"],
+    invalidOptions = @["randomoption", "anotheroption", "andmoreoption"],
+    disabledChecks = {negativeFix, invalidSearch})
