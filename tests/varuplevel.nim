@@ -1,8 +1,5 @@
 include ../src/rules/varuplevel
 import utils/helpers
 
-const
-  validOptions = @[]
-  invalidOptions = @["something"]
-
-runRuleTest(files = @["varuplevel"], disabledChecks = {invalidSearch, negativeFix})
+runRuleTest(files = @["varuplevel"], validOptions = @[], invalidOptions = @[
+    "something"], disabledChecks = {invalidSearch, negativeFix})
