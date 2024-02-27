@@ -35,19 +35,22 @@ suite "Unit tests for comments rule":
   checkpoint "Initializing the tests"
   const
     validOptions: seq[string] = @["pattern", "^FIXME"]
-    invalidOptions = @["randomoption", "anotheroption", "thirdoption"]
-    invalidNimCode = "var a = 1"
-    validNimCode = "var a = 1"
+    invalidOptions: seq[string] = @["randomoption", "anotheroption", "thirdoption"]
+    invalidNimCode: string = "var a = 1"
+    validNimCode: string = "var a = 1"
 
   setLogger()
 
   let
     (nimCache, nimConfig) = setNim()
   var
-    validCode = parseString(s = validNimCode, cache = nimCache, config = nimConfig)
-    invalidCode = parseString(s = invalidNimCode, cache = nimCache, config = nimConfig)
-    ruleOptions = RuleOptions(parent: true, fileName: "tests/invalid/comments.nim",
-        negation: false, ruleType: check, options: validOptions, amount: 0,
+    validCode: PNode = parseString(s = validNimCode, cache = nimCache,
+        config = nimConfig)
+    invalidCode: PNode = parseString(s = invalidNimCode, cache = nimCache,
+        config = nimConfig)
+    ruleOptions: RuleOptions = RuleOptions(parent: true,
+        fileName: "tests/invalid/comments.nim", negation: false, ruleType: check,
+        options: validOptions, amount: 0,
         enabled: true, maxResults: Natural.high)
 
   test "Checking the rule's options validation.":
@@ -60,7 +63,8 @@ suite "Unit tests for comments rule":
 
   test "Checking check type of the rule":
     checkpoint "Checking the check type of the rule with the invalid code"
-    ruleCheck(astNode = invalidCode, parentNode = invalidCode, rule = ruleOptions)
+    ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+        rule = ruleOptions)
     check:
       ruleOptions.amount == 0
     checkpoint "Checking the check type of the rule with the valid code"
@@ -81,7 +85,8 @@ suite "Unit tests for comments rule":
     checkpoint "Checking the negative check type of the rule with the invalid code"
     ruleOptions.parent = true
     ruleOptions.fileName = "tests/invalid/comments.nim"
-    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+        rule = ruleOptions)
     check:
       ruleOptions.amount > 0
 
@@ -92,13 +97,14 @@ suite "Unit tests for comments rule":
     ruleOptions.negation = false
     ruleOptions.amount = 0
     ruleOptions.fileName = "tests/invalid/comments.nim"
-    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+        rule = ruleOptions)
     check:
       ruleOptions.amount == 0
     checkpoint "Checking search type of the rule with the valid code."
     ruleOptions.parent = true
     ruleOptions.fileName = "tests/valid/comments.nim"
-    ruleCheck(validCode, validCode, ruleOptions)
+    ruleCheck(astNode = validCode, parentNode = validCode, rule = ruleOptions)
     check:
       ruleOptions.amount > 0
 
@@ -107,13 +113,14 @@ suite "Unit tests for comments rule":
     ruleOptions.parent = true
     ruleOptions.negation = true
     ruleOptions.amount = 0
-    ruleCheck(validCode, validCode, ruleOptions)
+    ruleCheck(astNode = validCode, parentNode = validCode, rule = ruleOptions)
     check:
       ruleOptions.amount == 0
     checkpoint "Checking negative search type of the rule with the invalid code."
     ruleOptions.parent = true
     ruleOptions.fileName = "tests/invalid/comments.nim"
-    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+        rule = ruleOptions)
     check:
       ruleOptions.amount == 1
 
@@ -123,13 +130,14 @@ suite "Unit tests for comments rule":
     ruleOptions.ruleType = count
     ruleOptions.negation = false
     ruleOptions.amount = 0
-    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+        rule = ruleOptions)
     check:
       ruleOptions.amount == 1
     checkpoint "Checking count type of the rule with the valid code."
     ruleOptions.parent = true
     ruleOptions.amount = 0
-    ruleCheck(validCode, validCode, ruleOptions)
+    ruleCheck(astNode = validCode, parentNode = validCode, rule = ruleOptions)
     check:
       ruleOptions.amount == 1
 
@@ -138,13 +146,14 @@ suite "Unit tests for comments rule":
     ruleOptions.parent = true
     ruleOptions.negation = true
     ruleOptions.amount = 0
-    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+        rule = ruleOptions)
     check:
       ruleOptions.amount == 1
     checkpoint "Checking negative count type of the rule with the valid code."
     ruleOptions.parent = true
     ruleOptions.amount = 0
-    ruleCheck(validCode, validCode, ruleOptions)
+    ruleCheck(astNode = validCode, parentNode = validCode, rule = ruleOptions)
     check:
       ruleOptions.amount == 1
 
@@ -154,8 +163,9 @@ suite "Unit tests for comments rule":
     ruleOptions.negation = false
     ruleOptions.amount = 0
     ruleOptions.identsCache = nimCache
-    let oldInvalidCode = copyTree(invalidCode)
-    ruleCheck(invalidCode, invalidCode, ruleOptions)
+    let oldInvalidCode: PNode = copyTree(src = invalidCode)
+    ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+        rule = ruleOptions)
     check:
       $invalidCode == $validCode
-    invalidCode = copyTree(oldInvalidCode)
+    invalidCode = copyTree(src = oldInvalidCode)
