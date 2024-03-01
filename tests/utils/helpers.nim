@@ -45,7 +45,7 @@ proc setLogger*() {.sideEffect, raises: [], tags: [], contractual.} =
   body:
     if getHandlers().len > 0:
       return
-    let logger = newConsoleLogger(fmtStr = "$levelname: ")
+    let logger: ConsoleLogger = newConsoleLogger(fmtStr = "$levelname: ")
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
 
@@ -55,8 +55,8 @@ proc setNim*(): tuple[cache: IdentCache, config: ConfigRef] {.sideEffect,
   ##
   ## Returns new Nim compiler configuration and cache settings
   let
-    nimCache = newIdentCache()
-    nimConfig = newConfigRef()
+    nimCache: IdentCache = newIdentCache()
+    nimConfig: ConfigRef = newConfigRef()
   nimConfig.options.excl(y = optHints)
   return (nimCache, nimConfig)
 
@@ -84,7 +84,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
     for sourceFile in files:
       var
         codeParser: Parser = Parser()
-        fileName = toAbsolute(file = sourceFile & ".nim",
+        fileName: AbsoluteFile = toAbsolute(file = sourceFile & ".nim",
             base = toAbsoluteDir(path = getCurrentDir() & DirSep & "tests" &
             DirSep & "valid"))
       openParser(p = codeParser, filename = fileName,
@@ -92,7 +92,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           cache = nimCache, config = nimConfig)
       var validCode: PNode = codeParser.parseAll
       codeParser.closeParser
-      var fileName2 = toAbsolute(file = sourceFile & ".nim",
+      var fileName2: AbsoluteFile = toAbsolute(file = sourceFile & ".nim",
           base = toAbsoluteDir(path = getCurrentDir() & DirSep & "tests" &
           DirSep & "invalid"))
       openParser(p = codeParser, filename = fileName2,
@@ -100,7 +100,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           cache = nimCache, config = nimConfig)
       var invalidCode: PNode = codeParser.parseAll
       codeParser.closeParser
-      var ruleOptions = RuleOptions(parent: true,
+      var ruleOptions: RuleOptions = RuleOptions(parent: true,
           fileName: "tests/tcomments/test.nim", negation: false,
           ruleType: check, options: validOptions, amount: 0, enabled: true,
           maxResults: Natural.high)
@@ -225,7 +225,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           ruleOptions.negation = false
           ruleOptions.amount = 0
           ruleOptions.identsCache = nimCache
-          let oldInvalidCode = copyTree(src = invalidCode)
+          let oldInvalidCode: PNode = copyTree(src = invalidCode)
           ruleCheck(astNode = invalidCode, parentNode = invalidCode,
               rule = ruleOptions)
           check:
@@ -241,7 +241,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           ruleOptions.parent = true
           ruleOptions.negation = true
           ruleOptions.amount = 0
-          let oldValidCode = copyTree(src = validCode)
+          let oldValidCode: PNode = copyTree(src = validCode)
           ruleCheck(astNode = validCode, parentNode = validCode,
               rule = ruleOptions)
           check:
