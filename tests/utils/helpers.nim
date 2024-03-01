@@ -31,9 +31,15 @@ import ../../src/rules
 import contracts, unittest2
 
 type DisabledChecks* = enum
+  ## the types of disabled tests for the program's rules:
+  ##
+  ## * search type with an invalid code
+  ## * both fix types of rule
+  ## * fix type with negation
   invalidSearch, fixTests, negativeFix
 
 proc setLogger*() {.sideEffect, raises: [], tags: [], contractual.} =
+  ## Set the program's logger to the console
   ensure:
     getHandlers().len > 0
   body:
@@ -45,6 +51,9 @@ proc setLogger*() {.sideEffect, raises: [], tags: [], contractual.} =
 
 proc setNim*(): tuple[cache: IdentCache, config: ConfigRef] {.sideEffect,
     raises: [], tags: [], contractual.} =
+  ## Set the Nim compiler configuration and cache settings
+  ##
+  ## Returns new Nim compiler configuration and cache settings
   let
     nimCache = newIdentCache()
     nimConfig = newConfigRef()
@@ -53,6 +62,18 @@ proc setNim*(): tuple[cache: IdentCache, config: ConfigRef] {.sideEffect,
 
 template runRuleTest*(files, validOptions, invalidOptions: seq[string];
     disabledChecks: set[DisabledChecks] = {}) =
+  ## The main suite for tests for the program's rules
+  ##
+  ## * files          - the list of names of files which contains valid and
+  ##                    invalid code to check with the rule. Valid code should
+  ##                    be placed in *tests/valid* directory and invalid in
+  ##                    *tests/invalid*. Both must have the same name and end
+  ##                    with extension *nim*. All tests will be run separately
+  ##                    on each pair of files.
+  ## * validOptions   - the list of valid options for the rule
+  ## * invalidOptions - the list of invalid options for the rule
+  ## * disabledChecks - the list of disabled checks for the rule. By default
+  ##                    all checks are enabled
 
   suite "Unit tests for " & ruleSettings.name & " rule":
 
