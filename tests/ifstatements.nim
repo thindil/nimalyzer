@@ -33,6 +33,6 @@ runRuleTest(files = @["ifstatements"], validOptions = @["all"],
     disabledChecks = {negativeFix, invalidSearch})
 
 runRuleTest(files = @["ifstatements"], validOptions = @["max", "3"],
-    invalidOptions = @["randomoption", "anotheroption", "andmoreoption"],
+    invalidOptions = @["randomoption2", "anotheroption2", "andmoreoption2"],
     disabledChecks = {negativeFix, invalidSearch})
 
