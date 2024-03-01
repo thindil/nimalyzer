@@ -110,12 +110,14 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleOptions.parent = true
         ruleOptions.negation = true
         ruleOptions.amount = 0
-        ruleCheck(validCode, validCode, ruleOptions)
+        ruleCheck(astNode = validCode, parentNode = validCode,
+            rule = ruleOptions)
         check:
           ruleOptions.amount == 0
         checkpoint "Checking the negative check type of the rule with the invalid code"
         ruleOptions.parent = true
-        ruleCheck(invalidCode, invalidCode, ruleOptions)
+        ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+            rule = ruleOptions)
         check:
           ruleOptions.amount > 0
 
@@ -129,12 +131,14 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           echo "Test for search type of the rule with invalid code skipped"
           skip()
         else:
-          ruleCheck(invalidCode, invalidCode, ruleOptions)
+          ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+              rule = ruleOptions)
           check:
             ruleOptions.amount == 0
           checkpoint "Checking search type of the rule with the valid code."
           ruleOptions.parent = true
-          ruleCheck(validCode, validCode, ruleOptions)
+          ruleCheck(astNode = validCode, parentNode = validCode,
+              rule = ruleOptions)
           check:
             ruleOptions.amount > 0
 
@@ -143,12 +147,14 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleOptions.parent = true
         ruleOptions.negation = true
         ruleOptions.amount = 0
-        ruleCheck(validCode, validCode, ruleOptions)
+        ruleCheck(astNode = validCode, parentNode = validCode,
+            rule = ruleOptions)
         check:
           ruleOptions.amount == 0
         checkpoint "Checking negative search type of the rule with the invalid code."
         ruleOptions.parent = true
-        ruleCheck(invalidCode, invalidCode, ruleOptions)
+        ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+            rule = ruleOptions)
         check:
           ruleOptions.amount > 0
 
@@ -158,13 +164,15 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleOptions.ruleType = count
         ruleOptions.negation = false
         ruleOptions.amount = 0
-        ruleCheck(invalidCode, invalidCode, ruleOptions)
+        ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+            rule = ruleOptions)
         check:
           ruleOptions.amount == 1
         checkpoint "Checking count type of the rule with the valid code."
         ruleOptions.parent = true
         ruleOptions.amount = 0
-        ruleCheck(validCode, validCode, ruleOptions)
+        ruleCheck(astNode = validCode, parentNode = validCode,
+            rule = ruleOptions)
         check:
           ruleOptions.amount == 1
 
@@ -173,13 +181,15 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleOptions.parent = true
         ruleOptions.negation = true
         ruleOptions.amount = 0
-        ruleCheck(invalidCode, invalidCode, ruleOptions)
+        ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+            rule = ruleOptions)
         check:
           ruleOptions.amount == 1
         checkpoint "Checking negative count type of the rule with the valid code."
         ruleOptions.parent = true
         ruleOptions.amount = 0
-        ruleCheck(validCode, validCode, ruleOptions)
+        ruleCheck(astNode = validCode, parentNode = validCode,
+            rule = ruleOptions)
         check:
           ruleOptions.amount == 1
 
@@ -194,11 +204,12 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           ruleOptions.negation = false
           ruleOptions.amount = 0
           ruleOptions.identsCache = nimCache
-          let oldInvalidCode = copyTree(invalidCode)
-          ruleCheck(invalidCode, invalidCode, ruleOptions)
+          let oldInvalidCode = copyTree(src = invalidCode)
+          ruleCheck(astNode = invalidCode, parentNode = invalidCode,
+              rule = ruleOptions)
           check:
             $invalidCode == $validCode
-          invalidCode = copyTree(oldInvalidCode)
+          invalidCode = copyTree(src = oldInvalidCode)
 
       test "Checking negative fix type of the rule":
         if fixTests in disabledChecks or negativeFix in disabledChecks:
@@ -209,8 +220,9 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           ruleOptions.parent = true
           ruleOptions.negation = true
           ruleOptions.amount = 0
-          let oldValidCode = copyTree(validCode)
-          ruleCheck(validCode, validCode, ruleOptions)
+          let oldValidCode = copyTree(src = validCode)
+          ruleCheck(astNode = validCode, parentNode = validCode,
+              rule = ruleOptions)
           check:
             $invalidCode == $validCode
-          validCode = copyTree(oldValidCode)
+          validCode = copyTree(src = oldValidCode)
