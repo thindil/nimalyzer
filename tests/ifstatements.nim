@@ -30,7 +30,7 @@ import utils/helpers
 
 runRuleTest(files = @["ifstatements"], validOptions = @["all"],
     invalidOptions = @["randomoption", "anotheroption", "andmoreoption"],
-    disabledChecks = {negativeFix, invalidSearch})
+    disabledChecks = {fixTests, invalidSearch})
 
 runRuleTest(files = @["ifstatements"], validOptions = @["max", "3"],
     invalidOptions = @["randomoption2", "anotheroption2", "andmoreoption2"],

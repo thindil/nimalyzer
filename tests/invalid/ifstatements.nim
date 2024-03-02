@@ -2,15 +2,20 @@ let a = 0
 
 if a != 1:
   echo "not equal"
-elif a == 2:
-  echo "equal to 2"
-elif a == 3:
-  echo "equal to 3"
 else:
   echo "equal"
 
 if a == 0:
   discard
+
+if a == 0:
+  echo "zero"
+elif a == 1:
+  echo "one"
+elif a == 2:
+  echo "two"
+else:
+  echo "more"
 
 when sizeof(int) == 2:
   echo "running on a 16 bit system!"
