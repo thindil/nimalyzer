@@ -5,6 +5,9 @@ if a != 1:
 else:
   echo "equal"
 
+if a == 0:
+  discard
+
 when sizeof(int) == 2:
   echo "running on a 16 bit system!"
 elif sizeof(int) == 4:
