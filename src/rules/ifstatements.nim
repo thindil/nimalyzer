@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek thindil Jasicki
+# Copyright © 2023-2024 Bartek thindil Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -198,7 +198,8 @@ checkRule:
         if rule.ruleType == fix and not checkResult:
           return
       # Check the amount of the if statement branches (min and max)
-      if rule.options[0].toLowerAscii in ["min", "max"] and rule.amount == oldAmount:
+      if rule.options[0].toLowerAscii in ["min", "max"] and rule.amount ==
+          oldAmount and node.kind != nkWhenStmt:
         var checkResult: bool = true
         if rule.options[0].toLowerAscii == "min":
           if node.len < rule.options[1].parseInt():
