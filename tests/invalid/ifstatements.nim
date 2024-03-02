@@ -2,6 +2,10 @@ let a = 0
 
 if a != 1:
   echo "not equal"
+elif a == 2:
+  echo "equal to 2"
+elif a == 3:
+  echo "equal to 3"
 else:
   echo "equal"
 
