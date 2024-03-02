@@ -12,6 +12,10 @@ of the program.
   update file *rulesList.txt*. Now it is just adding or removing the Nim file
   with the rule's code to *rules* directory.
 
+### Fixed
+- The rule `ifStatements` checks `when` statements for upgrade to `case`
+  statements
+
 ## [0.7.1] - 2023-10-03
 
 ### Fixed
