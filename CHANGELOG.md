@@ -14,7 +14,8 @@ of the program.
 
 ### Fixed
 - The rule `ifStatements` checks `when` statements for upgrade to `case`
-  statements
+  statements.
+- Showing the explanation for negative checks of the `forStatements` rule.
 
 ## [0.7.1] - 2023-10-03
 
