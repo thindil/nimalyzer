@@ -135,9 +135,12 @@ checkRule:
             ^1][0][0].kind != nkEmpty
       if rule.ruleType == RuleTypes.count:
         checkResult = not checkResult
+      let oldAmount: int = rule.amount
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
           negativeMessage = negativeMessage, ruleData = checkType,
           node = nodeToCheck, params = [ $nodeToCheck.info.line, message])
+      if rule.negation and oldAmount > rule.amount:
+        rule.amount = -1_000
       if rule.ruleType == fix and not checkResult:
         return
   endCheck:

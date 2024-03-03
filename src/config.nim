@@ -221,7 +221,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
                 $lineNumber & ". Reason: ", e = getCurrentException())
         # Remove the selected file from the list of source code files to check
         of "ignore":
-          for index, fileName in result.sources:
+          for index, fileName in result.sources.pairs:
             if fileName == setting.value:
               result.sources.del(i = index)
               message(text = "Removed the file '" & fileName &
