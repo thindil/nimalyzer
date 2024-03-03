@@ -106,20 +106,20 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           maxResults: Natural.high)
 
       test "Checking the rule's options validation.":
-        checkpoint "Validate invalid rule's options"
+        echo "Validate invalid rule's options"
         check:
           not validateOptions(rule = ruleSettings, options = invalidOptions)
-        checkpoint "Validate valid rule's options"
+        echo "Validate valid rule's options"
         check:
           validateOptions(rule = ruleSettings, options = validOptions)
 
       test "Checking check type of the rule":
-        checkpoint "Checking the check type of the rule with the invalid code"
+        echo "Checking the check type of the rule with the invalid code"
         ruleCheck(astNode = invalidCode, parentNode = invalidCode,
             rule = ruleOptions)
         check:
           ruleOptions.amount == 0
-        checkpoint "Checking the check type of the rule with the valid code"
+        echo "Checking the check type of the rule with the valid code"
         ruleOptions.parent = true
         ruleCheck(astNode = validCode, parentNode = validCode,
             rule = ruleOptions)
@@ -127,7 +127,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           ruleOptions.amount > 0
 
       test "Checking negative check type of the rule":
-        checkpoint "Checking the negative check type of the rule with the valid code"
+        echo "Checking the negative check type of the rule with the valid code"
         ruleOptions.parent = true
         ruleOptions.negation = true
         ruleOptions.amount = 0
@@ -135,7 +135,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
             rule = ruleOptions)
         check:
           ruleOptions.amount == 0
-        checkpoint "Checking the negative check type of the rule with the invalid code"
+        echo "Checking the negative check type of the rule with the invalid code"
         ruleOptions.parent = true
         ruleCheck(astNode = invalidCode, parentNode = invalidCode,
             rule = ruleOptions)
@@ -143,7 +143,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           ruleOptions.amount > 0
 
       test "Checking search type of the rule":
-        checkpoint "Checking search type of the rule with the invalid code."
+        echo "Checking search type of the rule with the invalid code."
         ruleOptions.parent = true
         ruleOptions.ruleType = search
         ruleOptions.negation = false
@@ -156,7 +156,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
               rule = ruleOptions)
           check:
             ruleOptions.amount == 0
-          checkpoint "Checking search type of the rule with the valid code."
+          echo "Checking search type of the rule with the valid code."
           ruleOptions.parent = true
           ruleCheck(astNode = validCode, parentNode = validCode,
               rule = ruleOptions)
@@ -164,7 +164,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
             ruleOptions.amount > 0
 
       test "Checking negative search type of the rule":
-        checkpoint "Checking negative search type of the rule with the valid code."
+        echo "Checking negative search type of the rule with the valid code."
         ruleOptions.parent = true
         ruleOptions.negation = true
         ruleOptions.amount = 0
@@ -172,7 +172,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
             rule = ruleOptions)
         check:
           ruleOptions.amount == 0
-        checkpoint "Checking negative search type of the rule with the invalid code."
+        echo "Checking negative search type of the rule with the invalid code."
         ruleOptions.parent = true
         ruleCheck(astNode = invalidCode, parentNode = invalidCode,
             rule = ruleOptions)
@@ -180,7 +180,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           ruleOptions.amount > 0
 
       test "Checking count type of the rule":
-        checkpoint "Checking count type of the rule with the invalid code."
+        echo "Checking count type of the rule with the invalid code."
         ruleOptions.parent = true
         ruleOptions.ruleType = count
         ruleOptions.negation = false
@@ -189,7 +189,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
             rule = ruleOptions)
         check:
           ruleOptions.amount == 1
-        checkpoint "Checking count type of the rule with the valid code."
+        echo "Checking count type of the rule with the valid code."
         ruleOptions.parent = true
         ruleOptions.amount = 0
         ruleCheck(astNode = validCode, parentNode = validCode,
@@ -198,7 +198,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           ruleOptions.amount == 1
 
       test "Checking negative count type of the rule":
-        checkpoint "Checking negative count type of the rule with the invalid code."
+        echo "Checking negative count type of the rule with the invalid code."
         ruleOptions.parent = true
         ruleOptions.negation = true
         ruleOptions.amount = 0
@@ -206,7 +206,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
             rule = ruleOptions)
         check:
           ruleOptions.amount == 1
-        checkpoint "Checking negative count type of the rule with the valid code."
+        echo "Checking negative count type of the rule with the valid code."
         ruleOptions.parent = true
         ruleOptions.amount = 0
         ruleCheck(astNode = validCode, parentNode = validCode,
@@ -219,7 +219,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           echo "Test for fix type of the rule skipped."
           skip()
         else:
-          checkpoint "Checking fix type of the rule."
+          echo "Checking fix type of the rule."
           ruleOptions.parent = true
           ruleOptions.ruleType = fix
           ruleOptions.negation = false
@@ -237,7 +237,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           echo "Test for negative fix type of the rule skipped."
           skip()
         else:
-          checkpoint "Checking negative fix type of the rule."
+          echo "Checking negative fix type of the rule."
           ruleOptions.parent = true
           ruleOptions.negation = true
           ruleOptions.amount = 0
