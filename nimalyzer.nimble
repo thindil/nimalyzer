@@ -34,8 +34,8 @@ task release, "builds the project in release mode":
 
 task test, "run the project unit tests":
   for file in listFiles("tests"):
-    if file.endsWith("nim") and file != "tests" & DirSep & "megatest.nim":
-      exec "nim c --verbosity:0 -r " & file
+    if file.endsWith("nim"):
+      exec "nim c --verbosity:0 -r " & file & " -v"
 
 task releasewindows, "builds the project in release mode for Windows 64-bit":
   exec "nimble install -d -y"
