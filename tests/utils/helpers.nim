@@ -147,8 +147,6 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleOptions.ruleType = search
         ruleOptions.negation = false
         ruleOptions.amount = 0
-
-      test "Checking search type of the rule with the valid code.":
         if invalidSearch in disabledChecks:
           echo "Test for search type of the rule with invalid code skipped"
           skip()
@@ -157,6 +155,8 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
               rule = ruleOptions)
           check:
             ruleOptions.amount == 0
+
+      test "Checking search type of the rule with the valid code.":
           ruleOptions.parent = true
           ruleCheck(astNode = validCode, parentNode = validCode,
               rule = ruleOptions)
