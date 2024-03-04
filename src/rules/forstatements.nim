@@ -139,7 +139,8 @@ checkRule:
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
           negativeMessage = negativeMessage, ruleData = checkType,
           node = nodeToCheck, params = [ $nodeToCheck.info.line, message])
-      if rule.negation and oldAmount > rule.amount:
+      # To show the rule's explaination the rule.amount must be negative
+      if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
         rule.amount = -1_000
       if rule.ruleType == fix and not checkResult:
         return
