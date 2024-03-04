@@ -108,7 +108,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           DirSep & "invalid"))
         countInvalidAmount, countNegInvalidAmount: int = -1
       lineNumber = 0
-      for line in lines(fileName = $fileName):
+      for line in lines(fileName = $fileName2):
         if line.startsWith(prefix = "# Count:"):
           countInvalidAmount = line[9 .. ^1].parseInt
         elif line.startsWith(prefix = "# Negative count:"):
