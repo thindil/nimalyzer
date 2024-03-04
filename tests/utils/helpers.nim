@@ -87,14 +87,35 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         fileName: AbsoluteFile = toAbsolute(file = sourceFile & ".nim",
             base = toAbsoluteDir(path = getCurrentDir() & DirSep & "tests" &
             DirSep & "valid"))
+        countValidAmount, countNegValidAmount: int = -1
+        lineNumber: Natural = 0
+      for line in lines(fileName = $fileName):
+        if line.startsWith(prefix = "# Count:"):
+          countValidAmount = line[9 .. ^1].parseInt
+        elif line.startsWith(prefix = "# Negative count:"):
+          countNegValidAmount = line[18 .. ^1].parseInt
+        lineNumber.inc
+        if lineNumber == 2:
+          break
       openParser(p = codeParser, filename = fileName,
           inputStream = llStreamOpen(filename = fileName, mode = fmRead),
           cache = nimCache, config = nimConfig)
       var validCode: PNode = codeParser.parseAll
       codeParser.closeParser
-      var fileName2: AbsoluteFile = toAbsolute(file = sourceFile & ".nim",
+      var
+        fileName2: AbsoluteFile = toAbsolute(file = sourceFile & ".nim",
           base = toAbsoluteDir(path = getCurrentDir() & DirSep & "tests" &
           DirSep & "invalid"))
+        countInvalidAmount, countNegInvalidAmount: int = -1
+      lineNumber = 0
+      for line in lines(fileName = $fileName):
+        if line.startsWith(prefix = "# Count:"):
+          countInvalidAmount = line[9 .. ^1].parseInt
+        elif line.startsWith(prefix = "# Negative count:"):
+          countNegInvalidAmount = line[18 .. ^1].parseInt
+        lineNumber.inc
+        if lineNumber == 2:
+          break
       openParser(p = codeParser, filename = fileName2,
           inputStream = llStreamOpen(filename = fileName2, mode = fmRead),
           cache = nimCache, config = nimConfig)
@@ -187,7 +208,10 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleCheck(astNode = invalidCode, parentNode = invalidCode,
             rule = ruleOptions)
         check:
-          ruleOptions.amount == 1
+          if countInvalidAmount == -1:
+            ruleOptions.amount == 1
+          else:
+            ruleOptions.amount == countInvalidAmount
 
       test "Checking count type of the rule with the valid code.":
         ruleOptions.parent = true
@@ -195,7 +219,10 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleCheck(astNode = validCode, parentNode = validCode,
             rule = ruleOptions)
         check:
-          ruleOptions.amount == 1
+          if countValidAmount == -1:
+            ruleOptions.amount == 1
+          else:
+            ruleOptions.amount == countValidAmount
 
       test "Checking negative count type of the rule with the invalid code.":
         ruleOptions.parent = true
@@ -204,7 +231,10 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleCheck(astNode = invalidCode, parentNode = invalidCode,
             rule = ruleOptions)
         check:
-          ruleOptions.amount == 1
+          if countNegInvalidAmount == -1:
+            ruleOptions.amount == 1
+          else:
+            ruleOptions.amount == countNegInvalidAmount
 
       test "Checking negative count type of the rule with the valid code.":
         ruleOptions.parent = true
@@ -212,7 +242,10 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleCheck(astNode = validCode, parentNode = validCode,
             rule = ruleOptions)
         check:
-          ruleOptions.amount == 1
+          if countNegValidAmount == -1:
+            ruleOptions.amount == 1
+          else:
+            ruleOptions.amount == countNegValidAmount
 
       test "Checking fix type of the rule":
         if fixTests in disabledChecks:
