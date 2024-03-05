@@ -87,7 +87,8 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         fileName: AbsoluteFile = toAbsolute(file = sourceFile & ".nim",
             base = toAbsoluteDir(path = getCurrentDir() & DirSep & "tests" &
             DirSep & "valid"))
-        countValidAmount, countNegValidAmount: int = 1
+        countValidAmount: int = 1
+        countNegValidAmount: int = 0
         lineNumber: Natural = 0
       for line in lines(fileName = $fileName):
         if line.startsWith(prefix = "# Count:"):
@@ -106,7 +107,8 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         fileName2: AbsoluteFile = toAbsolute(file = sourceFile & ".nim",
           base = toAbsoluteDir(path = getCurrentDir() & DirSep & "tests" &
           DirSep & "invalid"))
-        countInvalidAmount, countNegInvalidAmount: int = 1
+        countInvalidAmount: int = 0
+        countNegInvalidAmount: int = 1
       lineNumber = 0
       for line in lines(fileName = $fileName2):
         if line.startsWith(prefix = "# Count:"):
