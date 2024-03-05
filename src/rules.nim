@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023-2024 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -391,7 +391,7 @@ template endCheck*(code: untyped): untyped =
           s = foundMessage.fmt) else: foundMessage.fmt) & " found: " &
           $rule.amount,
           returnValue = rule.amount, level = lvlNotice)
-      rule.amount = 1
+      rule.amount.inc
     elif rule.amount < 1:
       if rule.enabled:
         if rule.negation:
