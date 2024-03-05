@@ -16,6 +16,7 @@ of the program.
 - The rule `ifStatements` checks `when` statements for upgrade to `case`
   statements.
 - Showing the explanation for negative checks of the `forStatements` rule.
+- The result for negative `count` type check for `assignments` rule.
 
 ## [0.7.1] - 2023-10-03
 
