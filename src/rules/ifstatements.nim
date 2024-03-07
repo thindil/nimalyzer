@@ -141,17 +141,20 @@ checkRule:
         if rule.options[0].toLowerAscii in ["all", "negative"]:
           try:
             let conditions: seq[string] = ($node[0]).split
+            var checkResult: bool = true
             if (conditions.len > 2 and conditions[2] == "not") or (
                 conditions.len > 3 and conditions[3] in ["notin", "!="]):
-              var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
+              checkResult = node[^1].kind notin {nkElse, nkElseExpr}
               if rule.ruleType == RuleTypes.count:
                 checkResult = not checkResult
-              setResult(checkResult = checkResult,
-                  positiveMessage = positiveMessage,
-                  negativeMessage = negativeMessage, node = node,
-                  ruleData = "negation", params = [$node.info.line,
-                  (if rule.negation: "doesn't start" else: "starts") &
-                  " with a negative condition."])
+            elif rule.ruleType == RuleTypes.count:
+              checkResult = false
+            setResult(checkResult = checkResult,
+                positiveMessage = positiveMessage,
+                negativeMessage = negativeMessage, node = node,
+                ruleData = "negation", params = [$node.info.line,
+                (if rule.negation: "doesn't start" else: "starts") &
+                " with a negative condition."])
           except Exception as e:
             rule.amount = errorMessage(
                 text = "Can't check the if statement.", e = e)
