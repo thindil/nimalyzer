@@ -144,7 +144,7 @@ checkRule:
             if (conditions.len > 2 and conditions[2] == "not") or (
                 conditions.len > 3 and conditions[3] in ["notin", "!="]):
               var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
-              if rule.ruleType == RuleTypes.count and not rule.negation:
+              if rule.ruleType == RuleTypes.count:
                 checkResult = not checkResult
               setResult(checkResult = checkResult,
                   positiveMessage = positiveMessage,
@@ -168,7 +168,7 @@ checkRule:
               node[^2]
           if lastNode.kind in nkLastBlockStmts:
             var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
-            if rule.ruleType == RuleTypes.count and not rule.negation:
+            if rule.ruleType == RuleTypes.count:
               checkResult = not checkResult
             setResult(checkResult = checkResult,
                 positiveMessage = positiveMessage,
