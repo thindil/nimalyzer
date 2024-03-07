@@ -17,6 +17,7 @@ of the program.
   statements.
 - Showing the explanation for negative checks of the `forStatements` rule.
 - The result for negative `count` type check for `assignments` rule.
+- The result for `count` type check for `ifstatements` rule.
 
 ## [0.7.1] - 2023-10-03
 
