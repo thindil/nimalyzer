@@ -155,12 +155,15 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
           break
     if rule.ruleType == RuleTypes.count:
       if hiddenLine > 0:
-        hiddenLine = 0
-      else:
-        hiddenLine = 1
-    setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
-        negativeMessage = negativeMessage, node = node, ruleData = $node[namePos],
-        params = [$node[namePos], $node.info.line, $hiddenLine])
+        setResult(checkResult = true, positiveMessage = positiveMessage,
+            negativeMessage = negativeMessage, node = node, ruleData = $node[namePos],
+            params = [$node[namePos], $node.info.line, $hiddenLine])
+      elif rule.negation:
+        rule.amount.inc
+    else:
+      setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
+          negativeMessage = negativeMessage, node = node, ruleData = $node[namePos],
+          params = [$node[namePos], $node.info.line, $hiddenLine])
 {.pop ruleOff: "paramsUsed".}
 
 {.hint[XCannotRaiseY]: off.}
