@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek thindil Jasicki
+# Copyright © 2023-2024 Bartek thindil Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -153,6 +153,11 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         if hiddingChild != nil:
           hiddenLine = hiddingChild.info.line
           break
+    if rule.ruleType == RuleTypes.count:
+      if hiddenLine > 0:
+        hiddenLine = 0
+      else:
+        hiddenLine = 1
     setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
         negativeMessage = negativeMessage, node = node, ruleData = $node[namePos],
         params = [$node[namePos], $node.info.line, $hiddenLine])
