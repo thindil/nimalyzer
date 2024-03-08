@@ -1,5 +1,5 @@
 # Count: 0
-# Negative count: 2
+# Negative count: 3
 
 var a = 1
 for i in 1 .. 10:
