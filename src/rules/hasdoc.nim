@@ -88,7 +88,7 @@
 import ../rules
 
 ruleConfig(ruleName = "hasdoc",
-  ruleFoundMessage = "declared public items with documentation",
+  ruleFoundMessage = "declared public items with{negation} documentation",
   ruleNotFoundMessage = "The documentation not found.",
   rulePositiveMessage = "Declaration of {params[0]} at {params[1]} has documentation.",
   ruleNegativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.",
@@ -118,21 +118,22 @@ checkRule:
           negativeMessage = "Module doesn't have documentation.",
           node = astNode)
   startCheck:
-    let nodesToCheck: set[TNodeKind] = case rule.options[0].toLowerAscii
-      of "all":
-        {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef,
-            nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef, nkEnumTy,
-            nkConstSection, nkConstTy, nkVarSection, nkTypeSection, nkObjectTy,
-            nkLetSection}
-      of "callables":
-        {nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef, nkTemplateDef, nkIteratorDef}
-      of "types":
-        {nkTypeSection, nkTypeDef, nkEnumTy, nkObjectTy, nkConstTy}
-      of "typesfields":
-        {nkIdentDefs}
-      else:
-        {}
-    discard
+    let
+      nodesToCheck: set[TNodeKind] = case rule.options[0].toLowerAscii
+        of "all":
+          {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef,
+              nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef, nkEnumTy,
+              nkConstSection, nkConstTy, nkVarSection, nkTypeSection, nkObjectTy,
+              nkLetSection}
+        of "callables":
+          {nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef, nkTemplateDef, nkIteratorDef}
+        of "types":
+          {nkTypeSection, nkTypeDef, nkEnumTy, nkObjectTy, nkConstTy}
+        of "typesfields":
+          {nkIdentDefs}
+        else:
+          {}
+      negation: string = (if rule.negation: "out" else: "")
   checking:
     # Check only elements which can have documentation
     if node.kind in nodesToCheck:
