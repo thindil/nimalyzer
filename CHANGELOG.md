@@ -21,7 +21,8 @@ of the program.
   `localhides` rules.
 - Showing the detailed information about found result for `count` type of
   the program's rules.
-- The summary information for negative `count` type check for `haddoc` rule.
+- The summary information for negative `count` type check for `haddoc` and
+  `hasentity` rules.
 
 ## [0.7.1] - 2023-10-03
 
