@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023-2024 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -106,7 +106,7 @@
 import ../rules
 
 ruleConfig(ruleName = "hasentity",
-  ruleFoundMessage = "declared {rule.options[0]} with name '{rule.options[1]}'",
+  ruleFoundMessage = "declared {rule.options[0]} with{negation} name '{rule.options[1]}'",
   ruleNotFoundMessage = "doesn't have declared {rule.options[0]} with name '{rule.options[1]}'.",
   rulePositiveMessage = "Has declared {params[0]} with name '{params[1]}' at line: {params[2]}.",
   ruleNegativeMessage = "Has declared {params[0]} with name '{params[1]}' at line: {params[2]}.",
@@ -129,6 +129,7 @@ checkRule:
       rule.amount = errorMessage(text = "Invalid type of entity: " &
           rule.options[0])
       return
+    let negation: string = (if rule.negation: "out" else: "")
   checking:
     if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
         nkCommentStmt}:
