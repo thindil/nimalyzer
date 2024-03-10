@@ -19,6 +19,8 @@ of the program.
 - The result for negative `count` type check for `assignments` rule.
 - The result for `count` type check for `casestatements`, `ifstatements` and
   `localhides` rules.
+- Showing the detailed information about found result for `count` type of
+  the program's rules.
 
 ## [0.7.1] - 2023-10-03
 
