@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023-2024 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -116,7 +116,7 @@
 import ../rules
 
 ruleConfig(ruleName = "haspragma",
-  ruleFoundMessage = "declared procedures with selected pragmas",
+  ruleFoundMessage = "declared procedures with{negation} selected pragmas",
   ruleNotFoundMessage = "The selected pragma(s) not found.",
   rulePositiveMessage = "procedure {params[0]} line: {params[1]} has declared pragma: {params[2]}.",
   ruleNegativeMessage = "procedure {params[0]} line: {params[1]} doesn't have declared pragma: {params[2]}.",
@@ -129,15 +129,17 @@ checkRule:
   initCheck:
     discard
   startCheck:
-    let nodesToCheck: set[TNodeKind] = case rule.options[0]
-      of "all":
-        routineDefs
-      of "procedures", "unborrowed":
-        {nkProcDef, nkFuncDef, nkMethodDef}
-      of "templates":
-        {nkTemplateDef}
-      else:
-        {}
+    let
+      nodesToCheck: set[TNodeKind] = case rule.options[0]
+        of "all":
+          routineDefs
+        of "procedures", "unborrowed":
+          {nkProcDef, nkFuncDef, nkMethodDef}
+        of "templates":
+          {nkTemplateDef}
+        else:
+          {}
+      negation: string = (if rule.negation: "out" else: "")
   checking:
     if node.kind in nodesToCheck:
       # Set the name of the procedure to check
