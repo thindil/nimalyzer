@@ -22,7 +22,7 @@ of the program.
 - Showing the detailed information about found result for `count` type of
   the program's rules.
 - The summary information for negative `count` type check for `haddoc`,
-  `hasentity` and `haspragma` rules.
+  `hasentity`, `haspragma` and `localhides` rules.
 
 ## [0.7.1] - 2023-10-03
 
