@@ -1,5 +1,5 @@
-# Count: 1
-# Negative count: 0
+# Count: 0
+# Negative count: 1
 
 let a = 0
 
