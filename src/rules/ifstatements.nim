@@ -209,6 +209,8 @@ checkRule:
             checkResult = false
         elif node.len > rule.options[1].parseInt():
           checkResult = false
+        if rule.ruleType == RuleTypes.count:
+          checkResult = not checkResult
         setResult(checkResult = checkResult,
             positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, node = node,
