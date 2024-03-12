@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023-2024 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -81,8 +81,8 @@
 import ../rules
 
 ruleConfig(ruleName = "vardeclared",
-  ruleFoundMessage = "declarations with{negation}{rule.options[0]} declaration",
-  ruleNotFoundMessage = "declarations with{negation}{rule.options[0]} declaration not found.",
+  ruleFoundMessage = "declarations with{negation} {rule.options[0]} declaration",
+  ruleNotFoundMessage = "declarations with{negation} {rule.options[0]} declaration not found.",
   rulePositiveMessage = "declaration of {params[0]} line: {params[1]} sets the {params[2]} '{params[3]}' as the {params[2]} of the variable.",
   ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} doesn't set {params[2]} for the variable.",
   ruleOptions = @[custom],
