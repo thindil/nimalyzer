@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023-2024 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -83,9 +83,9 @@ import compiler/trees
 import ../rules
 
 ruleConfig(ruleName = "paramsused",
-  ruleFoundMessage = "procedures which{negation} uses all parameters",
-  ruleNotFoundMessage = "procedures which{negation} uses all parameters not found.",
-  rulePositiveMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all parameters.",
+  ruleFoundMessage = "procedures which{negation} use all parameters",
+  ruleNotFoundMessage = "procedures which{negation} use all parameters not found.",
+  rulePositiveMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all its parameters.",
   ruleNegativeMessage = "procedure {params[0]} line: {params[1]} doesn't use parameter '{params[2]}'.",
   ruleOptions = @[custom],
   ruleOptionValues = @["procedures", "templates", "macros", "all"],
