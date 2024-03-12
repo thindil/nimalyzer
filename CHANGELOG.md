@@ -23,7 +23,7 @@ of the program.
   the program's rules.
 - The summary information for negative `count` type check for `haddoc`,
   `hasentity`, `haspragma` and `localhides` rules.
-- The summary information for checks for `paramsused` rule.
+- The summary information for checks for `paramsused` and `vardeclared` rules.
 
 ## [0.7.1] - 2023-10-03
 
