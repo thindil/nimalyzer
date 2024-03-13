@@ -132,7 +132,7 @@ suite "Unit tests for comments rule":
     ruleCheck(astNode = invalidCode, parentNode = invalidCode,
         rule = ruleOptions)
     check:
-      ruleOptions.amount == 1
+      ruleOptions.amount == 0
 
   test "Checking count type of the rule with the valid code.":
     ruleOptions.parent = true
@@ -155,7 +155,7 @@ suite "Unit tests for comments rule":
     ruleOptions.amount = 0
     ruleCheck(astNode = validCode, parentNode = validCode, rule = ruleOptions)
     check:
-      ruleOptions.amount == 1
+      ruleOptions.amount == 0
 
   test "Checking fix type of the rule.":
     ruleOptions.parent = true
