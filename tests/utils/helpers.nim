@@ -177,14 +177,14 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           ruleCheck(astNode = invalidCode, parentNode = invalidCode,
               rule = ruleOptions)
           check:
-            ruleOptions.amount == 0
+            ruleOptions.amount == countInvalidAmount
 
       test "Checking search type of the rule with the valid code.":
           ruleOptions.parent = true
           ruleCheck(astNode = validCode, parentNode = validCode,
               rule = ruleOptions)
           check:
-            ruleOptions.amount > 0
+            ruleOptions.amount == countValidAmount
 
       test "Checking negative search type of the rule with the valid code.":
         ruleOptions.parent = true
@@ -193,14 +193,14 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleCheck(astNode = validCode, parentNode = validCode,
             rule = ruleOptions)
         check:
-          ruleOptions.amount == 0
+          ruleOptions.amount == countNegValidAmount
 
       test "Checking negative search type of the rule with the invalid code.":
         ruleOptions.parent = true
         ruleCheck(astNode = invalidCode, parentNode = invalidCode,
             rule = ruleOptions)
         check:
-          ruleOptions.amount > 0
+          ruleOptions.amount == countNegInvalidAmount
 
       test "Checking count type of the rule with the invalid code.":
         ruleOptions.parent = true
