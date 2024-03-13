@@ -129,6 +129,7 @@ suite "Unit tests for comments rule":
     ruleOptions.ruleType = count
     ruleOptions.negation = false
     ruleOptions.amount = 0
+    ruleOptions.fileName = "tests/invalid/comments.nim"
     ruleCheck(astNode = invalidCode, parentNode = invalidCode,
         rule = ruleOptions)
     check:
@@ -137,6 +138,7 @@ suite "Unit tests for comments rule":
   test "Checking count type of the rule with the valid code.":
     ruleOptions.parent = true
     ruleOptions.amount = 0
+    ruleOptions.fileName = "tests/valid/comments.nim"
     ruleCheck(astNode = validCode, parentNode = validCode, rule = ruleOptions)
     check:
       ruleOptions.amount == 1
@@ -145,6 +147,7 @@ suite "Unit tests for comments rule":
     ruleOptions.parent = true
     ruleOptions.negation = true
     ruleOptions.amount = 0
+    ruleOptions.fileName = "tests/invalid/comments.nim"
     ruleCheck(astNode = invalidCode, parentNode = invalidCode,
         rule = ruleOptions)
     check:
@@ -153,6 +156,7 @@ suite "Unit tests for comments rule":
   test "Checking negative count type of the rule with the valid code.":
     ruleOptions.parent = true
     ruleOptions.amount = 0
+    ruleOptions.fileName = "tests/valid/comments.nim"
     ruleCheck(astNode = validCode, parentNode = validCode, rule = ruleOptions)
     check:
       ruleOptions.amount == 0
