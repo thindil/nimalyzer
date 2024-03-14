@@ -106,7 +106,7 @@ checkRule:
           checkResult = false
       elif node.len - 1 > rule.options[1].parseInt():
         checkResult = false
-      if rule.ruleType == RuleTypes.count:
+      if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
       setResult(checkResult = checkResult,
           positiveMessage = positiveMessage,
