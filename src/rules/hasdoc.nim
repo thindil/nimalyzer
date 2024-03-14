@@ -89,7 +89,7 @@ import ../rules
 
 ruleConfig(ruleName = "hasdoc",
   ruleFoundMessage = "declared public items with{negation} documentation",
-  ruleNotFoundMessage = "The documentation not found.",
+  ruleNotFoundMessage = "{notFoundMsg}",
   rulePositiveMessage = "Declaration of {params[0]} at {params[1]} has documentation.",
   ruleNegativeMessage = "Declaration of {params[0]} at {params[1]} doesn't have documentation.",
   ruleOptions = @[custom, str],
@@ -200,7 +200,11 @@ checkRule:
                 text = "Can't check the declared entity '" & declName & "'.", e = e)
             return
   endCheck:
-    discard
+    let notFoundMsg: string =
+      if rule.negation and rule.ruleType == search and rule.amount < 1:
+        "The documentation found."
+      else:
+        "The documentation not found."
 {.hint[XCannotRaiseY]: on.}
 
 fixRule:
