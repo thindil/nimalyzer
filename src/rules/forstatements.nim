@@ -133,7 +133,7 @@ checkRule:
         checkType = "empty"
         checkResult = nodeToCheck[^1][0].kind != nkDiscardStmt or nodeToCheck[
             ^1][0][0].kind != nkEmpty
-      if rule.ruleType == RuleTypes.count:
+      if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
       let oldAmount: int = rule.amount
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
