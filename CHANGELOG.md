@@ -22,11 +22,12 @@ of the program.
   `localhides` rules.
 - Showing the detailed information about found result for `count` type of
   the program's rules.
-- The summary information for negative `count` type check for `haddoc`,
+- The summary information for negative `count` type check for `hasdoc`,
   `hasentity`, `haspragma` and `localhides` rules.
 - The summary information for checks for `paramsused` and `vardeclared` rules.
 - The result for `search` type check for `casestatements` and `forstatements`
   rules.
+- The summary information for negative `search` type check for `hasdoc` rule.
 
 ## [0.7.1] - 2023-10-03
 
