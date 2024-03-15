@@ -147,7 +147,7 @@ checkRule:
               checkResult = node[^1].kind notin {nkElse, nkElseExpr}
               if rule.ruleType == RuleTypes.count:
                 checkResult = not checkResult
-            elif rule.ruleType == RuleTypes.count:
+            elif rule.ruleType in {RuleTypes.count, search}:
               checkResult = false
             setResult(checkResult = checkResult,
                 positiveMessage = positiveMessage,
@@ -188,7 +188,7 @@ checkRule:
           if child[^1].kind == nkStmtList and child[^1].len == 1:
             checkResult = child[^1][0].kind != nkDiscardStmt or child[^1][0][
                 0].kind != nkEmpty
-            if rule.ruleType == RuleTypes.count and not rule.negation:
+            if rule.ruleType in {RuleTypes.count, search}:
               checkResult = not checkResult
             setResult(checkResult = checkResult,
                 positiveMessage = positiveMessage,
