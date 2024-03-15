@@ -194,7 +194,7 @@ checkRule:
         for pragma in pragmas:
           try:
             strPragmas.add(y = $pragma)
-          except KeyError, Exception:
+          except:
             discard
         if rule.options[0].toLowerAscii != "unborrowed" or "borrow" notin strPragmas:
           # Check the node for each selected pragma
