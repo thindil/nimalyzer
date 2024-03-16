@@ -126,6 +126,26 @@ ruleConfig(ruleName = "ifstatements",
   ruleOptionValues = @["all", "negative", "moveable", "empty", "min", "max"],
   ruleMinOptions = 1)
 
+proc checkMinMax(node, parent: PNode; messagePrefix: string;
+    rule: var RuleOptions) {.raises: [ValueError], tags: [RootEffect], contractual.} =
+  body:
+    let astNode: PNode = parent
+    var checkResult: bool = true
+    if rule.options[0].toLowerAscii == "min":
+      if node.len < rule.options[1].parseInt():
+        checkResult = false
+    elif node.len > rule.options[1].parseInt():
+      checkResult = false
+    if rule.ruleType in {RuleTypes.count, search}:
+      checkResult = not checkResult
+    setResult(checkResult = checkResult,
+        positiveMessage = positiveMessage,
+        negativeMessage = negativeMessage, node = node,
+        ruleData = "amount", params = [$node.info.line,
+        "the statement " & (if rule.negation: "doesn't have " else: "has ") &
+        (if rule.options[0].toLowerAscii == "max": "more " else: "less ") &
+            "than " & rule.options[1] & " branches."])
+
 checkRule:
   initCheck:
     if rule.options[0] in ["min", "max"] and rule.options.len < 2:
@@ -203,21 +223,17 @@ checkRule:
       # Check the amount of the if statement branches (min and max)
       if rule.options[0].toLowerAscii in ["min", "max"] and rule.amount ==
           oldAmount and node.kind != nkWhenStmt:
-        var checkResult: bool = true
-        if rule.options[0].toLowerAscii == "min":
-          if node.len < rule.options[1].parseInt():
-            checkResult = false
-        elif node.len > rule.options[1].parseInt():
-          checkResult = false
-        if rule.ruleType in {RuleTypes.count, search}:
-          checkResult = not checkResult
-        setResult(checkResult = checkResult,
-            positiveMessage = positiveMessage,
-            negativeMessage = negativeMessage, node = node,
-            ruleData = "amount", params = [$node.info.line,
-            "the statement " & (if rule.negation: "doesn't have " else: "has ") &
-            (if rule.options[0].toLowerAscii == "max": "more " else: "less ") &
-                "than " & rule.options[1] & " branches."])
+        checkMinMax(node = node, parent = parentNode,
+            messagePrefix = messagePrefix, rule = rule)
+    else:
+      for child in node:
+        if child.kind in {nkIfStmt, nkElifBranch, nkWhenStmt}:
+          var oldAmount: int = rule.amount
+          # Check the amount of the if statement branches (min and max)
+          if rule.options[0].toLowerAscii in ["min", "max"] and rule.amount ==
+              oldAmount and node.kind != nkWhenStmt:
+            checkMinMax(node = child, parent = node,
+                messagePrefix = messagePrefix, rule = rule)
   endCheck:
     discard
 
