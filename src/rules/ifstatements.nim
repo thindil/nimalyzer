@@ -147,6 +147,27 @@ proc checkMinMax(node, parent: PNode; messagePrefix: string;
         (if rule.options[0].toLowerAscii == "max": "more " else: "less ") &
             "than " & rule.options[1] & " branches."])
 
+proc checkEmptyBranch(node, parent: PNode; messagePrefix: string;
+    rule: var RuleOptions; checkResult: var bool) {.raises: [], tags: [RootEffect], contractual.} =
+  body:
+    let astNode: PNode = parent
+    for child in node:
+      if child.kind == nkIdent:
+        continue
+      if child[^1].kind == nkStmtList and child[^1].len == 1:
+        checkResult = child[^1][0].kind != nkDiscardStmt or child[^1][0][
+            0].kind != nkEmpty
+        if rule.ruleType in {RuleTypes.count, search}:
+          checkResult = not checkResult
+        setResult(checkResult = checkResult,
+            positiveMessage = positiveMessage,
+            negativeMessage = negativeMessage, node = node,
+            ruleData = "discard", params = [$node.info.line,
+            "the statement branch " & (
+            if rule.negation: "doesn't contain" else: "contains") &
+            " only discard statement."])
+        break
+
 checkRule:
   initCheck:
     if rule.options[0] in ["min", "max"] and rule.options.len < 2:
@@ -203,22 +224,8 @@ checkRule:
       # Check if the if statement contains empty branches (with discard only)
       if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
         var checkResult: bool = true
-        for child in node:
-          if child.kind == nkIdent:
-            continue
-          if child[^1].kind == nkStmtList and child[^1].len == 1:
-            checkResult = child[^1][0].kind != nkDiscardStmt or child[^1][0][
-                0].kind != nkEmpty
-            if rule.ruleType in {RuleTypes.count, search}:
-              checkResult = not checkResult
-            setResult(checkResult = checkResult,
-                positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node,
-                ruleData = "discard", params = [$node.info.line,
-                "the statement branch " & (
-                if rule.negation: "doesn't contain" else: "contains") &
-                " only discard statement."])
-            break
+        checkEmptyBranch(node = node, parent = parentNode,
+            messagePrefix = messagePrefix, rule = rule, checkResult = checkResult)
         if rule.ruleType == fix and not checkResult:
           return
       # Check the amount of the if statement branches (min and max)
@@ -230,6 +237,13 @@ checkRule:
       for child in node:
         if child.kind in {nkIfStmt, nkElifBranch, nkWhenStmt}:
           var oldAmount: int = rule.amount
+          # Check if the if statement contains empty branches (with discard only)
+          if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
+            var checkResult: bool = true
+            checkEmptyBranch(node = node, parent = parentNode,
+                messagePrefix = messagePrefix, rule = rule, checkResult = checkResult)
+            if rule.ruleType == fix and not checkResult:
+              return
           # Check the amount of the if statement branches (min and max)
           if rule.options[0].toLowerAscii in ["min", "max"] and rule.amount ==
               oldAmount and node.kind != nkWhenStmt:
