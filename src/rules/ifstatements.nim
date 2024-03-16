@@ -134,8 +134,11 @@ proc checkMinMax(node, parent: PNode; messagePrefix: string;
     if rule.options[0].toLowerAscii == "min":
       if node.len < rule.options[1].parseInt():
         checkResult = false
-    elif node.len > rule.options[1].parseInt():
-      checkResult = false
+    else:
+      if node.len > rule.options[1].parseInt():
+        checkResult = false
+    if rule.negation:
+      checkresult = not checkResult
     if rule.ruleType in {RuleTypes.count, search}:
       checkResult = not checkResult
     setResult(checkResult = checkResult,
@@ -232,6 +235,7 @@ checkRule:
           # Check the amount of the if statement branches (min and max)
           if rule.options[0].toLowerAscii in ["min", "max"] and rule.amount ==
               oldAmount and node.kind != nkWhenStmt:
+            echo "new:", child.len
             checkMinMax(node = child, parent = node,
                 messagePrefix = messagePrefix, rule = rule)
   endCheck:
