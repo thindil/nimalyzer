@@ -137,8 +137,6 @@ proc checkMinMax(node, parent: PNode; messagePrefix: string;
     else:
       if node.len > rule.options[1].parseInt():
         checkResult = false
-    if rule.negation:
-      checkresult = not checkResult
     if rule.ruleType in {RuleTypes.count, search}:
       checkResult = not checkResult
     setResult(checkResult = checkResult,
@@ -157,7 +155,7 @@ checkRule:
   startCheck:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
-    if node.kind in {nkIfStmt, nkElifBranch, nkWhenStmt}:
+    if node.kind in {nkIfStmt, nkWhenStmt}:
       var oldAmount: int = rule.amount
       if node.len > 1:
         # Check if the if statement starts with negative condition and has else branch
