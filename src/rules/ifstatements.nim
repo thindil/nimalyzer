@@ -235,7 +235,6 @@ checkRule:
           # Check the amount of the if statement branches (min and max)
           if rule.options[0].toLowerAscii in ["min", "max"] and rule.amount ==
               oldAmount and node.kind != nkWhenStmt:
-            echo "new:", child.len
             checkMinMax(node = child, parent = node,
                 messagePrefix = messagePrefix, rule = rule)
   endCheck:
