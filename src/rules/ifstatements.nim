@@ -280,11 +280,11 @@ checkRule:
       for child in node:
         if child.kind in {nkIfStmt, nkElifBranch, nkWhenStmt}:
           var oldAmount: int = rule.amount
-          if node.len > 1:
+          if child.len > 1:
             # Check if the if statement starts with negative condition and has else branch
             if rule.options[0].toLowerAscii in ["all", "negative"]:
               try:
-                checkNegativeCondition(node = node, parent = parentNode,
+                checkNegativeCondition(node = child, parent = node,
                     messagePrefix = messagePrefix, rule = rule)
               except Exception as e:
                 rule.amount = errorMessage(
@@ -293,12 +293,12 @@ checkRule:
             # Check if the last if branch can be moved outside the if statement
             if rule.options[0].toLowerAscii in ["all", "moveable"] and
                 rule.amount == oldAmount:
-              checkMoveableBranch(node = node, parent = parentNode,
+              checkMoveableBranch(node = child, parent = node,
                   messagePrefix = messagePrefix, rule = rule, negation = negation)
           # Check if the if statement contains empty branches (with discard only)
           if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
             var checkResult: bool = true
-            checkEmptyBranch(node = node, parent = parentNode,
+            checkEmptyBranch(node = child, parent = node,
                 messagePrefix = messagePrefix, rule = rule, checkResult = checkResult)
             if rule.ruleType == fix and not checkResult:
               return
