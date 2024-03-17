@@ -162,6 +162,7 @@ proc checkEmptyBranch(node, parent: PNode; messagePrefix: string;
   ## * parent        - the parent node of the node to check
   ## * messagePrefix - the prefix added to the log message, set by the program
   ## * rule          - the rule options set by the user
+  ## * checkResult   - the result of the check
   body:
     let astNode: PNode = parent
     for child in node:
@@ -180,6 +181,36 @@ proc checkEmptyBranch(node, parent: PNode; messagePrefix: string;
             if rule.negation: "doesn't contain" else: "contains") &
             " only discard statement."])
         break
+
+proc checkMoveableBranch(node, parent: PNode; messagePrefix: string;
+    rule: var RuleOptions; negation: string) {.raises: [], tags: [RootEffect], contractual.} =
+  ## Check the if statement for branch which can be moved outside the statement
+  ##
+  ## * node          - the node which will be checked
+  ## * parent        - the parent node of the node to check
+  ## * messagePrefix - the prefix added to the log message, set by the program
+  ## * rule          - the rule options set by the user
+  ## * negation      - the text added to the message when negation option is set
+  ##                   for the rule
+  body:
+    let astNode: PNode = parent
+    let lastNode: PNode = try:
+        if node[^2][^1].kind == nkStmtList:
+          node[^2][^1][^1]
+        else:
+          node[^2][^1]
+      except:
+        node[^2]
+    if lastNode.kind in nkLastBlockStmts:
+      var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
+      if rule.ruleType == RuleTypes.count:
+        checkResult = not checkResult
+      setResult(checkResult = checkResult,
+          positiveMessage = positiveMessage,
+          negativeMessage = negativeMessage, node = node,
+          ruleData = "outside", params = [$node.info.line,
+          "the content of the last branch can" & negation &
+          " be moved outside the if statement."])
 {.pop ruleOff: "paramsUsed".}
 
 checkRule:
@@ -218,23 +249,8 @@ checkRule:
         # Check if the last if branch can be moved outside the if statement
         if rule.options[0].toLowerAscii in ["all", "moveable"] and
             rule.amount == oldAmount:
-          let lastNode: PNode = try:
-              if node[^2][^1].kind == nkStmtList:
-                node[^2][^1][^1]
-              else:
-                node[^2][^1]
-            except:
-              node[^2]
-          if lastNode.kind in nkLastBlockStmts:
-            var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}
-            if rule.ruleType == RuleTypes.count:
-              checkResult = not checkResult
-            setResult(checkResult = checkResult,
-                positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node,
-                ruleData = "outside", params = [$node.info.line,
-                "the content of the last branch can" & negation &
-                " be moved outside the if statement."])
+          checkMoveableBranch(node = node, parent = parentNode,
+              messagePrefix = messagePrefix, rule = rule, negation = negation)
       # Check if the if statement contains empty branches (with discard only)
       if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
         var checkResult: bool = true
@@ -251,6 +267,12 @@ checkRule:
       for child in node:
         if child.kind in {nkIfStmt, nkElifBranch, nkWhenStmt}:
           var oldAmount: int = rule.amount
+          if node.len > 1:
+            # Check if the last if branch can be moved outside the if statement
+            if rule.options[0].toLowerAscii in ["all", "moveable"] and
+                rule.amount == oldAmount:
+              checkMoveableBranch(node = node, parent = parentNode,
+                  messagePrefix = messagePrefix, rule = rule, negation = negation)
           # Check if the if statement contains empty branches (with discard only)
           if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
             var checkResult: bool = true
