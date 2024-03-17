@@ -126,6 +126,7 @@ ruleConfig(ruleName = "ifstatements",
   ruleOptionValues = @["all", "negative", "moveable", "empty", "min", "max"],
   ruleMinOptions = 1)
 
+{.push ruleOff: "paramsUsed".}
 proc checkMinMax(node, parent: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [ValueError], tags: [RootEffect], contractual.} =
   body:
@@ -167,6 +168,7 @@ proc checkEmptyBranch(node, parent: PNode; messagePrefix: string;
             if rule.negation: "doesn't contain" else: "contains") &
             " only discard statement."])
         break
+{.pop ruleOff: "paramsUsed".}
 
 checkRule:
   initCheck:
