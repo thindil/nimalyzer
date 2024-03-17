@@ -199,7 +199,7 @@ checkRule:
         if rule.options[0].toLowerAscii != "unborrowed" or "borrow" notin strPragmas:
           # Check the node for each selected pragma
           for pragma in rule.options[1 .. ^1]:
-            {.ruleOff: "ifStatements".}
+            {.ruleOff: "ifstatements".}
             if pragma[^1] == '*' and pragma[0] != '*':
               var hasPragma: bool = false
               for procPragma in strPragmas:
@@ -243,7 +243,7 @@ checkRule:
                   negativeMessage = negativeMessage, node = node,
                   ruleData = pragma, params = [
                   procName, $node.info.line, pragma])
-            {.ruleOn: "ifStatements".}
+            {.ruleOn: "ifstatements".}
   endCheck:
     if not rule.enabled and rule.amount == 0:
       rule.amount = 1
