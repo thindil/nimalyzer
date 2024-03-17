@@ -211,6 +211,32 @@ proc checkMoveableBranch(node, parent: PNode; messagePrefix: string;
           ruleData = "outside", params = [$node.info.line,
           "the content of the last branch can" & negation &
           " be moved outside the if statement."])
+
+proc checkNegativeCondition(node, parent: PNode; messagePrefix: string;
+    rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect], contractual.} =
+  ## Check the if statement for empty branches
+  ##
+  ## * node          - the node which will be checked
+  ## * parent        - the parent node of the node to check
+  ## * messagePrefix - the prefix added to the log message, set by the program
+  ## * rule          - the rule options set by the user
+  body:
+    let astNode: PNode = parent
+    let conditions: seq[string] = ($node[0]).split
+    var checkResult: bool = true
+    if (conditions.len > 2 and conditions[2] == "not") or (
+        conditions.len > 3 and conditions[3] in ["notin", "!="]):
+      checkResult = node[^1].kind notin {nkElse, nkElseExpr}
+      if rule.ruleType == RuleTypes.count:
+        checkResult = not checkResult
+    elif rule.ruleType in {RuleTypes.count, search}:
+      checkResult = false
+    setResult(checkResult = checkResult,
+        positiveMessage = positiveMessage,
+        negativeMessage = negativeMessage, node = node,
+        ruleData = "negation", params = [$node.info.line,
+        (if rule.negation: "doesn't start" else: "starts") &
+        " with a negative condition."])
 {.pop ruleOff: "paramsUsed".}
 
 checkRule:
@@ -227,21 +253,8 @@ checkRule:
         # Check if the if statement starts with negative condition and has else branch
         if rule.options[0].toLowerAscii in ["all", "negative"]:
           try:
-            let conditions: seq[string] = ($node[0]).split
-            var checkResult: bool = true
-            if (conditions.len > 2 and conditions[2] == "not") or (
-                conditions.len > 3 and conditions[3] in ["notin", "!="]):
-              checkResult = node[^1].kind notin {nkElse, nkElseExpr}
-              if rule.ruleType == RuleTypes.count:
-                checkResult = not checkResult
-            elif rule.ruleType in {RuleTypes.count, search}:
-              checkResult = false
-            setResult(checkResult = checkResult,
-                positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node,
-                ruleData = "negation", params = [$node.info.line,
-                (if rule.negation: "doesn't start" else: "starts") &
-                " with a negative condition."])
+            checkNegativeCondition(node = node, parent = parentNode,
+                messagePrefix = messagePrefix, rule = rule)
           except Exception as e:
             rule.amount = errorMessage(
                 text = "Can't check the if statement.", e = e)
@@ -268,6 +281,15 @@ checkRule:
         if child.kind in {nkIfStmt, nkElifBranch, nkWhenStmt}:
           var oldAmount: int = rule.amount
           if node.len > 1:
+            # Check if the if statement starts with negative condition and has else branch
+            if rule.options[0].toLowerAscii in ["all", "negative"]:
+              try:
+                checkNegativeCondition(node = node, parent = parentNode,
+                    messagePrefix = messagePrefix, rule = rule)
+              except Exception as e:
+                rule.amount = errorMessage(
+                    text = "Can't check the if statement.", e = e)
+                return
             # Check if the last if branch can be moved outside the if statement
             if rule.options[0].toLowerAscii in ["all", "moveable"] and
                 rule.amount == oldAmount:

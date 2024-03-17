@@ -13,6 +13,6 @@ if a == 0:
 
 if a > 0:
   for i in 1 .. 5:
-    if a == 1:
+    if a != 1:
       discard
     continue
