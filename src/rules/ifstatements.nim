@@ -129,6 +129,12 @@ ruleConfig(ruleName = "ifstatements",
 {.push ruleOff: "paramsUsed".}
 proc checkMinMax(node, parent: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [ValueError], tags: [RootEffect], contractual.} =
+  ## Check the amount of branches of the selected if statement
+  ##
+  ## * node          - the node which will be checked
+  ## * parent        - the parent node of the node to check
+  ## * messagePrefix - the prefix added to the log message, set by the program
+  ## * rule          - the rule options set by the user
   body:
     let astNode: PNode = parent
     var checkResult: bool = true
@@ -150,6 +156,12 @@ proc checkMinMax(node, parent: PNode; messagePrefix: string;
 
 proc checkEmptyBranch(node, parent: PNode; messagePrefix: string;
     rule: var RuleOptions; checkResult: var bool) {.raises: [], tags: [RootEffect], contractual.} =
+  ## Check the if statement for empty branches
+  ##
+  ## * node          - the node which will be checked
+  ## * parent        - the parent node of the node to check
+  ## * messagePrefix - the prefix added to the log message, set by the program
+  ## * rule          - the rule options set by the user
   body:
     let astNode: PNode = parent
     for child in node:
