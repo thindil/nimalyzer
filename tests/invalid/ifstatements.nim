@@ -1,5 +1,5 @@
-# Count: 2
-# Negative count: 0
+# Count: 3
+# Negative count: 1
 
 let a = 0
 
@@ -10,3 +10,9 @@ else:
 
 if a == 0:
   discard
+
+if a > 0:
+  for i in 1 .. 5:
+    if a == 1:
+      discard
+    continue
