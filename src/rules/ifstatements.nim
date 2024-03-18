@@ -227,7 +227,7 @@ proc checkNegativeCondition(node, parent: PNode; messagePrefix: string;
     if (conditions.len > 2 and conditions[2] == "not") or (
         conditions.len > 3 and conditions[3] in ["notin", "!="]):
       checkResult = node[^1].kind notin {nkElse, nkElseExpr}
-      if rule.ruleType == RuleTypes.count:
+      if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
     elif rule.ruleType in {RuleTypes.count, search}:
       checkResult = false
@@ -308,7 +308,8 @@ checkRule:
             checkMinMax(node = child, parent = node,
                 messagePrefix = messagePrefix, rule = rule)
   endCheck:
-    discard
+    if rule.negation and rule.ruleType in {search, count} and rule.amount < 0:
+      rule.amount = rule.amount.abs - 1
 
 fixRule:
   # Don't change anything if rule has negation or check for amount of branches
