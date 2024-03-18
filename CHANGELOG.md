@@ -11,6 +11,7 @@ of the program.
 - **BREAKING**: adding or removing rules from the program doesn't need to
   update file *rulesList.txt*. Now it is just adding or removing the Nim file
   with the rule's code to *rules* directory.
+- Better detection of `if` stataments by the `isStatements` rule.
 
 ### Fixed
 - The rule `ifStatements` checks `when` statements for upgrade to `case`
