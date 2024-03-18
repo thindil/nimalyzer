@@ -16,7 +16,7 @@ program are missing, and should have a nice amount of bugs.
 
 If you read this file on GitHub: **please don't send pull requests here**. All will
 be automatically closed. Any code propositions should go to the
-[Fossil](https://www.laeran.pl/repositories/nimalyzer) repository.
+[Fossil](https://www.laeran.pl.eu.org/repositories/nimalyzer) repository.
 
 **IMPORTANT:** If you read the file in the project code repository: This
 version of the file is related to the future version of the program. It may
