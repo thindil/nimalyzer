@@ -12,6 +12,7 @@ of the program.
   update file *rulesList.txt*. Now it is just adding or removing the Nim file
   with the rule's code to *rules* directory.
 - Better detection of `if` stataments by the `isStatements` rule.
+- Updated README.md.
 
 ### Fixed
 - The rule `ifStatements` checks `when` statements for upgrade to `case`
