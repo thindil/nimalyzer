@@ -283,6 +283,10 @@ checkRule:
             messagePrefix = messagePrefix, rule = rule)
     else:
       for child in node:
+        setRuleState(node = child, ruleName = ruleSettings.name,
+            oldState = rule.enabled)
+        if not rule.enabled:
+          continue
         if child.kind in {nkIfStmt, nkElifBranch, nkWhenStmt}:
           var oldAmount: int = rule.amount
           if child.len > 1:
