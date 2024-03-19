@@ -128,7 +128,8 @@ ruleConfig(ruleName = "ifstatements",
 
 {.push ruleOff: "paramsUsed".}
 proc checkMinMax(node, parent: PNode; messagePrefix: string;
-    rule: var RuleOptions) {.raises: [ValueError], tags: [RootEffect], contractual.} =
+    rule: var RuleOptions) {.raises: [ValueError], tags: [RootEffect],
+        contractual.} =
   ## Check the amount of branches of the selected if statement
   ##
   ## * node          - the node which will be checked
@@ -155,7 +156,8 @@ proc checkMinMax(node, parent: PNode; messagePrefix: string;
             "than " & rule.options[1] & " branches."])
 
 proc checkEmptyBranch(node, parent: PNode; messagePrefix: string;
-    rule: var RuleOptions; checkResult: var bool) {.raises: [], tags: [RootEffect], contractual.} =
+    rule: var RuleOptions; checkResult: var bool) {.raises: [], tags: [
+        RootEffect], contractual.} =
   ## Check the if statement for empty branches
   ##
   ## * node          - the node which will be checked
@@ -183,7 +185,8 @@ proc checkEmptyBranch(node, parent: PNode; messagePrefix: string;
         break
 
 proc checkMoveableBranch(node, parent: PNode; messagePrefix: string;
-    rule: var RuleOptions; negation: string) {.raises: [], tags: [RootEffect], contractual.} =
+    rule: var RuleOptions; negation: string) {.raises: [], tags: [RootEffect],
+        contractual.} =
   ## Check the if statement for branch which can be moved outside the statement
   ##
   ## * node          - the node which will be checked
@@ -213,7 +216,8 @@ proc checkMoveableBranch(node, parent: PNode; messagePrefix: string;
           " be moved outside the if statement."])
 
 proc checkNegativeCondition(node, parent: PNode; messagePrefix: string;
-    rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect], contractual.} =
+    rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
+        contractual.} =
   ## Check the if statement for empty branches
   ##
   ## * node          - the node which will be checked
@@ -268,7 +272,8 @@ checkRule:
       if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
         var checkResult: bool = true
         checkEmptyBranch(node = node, parent = parentNode,
-            messagePrefix = messagePrefix, rule = rule, checkResult = checkResult)
+            messagePrefix = messagePrefix, rule = rule,
+            checkResult = checkResult)
         if rule.ruleType == fix and not checkResult:
           return
       # Check the amount of the if statement branches (min and max)
@@ -294,12 +299,14 @@ checkRule:
             if rule.options[0].toLowerAscii in ["all", "moveable"] and
                 rule.amount == oldAmount:
               checkMoveableBranch(node = child, parent = node,
-                  messagePrefix = messagePrefix, rule = rule, negation = negation)
+                  messagePrefix = messagePrefix, rule = rule,
+                  negation = negation)
           # Check if the if statement contains empty branches (with discard only)
           if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
             var checkResult: bool = true
             checkEmptyBranch(node = child, parent = node,
-                messagePrefix = messagePrefix, rule = rule, checkResult = checkResult)
+                messagePrefix = messagePrefix, rule = rule,
+                checkResult = checkResult)
             if rule.ruleType == fix and not checkResult:
               return
           # Check the amount of the if statement branches (min and max)
