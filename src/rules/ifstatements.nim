@@ -145,6 +145,15 @@ proc checkMinMax(node, parent: PNode; messagePrefix: string;
     else:
       if node.len > rule.options[1].parseInt():
         checkResult = false
+    if not checkResult:
+      for child in node:
+        for element in child[0]:
+          try:
+            if $element in ["and", "or"]:
+              checkResult = true
+              break
+          except:
+            discard
     if rule.ruleType in {RuleTypes.count, search}:
       checkResult = not checkResult
     setResult(checkResult = checkResult,
