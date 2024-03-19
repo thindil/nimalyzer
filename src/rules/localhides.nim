@@ -153,7 +153,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         if hiddingChild != nil:
           hiddenLine = hiddingChild.info.line
           break
-    if rule.ruleType == RuleTypes.count:
+    if rule.ruleType in {RuleTypes.count, search}:
       if hiddenLine > 0:
         setResult(checkResult = true, positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, node = node, ruleData = $node[namePos],
