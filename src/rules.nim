@@ -236,12 +236,12 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
             return
         else:
           if rule.negation:
-            if rule.ruleType != count:
+            if rule.ruleType == count:
+              rule.amount.inc
+            else:
               message(text = messagePrefix & negativeMessage.multiReplace(
                   replacements = replacements), returnValue = rule.amount,
                   level = lvlNotice, decrease = false)
-            else:
-              rule.amount.inc
             rule.maxResults.dec
             if rule.maxResults == 0:
               return

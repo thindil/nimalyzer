@@ -142,17 +142,17 @@ checkRule:
                   break
               # The node doesn't use one of its parameters
               if index == -1:
-                if not rule.negation:
+                if rule.negation:
+                  setResult(checkResult = false, positiveMessage = "",
+                      negativeMessage = positiveMessage, node = node, params = [
+                      procName, $node.info.line, " doesn't"])
+                  break
+                else:
                   setResult(checkResult = false, positiveMessage = "",
                       negativeMessage = negativeMessage, ruleData = varName,
                       node = node, params = [procName, $node.info.line, varName])
                   if rule.ruleType == fix:
                     return
-                else:
-                  setResult(checkResult = false, positiveMessage = "",
-                      negativeMessage = positiveMessage, node = node, params = [
-                      procName, $node.info.line, " doesn't"])
-                  break
             except KeyError, Exception:
               rule.amount = errorMessage(text = messagePrefix &
                   "can't check parameters of procedure " & procName &

@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023-2024 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -152,13 +152,11 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
         # If the configuration file contains a couple of sections of settings,
         # skip the current line until don't meet the proper section
         if configSection > 0:
-          if configLine[0] != "reset":
-            continue
-          else:
+          if configLine[0] == "reset":
             configSection.dec
             message(text = "Restarting parsing of the configuration file.",
                 level = lvlDebug)
-            continue
+          continue
         case setting.name
         # If the configuration file contains "reset" setting, stop parsing it
         # and increase the amount of sections
