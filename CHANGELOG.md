@@ -28,7 +28,7 @@ of the program.
   `hasentity`, `haspragma` and `localhides` rules.
 - The summary information for checks for `paramsused` and `vardeclared` rules.
 - The result for `search` type check for `casestatements`, `ifstatements`,
-  `forstatements` and `localhides` rules.
+  `forstatements`, `localhides` and `varuplevel` rules.
 - The summary information for negative `search` type check for `hasdoc` rule.
 
 ## [0.7.1] - 2023-10-03
