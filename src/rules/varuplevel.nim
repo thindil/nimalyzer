@@ -113,7 +113,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     var isUpdatable: bool = isDeepConstExpr(n = node[2])
     # Check if let declaration can be updated
     if section.kind == nkLetSection:
-      if rule.negation and rule.ruleType == count:
+      if rule.negation and rule.ruleType in {RuleTypes.count, search}:
         isUpdatable = not isUpdatable
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
@@ -161,7 +161,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
             if checkChild(nodes = child):
               isUpdatable = false
               break
-      if rule.negation and rule.ruleType == count:
+      if rule.negation and rule.ruleType in {RuleTypes.count, search}:
         isUpdatable = not isUpdatable
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
