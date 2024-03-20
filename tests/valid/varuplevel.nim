@@ -1,4 +1,4 @@
-# Count: 1
+# Count: 0
 # Negative count: 2
 
 var a: seq[int]
