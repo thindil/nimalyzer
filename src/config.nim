@@ -185,10 +185,15 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
                 $lineNumber & " for the maximum amount of the program's reports.")
         # Set the file to which the program's output will be logged
         of "output":
-          let fileName: string = unixToNativePath(path = setting.value)
+          let logMode: FileMode = (if setting.value.startsWith(
+              prefix = "new "): fmWrite else: fmAppend)
+          let fileName: string = unixToNativePath(path = (if logMode ==
+              fmWrite: setting.value[4 .. ^1] else: setting.value))
           addHandler(handler = newFileLogger(filename = fileName,
-              fmtStr = "[$time] - $levelname: "))
-          message(text = "Added the file '" & fileName & "' as a log file.",
+              fmtStr = "[$time] - $levelname: ", mode = logMode))
+          message(text = "Added the file '" & fileName & "' as a log file" & (
+              if logMode ==
+              fmWrite: " and remove its content before logging." else: "."),
               level = lvlDebug)
         # Set the command which will be executed when rule type fix encounter
         # a problem
