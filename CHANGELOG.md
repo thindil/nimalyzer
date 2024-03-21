@@ -15,7 +15,7 @@ of the program.
 - Updated README.md.
 
 ### Fixed
-- The rule `ifStatements` checks `when` statements for upgrade to `case`
+- The rule `ifstatements` checks `when` statements for upgrade to `case`
   statements.
 - Showing the explanation for negative checks of the `forStatements` rule.
 - The result for negative `count` type check for `assignments` and
@@ -29,7 +29,8 @@ of the program.
 - The summary information for checks for `paramsused` and `vardeclared` rules.
 - The result for `search` type check for `casestatements`, `ifstatements`,
   `forstatements`, `localhides` and `varuplevel` rules.
-- The summary information for negative `search` type check for `hasdoc` rule.
+- The summary information for negative `search` type check for `hasdoc` and
+  `localhides` rules.
 
 ## [0.7.1] - 2023-10-03
 
