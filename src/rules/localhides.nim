@@ -82,7 +82,7 @@ import ../rules
 
 ruleConfig(ruleName = "localhides",
   ruleFoundMessage = "local declarations which{negation} hide global declarations",
-  ruleNotFoundMessage = "Local declarations which hide global declarations not found.",
+  ruleNotFoundMessage = "Local declarations which{negation} hide global declarations not found.",
   rulePositiveMessage = "declaration of '{params[0]}' line: {params[1]} is not hidden by local variable.",
   ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} is hidden by local variable in line {params[2]}.")
 
