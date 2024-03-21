@@ -51,9 +51,11 @@ second form, the path must be relative to the place from which nimalyzer is
 executed (working directory). The moment from which the output will be saved
 to the file depends on the position of this setting in the configuration
 file. If you don't want to save any configuration related output, you can put
-it at the end of the file.
+it at the end of the file. If there is the word *new* before the path to the
+file, the content of the file will be removed before start logging. Otherwise,
+the logging messages will be added at the end of the file.
 ::
-    output nimalyzer.log
+    output new nimalyzer.log
 
 Fix rule command
 ----------------
@@ -96,6 +98,7 @@ executed (working directory).
     source src/utils.nim
     source tools/gendoc.nim
     source tools/genrule.nim
+    source tests/utils/helpers.nim
 
 Directory
 ---------
@@ -109,6 +112,19 @@ The setting below will check all files in directory "src" and its
 subdirectories.
 ::
     directory src
+
+Files
+-----
+The pattern of path for the list of files which will be analyzed. The path
+must be in Unix form. It will be converted to the proper path by the
+program. A configuration file must have at least one source file defined, by
+'source', 'files' or 'directory' settings. You can add more than one files
+setting per file. Also, the path can be absolute or relative. In the second
+form, the path must be relative to the place from which nimalyzer is
+executed (working directory). The pattern below check all files with 'nim'
+extension in "tests" directory.
+::
+    files tests/*.nim
 
 Ignore
 ------
@@ -131,7 +147,7 @@ before the program starts checking the rules. Any message added after any
 rule, will be repeated for each checked file. The setting below will show
 the message in the program's output (console and the log file) only once.
 ::
-    message Checking the program
+    message Checking the program, tools and the program's unit tests
 
 Check rules
 -----------
@@ -285,25 +301,14 @@ setting `maxReports` to its default value.
 ::
     reset
 
-Files
------
-The pattern of path for the list of files which will be analyzed. The path
-must be in Unix form. It will be converted to the proper path by the
-program. A configuration file must have at least one source file defined, by
-'source', 'files' or 'directory' settings. You can add more than one files
-setting per file. Also, the path can be absolute or relative. In the second
-form, the path must be relative to the place from which nimalyzer is
-executed (working directory). The pattern below check all files with 'nim'
-extension in "src/rules" directory.
-::
-    files src/rules/*.nim
-
 Here is the list of check rules to check by the program in the second section
 of the configuration. They are almost the same as for the previous list of
 the check rules, but the first rule checks also templates and macros. We also
-set again message to show it only once as there is no rules configured for
-the program.
+set again the list of files to check and the message to show it only once as
+there is no rules configured for the program.
 ::
+    files src/rules/*.nim
+
     message Checking the program's rules
 
     check hasPragma all contractual "raises: [*"
