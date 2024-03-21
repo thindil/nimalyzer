@@ -32,4 +32,4 @@ import utils/helpers
 # positive value. Also, disable check for negative fix type of rule as it
 # do nothing.
 runRuleTest(files = @["localhides"], validOptions = @[], invalidOptions = @[
-    "randomoption"], disabledChecks = {invalidSearch, negativeFix})
+    "randomoption"], disabledChecks = {negativeFix})
