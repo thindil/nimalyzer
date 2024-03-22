@@ -73,14 +73,15 @@ const
     windows): "open" else: "xdg-open" & " {fileName}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
-  configOptions*: array[16, string] = ["verbosity", "output", "source", "files",
+  configOptions*: array[17, string] = ["verbosity", "output", "source", "files",
       "directory", "check", "search", "count", "fixcommand", "fix", "reset",
-      "message", "forcefixcommand", "maxreports", "explanation", "ignore"]
+      "message", "forcefixcommand", "maxreports", "explanation", "ignore",
+      "showsummary"]
     ## The list of available the program's configuration's options
 
 proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
     string]; rules: seq[ConfigData]; fixCommand: string;
-    maxReports: Natural] {.sideEffect, raises: [], tags: [ReadIOEffect,
+    maxReports: Natural; showSummary: bool] {.sideEffect, raises: [], tags: [ReadIOEffect,
     RootEffect], contractual.} =
   ## Parse the configuration file and get all the program's settings
   ##
@@ -129,6 +130,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
 
     result.fixCommand = fixCommand
     result.maxReports = Positive.high
+    result.showSummary = false
     try:
       # Read the program's configuration
       var
@@ -263,6 +265,20 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             abortProgram(message = "Can't parse the 'explanation' setting in the configuration file, line: " &
                 $lineNumber & ". No explanation's text set.")
           result.rules[result.rules.high].explanation = setting.value
+        # Set do the progam should show the summary information about the work
+        # after analyzing the code
+        of "showsummary":
+          if setting.value.len == 0:
+            abortProgram(message = "Can't parse the 'showsummary' setting in the configuration file, line: " &
+                $lineNumber & ". No value set, should be 0, 1, true or false.")
+          if setting.value.toLowerAscii in ["0", "false"]:
+            result.showSummary = false
+            message(text = "Disabled showing the program's summary information.",
+                level = lvlDebug)
+          else:
+            result.showSummary = true
+            message(text = "Enabled showing the program's summary information.",
+                level = lvlDebug)
         else:
           discard
         # Set the program's rule to test the code

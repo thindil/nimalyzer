@@ -26,7 +26,7 @@
 ## This is the main module of the program.
 
 # Standard library imports
-import std/[macros, os, strutils]
+import std/[macros, os, strutils, times]
 # External modules imports
 import compiler/[idents, llstream, options, parser, pathutils]
 import colored_logger
@@ -42,7 +42,8 @@ macro importRules() =
   ## Returns the list of import statements with the program's rules code as
   ## modules.
   result = newStmtList()
-  for file in walkDir(dir = getProjectPath().parentDir & DirSep & "src" & DirSep & "rules"):
+  for file in walkDir(dir = getProjectPath().parentDir & DirSep & "src" &
+      DirSep & "rules"):
     if file.path.endsWith(suffix = ".nim"):
       result.add nnkImportStmt.newTree(children =
         newIdentNode(i = file.path)
@@ -72,12 +73,15 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     var
       resultCode: int = QuitSuccess
       configSections: int = 0
+      globalShowSummary: bool = false
+    let startTime = cpuTime()
     # Check source code files with the selected rules
     block checkingCode:
       while configSections > -1:
         # Read the configuration file and set the program
-        var (sources, rules, fixCommand, maxResults) = parseConfig(
+        var (sources, rules, fixCommand, maxResults, showSummary) = parseConfig(
             configFile = paramStr(i = 1), sections = configSections)
+        globalShowSummary = showSummary
         # Check if the lists of source code files and rules is set
         if sources.len == 0:
           abortProgram(message = "No files specified to check. Please enter any files names to the configuration file.")
@@ -150,6 +154,10 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
           except OSError:
             abortProgram(message = "Can't parse file '" & source &
                 "'. Reason: ", e = getCurrentException())
+    if globalShowSummary:
+      message(text = "SUMMARY:")
+      message(text = "========")
+      message(text = "Time taken: " & $(cpuTime() - startTime))
     message(text = "Stopping nimalyzer.")
     quit resultCode
 
