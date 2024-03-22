@@ -26,7 +26,7 @@
 ## This is the main module of the program.
 
 # Standard library imports
-import std/[macros, os, strutils, times]
+import std/[macros, os, strformat, strutils, times]
 # External modules imports
 import compiler/[idents, llstream, options, parser, pathutils]
 import colored_logger
@@ -159,6 +159,12 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       message(text = "========")
       message(text = "SUMMARY:")
       message(text = "Time taken: " & $(cpuTime() - startTime) & " sec(s)")
+      let memUsage: float = getMaxMem().float / 1048576.0
+      try:
+        message(text = "Max memory usage: {memUsage:06.3f} MiB".fmt)
+      except:
+        abortProgram(message = "Can't show the program max memory usage. Reason: ",
+            e = getCurrentException())
     message(text = "Stopping nimalyzer.")
     quit resultCode
 
