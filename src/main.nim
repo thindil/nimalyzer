@@ -74,14 +74,15 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       resultCode: int = QuitSuccess
       configSections: int = 0
       globalShowSummary: bool = false
-    let startTime = cpuTime()
+    let startTime: float = cpuTime()
     # Check source code files with the selected rules
     block checkingCode:
       while configSections > -1:
         # Read the configuration file and set the program
         var (sources, rules, fixCommand, maxResults, showSummary) = parseConfig(
             configFile = paramStr(i = 1), sections = configSections)
-        globalShowSummary = showSummary
+        if showSummary:
+          globalShowSummary = showSummary
         # Check if the lists of source code files and rules is set
         if sources.len == 0:
           abortProgram(message = "No files specified to check. Please enter any files names to the configuration file.")
@@ -155,9 +156,9 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             abortProgram(message = "Can't parse file '" & source &
                 "'. Reason: ", e = getCurrentException())
     if globalShowSummary:
-      message(text = "SUMMARY:")
       message(text = "========")
-      message(text = "Time taken: " & $(cpuTime() - startTime))
+      message(text = "SUMMARY:")
+      message(text = "Time taken: " & $(cpuTime() - startTime) & " sec(s)")
     message(text = "Stopping nimalyzer.")
     quit resultCode
 
