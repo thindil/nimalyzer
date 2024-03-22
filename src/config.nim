@@ -186,7 +186,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
         # Set the file to which the program's output will be logged
         of "output":
           let logMode: FileMode = (if setting.value.startsWith(
-              prefix = "new "): fmWrite else: fmAppend)
+              prefix = "new ".toLowerAscii): fmWrite else: fmAppend)
           let fileName: string = unixToNativePath(path = (if logMode ==
               fmWrite: setting.value[4 .. ^1] else: setting.value))
           addHandler(handler = newFileLogger(filename = fileName,
