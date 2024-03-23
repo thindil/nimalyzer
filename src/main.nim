@@ -158,12 +158,14 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     if globalShowSummary:
       message(text = "========")
       message(text = "SUMMARY:")
-      message(text = "Time taken: " & $(cpuTime() - startTime) & " sec(s)")
-      let memUsage: float = getMaxMem().float / 1048576.0
+      let
+        timeTaken: float = cpuTime() - startTime
+        memUsage: float = getMaxMem().float / 1048576.0
       try:
+        message(text = "Time taken: {timeTaken:06.3f} sec(s)".fmt)
         message(text = "Max memory usage: {memUsage:06.3f} MiB".fmt)
       except:
-        abortProgram(message = "Can't show the program max memory usage. Reason: ",
+        abortProgram(message = "Can't show the program's summary. Reason: ",
             e = getCurrentException())
     message(text = "Stopping nimalyzer.")
     quit resultCode
