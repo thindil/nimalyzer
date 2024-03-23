@@ -6,6 +6,11 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- The configuration option to enable the program's summary at the end of its
+  work. Currently, it shows only how much time elapsed and the highest memory
+  usage.
+
 ### Changed
 - Using unittest2 package for the project's unit tests.
 - **BREAKING**: adding or removing rules from the program doesn't need to
