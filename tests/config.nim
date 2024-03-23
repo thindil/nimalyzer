@@ -37,8 +37,8 @@ suite "Unit tests for config module":
 
   test "Test parsing configuration file":
     var sections: int = 0
-    let (sources, rules, fixCommand, maxReports) = parseConfig(
+    let (sources, rules, fixCommand, maxReports, showSummary) = parseConfig(
         configFile = "config/nimalyzer.cfg", sections = sections)
     check:
       sources.len > 0 and rules.len > 0 and fixCommand.len > 0 and sections ==
-        1 and maxReports == Natural.high
+        1 and maxReports == Natural.high and showSummary
