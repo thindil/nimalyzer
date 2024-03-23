@@ -55,7 +55,9 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
   ## The main procedure of the program
   # Set the logger, where the program output will be send
   body:
-    let logger: ConsoleLogger = newColoredLogger(
+    let
+      startTime: float = cpuTime()
+      logger: ConsoleLogger = newColoredLogger(
         fmtStr = "[$time] $levelname ")
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
@@ -74,7 +76,6 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       resultCode: int = QuitSuccess
       configSections: int = 0
       globalShowSummary: bool = false
-    let startTime: float = cpuTime()
     # Check source code files with the selected rules
     block checkingCode:
       while configSections > -1:
