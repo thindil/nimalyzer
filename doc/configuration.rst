@@ -82,6 +82,18 @@ instead of their code.
 ::
     forcefixcommand true
 
+Show the program's summary
+-----------------
+If the setting is set to *true* or *1* the program will show the short summary
+information about resources usage during analyzing the code. If the setting is
+set to *false* or *0* or doesn't exist in the configuration file, the summary
+will not be presented. It is an optional parameter. The position of the setting
+in the configuration file doesn't matter as the statistics are always started
+to count from the start of the program. The setting below enables the program's
+summary.
+::
+showSummary true
+
 Source
 ------
 The path to the file which will be analyzed. The path must be in Unix form.
