@@ -118,6 +118,15 @@ proc checkIterators(nodeToCheck: PNode; callName, message,
         "'" else: "don't use 'pairs' or 'items'") & " for iterators."
     checkType = "iterator"
 
+proc checkEmpty(nodeToCheck: PNode; message, checkType: var string;
+    checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
+    RootEffect], contractual.} =
+  body:
+    message = (if rule.negation: "doesn't contain" else: "contains") & " only discard statement."
+    checkType = "empty"
+    checkResult = nodeToCheck[^1][0].kind != nkDiscardStmt or nodeToCheck[
+        ^1][0][0].kind != nkEmpty
+
 checkRule:
   initCheck:
     discard
@@ -136,10 +145,8 @@ checkRule:
             message = message, checkType = checkType, checkResult = checkResult, rule = rule)
       # Check if the for statement contains only discard statement
       if not checkResult and rule.options[0].toLowerAscii in ["all", "empty"]:
-        message = (if rule.negation: "doesn't contain" else: "contains") & " only discard statement."
-        checkType = "empty"
-        checkResult = nodeToCheck[^1][0].kind != nkDiscardStmt or nodeToCheck[
-            ^1][0][0].kind != nkEmpty
+        checkEmpty(nodeToCheck = nodeToCheck, message = message,
+            checkType = checkType, checkResult = checkResult, rule = rule)
       if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
       let oldAmount: int = rule.amount
@@ -169,11 +176,16 @@ checkRule:
             checkIterators(nodeToCheck = nodeToCheck, callName = callName,
                 message = message, checkType = checkType,
                 checkResult = checkResult, rule = rule)
+          # Check if the for statement contains only discard statement
+          if not checkResult and rule.options[0].toLowerAscii in ["all", "empty"]:
+            checkEmpty(nodeToCheck = nodeToCheck, message = message,
+                checkType = checkType, checkResult = checkResult, rule = rule)
           if rule.ruleType in {RuleTypes.count, search}:
             checkResult = not checkResult
           let oldAmount: int = rule.amount
           setResult(checkResult = checkResult,
-              positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+              positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage,
               ruleData = checkType,
               node = nodeToCheck, params = [ $nodeToCheck.info.line, message])
           # To show the rule's explaination the rule.amount must be negative
