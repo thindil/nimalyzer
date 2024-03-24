@@ -151,6 +151,36 @@ checkRule:
         rule.amount = -1_000
       if rule.ruleType == fix and not checkResult:
         return
+    else:
+      for child in node:
+        setRuleState(node = child, ruleName = ruleSettings.name,
+            oldState = rule.enabled)
+        if not rule.enabled:
+          continue
+        if child.kind == nkForStmt or (child.kind == nkStmtList and child[
+            0].kind == nkForStmt):
+          let
+            nodeToCheck: PNode = (if child.kind == nkForStmt: child else: child[0])
+          var
+            checkResult: bool = false
+            callName, message, checkType: string = ""
+          # Check if the for statement uses iterators pairs and items
+          if rule.options[0].toLowerAscii in ["all", "iterators"]:
+            checkIterators(nodeToCheck = nodeToCheck, callName = callName,
+                message = message, checkType = checkType,
+                checkResult = checkResult, rule = rule)
+          if rule.ruleType in {RuleTypes.count, search}:
+            checkResult = not checkResult
+          let oldAmount: int = rule.amount
+          setResult(checkResult = checkResult,
+              positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+              ruleData = checkType,
+              node = nodeToCheck, params = [ $nodeToCheck.info.line, message])
+          # To show the rule's explaination the rule.amount must be negative
+          if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+            rule.amount = -1_000
+          if rule.ruleType == fix and not checkResult:
+            return
   endCheck:
     discard
 
