@@ -98,6 +98,15 @@ ruleConfig(ruleName = "forstatements",
 proc checkIterators(nodeToCheck: PNode; message, checkType: var string;
     checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
     RootEffect], contractual.} =
+  ## Check for statement do it use iterators pairs or items
+  ##
+  ## * nodeToCheck - the node which will be checked
+  ## * message     - the message shown to the user with result of the check
+  ## * checkType   - the name of the check's type
+  ## * checkResult - the result of the check
+  ## * rule        - the rule options set by the user
+  ##
+  ## Returns modified arguments checkType, checkResult and rule
   body:
     var callName: string = ""
     try:
@@ -122,6 +131,15 @@ proc checkIterators(nodeToCheck: PNode; message, checkType: var string;
 proc checkEmpty(nodeToCheck: PNode; message, checkType: var string;
     checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
     RootEffect], contractual.} =
+  ## Check for statement do it use iterators pairs or items
+  ##
+  ## * nodeToCheck - the node which will be checked
+  ## * message     - the message shown to the user with result of the check
+  ## * checkType   - the name of the check's type
+  ## * checkResult - the result of the check
+  ## * rule        - the rule options set by the user
+  ##
+  ## Returns modified arguments checkType, checkResult and rule
   body:
     message = (if rule.negation: "doesn't contain" else: "contains") & " only discard statement."
     checkType = "empty"
