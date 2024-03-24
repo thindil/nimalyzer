@@ -95,10 +95,11 @@ ruleConfig(ruleName = "forstatements",
   ruleOptionValues = @["all", "iterators", "empty"],
   ruleMinOptions = 1)
 
-proc checkIterators(nodeToCheck: PNode; callName, message,
-    checkType: var string; checkResult: var bool;
-    rule: var RuleOptions) {.raises: [], tags: [RootEffect], contractual.} =
+proc checkIterators(nodeToCheck: PNode; message, checkType: var string;
+    checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
+    RootEffect], contractual.} =
   body:
+    var callName: string = ""
     try:
       if nodeToCheck[^2].kind == nkCall:
         callName = $nodeToCheck[^2][0]
@@ -138,10 +139,10 @@ checkRule:
         nodeToCheck: PNode = (if node.kind == nkForStmt: node else: node[0])
       var
         checkResult: bool = false
-        callName, message, checkType: string = ""
+        message, checkType: string = ""
       # Check if the for statement uses iterators pairs and items
       if rule.options[0].toLowerAscii in ["all", "iterators"]:
-        checkIterators(nodeToCheck = nodeToCheck, callName = callName,
+        checkIterators(nodeToCheck = nodeToCheck,
             message = message, checkType = checkType, checkResult = checkResult, rule = rule)
       # Check if the for statement contains only discard statement
       if not checkResult and rule.options[0].toLowerAscii in ["all", "empty"]:
@@ -170,10 +171,10 @@ checkRule:
             nodeToCheck: PNode = (if child.kind == nkForStmt: child else: child[0])
           var
             checkResult: bool = false
-            callName, message, checkType: string = ""
+            message, checkType: string = ""
           # Check if the for statement uses iterators pairs and items
           if rule.options[0].toLowerAscii in ["all", "iterators"]:
-            checkIterators(nodeToCheck = nodeToCheck, callName = callName,
+            checkIterators(nodeToCheck = nodeToCheck,
                 message = message, checkType = checkType,
                 checkResult = checkResult, rule = rule)
           # Check if the for statement contains only discard statement
