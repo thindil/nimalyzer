@@ -95,6 +95,29 @@ ruleConfig(ruleName = "forstatements",
   ruleOptionValues = @["all", "iterators", "empty"],
   ruleMinOptions = 1)
 
+proc checkIterators(nodeToCheck: PNode; callName, message,
+    checkType: var string; checkResult: var bool;
+    rule: var RuleOptions) {.raises: [], tags: [RootEffect], contractual.} =
+  body:
+    try:
+      if nodeToCheck[^2].kind == nkCall:
+        callName = $nodeToCheck[^2][0]
+        if ($nodeToCheck[^2]).startsWith(prefix = "pairs") or ($nodeToCheck[
+            ^2]).startsWith(prefix = "items"):
+          checkResult = true
+      elif nodeToCheck[^2].kind == nkDotExpr:
+        callName = $nodeToCheck[^2][^1]
+        if ($nodeToCheck[^2]).endsWith(suffix = ".pairs") or ($nodeToCheck[
+            ^2]).endsWith(suffix = ".items"):
+          checkResult = true
+    except Exception as e:
+      rule.amount = errorMessage(
+          text = "Can't check the for statement.", e = e)
+      return
+    message = (if rule.negation: "uses '" & callName &
+        "'" else: "don't use 'pairs' or 'items'") & " for iterators."
+    checkType = "iterator"
+
 checkRule:
   initCheck:
     discard
@@ -109,24 +132,8 @@ checkRule:
         callName, message, checkType: string = ""
       # Check if the for statement uses iterators pairs and items
       if rule.options[0].toLowerAscii in ["all", "iterators"]:
-        try:
-          if nodeToCheck[^2].kind == nkCall:
-            callName = $nodeToCheck[^2][0]
-            if ($nodeToCheck[^2]).startsWith(prefix = "pairs") or ($nodeToCheck[
-                ^2]).startsWith(prefix = "items"):
-              checkResult = true
-          elif nodeToCheck[^2].kind == nkDotExpr:
-            callName = $nodeToCheck[^2][^1]
-            if ($nodeToCheck[^2]).endsWith(suffix = ".pairs") or ($nodeToCheck[
-                ^2]).endsWith(suffix = ".items"):
-              checkResult = true
-        except Exception as e:
-          rule.amount = errorMessage(
-              text = "Can't check the for statement.", e = e)
-          return
-        message = (if rule.negation: "uses '" & callName &
-            "'" else: "don't use 'pairs' or 'items'") & " for iterators."
-        checkType = "iterator"
+        checkIterators(nodeToCheck = nodeToCheck, callName = callName,
+            message = message, checkType = checkType, checkResult = checkResult, rule = rule)
       # Check if the for statement contains only discard statement
       if not checkResult and rule.options[0].toLowerAscii in ["all", "empty"]:
         message = (if rule.negation: "doesn't contain" else: "contains") & " only discard statement."
