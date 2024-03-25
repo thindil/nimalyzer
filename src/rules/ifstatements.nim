@@ -136,6 +136,8 @@ proc checkMinMax(node, parent: PNode; messagePrefix: string;
   ## * parent        - the parent node of the node to check
   ## * messagePrefix - the prefix added to the log message, set by the program
   ## * rule          - the rule options set by the user
+  ##
+  ## Returns modified argument rule
   body:
     let astNode: PNode = parent
     var checkResult: bool = true
@@ -174,6 +176,8 @@ proc checkEmptyBranch(node, parent: PNode; messagePrefix: string;
   ## * messagePrefix - the prefix added to the log message, set by the program
   ## * rule          - the rule options set by the user
   ## * checkResult   - the result of the check
+  ##
+  ## Returns modified arguments rule and checkResult
   body:
     let astNode: PNode = parent
     for child in node:
@@ -204,6 +208,8 @@ proc checkMoveableBranch(node, parent: PNode; messagePrefix: string;
   ## * rule          - the rule options set by the user
   ## * negation      - the text added to the message when negation option is set
   ##                   for the rule
+  ##
+  ## Returns modified argument rule
   body:
     let astNode: PNode = parent
     let lastNode: PNode = try:
@@ -233,6 +239,8 @@ proc checkNegativeCondition(node, parent: PNode; messagePrefix: string;
   ## * parent        - the parent node of the node to check
   ## * messagePrefix - the prefix added to the log message, set by the program
   ## * rule          - the rule options set by the user
+  ##
+  ## Returns modified argument rule
   body:
     let astNode: PNode = parent
     let conditions: seq[string] = ($node[0]).split
