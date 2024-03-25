@@ -102,7 +102,7 @@ checkRule:
         if startsWith(s = $node[namePos], prefix = '('):
           continue
         # Check each variable declaration if meet the rule requirements
-        for declaration in node.items:
+        for declaration in node:
           if declaration.len == 0:
             continue
           # Check if declaration of variable sets its type

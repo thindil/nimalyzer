@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek thindil Jasicki
+# Copyright © 2023-2024 Bartek thindil Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -208,7 +208,7 @@ fixRule:
       for index, node in nodes:
         if node.kind in {nkVarSection, nkLetSection}:
           nodeIndex = index
-          for index, declaration in node.pairs:
+          for index, declaration in node:
             if declaration == astNode:
               declIndex = index
               break

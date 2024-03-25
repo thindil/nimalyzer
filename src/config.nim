@@ -300,7 +300,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
             newRule.negation = true
             configRule.next
             newRule.name = configRule.key.toLowerAscii
-          for index, rule in rulesList.pairs:
+          for index, rule in rulesList:
             if rule.name == newRule.name:
               newRule.index = index
               break
