@@ -79,15 +79,28 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
     if node.kind == nkTryStmt or (node.kind == nkStmtList and node[0].kind == nkTryStmt):
-      let
-        nodeToCheck: PNode = (if node.kind == nkTryStmt: node else: node[0])
-      try:
-        echo "NEW:"
-        echo nodeToCheck[^1]
-        for child in nodeToCheck[^1]:
-          echo "CHILD:", child
-      except:
-        discard
+      let exceptNode: PNode = (if node.kind == nkTryStmt: node[^1] else: node[0][^1])
+      for child in exceptNode:
+        if child.kind == nkIdent:
+          try:
+            echo "CHILD:", child
+          except:
+            discard
+    else:
+      for child in node:
+        setRuleState(node = child, ruleName = ruleSettings.name,
+            oldState = rule.enabled)
+        if not rule.enabled:
+          continue
+        if child.kind == nkTryStmt or (child.kind == nkStmtList and child[
+            0].kind == nkTryStmt):
+          let exceptNode: PNode = (if child.kind == nkTryStmt: child[^1] else: child[0][^1])
+          for child in exceptNode:
+            if child.kind == nkIdent:
+              try:
+                echo "CHILD:", child
+              except:
+                discard
   endCheck:
     discard
 
