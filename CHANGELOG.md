@@ -16,7 +16,8 @@ of the program.
 - **BREAKING**: adding or removing rules from the program doesn't need to
   update file *rulesList.txt*. Now it is just adding or removing the Nim file
   with the rule's code to *rules* directory.
-- Better detection of `if` stataments by the `isStatements` rule.
+- Better detection of `if` stataments by the `ifStatements` rule.
+- Better detection of `for` stataments by the `forStatements` rule.
 - Updated README.md.
 - **BREAKING**: added the option to set if the log file should be cleared
   before the logging starts. It can breaks the old configuration file, because
