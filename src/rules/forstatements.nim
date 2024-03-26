@@ -131,7 +131,7 @@ proc checkIterators(nodeToCheck: PNode; message, checkType: var string;
 proc checkEmpty(nodeToCheck: PNode; message, checkType: var string;
     checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
     RootEffect], contractual.} =
-  ## Check for statement do it use iterators pairs or items
+  ## Check for statement do it contains only discard statement
   ##
   ## * nodeToCheck - the node which will be checked
   ## * message     - the message shown to the user with result of the check
