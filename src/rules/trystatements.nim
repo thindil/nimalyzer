@@ -75,6 +75,15 @@ ruleConfig(ruleName = "trystatements",
 proc checkEmpty(exceptNode: PNode; message, checkType: var string;
     checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
     RootEffect], contractual.} =
+  ## Check except branch of the try statement do it not specify an exception
+  ##
+  ## * nodeToCheck - the node which will be checked
+  ## * message     - the message shown to the user with result of the check
+  ## * checkType   - the name of the check's type
+  ## * checkResult - the result of the check
+  ## * rule        - the rule options set by the user
+  ##
+  ## Returns modified arguments checkType, checkResult and rule
   require:
     exceptNode != nil
   body:
@@ -89,6 +98,16 @@ proc checkEmpty(exceptNode: PNode; message, checkType: var string;
 proc checkName(exceptNode: PNode; message, checkType: var string;
     checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
     RootEffect], contractual.} =
+  ## Check except branch of the try statement do it contains the selected
+  ## exception
+  ##
+  ## * nodeToCheck - the node which will be checked
+  ## * message     - the message shown to the user with result of the check
+  ## * checkType   - the name of the check's type
+  ## * checkResult - the result of the check
+  ## * rule        - the rule options set by the user
+  ##
+  ## Returns modified arguments checkType, checkResult and rule
   require:
     exceptNode != nil
   body:
