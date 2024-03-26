@@ -23,42 +23,63 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## --Insert here the description of the rule--
+## The rule to check do `try` statements in the code contains or not some
+## expressions. Checked things:
+##
+## * Except branches do they don't have specified an exception.
+## * Except branches for the selected exception.
+##
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? trystatements
+##   [ruleType] ?not? trystatements [checkType] [exceptionName]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
-##   rules, please refer to the program's documentation. --Insert description
-##   how rules types works with the rule--.
+##   rules, please refer to the program's documentation. Check type will raise
+##   an error if there is a `for` statement which violates the check. Search
+##   type will list all statements which violates the check or raise an
+##   error if nothing found. Count type will simply list the amount of the
+##   statements which violates the check. --Insert description
+##   how fix type works with the rule--.
 ## * optional word *not* means negation for the rule. Adding word *not* will
-##   change to inform only about --Insert description how negation affects the
-##   rule--.
+##   change to inform only about  the `try` statements which not violates the
+##   rule's check.
 ## * trystatements is the name of the rule. It is case-insensitive, thus it can be
-##   set as *trystatements*, *trystatements* or *--rUlEnAmE--*.
+##   set as *trystatements*, *trystatements* or *tRyStAtEmEnTs*.
 ##
 ## Disabling the rule
 ## ------------------
 ## It is possible to disable the rule for a selected part of the checked code
-## by using pragma *ruleOff: "trystatements"* in the element from which the rule
-## should be disabled or in code before it. For example, if the rule should
-## be disabled for procedure `proc main()`, the full declaration of it should
-## be::
+## by using pragma *ruleOff: "tryStatements"* in the code before it. For
+## example, if the rule should be disabled for the selected statement, the full
+## declaration of it should be::
 ##
-##     proc main () {.ruleOff: "trystatements".}
+##     {.ruleOff: "tryStatements".}
+##     try:
+##       someProcedure()
+##     except:
+##       discard
 ##
-## To enable the rule again, the pragma *ruleOn: "trystatements"* should be added in
-## the element which should be checked or in code before it. For example, if
-## the rule should be re-enabled for `const a = 1`, the full declaration should
-## be::
+## To enable the rule again, the pragma *ruleOn: "tryStatements"* should be
+## added in the code before it. For example, if the rule should be re-enabled
+## for the statement, the full declaration should be::
 ##
-##     const a {.ruleOn: "trystatements".} = 1
+##     {.ruleOn: "tryStatements".}
+##     try:
+##       someProcedure()
+##     except:
+##       discard
 ##
 ## Examples
 ## --------
 ##
-## --Insert rules examples--
+## 1. Check if all `try` statements have defined exceptions to catch::
+##
+##     check tryStatements empty
+##
+## 2. Remove all occurences of `Exception` excetion from `try` statements::
+##
+##     fix not tryStatements name Exception
 
 # Import default rules' modules
 import ../rules
