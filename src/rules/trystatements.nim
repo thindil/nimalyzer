@@ -75,28 +75,34 @@ ruleConfig(ruleName = "trystatements",
 proc checkEmpty(exceptNode: PNode; message, checkType: var string;
     checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
     RootEffect], contractual.} =
-  message = (if rule.negation: "doesn't contain" else: "contains") & " general except statement."
-  checkType = "empty"
-  checkResult = false
-  for child in exceptNode:
-    if child.kind == nkIdent:
-      checkResult = true
-      break
+  require:
+    exceptNode != nil
+  body:
+    message = (if rule.negation: "doesn't contain" else: "contains") & " general except statement."
+    checkType = "empty"
+    checkResult = false
+    for child in exceptNode:
+      if child.kind == nkIdent:
+        checkResult = true
+        break
 
 proc checkName(exceptNode: PNode; message, checkType: var string;
     checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
     RootEffect], contractual.} =
-  message = (if rule.negation: "doesn't contain" else: "contains") &
-      " except statement with rule '" & rule.options[1] & "'."
-  checkType = "name"
-  checkResult = true
-  for child in exceptNode:
-    try:
-      if child.kind == nkIdent and ($child).toLowerAscii == rule.options[1].toLowerAscii:
-        checkResult = false
-        break
-    except:
-      discard
+  require:
+    exceptNode != nil
+  body:
+    message = (if rule.negation: "doesn't contain" else: "contains") &
+        " except statement with rule '" & rule.options[1] & "'."
+    checkType = "name"
+    checkResult = true
+    for child in exceptNode:
+      try:
+        if child.kind == nkIdent and ($child).toLowerAscii == rule.options[1].toLowerAscii:
+          checkResult = false
+          break
+      except:
+        discard
 
 checkRule:
   initCheck:
