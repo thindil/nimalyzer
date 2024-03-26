@@ -83,9 +83,26 @@ proc checkEmpty(exceptNode: PNode; message, checkType: var string;
       checkResult = true
       break
 
+proc checkName(exceptNode: PNode; message, checkType: var string;
+    checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
+    RootEffect], contractual.} =
+  message = (if rule.negation: "doesn't contain" else: "contains") &
+      " except statement with rule '" & rule.options[1] & "'."
+  checkType = "name"
+  checkResult = true
+  for child in exceptNode:
+    try:
+      if child.kind == nkIdent and ($child).toLowerAscii == rule.options[1].toLowerAscii:
+        checkResult = false
+        break
+    except:
+      discard
+
 checkRule:
   initCheck:
-    discard
+    if rule.options[0] == "name" and rule.options.len < 2:
+      rule.amount = errorMessage(text = "Can't check try statements' names. No name specified to check.")
+      return
   startCheck:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
@@ -98,6 +115,10 @@ checkRule:
       # Check if the try statement contains general except statement
       if rule.options[0].toLowerAscii == "empty":
         checkEmpty(exceptNode = exceptNode, message = message,
+            checkType = checkType, checkResult = checkResult, rule = rule)
+      # Check if the try statement contains except with the selected exception
+      if not checkResult and rule.options[0].toLowerAscii == "name":
+        checkName(exceptNode = exceptNode, message = message,
             checkType = checkType, checkResult = checkResult, rule = rule)
       if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
@@ -127,11 +148,16 @@ checkRule:
           if rule.options[0].toLowerAscii == "empty":
             checkEmpty(exceptNode = exceptNode, message = message,
                 checkType = checkType, checkResult = checkResult, rule = rule)
+          # Check if the try statement contains except with the selected exception
+          if not checkResult and rule.options[0].toLowerAscii == "name":
+            checkName(exceptNode = exceptNode, message = message,
+                checkType = checkType, checkResult = checkResult, rule = rule)
           if rule.ruleType in {RuleTypes.count, search}:
             checkResult = not checkResult
           let oldAmount: int = rule.amount
           setResult(checkResult = checkResult,
-              positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+              positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage,
               ruleData = checkType,
               node = exceptNode, params = [$exceptNode.info.line, message])
           # To show the rule's explaination the rule.amount must be negative
