@@ -72,6 +72,17 @@ ruleConfig(ruleName = "trystatements",
   ruleOptionValues = @["empty", "name"],
   ruleMinOptions = 1)
 
+proc checkEmpty(exceptNode: PNode; message, checkType: var string;
+    checkResult: var bool; rule: var RuleOptions) {.raises: [], tags: [
+    RootEffect], contractual.} =
+  message = (if rule.negation: "doesn't contain" else: "contains") & " general except statement."
+  checkType = "empty"
+  checkResult = false
+  for child in exceptNode:
+    if child.kind == nkIdent:
+      checkResult = true
+      break
+
 checkRule:
   initCheck:
     discard
@@ -79,13 +90,26 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
   checking:
     if node.kind == nkTryStmt or (node.kind == nkStmtList and node[0].kind == nkTryStmt):
-      let exceptNode: PNode = (if node.kind == nkTryStmt: node[^1] else: node[0][^1])
-      for child in exceptNode:
-        if child.kind == nkIdent:
-          try:
-            echo "CHILD:", child
-          except:
-            discard
+      let exceptNode: PNode = (if node.kind == nkTryStmt: node[^1] else: node[
+          0][^1])
+      var
+        checkResult: bool = false
+        message, checkType: string = ""
+      # Check if the try statement contains general except statement
+      if rule.options[0].toLowerAscii == "empty":
+        checkEmpty(exceptNode = exceptNode, message = message,
+            checkType = checkType, checkResult = checkResult, rule = rule)
+      if rule.ruleType in {RuleTypes.count, search}:
+        checkResult = not checkResult
+      let oldAmount: int = rule.amount
+      setResult(checkResult = checkResult, positiveMessage = positiveMessage,
+          negativeMessage = negativeMessage, ruleData = checkType,
+          node = exceptNode, params = [$exceptNode.info.line, message])
+      # To show the rule's explaination the rule.amount must be negative
+      if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+        rule.amount = -1_000
+      if rule.ruleType == fix and not checkResult:
+        return
     else:
       for child in node:
         setRuleState(node = child, ruleName = ruleSettings.name,
@@ -94,13 +118,27 @@ checkRule:
           continue
         if child.kind == nkTryStmt or (child.kind == nkStmtList and child[
             0].kind == nkTryStmt):
-          let exceptNode: PNode = (if child.kind == nkTryStmt: child[^1] else: child[0][^1])
-          for child in exceptNode:
-            if child.kind == nkIdent:
-              try:
-                echo "CHILD:", child
-              except:
-                discard
+          let exceptNode: PNode = (if child.kind == nkTryStmt: child[
+              ^1] else: child[0][^1])
+          var
+            checkResult: bool = false
+            message, checkType: string = ""
+          # Check if the try statement contains general except statement
+          if rule.options[0].toLowerAscii == "empty":
+            checkEmpty(exceptNode = exceptNode, message = message,
+                checkType = checkType, checkResult = checkResult, rule = rule)
+          if rule.ruleType in {RuleTypes.count, search}:
+            checkResult = not checkResult
+          let oldAmount: int = rule.amount
+          setResult(checkResult = checkResult,
+              positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+              ruleData = checkType,
+              node = exceptNode, params = [$exceptNode.info.line, message])
+          # To show the rule's explaination the rule.amount must be negative
+          if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+            rule.amount = -1_000
+          if rule.ruleType == fix and not checkResult:
+            return
   endCheck:
     discard
 
