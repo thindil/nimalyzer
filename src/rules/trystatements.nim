@@ -36,7 +36,7 @@
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
 ##   rules, please refer to the program's documentation. Check type will raise
-##   an error if there is a `for` statement which violates the check. Search
+##   an error if there is a `try` statement which violates the check. Search
 ##   type will list all statements which violates the check or raise an
 ##   error if nothing found. Count type will simply list the amount of the
 ##   statements which violates the check. --Insert description
@@ -47,8 +47,8 @@
 ## * trystatements is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *trystatements*, *trystatements* or *tRyStAtEmEnTs*.
 ## * checkType is the type of checks to perform on the `try` statements. Proper
-##   values are: *empty*, *name*. Setting it to empty will check existence of
-##   except branches without specified an exception. Name value will check do
+##   values are: *empty* and *name*. Setting it to empty will check existence of
+##   except branches without specified any exception. Name value will check do
 ##   exist except branches with the selected exception.
 ## * exceptionName is required only when checkType is set to *name*. It is the
 ##   name of the exception to looking for. The argument is case-insensitive,
@@ -115,12 +115,12 @@ proc checkEmpty(exceptNode: PNode; message, checkType: var string;
   require:
     exceptNode != nil
   body:
-    message = (if rule.negation: "doesn't contain" else: "contains") & " general except statement."
+    message = (if rule.negation: "contains" else: "doesn't contain") & " general except statement."
     checkType = "empty"
-    checkResult = false
+    checkResult = true
     for child in exceptNode:
       if child.kind == nkIdent:
-        checkResult = true
+        checkResult = false
         break
 
 proc checkName(exceptNode: PNode; message, checkType: var string;
