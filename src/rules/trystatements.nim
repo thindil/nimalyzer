@@ -46,6 +46,13 @@
 ##   rule's check.
 ## * trystatements is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *trystatements*, *trystatements* or *tRyStAtEmEnTs*.
+## * checkType is the type of checks to perform on the `try` statements. Proper
+##   values are: *empty*, *name*. Setting it to empty will check existence of
+##   except branches without specified an exception. Name value will check do
+##   exist except branches with the selected exception.
+## * exceptionName is required only when checkType is set to *name*. It is the
+##   name of the exception to looking for. The argument is case-insensitive,
+##   thus setting it to ioerror will find branches with IOError or ioError too.
 ##
 ## Disabling the rule
 ## ------------------
@@ -67,7 +74,7 @@
 ##     {.ruleOn: "tryStatements".}
 ##     try:
 ##       someProcedure()
-##     except:
+##     except IOError:
 ##       discard
 ##
 ## Examples
