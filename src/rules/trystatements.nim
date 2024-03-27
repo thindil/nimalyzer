@@ -139,14 +139,14 @@ proc checkName(exceptNode: PNode; message, checkType: var string;
   require:
     exceptNode != nil
   body:
-    message = (if rule.negation: "doesn't contain" else: "contains") &
+    message = (if rule.negation: "contains" else: "doesn't contain") &
         " except statement with rule '" & rule.options[1] & "'."
     checkType = "name"
-    checkResult = true
+    checkResult = false
     for child in exceptNode:
       try:
         if child.kind == nkIdent and ($child).toLowerAscii == rule.options[1].toLowerAscii:
-          checkResult = false
+          checkResult = true
           break
       except:
         discard
