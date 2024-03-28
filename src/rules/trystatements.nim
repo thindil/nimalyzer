@@ -152,6 +152,40 @@ proc checkName(exceptNode: PNode; message, checkType: var string;
       except:
         discard
 
+proc checkStatement(nodeToCheck, astNode: PNode; rule: var RuleOptions;
+    messagePrefix: string) {.raises: [], tags: [RootEffect], contractual.} =
+  require:
+    nodeToCheck != nil
+    astNode != nil
+  body:
+    for child in nodeToCheck:
+      if child.kind != nkExceptBranch:
+        continue
+      var
+        checkResult: bool = false
+        message, checkType: string = ""
+      # Check if the try statement contains general except statement
+      if rule.options[0].toLowerAscii == "empty":
+        checkEmpty(exceptNode = child, message = message,
+            checkType = checkType, checkResult = checkResult, rule = rule)
+      # Check if the try statement contains except with the selected exception
+      if not checkResult and rule.options[0].toLowerAscii == "name":
+        checkName(exceptNode = child, message = message,
+            checkType = checkType, checkResult = checkResult, rule = rule)
+      if rule.ruleType in {RuleTypes.count, search}:
+        checkResult = not checkResult
+      let oldAmount: int = rule.amount
+      setResult(checkResult = checkResult, positiveMessage = positiveMessage,
+          negativeMessage = negativeMessage, ruleData = checkType,
+          node = child, params = [$child.info.line, message])
+      # To show the rule's explaination the rule.amount must be negative
+      if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+        rule.amount = -1_000
+      if rule.ruleType == fix and not checkResult:
+        return
+      if not checkResult:
+        break
+
 checkRule:
   initCheck:
     if rule.options[0] == "name" and rule.options.len < 2:
@@ -162,33 +196,8 @@ checkRule:
   checking:
     if node.kind == nkTryStmt or (node.kind == nkStmtList and node[0].kind == nkTryStmt):
       let nodeToCheck: PNode = (if node.kind == nkTryStmt: node else: node[0])
-      for child in nodeToCheck:
-        if child.kind != nkExceptBranch:
-          continue
-        var
-          checkResult: bool = false
-          message, checkType: string = ""
-        # Check if the try statement contains general except statement
-        if rule.options[0].toLowerAscii == "empty":
-          checkEmpty(exceptNode = child, message = message,
-              checkType = checkType, checkResult = checkResult, rule = rule)
-        # Check if the try statement contains except with the selected exception
-        if not checkResult and rule.options[0].toLowerAscii == "name":
-          checkName(exceptNode = child, message = message,
-              checkType = checkType, checkResult = checkResult, rule = rule)
-        if rule.ruleType in {RuleTypes.count, search}:
-          checkResult = not checkResult
-        let oldAmount: int = rule.amount
-        setResult(checkResult = checkResult, positiveMessage = positiveMessage,
-            negativeMessage = negativeMessage, ruleData = checkType,
-            node = child, params = [$child.info.line, message])
-        # To show the rule's explaination the rule.amount must be negative
-        if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
-          rule.amount = -1_000
-        if rule.ruleType == fix and not checkResult:
-          return
-        if not checkResult:
-          break
+      checkStatement(nodeToCheck = nodeToCheck, astNode = astNode, rule = rule,
+          messagePrefix = messagePrefix)
     else:
       for child in node:
         setRuleState(node = child, ruleName = ruleSettings.name,
@@ -199,35 +208,8 @@ checkRule:
             0].kind == nkTryStmt):
           let nodeToCheck: PNode = (if child.kind ==
               nkTryStmt: child else: child[0])
-          for branchNode in nodeToCheck:
-            if branchNode.kind != nkExceptBranch:
-              continue
-            var
-              checkResult: bool = false
-              message, checkType: string = ""
-            # Check if the try statement contains general except statement
-            if rule.options[0].toLowerAscii == "empty":
-              checkEmpty(exceptNode = branchNode, message = message,
-                  checkType = checkType, checkResult = checkResult, rule = rule)
-            # Check if the try statement contains except with the selected exception
-            if not checkResult and rule.options[0].toLowerAscii == "name":
-              checkName(exceptNode = branchNode, message = message,
-                  checkType = checkType, checkResult = checkResult, rule = rule)
-            if rule.ruleType in {RuleTypes.count, search}:
-              checkResult = not checkResult
-            let oldAmount: int = rule.amount
-            setResult(checkResult = checkResult,
-                positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage,
-                ruleData = checkType,
-                node = branchNode, params = [$branchNode.info.line, message])
-            # To show the rule's explaination the rule.amount must be negative
-            if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
-              rule.amount = -1_000
-            if rule.ruleType == fix and not checkResult:
-              return
-            if not checkResult:
-              break
+          checkStatement(nodeToCheck = nodeToCheck, astNode = astNode,
+              rule = rule, messagePrefix = messagePrefix)
   endCheck:
     discard
 
