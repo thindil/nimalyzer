@@ -26,7 +26,7 @@
 ## The rule to check do `try` statements in the code contains or not some
 ## expressions. Checked things:
 ##
-## * Except branches do they don't have specified an exception.
+## * Except branches do they don't have specified any exception.
 ## * Except branches for the selected exception.
 ##
 ## The syntax in a configuration file is::
@@ -80,11 +80,11 @@
 ## Examples
 ## --------
 ##
-## 1. Check if all `try` statements have defined exceptions to catch::
+## 1. Check if all `try` statements don't have defined exceptions to catch::
 ##
 ##     check tryStatements empty
 ##
-## 2. Remove all occurences of `Exception` excetion from `try` statements::
+## 2. Remove all occurences of `Exception` exception from `try` statements::
 ##
 ##     fix not tryStatements name Exception
 
