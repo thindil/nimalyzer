@@ -5,3 +5,5 @@ try:
   echo "hello"
 except IOError:
   discard
+except Exception:
+  discard

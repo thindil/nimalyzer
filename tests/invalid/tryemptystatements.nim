@@ -3,5 +3,7 @@
 
 try:
   echo "hello"
-except Exception:
+except IOError:
+  discard
+except:
   discard
