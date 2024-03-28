@@ -32,6 +32,6 @@ runRuleTest(files = @["tryemptystatements"], validOptions = @["empty"],
     invalidOptions = @["randomoption", "anotheroption", "andmoreoption"],
     disabledChecks = {fixTests})
 
-#runRuleTest(files = @["ifmaxstatements"], validOptions = @["max", "3"],
-#    invalidOptions = @["randomoption2", "anotheroption2", "andmoreoption2"],
-#    disabledChecks = {fixTests})
+runRuleTest(files = @["trynamestatements"], validOptions = @["name", "Exception"],
+    invalidOptions = @["randomoption2", "anotheroption2", "andmoreoption2"],
+    disabledChecks = {fixTests})
