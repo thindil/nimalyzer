@@ -226,9 +226,9 @@ fixRule:
   # Don't change anything if rule is looking for non empty except branches
   if rule.negation and rule.options[0] == "empty":
     return false
-  # Remove names of exceptions from except branch
+  var tryNode: PNode = (if parentNode.kind == nkTryStmt: parentNode else: parentNode[0])
+  # Remove names of exceptions from except branch when only empty branches are allowed
   if rule.options[0] == "empty":
-    var tryNode: PNode = (if parentNode.kind == nkTryStmt: parentNode else: parentNode[0])
     # Don't remove anything if the try statement has more than one except branch
     if tryNode.len > 2:
       return false
@@ -236,3 +236,36 @@ fixRule:
     while exceptBranch.len > 1:
       delSon(father = exceptBranch, idx = 0)
       result = true
+  elif rule.options[0] == "name":
+    var exceptBranch: PNode = tryNode[^1]
+    # Remove the selected exception from the except branch
+    if rule.negation:
+      for index, elem in exceptBranch:
+        if elem.kind != nkIdent:
+          continue
+        try:
+          if $elem == rule.options[1]:
+            delSon(father = exceptBranch, idx = index)
+            result = true
+            break
+        except KeyError, Exception:
+          discard errorMessage(text = "Can't remove the selected exception. Reason: " &
+              getCurrentExceptionMsg())
+          return false
+      try:
+        echo tryNode
+      except:
+        discard
+    # Add the selected exception to the except branch
+    else:
+      # Don't add anything if the try statement has more than one except branch
+      if tryNode.len > 2:
+        return false
+      exceptBranch.sons.insert(item = newIdentNode(ident = getIdent(ic = rule.identsCache,
+            identifier = rule.options[1]), info = exceptBranch.info), i = 0)
+      try:
+        echo tryNode
+      except:
+        discard
+      return true
+
