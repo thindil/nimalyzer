@@ -39,8 +39,11 @@
 ##   an error if there is a `try` statement which violates the check. Search
 ##   type will list all statements which violates the check or raise an
 ##   error if nothing found. Count type will simply list the amount of the
-##   statements which violates the check. --Insert description
-##   how fix type works with the rule--.
+##   statements which violates the check. Fix type behavior depends on the
+##   checkType parameter. For empty will try to remove any names of exceptions
+##   from except branch but only when the try statement has only one except branch.
+##   For name it will try to add the selected exception or remove it when the
+##   negation for the rule is set.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about  the `try` statements which not violates the
 ##   rule's check.
