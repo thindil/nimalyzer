@@ -228,13 +228,11 @@ fixRule:
     return false
   # Remove names of exceptions from except branch
   if rule.options[0] == "empty":
-    let tryNode: PNode = (if parentNode.kind == nkTryStmt: parentNode else: parentNode[0])
+    var tryNode: PNode = (if parentNode.kind == nkTryStmt: parentNode else: parentNode[0])
     # Don't remove anything if the try statement has more than one except branch
     if tryNode.len > 2:
       return false
-    try:
-      for child in tryNode:
-        echo "CHILD:", child
-    except:
-      discard
-  return false
+    var exceptBranch: PNode = tryNode[^1]
+    while exceptBranch.len > 1:
+      delSon(father = exceptBranch, idx = 0)
+      result = true
