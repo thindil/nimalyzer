@@ -191,8 +191,6 @@ proc checkStatement(nodeToCheck, astNode: PNode; rule: var RuleOptions;
       # To show the rule's explaination the rule.amount must be negative
       if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
         rule.amount = -1_000
-      if rule.ruleType == fix and not checkResult:
-        return
       if not checkResult:
         break
 {.push ruleOn: "paramsUsed".}
@@ -225,4 +223,18 @@ checkRule:
     discard
 
 fixRule:
-  discard
+  # Don't change anything if rule is looking for non empty except branches
+  if rule.negation and rule.options[0] == "empty":
+    return false
+  # Remove names of exceptions from except branch
+  if rule.options[0] == "empty":
+    let tryNode: PNode = (if parentNode.kind == nkTryStmt: parentNode else: parentNode[0])
+    # Don't remove anything if the try statement has more than one except branch
+    if tryNode.len > 2:
+      return false
+    try:
+      for child in tryNode:
+        echo "CHILD:", child
+    except:
+      discard
+  return false
