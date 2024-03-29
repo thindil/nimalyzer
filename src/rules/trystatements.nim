@@ -152,8 +152,18 @@ proc checkName(exceptNode: PNode; message, checkType: var string;
       except:
         discard
 
+{.push ruleOff: "paramsUsed".}
 proc checkStatement(nodeToCheck, astNode: PNode; rule: var RuleOptions;
     messagePrefix: string) {.raises: [], tags: [RootEffect], contractual.} =
+  ## Check the selected try statement's except branches do they follow the rule's
+  ## settings.
+  ##
+  ## * nodeToCheck   - the node which will be checked
+  ## * astNode       - the module node in which the try statement is
+  ## * messagePrefix - the prefix added to the log message, set by the program
+  ## * rule          - the rule options set by the user
+  ##
+  ## Returns the modified argument rule
   require:
     nodeToCheck != nil
     astNode != nil
@@ -185,6 +195,7 @@ proc checkStatement(nodeToCheck, astNode: PNode; rule: var RuleOptions;
         return
       if not checkResult:
         break
+{.push ruleOn: "paramsUsed".}
 
 checkRule:
   initCheck:
