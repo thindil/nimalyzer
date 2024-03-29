@@ -258,7 +258,7 @@ proc checkNegativeCondition(node, parent: PNode; messagePrefix: string;
         ruleData = "negation", params = [$node.info.line,
         (if rule.negation: "doesn't start" else: "starts") &
         " with a negative condition."])
-{.pop ruleOff: "paramsUsed".}
+{.push ruleOn: "paramsUsed".}
 
 checkRule:
   initCheck:

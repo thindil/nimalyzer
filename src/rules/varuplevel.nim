@@ -166,7 +166,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
           node = node, ruleData = "let", params = [$node[namePos], $node.info.line, "let"])
-{.pop ruleOff: "paramsUsed".}
+{.push ruleOn: "paramsUsed".}
 
 checkRule:
   initCheck:

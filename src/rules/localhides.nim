@@ -164,7 +164,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
       setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
           negativeMessage = negativeMessage, node = node, ruleData = $node[namePos],
           params = [$node[namePos], $node.info.line, $hiddenLine])
-{.pop ruleOff: "paramsUsed".}
+{.push ruleOn: "paramsUsed".}
 
 {.hint[XCannotRaiseY]: off.}
 checkRule:
