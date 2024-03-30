@@ -163,7 +163,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
         timeTaken: float = cpuTime() - startTime
         memUsage: float = getMaxMem().float / 1048576.0
       try:
-        message(text = "Time taken: {timeTaken:06.3f} sec(s)".fmt)
+        message(text = "Time elapsed: {timeTaken:06.3f} sec(s)".fmt)
         message(text = "Max memory usage: {memUsage:06.3f} MiB".fmt)
       except:
         abortProgram(message = "Can't show the program's summary. Reason: ",
