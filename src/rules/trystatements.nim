@@ -42,10 +42,10 @@
 ##   statements which violates the check. Fix type behavior depends on the
 ##   checkType parameter. For empty will try to remove any names of exceptions
 ##   from except branch but only when the try statement has only one except branch.
-##   For name it will try to add the selected exception or remove it when the
+##   For name, it will try to add the selected exception or remove it when the
 ##   negation for the rule is set.
 ## * optional word *not* means negation for the rule. Adding word *not* will
-##   change to inform only about  the `try` statements which not violates the
+##   change to inform only about the `try` statements which not violates the
 ##   rule's check.
 ## * trystatements is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *trystatements*, *trystatements* or *tRyStAtEmEnTs*.
