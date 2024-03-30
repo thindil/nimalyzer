@@ -862,6 +862,76 @@ Examples
 
     search not paramsUsed all
 
+Trystatements rule
+==================
+The rule to check do `try` statements in the code contains or not some
+expressions. Checked things:
+
+* Except branches do they don't have specified any exception.
+* Except branches for the selected exception.
+
+The syntax in a configuration file is::
+
+  [ruleType] ?not? trystatements [checkType] [exceptionName]
+
+* ruleType is the type of rule which will be executed. Proper values are:
+  *check*, *search*, *count* and *fix*. For more information about the types of
+  rules, please refer to the program's documentation. Check type will raise
+  an error if there is a `try` statement which violates the check. Search
+  type will list all statements which violates the check or raise an
+  error if nothing found. Count type will simply list the amount of the
+  statements which violates the check. Fix type behavior depends on the
+  checkType parameter. For empty will try to remove any names of exceptions
+  from except branch but only when the try statement has only one except branch.
+  For name, it will try to add the selected exception or remove it when the
+  negation for the rule is set.
+* optional word *not* means negation for the rule. Adding word *not* will
+  change to inform only about the `try` statements which not violates the
+  rule's check.
+* trystatements is the name of the rule. It is case-insensitive, thus it can be
+  set as *trystatements*, *trystatements* or *tRyStAtEmEnTs*.
+* checkType is the type of checks to perform on the `try` statements. Proper
+  values are: *empty* and *name*. Setting it to empty will check existence of
+  except branches without specified any exception. Name value will check do
+  exist except branches with the selected exception.
+* exceptionName is required only when checkType is set to *name*. It is the
+  name of the exception to looking for. The argument is case-insensitive,
+  thus setting it to ioerror will find branches with IOError or ioError too.
+
+Disabling the rule
+------------------
+It is possible to disable the rule for a selected part of the checked code
+by using pragma *ruleOff: "tryStatements"* in the code before it. For
+example, if the rule should be disabled for the selected statement, the full
+declaration of it should be::
+
+    {.ruleOff: "tryStatements".}
+    try:
+      someProcedure()
+    except:
+      discard
+
+To enable the rule again, the pragma *ruleOn: "tryStatements"* should be
+added in the code before it. For example, if the rule should be re-enabled
+for the statement, the full declaration should be::
+
+    {.ruleOn: "tryStatements".}
+    try:
+      someProcedure()
+    except IOError:
+      discard
+
+Examples
+--------
+
+1. Check if all `try` statements don't have defined exceptions to catch::
+
+    check tryStatements empty
+
+2. Remove all occurences of `Exception` exception from `try` statements::
+
+    fix not tryStatements name Exception
+
 Vardeclared rule
 ================
 The rule to check if the selected variable declaration (var, let and const)
