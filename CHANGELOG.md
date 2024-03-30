@@ -10,6 +10,8 @@ of the program.
 - The configuration option to enable the program's summary at the end of its
   work. Currently, it shows only how much time elapsed and the highest memory
   usage.
+- New rule `tryStatements` to check `try` statements' `except` branches in a
+  code do they are empty or contain an exception with the selected name.
 
 ### Changed
 - Using unittest2 package for the project's unit tests.
