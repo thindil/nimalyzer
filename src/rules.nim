@@ -141,6 +141,7 @@ proc errorMessage*(text: string; e: ref Exception = nil): int {.sideEffect,
     var message: string = text
     if e != nil:
       message.add(y = getCurrentExceptionMsg())
+      message.add(y = "\nException name: [" & $e.name & "]\n")
       when defined(debug):
         message.add(y = "\nStack trace:\n" & getStackTrace(e = e))
     try:
