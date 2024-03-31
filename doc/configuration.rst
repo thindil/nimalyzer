@@ -190,6 +190,7 @@ lvlError. The settings below checks for:
 14. If any `case` statement can be replaced with `if` statement due to small amount of branches.
 15. If any `if` statement can be replaced with `case` statement due to large amount of branches.
 16. If any code block doesn't exceed limit of cyclomatic complexity.
+17. If any `try` statement doesn't have empty `except` branch
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -250,6 +251,9 @@ setting shouldn't contain a new line characters.
 
     check complexity cyclomatic all 40
     explanation A code with high cyclomatic complexity is hard to understand and maintain. Please reduce the amount of the code branches (like, loops, if or case statements).
+
+    check not trystatements empty
+    explanation Except branches with names of exceptions made code more readable. It also prevents problems when the checked code will start propagating new exceptions.
 
 Search rules
 ------------
@@ -370,3 +374,6 @@ there is no rules configured for the program.
 
     check complexity cyclomatic all 40
     explanation A code with high cyclomatic complexity is hard to understand and maintain. Please reduce the amount of the code branches (like, loops, if or case statements).
+
+    check not trystatements empty
+    explanation Except branches with names of exceptions made code more readable. It also prevents problems when the checked code will start propagating new exceptions.
