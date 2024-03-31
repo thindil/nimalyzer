@@ -165,7 +165,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       try:
         message(text = "Time elapsed: {timeTaken:06.3f} sec(s)".fmt)
         message(text = "Max memory usage: {memUsage:06.3f} MiB".fmt)
-      except:
+      except ValueError:
         abortProgram(message = "Can't show the program's summary. Reason: ",
             e = getCurrentException())
     message(text = "Stopping nimalyzer.")

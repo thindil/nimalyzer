@@ -112,7 +112,7 @@ checkRule:
         try:
           if node.sons[1].len < 3:
             continue
-        except:
+        except FieldDefect:
           continue
         if $node[1][1] == $node[0]:
           setResult(checkResult = false,
