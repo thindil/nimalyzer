@@ -154,7 +154,7 @@ proc checkMinMax(node, parent: PNode; messagePrefix: string;
             if $element in ["and", "or"]:
               checkResult = true
               break
-          except:
+          except Exception:
             discard
     if rule.ruleType in {RuleTypes.count, search}:
       checkResult = not checkResult
@@ -217,7 +217,7 @@ proc checkMoveableBranch(node, parent: PNode; messagePrefix: string;
           node[^2][^1][^1]
         else:
           node[^2][^1]
-      except:
+      except Exception:
         node[^2]
     if lastNode.kind in nkLastBlockStmts:
       var checkResult: bool = node[^1].kind notin {nkElse, nkElseExpr}

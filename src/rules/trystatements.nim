@@ -155,7 +155,7 @@ proc checkName(exceptNode: PNode; message, checkType: var string;
             1].toLowerAscii:
           checkResult = true
           break
-      except:
+      except KeyError, Exception:
         discard
 
 {.push ruleOff: "paramsUsed".}

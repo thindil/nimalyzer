@@ -153,7 +153,7 @@ checkRule:
         try:
           if '=' in $node[namePos]:
             continue
-        except:
+        except Exception:
           discard
         # Set the name of the declared entity which is checked for documentation
         var declName: string = try:
