@@ -12,6 +12,7 @@ of the program.
   usage.
 - New rule `tryStatements` to check `try` statements' `except` branches in a
   code do they are empty or contain an exception with the selected name.
+- More information about the program's error to error messages
 
 ### Changed
 - Using unittest2 package for the project's unit tests.
