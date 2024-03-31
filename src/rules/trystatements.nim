@@ -148,7 +148,10 @@ proc checkName(exceptNode: PNode; message, checkType: var string;
     checkResult = false
     for child in exceptNode:
       try:
-        if child.kind == nkIdent and ($child).toLowerAscii == rule.options[
+        let exceptionName: string = (if child.kind == nkIdent: (
+            $child).toLowerAscii elif child.kind == nkInfix: ($child[
+            1]).toLowerAscii else: "")
+        if exceptionName.len > 0 and exceptionName.toLowerAscii == rule.options[
             1].toLowerAscii:
           checkResult = true
           break
@@ -229,7 +232,8 @@ fixRule:
   # Don't change anything if rule is looking for non empty except branches
   if rule.negation and rule.options[0] == "empty":
     return false
-  var tryNode: PNode = (if parentNode.kind == nkTryStmt: parentNode else: parentNode[0])
+  var tryNode: PNode = (if parentNode.kind ==
+      nkTryStmt: parentNode else: parentNode[0])
   # Remove names of exceptions from except branch when only empty branches are allowed
   if rule.options[0] == "empty":
     # Don't remove anything if the try statement has more than one except branch
