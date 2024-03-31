@@ -3,5 +3,5 @@
 
 try:
   echo "hello"
-except Exception:
+except Exception as e:
   discard
