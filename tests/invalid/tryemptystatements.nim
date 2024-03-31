@@ -3,7 +3,7 @@
 
 try:
   echo "hello"
-except IOError:
+except IOError as e:
   discard
 except:
   discard

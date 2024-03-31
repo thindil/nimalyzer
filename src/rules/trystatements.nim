@@ -122,7 +122,7 @@ proc checkEmpty(exceptNode: PNode; message, checkType: var string;
     checkType = "empty"
     checkResult = true
     for child in exceptNode:
-      if child.kind == nkIdent:
+      if child.kind in {nkIdent, nkInfix}:
         checkResult = false
         break
 
