@@ -23,7 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## Provides unit tests for ifstatements rule
+## Provides unit tests for trystatements rule
 
 include ../src/rules/trystatements
 import utils/helpers
