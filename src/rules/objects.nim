@@ -69,7 +69,7 @@ ruleConfig(ruleName = "objects",
   rulePositiveMessage = "",
   ruleNegativeMessage = "",
   ruleOptions = @[custom],
-  ruleOptionValues = @["constructors", "getters", "setters", "all", "public"],
+  ruleOptionValues = @["constructors", "all", "publicfields", "directcalls"],
   ruleMinOptions = 1)
 
 checkRule:
