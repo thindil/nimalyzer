@@ -259,10 +259,6 @@ fixRule:
           discard errorMessage(text = "Can't remove the selected exception. Reason: " &
               getCurrentExceptionMsg())
           return false
-      try:
-        echo tryNode
-      except:
-        discard
     # Add the selected exception to the except branch
     else:
       # Don't add anything if the try statement has more than one except branch
@@ -270,9 +266,5 @@ fixRule:
         return false
       exceptBranch.sons.insert(item = newIdentNode(ident = getIdent(ic = rule.identsCache,
             identifier = rule.options[1]), info = exceptBranch.info), i = 0)
-      try:
-        echo tryNode
-      except:
-        discard
       return true
 
