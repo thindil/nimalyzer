@@ -1,6 +1,6 @@
-# Count: 1
-# Negative count: 0
+# Count: 0
+# Negative count: 1
 
 type test = object
   a: string
-  b: int
+  b, c*: int
