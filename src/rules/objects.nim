@@ -64,21 +64,47 @@
 import ../rules
 
 ruleConfig(ruleName = "objects",
-  ruleFoundMessage = "",
-  ruleNotFoundMessage = "",
-  rulePositiveMessage = "",
-  ruleNegativeMessage = "",
+  ruleFoundMessage = "object's types declarations which can{negation} be upgraded",
+  ruleNotFoundMessage = "object's types declarations which can{negation} be upgraded not found.",
+  rulePositiveMessage = "object's type declaration, line: {params[0]} {params[1]}",
+  ruleNegativeMessage = "object's type declaration, line: {params[0]} {params[1]}",
   ruleOptions = @[custom],
-  ruleOptionValues = @["constructors", "all", "publicfields", "directcalls"],
+  ruleOptionValues = @["all", "publicfields", "directcalls"],
   ruleMinOptions = 1)
 
 checkRule:
   initCheck:
     discard
   startCheck:
-    discard
+    let negation: string = (if rule.negation: "'t" else: "")
   checking:
-    discard
+    var
+      checkResult: bool = false
+      checkType: string = ""
+      message: string = ""
+    # Check if the object's type definition contains any public field
+    if rule.options[0].toLowerAscii in ["all", "publicfields"] and node.kind == nkObjectTy:
+      checkType = "public fields"
+      message = (if rule.negation: "contains" else: "doesn't contain") & " public fields."
+      block publicFields:
+        for child in node:
+          if child.kind == nkRecList:
+            for field in child:
+              for ident in field:
+                if ident.kind == nkPostfix:
+                  checkResult = true
+                  break publicFields
+      if rule.ruleType in {RuleTypes.count, search}:
+        checkResult = not checkResult
+      let oldAmount: int = rule.amount
+      setResult(checkResult = checkResult, positiveMessage = positiveMessage,
+          negativeMessage = negativeMessage, ruleData = checkType,
+          node = node, params = [$node.info.line, message])
+      # To show the rule's explaination the rule.amount must be negative
+      if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+        rule.amount = -1_000
+      if not checkResult:
+        break
   endCheck:
     discard
 
