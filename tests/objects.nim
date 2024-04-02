@@ -28,6 +28,6 @@
 include ../src/rules/objects
 import utils/helpers
 
-runRuleTest(files = @["objects"], validOptions = @["all"],
+runRuleTest(files = @["objects"], validOptions = @["publicfields"],
     invalidOptions = @["randomoption", "anotheroption"],
     disabledChecks = {fixTests})
