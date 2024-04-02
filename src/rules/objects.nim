@@ -106,4 +106,15 @@ checkRule:
     discard
 
 fixRule:
-  discard
+  if rule.negation:
+    discard
+  else:
+    for child in astNode:
+      if child.kind == nkRecList:
+        for field in child:
+          for i in 0 .. field.sons.len - 3:
+            if field[i].kind != nkPostfix:
+              try:
+                echo "IDENT:", field[i]
+              except:
+                discard
