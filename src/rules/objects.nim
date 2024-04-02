@@ -69,23 +69,20 @@ ruleConfig(ruleName = "objects",
   rulePositiveMessage = "object's type declaration, line: {params[0]} {params[1]}",
   ruleNegativeMessage = "object's type declaration, line: {params[0]} {params[1]}",
   ruleOptions = @[custom],
-  ruleOptionValues = @["all", "publicfields", "directcalls"],
+  ruleOptionValues = @["publicfields"],
   ruleMinOptions = 1)
 
 checkRule:
   initCheck:
     discard
   startCheck:
-    let negation: string = (if rule.negation: "'t" else: "")
+    let
+      negation: string = (if rule.negation: "'t" else: "")
+      message: string = (if rule.negation: "contains" else: "doesn't contain") & " public fields."
   checking:
-    var
-      checkResult: bool = false
-      checkType: string = ""
-      message: string = ""
+    var checkResult: bool = false
     # Check if the object's type definition contains any public field
-    if rule.options[0].toLowerAscii in ["all", "publicfields"] and node.kind == nkObjectTy:
-      checkType = "public fields"
-      message = (if rule.negation: "contains" else: "doesn't contain") & " public fields."
+    if rule.options[0].toLowerAscii == "publicfields" and node.kind == nkObjectTy:
       block publicFields:
         for child in node:
           if child.kind == nkRecList:
@@ -98,7 +95,7 @@ checkRule:
         checkResult = not checkResult
       let oldAmount: int = rule.amount
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
-          negativeMessage = negativeMessage, ruleData = checkType,
+          negativeMessage = negativeMessage, ruleData = "public fields",
           node = node, params = [$node.info.line, message])
       # To show the rule's explaination the rule.amount must be negative
       if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
