@@ -143,7 +143,7 @@ proc checkName(exceptNode: PNode; message, checkType: var string;
     exceptNode != nil
   body:
     message = (if rule.negation: "contains" else: "doesn't contain") &
-        " except statement with rule '" & rule.options[1] & "'."
+        " except statement with exception '" & rule.options[1] & "'."
     checkType = "name"
     checkResult = false
     for child in exceptNode:
