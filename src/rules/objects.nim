@@ -23,7 +23,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## --Insert here the description of the rule--
+## The rule to check do objects' declarations in the code contains or not some
+## expressions. Checked things:
+##
+## * Do the object's declaration contains public fields.
+##
 ## The syntax in a configuration file is::
 ##
 ##   [ruleType] ?not? objects
