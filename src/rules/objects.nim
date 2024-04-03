@@ -106,8 +106,10 @@ checkRule:
     discard
 
 fixRule:
+  # Made all fields of the object private
   if rule.negation:
     discard
+  # Made all fields of the object public
   else:
     for child in astNode:
       if child.kind == nkRecList:
@@ -115,6 +117,10 @@ fixRule:
           for i in 0 .. field.sons.len - 3:
             if field[i].kind != nkPostfix:
               try:
-                echo "IDENT:", field[i]
-              except:
-                discard
+                field[i] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+                  identifier = $field[i] & "*"), info = field.info)
+                result = true
+              except KeyError, Exception:
+                discard errorMessage(text = "Can't set the object's field public. Reason: " &
+                    getCurrentExceptionMsg())
+                return false
