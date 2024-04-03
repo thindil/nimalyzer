@@ -71,10 +71,7 @@ ruleConfig(ruleName = "objects",
   ruleFoundMessage = "object's types declarations which can{negation} be upgraded",
   ruleNotFoundMessage = "object's types declarations which can{negation} be upgraded not found.",
   rulePositiveMessage = "object's type declaration, line: {params[0]} {params[1]}",
-  ruleNegativeMessage = "object's type declaration, line: {params[0]} {params[1]}",
-  ruleOptions = @[custom],
-  ruleOptionValues = @["publicfields"],
-  ruleMinOptions = 1)
+  ruleNegativeMessage = "object's type declaration, line: {params[0]} {params[1]}")
 
 checkRule:
   initCheck:
@@ -86,7 +83,7 @@ checkRule:
   checking:
     var checkResult: bool = false
     # Check if the object's type definition contains any public field
-    if rule.options[0].toLowerAscii == "publicfields" and node.kind == nkObjectTy:
+    if node.kind == nkObjectTy:
       block publicFields:
         for child in node:
           if child.kind == nkRecList:
