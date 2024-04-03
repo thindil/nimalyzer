@@ -29,5 +29,4 @@ include ../src/rules/objects
 import utils/helpers
 
 runRuleTest(files = @["objects"], validOptions = @["publicfields"],
-    invalidOptions = @["randomoption", "anotheroption"],
-    disabledChecks = {fixTests})
+    invalidOptions = @["randomoption", "anotheroption"])
