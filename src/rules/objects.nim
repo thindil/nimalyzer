@@ -23,10 +23,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## The rule to check do objects' declarations in the code contains or not some
+## The rule to check do object's types' declarations in the code contains or not some
 ## expressions. Checked things:
 ##
-## * Do the object's declaration contains public fields.
+## * Do the object's type's declaration contains only public fields.
 ##
 ## The syntax in a configuration file is::
 ##
@@ -34,35 +34,49 @@
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
-##   rules, please refer to the program's documentation. --Insert description
-##   how rules types works with the rule--.
+##   rules, please refer to the program's documentation. Check type will raise
+##   an error if there is an object's type's declaration which violates the check.
+##   Search type will list all declarations which violates the check or raise an
+##   error if nothing found. Count type will simply list the amount of the
+##   declarations which violates the check. Fix type will add or remove public mark
+##   `*` from fields' of the object's type's declaration.
 ## * optional word *not* means negation for the rule. Adding word *not* will
-##   change to inform only about --Insert description how negation affects the
-##   rule--.
+##   change to inform only about objects' types' declarations which have only
+##   private fields.
 ## * objects is the name of the rule. It is case-insensitive, thus it can be
-##   set as *objects*, *objects* or *--rUlEnAmE--*.
+##   set as *objects*, *objects* or *oBjEcTs*.
 ##
 ## Disabling the rule
 ## ------------------
 ## It is possible to disable the rule for a selected part of the checked code
 ## by using pragma *ruleOff: "objects"* in the element from which the rule
 ## should be disabled or in code before it. For example, if the rule should
-## be disabled for procedure `proc main()`, the full declaration of it should
+## be disabled for type `myObject`, the full declaration of it should
 ## be::
 ##
-##     proc main () {.ruleOff: "objects".}
+##     {.ruleOff: "objects".}
+##     type myObject = object
+##       field: string
 ##
 ## To enable the rule again, the pragma *ruleOn: "objects"* should be added in
 ## the element which should be checked or in code before it. For example, if
-## the rule should be re-enabled for `const a = 1`, the full declaration should
-## be::
+## the rule should be re-enabled for `myRecord` declaration, the full declaration
+## should be::
 ##
-##     const a {.ruleOn: "objects".} = 1
+##     {.ruleOn: "objects".}
+##     type myRecord = object
+##       field: string
 ##
 ## Examples
 ## --------
 ##
-## --Insert rules examples--
+## 1. Check if all objects' types' declarations contains only public fields::
+##
+##     check objects
+##
+## 2. Made all object's types' fields private::
+##
+##     fix not objects
 
 # Import default rules' modules
 import ../rules
