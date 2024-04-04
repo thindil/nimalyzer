@@ -26,11 +26,11 @@
 ## The rule to check do object's types' declarations in the code contains or not some
 ## expressions. Checked things:
 ##
-## * Do the object's type's declaration contains only public fields.
+## * Do the object's type's declaration contains public fields.
 ##
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? objects
+##   [ruleType] ?not? objects [checkType]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -45,6 +45,9 @@
 ##   private fields.
 ## * objects is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *objects*, *objects* or *oBjEcTs*.
+## * checkType is the type of checks to perform on the objects' declarations. Proper
+##   value is: *publicfields*. Setting it to publicfieds will check existence of
+##   objects declarations which not contains public fields.
 ##
 ## Disabling the rule
 ## ------------------
@@ -70,13 +73,13 @@
 ## Examples
 ## --------
 ##
-## 1. Check if all objects' types' declarations contains only public fields::
+## 1. Check if all objects' types' declarations contains public fields::
 ##
-##     check objects
+##     check objects publicfields
 ##
 ## 2. Made all object's types' fields private::
 ##
-##     fix not objects
+##     fix not objects publicfields
 
 # Import default rules' modules
 import ../rules
