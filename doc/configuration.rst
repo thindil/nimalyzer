@@ -191,6 +191,7 @@ lvlError. The settings below checks for:
 15. If any `if` statement can be replaced with `case` statement due to large amount of branches.
 16. If any code block doesn't exceed limit of cyclomatic complexity.
 17. If any `try` statement doesn't have empty `except` branch
+18. If all object's type's declarations contains only private fields.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -254,6 +255,9 @@ setting shouldn't contain a new line characters.
 
     check not trystatements empty
     explanation Except branches with names of exceptions made code more readable. It also prevents problems when the checked code will start propagating new exceptions.
+
+    check not objects publicfields
+    explanation Each object's declaration should define also getters and setters for its fields. It made maintaining the code easier, when the type will be upgraded or required to use in multithread environment.
 
 Search rules
 ------------
@@ -377,3 +381,6 @@ there is no rules configured for the program.
 
     check not trystatements empty
     explanation Except branches with names of exceptions made code more readable. It also prevents problems when the checked code will start propagating new exceptions.
+
+    check not objects publicfields
+    explanation Each object's declaration should define also getters and setters for its fields. It made maintaining the code easier, when the type will be upgraded or required to use in multithread environment.
