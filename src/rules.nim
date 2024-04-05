@@ -65,8 +65,8 @@ type
     ## * explanation     - The explanation which will be show to the user if check
     ##                     or fix type of rule setting is violated by the checked
     ##                     code
-    options*: seq[string]
-    parent*: bool
+    options: seq[string]
+    parent: bool
     fileName*: string
     negation*: bool
     ruleType*: RuleTypes
@@ -94,6 +94,44 @@ type
     minOptions: Natural
     fixProc: proc (astNode, parentNode: PNode; rule: RuleOptions;
         data: string): bool
+
+proc options*(opt: RuleOptions): seq[string] {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## Getter for field `options` of `RuleOptions` type
+  ##
+  ## * opt - the options of the program's rule's configuration
+  ##
+  ## Returns the value of the `options` field of the rule's options
+  opt.options
+
+proc `options=`*(opt: var RuleOptions; value: seq[string]) {.sideEffect,
+    raises: [], tags: [], contractual.} =
+  ## Setter for field `options` of `RuleOptions` type
+  ##
+  ## * opt   - the options of the program's rule's configuration which will be updated
+  ## * value - the new value for the field
+  ##
+  ## Returns modified the program's rule's options
+  opt.options = value
+
+proc parent*(opt: RuleOptions): bool {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## Getter for field `parent` of `RuleOptions` type
+  ##
+  ## * opt - the options of the program's rule's configuration
+  ##
+  ## Returns the value of the `parent` field of the rule's options
+  opt.parent
+
+proc `parent=`*(opt: var RuleOptions; value: bool) {.sideEffect,
+    raises: [], tags: [], contractual.} =
+  ## Setter for field `parent` of `RuleOptions` type
+  ##
+  ## * opt   - the options of the program's rule's configuration which will be updated
+  ## * value - the new value for the field
+  ##
+  ## Returns modified the program's rule's options
+  opt.parent = value
 
 proc name*(setting: RuleSettings): string {.sideEffect, raises: [], tags: [],
     contractual.} =
