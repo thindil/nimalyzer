@@ -87,13 +87,35 @@ type
     ## * optionValues - If the rule has option type custom, the values for the option
     ## * minOptions   - The minumal amount of options required by the rule
     ## * fixProc      - The procedure used to auto fix the rule
-    name*: string
-    checkProc*: proc (astNode, parentNode: PNode; rule: var RuleOptions)
-    options*: seq[RuleOptionsTypes]
-    optionValues*: seq[string]
-    minOptions*: Natural
-    fixProc*: proc (astNode, parentNode: PNode; rule: RuleOptions;
+    name: string
+    checkProc: proc (astNode, parentNode: PNode; rule: var RuleOptions)
+    options: seq[RuleOptionsTypes]
+    optionValues: seq[string]
+    minOptions: Natural
+    fixProc: proc (astNode, parentNode: PNode; rule: RuleOptions;
         data: string): bool
+
+proc name*(setting: RuleSettings): string {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## Getter for field `name` of `RuleSettings` type
+  ##
+  ## * setting - the setting of the program's rule's configuration
+  ##
+  ## Returns the name of the rule
+  setting.name
+
+proc checkProc*(setting: RuleSettings; astNode, parentNode: PNode;
+    rule: var RuleOptions) {.sideEffect, raises: [Exception], tags: [
+    RootEffect], contractual.} =
+  ## Getter for field `checkProc` of `RuleSettings` type
+  ##
+  ## * setting    - the setting of the program's rule's configuration
+  ## * astNode    - the AST node which will be checked
+  ## * parentNode - the parent node of the node to check
+  ## * rule       - the program's rule's options
+  ##
+  ## Returns the name of the rule
+  setting.checkProc(astNode = astNode, parentNode = parentNode, rule = rule)
 
 const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
