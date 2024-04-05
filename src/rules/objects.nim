@@ -87,8 +87,8 @@ import ../rules
 ruleConfig(ruleName = "objects",
   ruleFoundMessage = "object's types declarations which can{negation} be upgraded",
   ruleNotFoundMessage = "object's types declarations which can{negation} be upgraded not found.",
-  rulePositiveMessage = "object's type declaration, line: {params[0]} {params[1]}",
-  ruleNegativeMessage = "object's type declaration, line: {params[0]} {params[1]}",
+  rulePositiveMessage = "declaration of type '{params[2]}', line: {params[0]} {params[1]}",
+  ruleNegativeMessage = "declaration of type '{params[2]}', line: {params[0]} {params[1]}",
   ruleOptions = @[custom],
   ruleOptionValues = @["publicfields"],
   ruleMinOptions = 1)
@@ -115,9 +115,15 @@ checkRule:
       if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
       let oldAmount: int = rule.amount
-      setResult(checkResult = checkResult, positiveMessage = positiveMessage,
-          negativeMessage = negativeMessage, ruleData = "public fields",
-          node = node, params = [$node.info.line, message])
+      try:
+        setResult(checkResult = checkResult, positiveMessage = positiveMessage,
+            negativeMessage = negativeMessage, ruleData = "public fields",
+            node = node, params = [$node.info.line, message, $astNode[0]])
+      except Exception:
+        rule.amount = errorMessage(text = messagePrefix &
+            "can't check declaration of type " &
+            " line: " &
+            $node.info.line & ". Reason: ", e = getCurrentException())
       # To show the rule's explaination the rule.amount must be negative
       if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
         rule.amount = -1_000
