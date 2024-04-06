@@ -159,7 +159,9 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
             negativeMessage = negativeMessage, node = node, ruleData = $node[namePos],
             params = [$node[namePos], $node.info.line, $hiddenLine])
       elif rule.negation:
-        rule.amount.inc
+        {.ruleOff: "assignments".}
+        rule.amount = rule.amount + 1
+        {.ruleOn: "assignments".}
     else:
       setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
           negativeMessage = negativeMessage, node = node, ruleData = $node[namePos],
