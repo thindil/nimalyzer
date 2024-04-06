@@ -113,10 +113,10 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               let astNode: PNode = codeParser.parseAll
               codeParser.closeParser
               var
-                currentRule: RuleOptions = RuleOptions(fixCommand: fixCommand,
-                    identsCache: nimCache)
+                currentRule: RuleOptions = RuleOptions(identsCache: nimCache)
                 index: Natural = 0
               currentRule.fileName = source
+              currentRule.fixCommand = fixCommand
               # Check the converted source code with each selected rule
               for rule in rules:
                 if rule.kind == ConfigKind.message:
