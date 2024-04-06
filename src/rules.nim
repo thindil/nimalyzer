@@ -68,9 +68,9 @@ type
     options: seq[string]
     parent: bool
     fileName: string
-    negation*: bool
-    ruleType*: RuleTypes
-    amount*: int
+    negation: bool
+    ruleType: RuleTypes
+    amount: int
     enabled*: bool
     fixCommand*: string
     identsCache*: IdentCache
@@ -112,6 +112,9 @@ template optionsGetter(name: untyped; typ: typedesc) =
 optionsGetter(name = options, typ = seq[string])
 optionsGetter(name = parent, typ = bool)
 optionsGetter(name = fileName, typ = string)
+optionsGetter(name = negation, typ = bool)
+optionsGetter(name = ruleType, typ = RuleTypes)
+optionsGetter(name = amount, typ = int)
 
 template optionsSetter(name: untyped; typ: typedesc) =
   ## Set the setter for a field of RuleOptions type
@@ -131,6 +134,9 @@ template optionsSetter(name: untyped; typ: typedesc) =
 optionsSetter(name = options, typ = seq[string])
 optionsSetter(name = parent, typ = bool)
 optionsSetter(name = fileName, typ = string)
+optionsSetter(name = negation, typ = bool)
+optionsSetter(name = ruleType, typ = RuleTypes)
+optionsSetter(name = amount, typ = int)
 
 proc name*(setting: RuleSettings): string {.sideEffect, raises: [], tags: [],
     contractual.} =
