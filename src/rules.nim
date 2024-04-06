@@ -71,8 +71,8 @@ type
     negation: bool
     ruleType: RuleTypes
     amount: int
-    enabled*: bool
-    fixCommand*: string
+    enabled: bool
+    fixCommand: string
     identsCache*: IdentCache
     forceFixCommand*: bool
     maxResults*: Natural
@@ -115,6 +115,8 @@ optionsGetter(name = fileName, typ = string)
 optionsGetter(name = negation, typ = bool)
 optionsGetter(name = ruleType, typ = RuleTypes)
 optionsGetter(name = amount, typ = int)
+optionsGetter(name = enabled, typ = bool)
+optionsGetter(name = fixCommand, typ = string)
 
 template optionsSetter(name: untyped; typ: typedesc) =
   ## Set the setter for a field of RuleOptions type
@@ -137,6 +139,8 @@ optionsSetter(name = fileName, typ = string)
 optionsSetter(name = negation, typ = bool)
 optionsSetter(name = ruleType, typ = RuleTypes)
 optionsSetter(name = amount, typ = int)
+optionsSetter(name = enabled, typ = bool)
+optionsSetter(name = fixCommand, typ = string)
 
 proc name*(setting: RuleSettings): string {.sideEffect, raises: [], tags: [],
     contractual.} =
