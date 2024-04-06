@@ -67,7 +67,7 @@ type
     ##                     code
     options: seq[string]
     parent: bool
-    fileName*: string
+    fileName: string
     negation*: bool
     ruleType*: RuleTypes
     amount*: int
@@ -95,43 +95,42 @@ type
     fixProc: proc (astNode, parentNode: PNode; rule: RuleOptions;
         data: string): bool
 
-proc options*(opt: RuleOptions): seq[string] {.sideEffect, raises: [], tags: [],
-    contractual.} =
-  ## Getter for field `options` of `RuleOptions` type
+template optionsGetter(name: untyped; typ: typedesc) =
+  ## Set the getter for a field of RuleOptions type
   ##
-  ## * opt - the options of the program's rule's configuration
-  ##
-  ## Returns the value of the `options` field of the rule's options
-  opt.options
+  ## * name - the name of the field for which the getter will be set
+  ## * typ  - the type of the value of the field
+  proc `name`*(opt: RuleOptions): `typ` {.sideEffect, raises: [], tags: [],
+      contractual.} =
+    ## The getter of a field of RuleOption type
+    ##
+    ## * opt - the options of the selected rule
+    ##
+    ## Returns the value of the selected field
+    opt.`name`
 
-proc `options=`*(opt: var RuleOptions; value: seq[string]) {.sideEffect,
-    raises: [], tags: [], contractual.} =
-  ## Setter for field `options` of `RuleOptions` type
-  ##
-  ## * opt   - the options of the program's rule's configuration which will be updated
-  ## * value - the new value for the field
-  ##
-  ## Returns modified the program's rule's options
-  opt.options = value
+optionsGetter(name = options, typ = seq[string])
+optionsGetter(name = parent, typ = bool)
+optionsGetter(name = fileName, typ = string)
 
-proc parent*(opt: RuleOptions): bool {.sideEffect, raises: [], tags: [],
-    contractual.} =
-  ## Getter for field `parent` of `RuleOptions` type
+template optionsSetter(name: untyped; typ: typedesc) =
+  ## Set the setter for a field of RuleOptions type
   ##
-  ## * opt - the options of the program's rule's configuration
-  ##
-  ## Returns the value of the `parent` field of the rule's options
-  opt.parent
+  ## * name - the name of the field for which the setter will be set
+  ## * typ  - the type of the value of the field
+  proc `name=`*(opt: var RuleOptions; value: `typ`) {.sideEffect, raises: [],
+      tags: [], contractual.} =
+    ## The setter of a field of RuleOption type
+    ##
+    ## * opt   - the options of the selected rule
+    ## * value - the new value for the selected field
+    ##
+    ## Returns modified options of the program's rule
+    opt.`name` = value
 
-proc `parent=`*(opt: var RuleOptions; value: bool) {.sideEffect,
-    raises: [], tags: [], contractual.} =
-  ## Setter for field `parent` of `RuleOptions` type
-  ##
-  ## * opt   - the options of the program's rule's configuration which will be updated
-  ## * value - the new value for the field
-  ##
-  ## Returns modified the program's rule's options
-  opt.parent = value
+optionsSetter(name = options, typ = seq[string])
+optionsSetter(name = parent, typ = bool)
+optionsSetter(name = fileName, typ = string)
 
 proc name*(setting: RuleSettings): string {.sideEffect, raises: [], tags: [],
     contractual.} =
