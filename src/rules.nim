@@ -74,9 +74,9 @@ type
     enabled: bool
     fixCommand: string
     identsCache: IdentCache
-    forceFixCommand*: bool
-    maxResults*: Natural
-    explanation*: string
+    forceFixCommand: bool
+    maxResults: Natural
+    explanation: string
 
   RuleSettings* = object
     ## Contains information about the program's rule configuration
@@ -118,6 +118,9 @@ optionsGetter(name = amount, typ = int)
 optionsGetter(name = enabled, typ = bool)
 optionsGetter(name = fixCommand, typ = string)
 optionsGetter(name = identsCache, typ = IdentCache)
+optionsGetter(name = forceFixCommand, typ = bool)
+optionsGetter(name = maxResults, typ = Natural)
+optionsGetter(name = explanation, typ = string)
 
 template optionsSetter(name: untyped; typ: typedesc) =
   ## Set the setter for a field of RuleOptions type
@@ -143,6 +146,9 @@ optionsSetter(name = amount, typ = int)
 optionsSetter(name = enabled, typ = bool)
 optionsSetter(name = fixCommand, typ = string)
 optionsSetter(name = identsCache, typ = IdentCache)
+optionsSetter(name = forceFixCommand, typ = bool)
+optionsSetter(name = maxResults, typ = Natural)
+optionsSetter(name = explanation, typ = string)
 
 proc name*(setting: RuleSettings): string {.sideEffect, raises: [], tags: [],
     contractual.} =
