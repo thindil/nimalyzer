@@ -95,7 +95,7 @@ type
     fixProc: proc (astNode, parentNode: PNode; rule: RuleOptions;
         data: string): bool
 
-template optionsGetter(name: untyped; typ: typedesc) =
+template optionsGetterSetter(name: untyped; typ: typedesc) =
   ## Set the getter for a field of RuleOptions type
   ##
   ## * name - the name of the field for which the getter will be set
@@ -108,25 +108,6 @@ template optionsGetter(name: untyped; typ: typedesc) =
     ##
     ## Returns the value of the selected field
     opt.`name`
-
-optionsGetter(name = options, typ = seq[string])
-optionsGetter(name = parent, typ = bool)
-optionsGetter(name = fileName, typ = string)
-optionsGetter(name = negation, typ = bool)
-optionsGetter(name = ruleType, typ = RuleTypes)
-optionsGetter(name = amount, typ = int)
-optionsGetter(name = enabled, typ = bool)
-optionsGetter(name = fixCommand, typ = string)
-optionsGetter(name = identsCache, typ = IdentCache)
-optionsGetter(name = forceFixCommand, typ = bool)
-optionsGetter(name = maxResults, typ = Natural)
-optionsGetter(name = explanation, typ = string)
-
-template optionsSetter(name: untyped; typ: typedesc) =
-  ## Set the setter for a field of RuleOptions type
-  ##
-  ## * name - the name of the field for which the setter will be set
-  ## * typ  - the type of the value of the field
   proc `name=`*(opt: var RuleOptions; value: `typ`) {.sideEffect, raises: [],
       tags: [], contractual.} =
     ## The setter of a field of RuleOption type
@@ -137,18 +118,18 @@ template optionsSetter(name: untyped; typ: typedesc) =
     ## Returns modified options of the program's rule
     opt.`name` = value
 
-optionsSetter(name = options, typ = seq[string])
-optionsSetter(name = parent, typ = bool)
-optionsSetter(name = fileName, typ = string)
-optionsSetter(name = negation, typ = bool)
-optionsSetter(name = ruleType, typ = RuleTypes)
-optionsSetter(name = amount, typ = int)
-optionsSetter(name = enabled, typ = bool)
-optionsSetter(name = fixCommand, typ = string)
-optionsSetter(name = identsCache, typ = IdentCache)
-optionsSetter(name = forceFixCommand, typ = bool)
-optionsSetter(name = maxResults, typ = Natural)
-optionsSetter(name = explanation, typ = string)
+optionsGetterSetter(name = options, typ = seq[string])
+optionsGetterSetter(name = parent, typ = bool)
+optionsGetterSetter(name = fileName, typ = string)
+optionsGetterSetter(name = negation, typ = bool)
+optionsGetterSetter(name = ruleType, typ = RuleTypes)
+optionsGetterSetter(name = amount, typ = int)
+optionsGetterSetter(name = enabled, typ = bool)
+optionsGetterSetter(name = fixCommand, typ = string)
+optionsGetterSetter(name = identsCache, typ = IdentCache)
+optionsGetterSetter(name = forceFixCommand, typ = bool)
+optionsGetterSetter(name = maxResults, typ = Natural)
+optionsGetterSetter(name = explanation, typ = string)
 
 proc name*(setting: RuleSettings): string {.sideEffect, raises: [], tags: [],
     contractual.} =
