@@ -100,8 +100,11 @@ checkRule:
     discard
   checking:
     try:
-      if node.kind == nkInfix:
-        setResult(checkResult = true, positiveMessage = positiveMessage,
+      if node.kind == nkInfix and astNode.kind == nkAsgn:
+        var checkResult = true
+        if rule.ruleType in {RuleTypes.count, search}:
+          checkResult = not checkResult
+        setResult(checkResult = checkResult, positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, node = node,
             ruleData = "shorthand", params = [$node[1], $node.info.line, (
             if rule.negation: "a full assignment" else: "a shorthand assignment"),
@@ -115,7 +118,10 @@ checkRule:
         except FieldDefect:
           continue
         if $node[1][1] == $node[0]:
-          setResult(checkResult = false,
+          var checkResult = false
+          if rule.ruleType in {RuleTypes.count, search}:
+            checkResult = not checkResult
+          setResult(checkResult = checkResult,
               positiveMessage = negativeMessage,
               negativeMessage = positiveMessage, node = node,
               ruleData = "shorthand", params = [$node[0], $node.info.line,
@@ -123,6 +129,30 @@ checkRule:
               (if rule.ruleType in {check,
               fix}: "can be updated to" else: "is"), (if rule.ruleType in {
               check, fix}: "can't be updated to" else: "isn't")])
+      else:
+        for child in node:
+          setRuleState(node = child, ruleName = ruleSettings.name,
+              oldState = rule.enabled)
+          if not rule.enabled:
+            continue
+          if child.kind == nkAsgn:
+            try:
+              if child.sons[1].len < 3:
+                continue
+            except FieldDefect:
+              continue
+            if $child[1][1] == $child[0]:
+              var checkResult = false
+              if rule.ruleType in {RuleTypes.count, search}:
+                checkResult = not checkResult
+              setResult(checkResult = checkResult,
+                  positiveMessage = negativeMessage,
+                  negativeMessage = positiveMessage, node = child,
+                  ruleData = "shorthand", params = [$child[0], $child.info.line,
+                  (if rule.negation: "a full assignment" else: "a shorthand assignment"),
+                  (if rule.ruleType in {check,
+                  fix}: "can be updated to" else: "is"), (if rule.ruleType in {
+                  check, fix}: "can't be updated to" else: "isn't")])
     except Exception:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
