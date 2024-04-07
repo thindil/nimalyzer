@@ -1,5 +1,8 @@
 # Count: 1
 # Negative count: 0
 
-var i = 1
-i += 1
+for i in 1..6:
+  echo i
+  if i > 0:
+    var j = 1
+    j += 1
