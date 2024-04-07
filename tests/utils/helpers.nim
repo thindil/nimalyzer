@@ -123,10 +123,15 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
           cache = nimCache, config = nimConfig)
       var invalidCode: PNode = codeParser.parseAll
       codeParser.closeParser
-      var ruleOptions: RuleOptions = RuleOptions(parent: true,
-          fileName: "tests/tcomments/test.nim", negation: false,
-          ruleType: check, options: validOptions, amount: 0, enabled: true,
-          maxResults: Natural.high)
+      var ruleOptions: RuleOptions = RuleOptions()
+      ruleOptions.parent = true
+      ruleOptions.fileName = "tests/tcomments/test.nim"
+      ruleOptions.negation = false
+      ruleOptions.ruleType = check
+      ruleOptions.options = validOptions
+      ruleOptions.amount = 0
+      ruleOptions.enabled = true
+      ruleOptions.maxResults = Natural.high
 
       test "Checking validate invalid rule's options":
         check:
