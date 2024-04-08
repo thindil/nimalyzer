@@ -147,41 +147,44 @@ checkRule:
 
 fixRule:
   result = false
+
+  proc updateAssignment(child: PNode, index: Natural) {.sideEffect,
+      raises: [KeyError, Exception], tags: [RootEffect], contractual.} =
+    ## Update the selected assignment to shorthand or long version
+    ##
+    ## * child - the assignment which will be updated
+    ## * index - the index of the assignment in AST node
+    let newInfix: PNode = newTree(kind = nkInfix, children = [])
+    if rule.negation:
+      let newAssignment: PNode = newTree(kind = nkAsgn, children = [])
+      newAssignment.add(son = newIdentNode(ident = getIdent(
+          ic = rule.identsCache, identifier = $astNode[1]),
+          info = astNode.info))
+      for i, part in child:
+        if i > 0:
+          newInfix.add(son = part)
+        else:
+          newInfix.add(son = newIdentNode(ident = getIdent(
+          ic = rule.identsCache,
+          identifier = $($part)[0 .. ^2]), info = child.info))
+      newAssignment.add(son = newInfix)
+      parentNode[index] = newAssignment
+    else:
+      for i, part in child[1]:
+        if i > 0:
+          newInfix.add(son = part)
+        else:
+          newInfix.add(son = newIdentNode(ident = getIdent(
+          ic = rule.identsCache,
+          identifier = $part & "="), info = child.info))
+      parentNode[index] = newInfix
+
   for index, child in parentNode:
     if child == astNode:
-      let newInfix: PNode = newTree(kind = nkInfix, children = [])
-      if rule.negation:
-        let newAssignment: PNode = newTree(kind = nkAsgn, children = [])
-        try:
-          newAssignment.add(son = newIdentNode(ident = getIdent(
-              ic = rule.identsCache, identifier = $astNode[1]),
-              info = astNode.info))
-          for i, part in child:
-            if i > 0:
-              newInfix.add(son = part)
-            else:
-              newInfix.add(son = newIdentNode(ident = getIdent(
-              ic = rule.identsCache,
-              identifier = $($part)[0 .. ^2]), info = child.info))
-          newAssignment.add(son = newInfix)
-          parentNode[index] = newAssignment
-          result = true
-        except KeyError, Exception:
-          discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
-              getCurrentExceptionMsg())
-          return false
-      else:
-        try:
-          for i, part in child[1]:
-            if i > 0:
-              newInfix.add(son = part)
-            else:
-              newInfix.add(son = newIdentNode(ident = getIdent(
-              ic = rule.identsCache,
-              identifier = $part & "="), info = child.info))
-          parentNode[index] = newInfix
-          result = true
-        except KeyError, Exception:
-          discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
-              getCurrentExceptionMsg())
-          return false
+      try:
+        updateAssignment(child = child, index = index)
+        result = true
+      except KeyError, Exception:
+        discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
+            getCurrentExceptionMsg())
+        return false
