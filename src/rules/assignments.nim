@@ -100,28 +100,15 @@ checkRule:
     discard
   checking:
     try:
-      if node.kind == nkInfix and astNode.kind == nkAsgn:
-        var checkResult = true
-        if rule.ruleType in {RuleTypes.count, search}:
-          checkResult = not checkResult
-        setResult(checkResult = checkResult, positiveMessage = positiveMessage,
-            negativeMessage = negativeMessage, node = node,
-            ruleData = "shorthand", params = [$node[1], $node.info.line, (
-            if rule.negation: "a full assignment" else: "a shorthand assignment"),
-            (if rule.ruleType in {check,
-            fix}: "can be updated to" else: "is"), (if rule.ruleType in {
-            check, fix}: "can't be updated to" else: "isn't")])
-      elif node.kind == nkAsgn:
+      # Check the global assignments
+      if node.kind == nkAsgn:
         try:
           if node.sons[1].len < 3:
             continue
         except FieldDefect:
           continue
         if $node[1][1] == $node[0]:
-          var checkResult = false
-          if rule.ruleType in {RuleTypes.count, search}:
-            checkResult = not checkResult
-          setResult(checkResult = checkResult,
+          setResult(checkResult = false,
               positiveMessage = negativeMessage,
               negativeMessage = positiveMessage, node = node,
               ruleData = "shorthand", params = [$node[0], $node.info.line,
@@ -129,6 +116,7 @@ checkRule:
               (if rule.ruleType in {check,
               fix}: "can be updated to" else: "is"), (if rule.ruleType in {
               check, fix}: "can't be updated to" else: "isn't")])
+      # Check the local assignments
       else:
         for child in node:
           setRuleState(node = child, ruleName = ruleSettings.name,
@@ -142,10 +130,7 @@ checkRule:
             except FieldDefect:
               continue
             if $child[1][1] == $child[0]:
-              var checkResult = false
-              if rule.ruleType in {RuleTypes.count, search}:
-                checkResult = not checkResult
-              setResult(checkResult = checkResult,
+              setResult(checkResult = false,
                   positiveMessage = negativeMessage,
                   negativeMessage = positiveMessage, node = child,
                   ruleData = "shorthand", params = [$child[0], $child.info.line,
@@ -161,6 +146,7 @@ checkRule:
     let negation: string = (if rule.negation: "'t" else: "")
 
 fixRule:
+  result = false
   for index, child in parentNode:
     if child == astNode:
       let newInfix: PNode = newTree(kind = nkInfix, children = [])
@@ -170,33 +156,32 @@ fixRule:
           newAssignment.add(son = newIdentNode(ident = getIdent(
               ic = rule.identsCache, identifier = $astNode[1]),
               info = astNode.info))
-          for i, part in astNode:
+          for i, part in child:
             if i > 0:
               newInfix.add(son = part)
             else:
               newInfix.add(son = newIdentNode(ident = getIdent(
               ic = rule.identsCache,
-              identifier = $($part)[0 .. ^2]), info = astNode.info))
+              identifier = $($part)[0 .. ^2]), info = child.info))
           newAssignment.add(son = newInfix)
           parentNode[index] = newAssignment
-          return true
+          result = true
         except KeyError, Exception:
           discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
               getCurrentExceptionMsg())
           return false
       else:
         try:
-          for i, part in astNode[1]:
+          for i, part in child[1]:
             if i > 0:
               newInfix.add(son = part)
             else:
               newInfix.add(son = newIdentNode(ident = getIdent(
               ic = rule.identsCache,
-              identifier = $part & "="), info = astNode.info))
+              identifier = $part & "="), info = child.info))
           parentNode[index] = newInfix
-          return true
+          result = true
         except KeyError, Exception:
           discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
               getCurrentExceptionMsg())
           return false
-  return false
