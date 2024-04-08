@@ -1,5 +1,8 @@
-# Count: 1
+# Count: 2
 # Negative count: 0
+
+var k = 1
+k += 1
 
 for i in 1..6:
   echo i
