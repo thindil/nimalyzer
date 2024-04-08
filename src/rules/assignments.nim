@@ -148,7 +148,7 @@ checkRule:
 fixRule:
   result = false
 
-  proc updateAssignment(child: PNode, index: Natural) {.sideEffect,
+  proc updateAssignment(child, parentNode: PNode, index: Natural) {.sideEffect,
       raises: [KeyError, Exception], tags: [RootEffect], contractual.} =
     ## Update the selected assignment to shorthand or long version
     ##
@@ -182,9 +182,20 @@ fixRule:
   for index, child in parentNode:
     if child == astNode:
       try:
-        updateAssignment(child = child, index = index)
+        updateAssignment(child = child, parentNode = parentNode, index = index)
         result = true
       except KeyError, Exception:
         discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
             getCurrentExceptionMsg())
         return false
+    else:
+      for subIndex, subChild in child:
+        if subChild == astNode:
+          try:
+            updateAssignment(child = subChild, parentNode = child,
+                index = subIndex)
+            result = true
+          except KeyError, Exception:
+            discard errorMessage(text = "Can't upgrade an assignment. Reason: " &
+                getCurrentExceptionMsg())
+            return false
