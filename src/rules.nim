@@ -44,7 +44,7 @@ type
 
   RuleOptionsTypes* = enum
     ## the available types of the program's rules' options
-    integer, str, node, custom
+    integer, str, node, custom, natural, positive
 
   RuleOptions* = object
     ## Contains information for the program's rules
@@ -336,14 +336,12 @@ proc validateOptions*(rule: RuleSettings; options: seq[
       of str:
         continue
       of integer:
-        let intOption: int = try:
-            options[index].parseInt()
+          try:
+            discard options[index].parseInt
           except ValueError:
-            -1
-        if intOption < 0:
-          return errorMessage(text = "The rule " & rule.name &
-              " option number " & $(index + 1) & " has invalid value: '" &
-              option & "'.").bool
+            return errorMessage(text = "The rule " & rule.name &
+                " option number " & $(index + 1) & " has invalid value: '" &
+                option & "'.").bool
       of node:
         let entityType: TNodeKind = parseEnum[TNodeKind](s = option,
             default = nkEmpty)
@@ -353,6 +351,24 @@ proc validateOptions*(rule: RuleSettings; options: seq[
               option & "'.").bool
       of custom:
         if option.toLowerAscii notin rule.optionValues:
+          return errorMessage(text = "The rule " & rule.name &
+              " option number " & $(index + 1) & " has invalid value: '" &
+              option & "'.").bool
+      of natural:
+        let intOption: int = try:
+            options[index].parseInt()
+          except ValueError:
+            -1
+        if intOption < 0:
+          return errorMessage(text = "The rule " & rule.name &
+              " option number " & $(index + 1) & " has invalid value: '" &
+              option & "'.").bool
+      of positive:
+        let intOption: int = try:
+            options[index].parseInt()
+          except ValueError:
+            -1
+        if intOption < 1:
           return errorMessage(text = "The rule " & rule.name &
               " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
