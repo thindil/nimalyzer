@@ -27,6 +27,7 @@ of the program.
 - **BREAKING**: added the option to set if the log file should be cleared
   before the logging starts. It can breaks the old configuration file, because
   the syntax of the setting `output` was changed.
+- Better detection of assignments by the `assignments` rule.
 
 ### Fixed
 - The rule `ifstatements` checks `when` statements for upgrade to `case`
