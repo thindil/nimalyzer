@@ -114,6 +114,15 @@ checkRule:
               (if rule.ruleType in {check,
               fix}: "can be updated to" else: "is"), (if rule.ruleType in {
               check, fix}: "can't be updated to" else: "isn't")])
+      elif node.kind == nkInfix and ($node[0])[^1] == '=':
+        setResult(checkResult = true,
+            positiveMessage = negativeMessage,
+            negativeMessage = positiveMessage, node = node,
+            ruleData = "shorthand", params = [$node, $node.info.line,
+            (if rule.negation: "a full assignment" else: "a shorthand assignment"),
+            (if rule.ruleType in {check,
+            fix}: "can't be updated to" else: "isn't"), (if rule.ruleType in {
+            check, fix}: "can be updated to" else: "is")])
       # Check the local assignments
       else:
         for child in node:
@@ -136,6 +145,15 @@ checkRule:
                   (if rule.ruleType in {check,
                   fix}: "can be updated to" else: "is"), (if rule.ruleType in {
                   check, fix}: "can't be updated to" else: "isn't")])
+          elif child.kind == nkInfix and ($child[0])[^1] == '=':
+            setResult(checkResult = true,
+                positiveMessage = negativeMessage,
+                negativeMessage = positiveMessage, node = child,
+                ruleData = "shorthand", params = [$child, $child.info.line,
+                (if rule.negation: "a full assignment" else: "a shorthand assignment"),
+                (if rule.ruleType in {check,
+                fix}: "can't be updated to" else: "isn't"), (if rule.ruleType in {
+                check, fix}: "can be updated to" else: "is")])
     except Exception:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
