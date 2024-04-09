@@ -130,11 +130,12 @@ ruleConfig
 * `ruleOptions` - the list of options which the rule accepts. If not set,
   default value, the rule will not accept any arguments in a
   configuration file. It is a Nim sequence with possible values: `node` for
-  AST Node, `str` for string values, `int` for integer values and `custom`
-  for string values which can contain only the selected values, similar to
-  enumerations. In the last case, the setting `ruleOptionValues` must be set
-  too. At the moment, a rule can have only one `custom` option type. The
-  setting is optional. Enumeration.
+  AST Node, `str` for string values, `integer` for integer values, `natural`
+  for integer values greater than -1, `positive` for integer values greater
+  than 0, and `custom` for string values which can contain only the selected
+  values, similar to enumerations. In the last case, the setting
+  `ruleOptionValues` must be set too. At the moment, a rule can have only one
+  `custom` option type. The setting is optional. Enumeration.
 * `ruleOptionValues` - the list of values for the `custom` type of the rule's
   options. It is a Nim sequence of strings. The setting is required only
   when setting `ruleOptions` contains `custom` type of the options.
