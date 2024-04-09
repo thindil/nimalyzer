@@ -89,7 +89,7 @@ ruleConfig(ruleName = "casestatements",
   ruleNotFoundMessage = "case statements which can{negation} be upgraded not found.",
   rulePositiveMessage = "case statement, line: {params[0]} {params[1]}",
   ruleNegativeMessage = "case statement, line: {params[0]} {params[1]}",
-  ruleOptions = @[custom, integer],
+  ruleOptions = @[custom, positive],
   ruleOptionValues = @["min", "max"],
   ruleMinOptions = 2)
 
