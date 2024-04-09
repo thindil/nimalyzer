@@ -15,6 +15,8 @@ of the program.
 - More information about the program's error to error messages
 - New rule `object`. Currently it only check if the object's type's
   declarations have all their fields public or private.
+- More types of the program's rules' options: `natural` for integer values of 0
+  or more and `positive` for integer values greater than 0.
 
 ### Changed
 - Using unittest2 package for the project's unit tests.
