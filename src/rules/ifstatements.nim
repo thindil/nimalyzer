@@ -122,7 +122,7 @@ ruleConfig(ruleName = "ifstatements",
   ruleNotFoundMessage = "if statements which can{negation} be upgraded not found.",
   rulePositiveMessage = "if statement, line: {params[0]} {params[1]}",
   ruleNegativeMessage = "if statement, line: {params[0]} {params[1]}",
-  ruleOptions = @[custom, integer],
+  ruleOptions = @[custom, positive],
   ruleOptionValues = @["all", "negative", "moveable", "empty", "min", "max"],
   ruleMinOptions = 1)
 
