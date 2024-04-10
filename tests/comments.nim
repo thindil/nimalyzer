@@ -48,10 +48,15 @@ suite "Unit tests for comments rule":
         config = nimConfig)
     invalidCode: PNode = parseString(s = invalidNimCode, cache = nimCache,
         config = nimConfig)
-    ruleOptions: RuleOptions = RuleOptions(parent: true,
-        fileName: "tests/invalid/comments.nim", negation: false, ruleType: check,
-        options: validOptions, amount: 0,
-        enabled: true, maxResults: Natural.high)
+    ruleOptions: RuleOptions = RuleOptions()
+  ruleOptions.parent = true
+  ruleOptions.fileName = "tests/invalid/comments.nim"
+  ruleOptions.negation = false
+  ruleOptions.ruleType = check
+  ruleOptions.options = validOptions
+  ruleOptions.amount = 0
+  ruleOptions.enabled = true
+  ruleOptions.maxResults = Natural.high
 
   test "Validate invalid rule's options":
     check:
