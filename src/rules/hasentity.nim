@@ -110,7 +110,7 @@ ruleConfig(ruleName = "hasentity",
   ruleNotFoundMessage = "doesn't have declared {rule.options[0]} with name '{rule.options[1]}'.",
   rulePositiveMessage = "Has declared {params[0]} with name '{params[1]}' at line: {params[2]}.",
   ruleNegativeMessage = "Has declared {params[0]} with name '{params[1]}' at line: {params[2]}.",
-  ruleOptions = @[node, str, node, integer],
+  ruleOptions = @[node, str, node, natural],
   ruleMinOptions = 2,
   ruleShowForCheck = true)
 
