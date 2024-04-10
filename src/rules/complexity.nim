@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek thindil Jasicki
+# Copyright © 2023-2024 Bartek thindil Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -96,7 +96,7 @@ ruleConfig(ruleName = "complexity",
   ruleNotFoundMessage = "Code blocks with the complexity {moreOrLess} the selected not found.",
   rulePositiveMessage = "Code block at line: {params[0]} has {params[1]} complexity less or equal to {params[2]} ({params[3]}).",
   ruleNegativeMessage = "Code block at line: {params[0]} has {params[1]} complexity more than {params[2]} ({params[3]}).",
-  ruleOptions = @[custom, str, integer],
+  ruleOptions = @[custom, str, positive],
   ruleOptionValues = @["cyclomatic"],
   ruleMinOptions = 3)
 
