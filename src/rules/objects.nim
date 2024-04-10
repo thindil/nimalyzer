@@ -39,15 +39,17 @@
 ##   Search type will list all declarations which violates the check or raise an
 ##   error if nothing found. Count type will simply list the amount of the
 ##   declarations which violates the check. Fix type will add or remove public mark
-##   `*` from fields' of the object's type's declaration.
+##   `*` from fields' of the object's type's declaration but only when **checkType**
+##   is set to *publicfields*.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about objects' types' declarations which have only
 ##   private fields.
 ## * objects is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *objects*, *objects* or *oBjEcTs*.
 ## * checkType is the type of checks to perform on the objects' declarations. Proper
-##   value is: *publicfields*. Setting it to publicfieds will check existence of
-##   objects declarations which not contains public fields.
+##   values are: *publicfields*, *all*. Setting it to publicfieds will check existence of
+##   objects declarations which not contains public fields. Setting it to all will
+##   perform all checks.
 ##
 ## Disabling the rule
 ## ------------------
@@ -90,7 +92,7 @@ ruleConfig(ruleName = "objects",
   rulePositiveMessage = "declaration of type '{params[2]}', line: {params[0]} {params[1]}",
   ruleNegativeMessage = "declaration of type '{params[2]}', line: {params[0]} {params[1]}",
   ruleOptions = @[custom],
-  ruleOptionValues = @["publicfields"],
+  ruleOptionValues = @["publicfields", "all"],
   ruleMinOptions = 1)
 
 checkRule:
@@ -103,7 +105,7 @@ checkRule:
   checking:
     var checkResult: bool = false
     # Check if the object's type definition contains any public field
-    if rule.options[0].toLowerAscii == "publicfields" and node.kind == nkObjectTy:
+    if rule.options[0].toLowerAscii in ["publicfields", "all"] and node.kind == nkObjectTy:
       block publicFields:
         for child in node:
           if child.kind == nkRecList:
@@ -133,6 +135,9 @@ checkRule:
     discard
 
 fixRule:
+  # Fix only public fields of the object
+  if rule.options[0].toLowerAscii != "publicfields":
+    return false
   # Made all fields of the object private
   if rule.negation:
     for child in astNode:
