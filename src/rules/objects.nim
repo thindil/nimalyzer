@@ -92,7 +92,7 @@ ruleConfig(ruleName = "objects",
   rulePositiveMessage = "declaration of type '{params[2]}', line: {params[0]} {params[1]}",
   ruleNegativeMessage = "declaration of type '{params[2]}', line: {params[0]} {params[1]}",
   ruleOptions = @[custom],
-  ruleOptionValues = @["publicfields", "all"],
+  ruleOptionValues = @["publicfields", "all", "standardtypes"],
   ruleMinOptions = 1)
 
 checkRule:
@@ -120,6 +120,34 @@ checkRule:
       try:
         setResult(checkResult = checkResult, positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, ruleData = "public fields",
+            node = node, params = [$node.info.line, message, $astNode[0]])
+      except Exception:
+        rule.amount = errorMessage(text = messagePrefix &
+            "can't check declaration of type " &
+            " line: " &
+            $node.info.line & ". Reason: ", e = getCurrentException())
+      # To show the rule's explaination the rule.amount must be negative
+      if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+        rule.amount = -1_000
+      if not checkResult:
+        break
+    if rule.options[0].toLowerAscii in ["standardtypes", "all"] and node.kind == nkObjectTy:
+      block standardTypes:
+        for child in node:
+          if child.kind == nkRecList:
+            for field in child:
+              try:
+                if ($field[^2]).toLowerAscii in ["int", "string"]:
+                  checkResult = true
+                  break standardTypes
+              except:
+                discard
+      if rule.ruleType in {RuleTypes.count, search}:
+        checkResult = not checkResult
+      let oldAmount: int = rule.amount
+      try:
+        setResult(checkResult = checkResult, positiveMessage = positiveMessage,
+            negativeMessage = negativeMessage, ruleData = "standard types",
             node = node, params = [$node.info.line, message, $astNode[0]])
       except Exception:
         rule.amount = errorMessage(text = messagePrefix &
