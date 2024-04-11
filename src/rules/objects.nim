@@ -131,14 +131,14 @@ checkRule:
       if not checkResult:
         break
     if rule.options[0].toLowerAscii in ["standardtypes", "all"] and node.kind == nkObjectTy:
-      checkResult = true
+      checkResult = false
       block standardTypes:
         for child in node:
           if child.kind == nkRecList:
             for field in child:
               try:
                 if ($field[^2]).toLowerAscii in ["int", "string"]:
-                  checkResult = false
+                  checkResult = true
                   break standardTypes
               except:
                 discard
