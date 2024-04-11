@@ -99,9 +99,7 @@ checkRule:
   initCheck:
     discard
   startCheck:
-    let
-      negation: string = (if rule.negation: "'t" else: "")
-      message: string = (if rule.negation: "contains" else: "doesn't contain") & " public fields."
+    let negation: string = (if rule.negation: "'t" else: "")
   checking:
     var checkResult: bool = false
     # Check if the object's type definition contains any public field
@@ -118,6 +116,7 @@ checkRule:
         checkResult = not checkResult
       let oldAmount: int = rule.amount
       try:
+        let message: string = (if rule.negation: "contains" else: "doesn't contain") & " public fields."
         setResult(checkResult = checkResult, positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, ruleData = "public fields",
             node = node, params = [$node.info.line, message, $astNode[0]])
@@ -132,13 +131,14 @@ checkRule:
       if not checkResult:
         break
     if rule.options[0].toLowerAscii in ["standardtypes", "all"] and node.kind == nkObjectTy:
+      checkResult = true
       block standardTypes:
         for child in node:
           if child.kind == nkRecList:
             for field in child:
               try:
                 if ($field[^2]).toLowerAscii in ["int", "string"]:
-                  checkResult = true
+                  checkResult = false
                   break standardTypes
               except:
                 discard
@@ -146,6 +146,7 @@ checkRule:
         checkResult = not checkResult
       let oldAmount: int = rule.amount
       try:
+        let message: string = (if rule.negation: "doesn't contain" else: "contains") & " field of int or string type."
         setResult(checkResult = checkResult, positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, ruleData = "standard types",
             node = node, params = [$node.info.line, message, $astNode[0]])
