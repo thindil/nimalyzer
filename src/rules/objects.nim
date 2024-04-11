@@ -128,7 +128,7 @@ checkRule:
       # To show the rule's explaination the rule.amount must be negative
       if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
         rule.amount = -1_000
-      if not checkResult:
+      if not checkResult and rule.options[0].toLowerAscii == "publicfields":
         break
     if rule.options[0].toLowerAscii in ["standardtypes", "all"] and node.kind == nkObjectTy:
       checkResult = false
@@ -146,7 +146,7 @@ checkRule:
         checkResult = not checkResult
       let oldAmount: int = rule.amount
       try:
-        let message: string = (if rule.negation: "doesn't contain" else: "contains") & " field of int or string type."
+        let message: string = (if rule.negation: "contains" else: "doesn't contain") & " field of int or string type."
         setResult(checkResult = checkResult, positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, ruleData = "standard types",
             node = node, params = [$node.info.line, message, $astNode[0]])
