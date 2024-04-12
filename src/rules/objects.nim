@@ -47,9 +47,11 @@
 ## * objects is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *objects*, *objects* or *oBjEcTs*.
 ## * checkType is the type of checks to perform on the objects' declarations. Proper
-##   values are: *publicfields*, *all*. Setting it to publicfieds will check existence of
-##   objects declarations which not contains public fields. Setting it to all will
-##   perform all checks.
+##   values are: *publicfields*, *all*, *standardtypes*. Setting it to publicfieds
+##   will check existence of objects declarations which contains public fields.
+##   Setting it to *standardtypes* will check existence of objects' declarations
+##   which contains fields with string or int type. Setting it to all will perform
+##   all checks.
 ##
 ## Disabling the rule
 ## ------------------
@@ -75,9 +77,9 @@
 ## Examples
 ## --------
 ##
-## 1. Check if all objects' types' declarations contains public fields::
+## 1. Check if all objects' types' declarations contains public fields and standard types::
 ##
-##     check objects publicfields
+##     check objects all
 ##
 ## 2. Made all object's types' fields private::
 ##
