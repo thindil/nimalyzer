@@ -2,5 +2,5 @@
 # Negative count: 0
 
 type test = object
-  a: string
-  b, c: int
+  a: char
+  b, c: int8

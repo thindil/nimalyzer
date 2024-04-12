@@ -1,6 +1,6 @@
 # Count: 0
-# Negative count: 1
+# Negative count: 2
 
 type test = object
   a: char
-  b, c*: int8
+  b, c*: int
