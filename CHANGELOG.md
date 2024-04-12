@@ -13,8 +13,9 @@ of the program.
 - New rule `tryStatements` to check `try` statements' `except` branches in a
   code do they are empty or contain an exception with the selected name.
 - More information about the program's error to error messages
-- New rule `object`. Currently it only check if the object's type's
-  declarations have all their fields public or private.
+- New rule `object`. It can check if the object's type's declarations have all
+  their fields public or private and do they are declared by using `int` or
+  `string` types.
 - More types of the program's rules' options: `natural` for integer values of 0
   or more and `positive` for integer values greater than 0.
 
