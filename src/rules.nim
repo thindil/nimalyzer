@@ -46,6 +46,18 @@ type
     ## the available types of the program's rules' options
     integer, str, node, custom, natural, positive
 
+  FixCommand = string
+    ## The full command to execute by a rule for fix type of checks
+
+  Explanation = string
+    ## The message show to the user as an explanation for a rule's setting
+
+  FilePath = string
+    ## The path to the file which will be checked by a rule
+
+  ResultAmount = int
+    ## The amount of results found by a rule
+
   RuleOptions* = object
     ## Contains information for the program's rules
     ##
@@ -67,16 +79,16 @@ type
     ##                     code
     options: seq[string]
     parent: bool
-    fileName: string
+    fileName: FilePath
     negation: bool
     ruleType: RuleTypes
-    amount: int
+    amount: ResultAmount
     enabled: bool
-    fixCommand: string
+    fixCommand: FixCommand
     identsCache: IdentCache
     forceFixCommand: bool
     maxResults: Natural
-    explanation: string
+    explanation: Explanation
 
   RuleSettings* = object
     ## Contains information about the program's rule configuration
@@ -120,16 +132,16 @@ template optionsGetterSetter(name: untyped; typ: typedesc) =
 
 optionsGetterSetter(name = options, typ = seq[string])
 optionsGetterSetter(name = parent, typ = bool)
-optionsGetterSetter(name = fileName, typ = string)
+optionsGetterSetter(name = fileName, typ = FilePath)
 optionsGetterSetter(name = negation, typ = bool)
 optionsGetterSetter(name = ruleType, typ = RuleTypes)
-optionsGetterSetter(name = amount, typ = int)
+optionsGetterSetter(name = amount, typ = ResultAmount)
 optionsGetterSetter(name = enabled, typ = bool)
-optionsGetterSetter(name = fixCommand, typ = string)
+optionsGetterSetter(name = fixCommand, typ = FixCommand)
 optionsGetterSetter(name = identsCache, typ = IdentCache)
 optionsGetterSetter(name = forceFixCommand, typ = bool)
 optionsGetterSetter(name = maxResults, typ = Natural)
-optionsGetterSetter(name = explanation, typ = string)
+optionsGetterSetter(name = explanation, typ = Explanation)
 
 proc name*(setting: RuleSettings): string {.sideEffect, raises: [], tags: [],
     contractual.} =
