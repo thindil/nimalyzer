@@ -142,7 +142,7 @@ checkRule:
                 if ($field[^2]).toLowerAscii in ["int", "string"]:
                   checkResult = true
                   break standardTypes
-              except:
+              except Exception:
                 discard
       if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
