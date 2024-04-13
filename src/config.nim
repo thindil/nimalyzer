@@ -101,16 +101,22 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
     configFile.len > 0
   body:
 
-    type ConfigSetting = object
-      ## Contains information about the setting from the program's
-      ## configuration's file.
-      ##
-      ## * name  - the name of the setting from the file
-      ## * value - the value of the setting from the file
-      ## * index - the index of the setting in configOptions list. If it is an
-      ##           invalid option, it is -1.
-      name, value: string
-      index: int
+    type
+      IndexRange = range[-1 .. int.high]
+      ConfigName = string
+      ConfigValue = string
+
+      ConfigSetting = object
+        ## Contains information about the setting from the program's
+        ## configuration's file.
+        ##
+        ## * name  - the name of the setting from the file
+        ## * value - the value of the setting from the file
+        ## * index - the index of the setting in configOptions list. If it is an
+        ##           invalid option, it is -1.
+        name: ConfigName
+        value: ConfigValue
+        index: IndexRange
 
     proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [
         ], tags: [RootEffect], contractual.} =
