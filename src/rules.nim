@@ -90,6 +90,9 @@ type
     maxResults: Natural
     explanation: Explanation
 
+  RuleName = string
+    ## A name of a rule
+
   RuleSettings* = object
     ## Contains information about the program's rule configuration
     ##
@@ -99,7 +102,7 @@ type
     ## * optionValues - If the rule has option type custom, the values for the option
     ## * minOptions   - The minumal amount of options required by the rule
     ## * fixProc      - The procedure used to auto fix the rule
-    name: string
+    name: RuleName
     checkProc: proc (astNode, parentNode: PNode; rule: var RuleOptions)
     options: seq[RuleOptionsTypes]
     optionValues: seq[string]
