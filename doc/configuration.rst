@@ -192,6 +192,7 @@ lvlError. The settings below checks for:
 16. If any code block doesn't exceed limit of cyclomatic complexity.
 17. If any `try` statement doesn't have empty `except` branch
 18. If all object's type's declarations contains only private fields and don't use `string` or `int` for their fields' types.
+19. If all variables' declarations don't use `string` or `int` types.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -258,6 +259,9 @@ setting shouldn't contain a new line characters.
 
     check not objects all
     explanation Each object's declaration should define also getters and setters for its fields. It made maintaining the code easier, when the type will be upgraded or required to use in multithread environment.
+
+    check not vardeclared standardtypes
+    explanation Using standard types like string or int can lead to hard to find bugs when wrong variables are interacting with self. Also, using a separated types give more information about the variable.
 
 Search rules
 ------------
@@ -384,3 +388,6 @@ there is no rules configured for the program.
 
     check not objects all
     explanation Each object's declaration should define also getters and setters for its fields. It made maintaining the code easier, when the type will be upgraded or required to use in multithread environment.
+
+    check not vardeclared standardtypes
+    explanation Using standard types like string or int can lead to hard to find bugs when wrong variables are interacting with self. Also, using a separated types give more information about the variable.
