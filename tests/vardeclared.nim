@@ -30,3 +30,6 @@ import utils/helpers
 
 runRuleTest(files = @["vardeclared"], validOptions = @["type"],
     invalidOptions = @[], disabledChecks = {fixTests})
+    
+runRuleTest(files = @["vardeclaredtypes"], validOptions = @["standardtypes"],
+    invalidOptions = @[], disabledChecks = {fixTests})
