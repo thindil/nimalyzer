@@ -46,7 +46,8 @@
 ##   Possible values are: full - the declaration must have declared type and
 ##   value for the variable, type - the declaration must have declared type for
 ##   the variable, value - the declaration must have declared value for the
-##   variable.
+##   variable, stadardtypes - the declaration has declared the variable with
+##   type int or string.
 ##
 ## Disabling the rule
 ## ------------------
