@@ -81,8 +81,8 @@
 import ../rules
 
 ruleConfig(ruleName = "vardeclared",
-  ruleFoundMessage = "declarations with{negation} {rule.options[0]} declaration",
-  ruleNotFoundMessage = "declarations with{negation} {rule.options[0]} declaration not found.",
+  ruleFoundMessage = "declarations with{negation} {ruleCheck} declaration",
+  ruleNotFoundMessage = "declarations with{negation} {ruleCheck} declaration not found.",
   rulePositiveMessage = "declaration of {params[0]} line: {params[1]} sets the {params[2]} '{params[3]}' as the {params[2]} of the variable.",
   ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} doesn't set {params[2]} for the variable.",
   ruleOptions = @[custom],
@@ -117,14 +117,16 @@ checkRule:
             setResult(checkResult = declaration[^1].kind != nkEmpty,
                 positiveMessage = positiveMessage,
                 negativeMessage = negativeMessage, node = declaration,
-                params = [$declaration[namePos], $declaration.info.line, "value",
+                params = [$declaration[namePos], $declaration.info.line,
+                    "value",
                 $declaration[2]])
           # Check if declaration of variable sets its type to int or string
           if rule.options[0] == "standardtypes" and declaration[^2].kind != nkEmpty:
             setResult(checkResult = $declaration[^2] in ["int", "string"],
-                positiveMessage = positiveMessage,
+                positiveMessage = "declaration of {params[0]} line: {params[1]} sets the {params[2]} of the variable.",
                 negativeMessage = negativeMessage, node = declaration,
-                params = [$declaration[namePos], $declaration.info.line, "type",
+                params = [$declaration[namePos], $declaration.info.line,
+                    "int or string as type",
                 $declaration[1]])
       # And sometimes the compiler detects declarations as the node
       elif node.kind == nkIdentDefs and astNode.kind in {nkVarSection,
@@ -146,17 +148,20 @@ checkRule:
               namePos], $node.info.line, "value", $node[2]])
         # Check if declaration of variable sets its type to int or string
         if rule.options[0] == "standardtypes" and node[1].kind != nkEmpty:
-          setResult(checkResult = $node[1] in ["int", "string"],
-              positiveMessage = positiveMessage,
+          setResult(checkResult = $node[1] notin ["int", "string"],
+              positiveMessage = "declaration of {params[0]} line: {params[1]} sets the {params[2]} of the variable.",
               negativeMessage = negativeMessage, node = node, params = [$node[
-              namePos], $node.info.line, "type", $node[1]])
+              namePos], $node.info.line, "int or string as type", $node[1]])
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
           "can't check declaration of variable " &
           " line: " &
           $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
-    let negation: string = (if rule.negation: "out" else: "")
+    let
+      negation: string = (if rule.negation: "out" else: "")
+      ruleCheck: string = (if rule.options[0] ==
+          "standardtypes": "int or string as type of" else: rule.options[0])
 
 fixRule:
   discard
