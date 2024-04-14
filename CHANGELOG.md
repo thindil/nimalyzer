@@ -18,6 +18,8 @@ of the program.
   `string` types.
 - More types of the program's rules' options: `natural` for integer values of 0
   or more and `positive` for integer values greater than 0.
+- The rule `varDeclared` can now detect do a variable was declared with `int` or
+  `string` type.
 
 ### Changed
 - Using unittest2 package for the project's unit tests.
