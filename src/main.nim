@@ -72,9 +72,10 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
       nimCache: IdentCache = newIdentCache()
       nimConfig: ConfigRef = newConfigRef()
     nimConfig.options.excl(y = optHints)
+    type ExtendedNatural = range[-1 .. Natural.high]
     var
-      resultCode: int = QuitSuccess
-      configSections: int = 0
+      resultCode: int16 = QuitSuccess
+      configSections: ExtendedNatural = 0
       globalShowSummary: bool = false
     # Check source code files with the selected rules
     block checkingCode:
