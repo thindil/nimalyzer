@@ -69,7 +69,7 @@ type
       text*: string
 
 const
-  fixCommand: string = when defined(macos) or defined(macosx) or defined(
+  fixCommand: FixCommand = when defined(macos) or defined(macosx) or defined(
     windows): "open" else: "xdg-open" & " {fileName}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
@@ -140,7 +140,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
     try:
       # Read the program's configuration
       var
-        configSection: int = sections
+        configSection: Natural = sections
         forceFixCommand: bool = false
         lineNumber: Natural = 0
       for line in configFile.lines:
@@ -195,7 +195,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
         of "output":
           let logMode: FileMode = (if setting.value.startsWith(
               prefix = "new ".toLowerAscii): fmWrite else: fmAppend)
-          let fileName: string = unixToNativePath(path = (if logMode ==
+          let fileName: FilePath = unixToNativePath(path = (if logMode ==
               fmWrite: setting.value[4 .. ^1] else: setting.value))
           addHandler(handler = newFileLogger(filename = fileName,
               fmtStr = "[$time] - $levelname: ", mode = logMode))
@@ -211,7 +211,7 @@ proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
               result.fixCommand & "'.", level = lvlDebug)
         # Set the source code file to check
         of "source":
-          let fileName: string = unixToNativePath(path = setting.value)
+          let fileName: FilePath = unixToNativePath(path = setting.value)
           addFile(fileName = fileName, sources = result.sources)
         # Set the source code files to check
         of "files":
