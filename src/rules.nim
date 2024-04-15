@@ -46,13 +46,13 @@ type
     ## the available types of the program's rules' options
     integer, str, node, custom, natural, positive
 
-  FixCommand = string
+  FixCommand* = string
     ## The full command to execute by a rule for fix type of checks
 
   Explanation = string
     ## The message show to the user as an explanation for a rule's setting
 
-  FilePath = string
+  FilePath* = string
     ## The path to the file which will be checked by a rule
 
   ResultAmount = int
