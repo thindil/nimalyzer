@@ -58,6 +58,9 @@ type
   ResultAmount = int
     ## The amount of results found by a rule
 
+  Message = string
+    ## A message showed to the user
+
   RuleOptions* = object
     ## Contains information for the program's rules
     ##
@@ -211,7 +214,7 @@ proc errorMessage*(text: string; e: ref Exception = nil): int {.sideEffect,
   require:
     text.len > 0
   body:
-    var message: string = text
+    var message: Message = text
     if e != nil:
       message.add(y = getCurrentExceptionMsg())
       message.add(y = "\nException name: [" & $e.name & "]\n")
