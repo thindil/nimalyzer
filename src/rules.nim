@@ -61,6 +61,9 @@ type
   Message = string
     ## A message showed to the user
 
+  ExtendedNatural* = range[-1 .. Natural.high]
+    ## Natural type of it with added -1 value
+
   RuleOptions* = object
     ## Contains information for the program's rules
     ##
