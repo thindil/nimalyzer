@@ -149,7 +149,7 @@ checkRule:
               namePos], $node.info.line, "value", $node[2]])
         # Check if declaration of variable sets its type to int or string
         if rule.options[0] == "standardtypes" and node[1].kind != nkEmpty:
-          setResult(checkResult = $node[1] notin ["int", "string"],
+          setResult(checkResult = $node[1] in ["int", "string"],
               positiveMessage = "declaration of {params[0]} line: {params[1]} sets the {params[2]} of the variable.",
               negativeMessage = negativeMessage, node = node, params = [$node[
               namePos], $node.info.line, "int or string as type", $node[1]])
