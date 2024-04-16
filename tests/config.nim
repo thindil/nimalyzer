@@ -36,7 +36,7 @@ suite "Unit tests for config module":
   setLogger()
 
   test "Test parsing configuration file":
-    var sections: int = 0
+    var sections: ExtendedNatural = 0
     let (sources, rules, fixCommand, maxReports, showSummary) = parseConfig(
         configFile = "config/nimalyzer.cfg", sections = sections)
     check:
