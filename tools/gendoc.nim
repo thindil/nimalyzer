@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023-2024 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -112,8 +112,9 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
 
       # Get the documentation of the program's rules
       let configFile: File = open(filename = "config" & DirSep & "nimalyzer.cfg")
+      type FileLine = string
       for line in configFile.lines:
-        var newLine: string = line
+        var newLine: FileLine = line
         newLine.removePrefix(chars = {'#', ' '})
         for prefix in configOptions:
           if newLine.startsWith(prefix = prefix):
