@@ -41,21 +41,25 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, ReadIOEffect,
     if not fileExists(filename = "nimalyzer.nimble"):
       quit(errormsg = "Please run the tool from the main directory of the project.")
     try:
+      type
+        UserInput = string
+        FilePath = string
+        FileContent = string
       # Ask the user for the new rule parameters
       echo "The name of the new rule: "
-      var name: string = ""
+      var name: UserInput = ""
       while name.len == 0:
         name = stdin.readLine
       echo "The author of the rule, leave empty for use default value: "
-      var author: string = stdin.readLine
+      var author: UserInput = stdin.readLine
       if author.len == 0:
         author = "Bartek thindil Jasicki"
-      let fileName: string = "src/rules" & DirSep & name.toLowerAscii & ".nim"
+      let fileName: FilePath = "src/rules" & DirSep & name.toLowerAscii & ".nim"
       # Check if a rule with the same name exists
       if fileExists(filename = fileName):
         quit(errormsg = "The rule with name '" & name & "' exists.")
       # Copy the template rule file to the proper directory
-      var ruleCode: string = readFile(filename = "tools" & DirSep & "rule.txt")
+      var ruleCode: FileContent = readFile(filename = "tools" & DirSep & "rule.txt")
       ruleCode = ruleCode.replace(sub = "--author--", by = author)
       ruleCode = ruleCode.replace(sub = "--ruleName--", by = name)
       ruleCode = ruleCode.replace(sub = "--rulename--", by = name.toLowerAscii)
