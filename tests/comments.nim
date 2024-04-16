@@ -33,11 +33,12 @@ import unittest2
 suite "Unit tests for comments rule":
 
   checkpoint "Initializing the tests"
+  type TestCode = string
   const
     validOptions: seq[string] = @["pattern", "^FIXME"]
     invalidOptions: seq[string] = @["randomoption", "anotheroption", "thirdoption"]
-    invalidNimCode: string = "var a = 1"
-    validNimCode: string = "var a = 1"
+    invalidNimCode: TestCode = "var a = 1"
+    validNimCode: TestCode = "var a = 1"
 
   setLogger()
 
