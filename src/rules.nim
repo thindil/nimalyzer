@@ -357,12 +357,12 @@ proc validateOptions*(rule: RuleSettings; options: seq[
       of str:
         continue
       of integer:
-          try:
-            discard options[index].parseInt
-          except ValueError:
-            return errorMessage(text = "The rule " & rule.name &
-                " option number " & $(index + 1) & " has invalid value: '" &
-                option & "'.").bool
+        try:
+          discard options[index].parseInt
+        except ValueError:
+          return errorMessage(text = "The rule " & rule.name &
+              " option number " & $(index + 1) & " has invalid value: '" &
+              option & "'.").bool
       of node:
         let entityType: TNodeKind = parseEnum[TNodeKind](s = option,
             default = nkEmpty)
@@ -376,7 +376,7 @@ proc validateOptions*(rule: RuleSettings; options: seq[
               " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
       of natural:
-        let intOption: int = try:
+        let intOption: ExtendedNatural = try:
             options[index].parseInt()
           except ValueError:
             -1
@@ -385,7 +385,7 @@ proc validateOptions*(rule: RuleSettings; options: seq[
               " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
       of positive:
-        let intOption: int = try:
+        let intOption: ExtendedNatural = try:
             options[index].parseInt()
           except ValueError:
             -1
