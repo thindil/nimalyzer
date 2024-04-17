@@ -79,10 +79,10 @@ const
       "showsummary"]
     ## The list of available the program's configuration's options
 
-proc parseConfig*(configFile: string; sections: var int): tuple[sources: seq[
-    string]; rules: seq[ConfigData]; fixCommand: string;
-    maxReports: Natural; showSummary: bool] {.sideEffect, raises: [], tags: [ReadIOEffect,
-    RootEffect], contractual.} =
+proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
+    sources: seq[string]; rules: seq[ConfigData]; fixCommand: string;
+    maxReports: Natural; showSummary: bool] {.sideEffect, raises: [], tags: [
+    ReadIOEffect, RootEffect], contractual.} =
   ## Parse the configuration file and get all the program's settings
   ##
   ## * configFile - the path to the configuration file which will be parsed
