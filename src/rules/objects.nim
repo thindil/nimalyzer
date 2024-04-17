@@ -208,7 +208,6 @@ fixRule:
   # Made all fields of the object private
   if rule.negation:
     try:
-      echo "NODE:", astNode
       for child in astNode:
         if child.kind == nkRecList:
           for field in child:
@@ -225,7 +224,6 @@ fixRule:
                         for ident in elemChild:
                           for index, identPart in ident:
                             if identPart.kind == nkPostfix:
-                              echo "ident[i]:", identPart
                               ident[index] = newIdentNode(ident = getIdent(
                                   ic = rule.identsCache, identifier = ($ident[
                                   index])[0 .. ^2]), info = ident.info)
@@ -237,23 +235,43 @@ fixRule:
                     ic = rule.identsCache,
                     identifier = ($field[i])[0 .. ^2]), info = field.info)
                   result = true
-      echo "NODE2:", astNode
     except KeyError, Exception:
       discard errorMessage(text = "Can't set the object's field public. Reason: " &
           getCurrentExceptionMsg())
       return false
   # Made all fields of the object public
   else:
-    for child in astNode:
-      if child.kind == nkRecList:
-        for field in child:
-          for i in 0 .. field.sons.len - 3:
-            if field[i].kind != nkPostfix:
-              try:
-                field[i] = newIdentNode(ident = getIdent(ic = rule.identsCache,
-                  identifier = $field[i] & "*"), info = field.info)
-                result = true
-              except KeyError, Exception:
-                discard errorMessage(text = "Can't set the object's field public. Reason: " &
-                    getCurrentExceptionMsg())
-                return false
+    try:
+      echo "NODE:", astNode
+      for child in astNode:
+        if child.kind == nkRecList:
+          for field in child:
+            if field.kind == nkRecCase:
+              for elem in field:
+                if elem.kind == nkIdentDefs:
+                  if elem[0].kind == nkIdent:
+                    elem[0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+                        identifier = $elem[0] & "*"), info = elem[0].info)
+                    result = true
+                else:
+                  for elemChild in elem:
+                    if elemChild.kind == nkRecList:
+                      for elemField in elemChild:
+                        for ident in elemChild:
+                          for i in 0 .. ident.sons.len - 3:
+                            if ident[i].kind != nkPostfix:
+                              ident[i] = newIdentNode(ident = getIdent(
+                                  ic = rule.identsCache, identifier = $ident[
+                                  i] & "*"), info = ident.info)
+                              result = true
+            else:
+              for i in 0 .. field.sons.len - 3:
+                if field[i].kind != nkPostfix:
+                  field[i] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+                    identifier = $field[i] & "*"), info = field.info)
+                  result = true
+      echo "NODE2:", astNode
+    except KeyError, Exception:
+      discard errorMessage(text = "Can't set the object's field public. Reason: " &
+          getCurrentExceptionMsg())
+      return false
