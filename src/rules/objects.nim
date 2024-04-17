@@ -242,7 +242,6 @@ fixRule:
   # Made all fields of the object public
   else:
     try:
-      echo "NODE:", astNode
       for child in astNode:
         if child.kind == nkRecList:
           for field in child:
@@ -250,8 +249,9 @@ fixRule:
               for elem in field:
                 if elem.kind == nkIdentDefs:
                   if elem[0].kind == nkIdent:
-                    elem[0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
-                        identifier = $elem[0] & "*"), info = elem[0].info)
+                    elem[0] = newIdentNode(ident = getIdent(
+                        ic = rule.identsCache, identifier = $elem[0] & "*"),
+                            info = elem[0].info)
                     result = true
                 else:
                   for elemChild in elem:
@@ -267,10 +267,10 @@ fixRule:
             else:
               for i in 0 .. field.sons.len - 3:
                 if field[i].kind != nkPostfix:
-                  field[i] = newIdentNode(ident = getIdent(ic = rule.identsCache,
+                  field[i] = newIdentNode(ident = getIdent(
+                    ic = rule.identsCache,
                     identifier = $field[i] & "*"), info = field.info)
                   result = true
-      echo "NODE2:", astNode
     except KeyError, Exception:
       discard errorMessage(text = "Can't set the object's field public. Reason: " &
           getCurrentExceptionMsg())
