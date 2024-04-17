@@ -110,10 +110,26 @@ checkRule:
         for child in node:
           if child.kind == nkRecList:
             for field in child:
-              for ident in field:
-                if ident.kind == nkPostfix:
-                  checkResult = true
-                  break publicFields
+              if field.kind == nkRecCase:
+                for elem in field:
+                  if elem.kind == nkIdentDefs:
+                    for ident in elem:
+                      if ident.kind == nkPostfix:
+                        checkResult = true
+                        break publicFields
+                  else:
+                    for elemChild in elem:
+                      if elemChild.kind == nkRecList:
+                        for elemField in elemChild:
+                          for ident in elemChild:
+                            if ident.kind == nkPostfix:
+                              checkResult = true
+                              break publicFields
+              else:
+                for ident in field:
+                  if ident.kind == nkPostfix:
+                    checkResult = true
+                    break publicFields
       if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
       let oldAmount: int = rule.amount
@@ -138,12 +154,32 @@ checkRule:
         for child in node:
           if child.kind == nkRecList:
             for field in child:
-              try:
-                if ($field[^2]).toLowerAscii in ["int", "string"]:
-                  checkResult = true
-                  break standardTypes
-              except Exception:
-                discard
+              if field.kind == nkRecCase:
+                for elem in field:
+                  if elem.kind == nkIdentDefs:
+                    try:
+                      if ($elem[^2]).toLowerAscii in ["int", "string"]:
+                        checkResult = true
+                        break standardTypes
+                    except:
+                      discard
+                  else:
+                    for elemChild in elem:
+                      if elemChild.kind == nkRecList:
+                        for elemField in elemChild:
+                          try:
+                            if ($elemField[^2]).toLowerAscii in ["int", "string"]:
+                              checkResult = true
+                              break standardTypes
+                          except:
+                            discard
+              else:
+                try:
+                  if ($field[^2]).toLowerAscii in ["int", "string"]:
+                    checkResult = true
+                    break standardTypes
+                except Exception:
+                  discard
       if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
       let oldAmount: int = rule.amount
