@@ -56,17 +56,98 @@ type
     ## field:
     ##
     ## * text - the text to show to the user
-    case kind*: ConfigKind
+    case kind: ConfigKind
     of rule:
-      name*: string
-      options*: seq[string]
-      negation*: bool
-      ruleType*: RuleTypes
-      index*: int
-      forceFixCommand*: bool
-      explanation*: string
+      name: string
+      options: seq[string]
+      negation: bool
+      ruleType: RuleTypes
+      index: int
+      forceFixCommand: bool
+      explanation: string
     of message:
-      text*: string
+      text: string
+
+proc kind*(config: ConfigData): ConfigKind {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## The getter of a field of ConfigData type
+  ##
+  ## * config - the ConfigData object which field will be get
+  ##
+  ## Returns the value of the selected field
+  config.kind
+
+proc text*(config: ConfigData): string {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## The getter of a field of ConfigData type
+  ##
+  ## * config - the ConfigData object which field will be get
+  ##
+  ## Returns the value of the selected field
+  config.text
+
+proc negation*(config: ConfigData): bool {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## The getter of a field of ConfigData type
+  ##
+  ## * config - the ConfigData object which field will be get
+  ##
+  ## Returns the value of the selected field
+  config.negation
+
+proc ruleType*(config: ConfigData): RuleTypes {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## The getter of a field of ConfigData type
+  ##
+  ## * config - the ConfigData object which field will be get
+  ##
+  ## Returns the value of the selected field
+  config.ruleType
+
+proc name*(config: ConfigData): string {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## The getter of a field of ConfigData type
+  ##
+  ## * config - the ConfigData object which field will be get
+  ##
+  ## Returns the value of the selected field
+  config.name
+
+proc options*(config: ConfigData): seq[string] {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## The getter of a field of ConfigData type
+  ##
+  ## * config - the ConfigData object which field will be get
+  ##
+  ## Returns the value of the selected field
+  config.options
+
+proc forceFixCommand*(config: ConfigData): bool {.sideEffect, raises: [],
+    tags: [], contractual.} =
+  ## The getter of a field of ConfigData type
+  ##
+  ## * config - the ConfigData object which field will be get
+  ##
+  ## Returns the value of the selected field
+  config.forceFixCommand
+
+proc explanation*(config: ConfigData): string {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## The getter of a field of ConfigData type
+  ##
+  ## * config - the ConfigData object which field will be get
+  ##
+  ## Returns the value of the selected field
+  config.explanation
+
+proc index*(config: ConfigData): int {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## The getter of a field of ConfigData type
+  ##
+  ## * config - the ConfigData object which field will be get
+  ##
+  ## Returns the value of the selected field
+  config.index
 
 const
   fixCommand: FixCommand = when defined(macos) or defined(macosx) or defined(
