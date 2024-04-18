@@ -58,15 +58,15 @@ type
     ## * text - the text to show to the user
     case kind: ConfigKind
     of rule:
-      name: string
+      name: RuleName
       options: seq[string]
       negation: bool
       ruleType: RuleTypes
-      index: int
+      index: ExtendedNatural
       forceFixCommand: bool
-      explanation: string
+      explanation: Explanation
     of message:
-      text: string
+      text: Message
 
 proc kind*(config: ConfigData): ConfigKind {.sideEffect, raises: [], tags: [],
     contractual.} =
@@ -104,7 +104,7 @@ proc ruleType*(config: ConfigData): RuleTypes {.sideEffect, raises: [], tags: []
   ## Returns the value of the selected field
   config.ruleType
 
-proc name*(config: ConfigData): string {.sideEffect, raises: [], tags: [],
+proc name*(config: ConfigData): RuleName {.sideEffect, raises: [], tags: [],
     contractual.} =
   ## The getter of a field of ConfigData type
   ##
