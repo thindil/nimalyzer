@@ -102,7 +102,6 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
   body:
 
     type
-      IndexRange = range[-1 .. int.high]
       ConfigName = string
       ConfigValue = string
 
@@ -116,7 +115,7 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
         ##           invalid option, it is -1.
         name: ConfigName
         value: ConfigValue
-        index: IndexRange
+        index: ExtendedNatural
 
     proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [
         ], tags: [RootEffect], contractual.} =
