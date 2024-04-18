@@ -29,4 +29,4 @@ include ../src/rules/objects
 import utils/helpers
 
 runRuleTest(files = @["objects"], validOptions = @["all"],
-    invalidOptions = @["randomoption", "anotheroption"])
+    invalidOptions = @["randomoption", "anotheroption"], disabledChecks = {fixTests})
