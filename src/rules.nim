@@ -96,7 +96,7 @@ type
     maxResults: Natural
     explanation: Explanation
 
-  RuleName = string
+  RuleName* = string
     ## A name of a rule
 
   RuleSettings* = object
