@@ -49,7 +49,7 @@ type
   FixCommand* = string
     ## The full command to execute by a rule for fix type of checks
 
-  Explanation = string
+  Explanation* = string
     ## The message show to the user as an explanation for a rule's setting
 
   FilePath* = string
@@ -58,7 +58,7 @@ type
   ResultAmount = int
     ## The amount of results found by a rule
 
-  Message = string
+  Message* = string
     ## A message showed to the user
 
   ExtendedNatural* = range[-1 .. Natural.high]
