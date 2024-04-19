@@ -55,7 +55,7 @@ type
   FilePath* = string
     ## The path to the file which will be checked by a rule
 
-  ResultAmount = int
+  ResultAmount* = int
     ## The amount of results found by a rule
 
   Message* = string
