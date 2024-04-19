@@ -35,7 +35,7 @@ suite "Unit tests for rules module":
   checkpoint "Initializing the tests"
   setLogger()
 
-  var resultValue: int = 0
+  var resultValue: ExtendedNatural = 0
 
   test "Test showing message":
     checkpoint "Decreasing the value"
