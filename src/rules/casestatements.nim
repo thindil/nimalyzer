@@ -116,7 +116,7 @@ checkRule:
           (if rule.options[0].toLowerAscii == "max": "more " else: "less ") &
               "than " & rule.options[1] & " branches."])
   endCheck:
-    let negation: string = (if rule.negation: "'t" else: "")
+    let negation: Message = (if rule.negation: "'t" else: "")
 
 fixRule:
   discard
