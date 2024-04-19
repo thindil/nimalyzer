@@ -101,6 +101,8 @@ ruleConfig(ruleName = "comments",
   ruleOptionValues = @["pattern", "legal"],
   ruleMinOptions = 1)
 
+type FileLine = string
+
 checkRule:
   initCheck:
     if rule.options[0] == "pattern" and rule.options.len < 2:
@@ -112,7 +114,7 @@ checkRule:
       return
   startCheck:
     let
-      negation: string = (if rule.negation: "doesn't " else: "")
+      negation: Message = (if rule.negation: "doesn't " else: "")
       convention: Regex = (if rule.options.len > 1: rule.options[
           1].re else: "^.".re)
   checking:
@@ -120,7 +122,7 @@ checkRule:
       var lineNumber: Natural = 0
       for line in lines(fileName = rule.fileName):
         lineNumber.inc
-        var cleanLine: string = line.strip()
+        var cleanLine: FileLine = line.strip()
         if cleanLine.startsWith(prefix = '#') and cleanLine.len > 2:
           cleanLine = cleanLine[cleanLine.find(sub = ' ') + 1 .. ^1]
           case rule.options[0]
@@ -183,7 +185,7 @@ fixRule:
         discard
       return false
 
-  let newFileName: string = rule.fileName & ".bak"
+  let newFileName: FilePath = rule.fileName & ".bak"
   case data
   # If comment has the regex pattern in itself, remove it
   of "pattern":
@@ -195,7 +197,7 @@ fixRule:
         convention: Regex = rule.options[1].re
         newFile: File = open(filename = rule.fileName, mode = fmWrite)
       for line in newFileName.lines:
-        var cleanLine: string = line.strip()
+        var cleanLine: FileLine = line.strip()
         if cleanLine.startsWith(prefix = '#') and cleanLine.len > 2:
           cleanLine = cleanLine[cleanLine.find(sub = ' ') + 1 .. ^1]
           if match(s = cleanLine, pattern = convention):
