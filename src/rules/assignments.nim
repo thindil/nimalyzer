@@ -159,7 +159,7 @@ checkRule:
           rule.fileName & ". Reason: ", e = getCurrentException())
       return
   endCheck:
-    let negation: string = (if rule.negation: "'t" else: "")
+    let negation: Message = (if rule.negation: "'t" else: "")
 
 fixRule:
   result = false
