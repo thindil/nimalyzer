@@ -156,7 +156,7 @@ checkRule:
             e = getCurrentException())
         return
   endCheck:
-    let moreOrLess: string = (if rule.negation: "more than" else: "less or equal to")
+    let moreOrLess: Message = (if rule.negation: "more than" else: "less or equal to")
 
 fixRule:
   discard
