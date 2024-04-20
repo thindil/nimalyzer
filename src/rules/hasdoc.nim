@@ -96,7 +96,11 @@ ruleConfig(ruleName = "hasdoc",
   ruleOptionValues = @["all", "callables", "types", "typesfields", "modules"],
   ruleMinOptions = 1)
 
-var docTemplate: string = ""
+type
+  DocString = string
+  Declaration = string
+
+var docTemplate: DocString = ""
 
 {.hint[XCannotRaiseY]: off.}
 checkRule:
@@ -133,7 +137,7 @@ checkRule:
           {nkIdentDefs}
         else:
           {}
-      negation: string = (if rule.negation: "out" else: "")
+      negation: Message = (if rule.negation: "out" else: "")
   checking:
     # Check only elements which can have documentation
     if node.kind in nodesToCheck:
@@ -156,7 +160,7 @@ checkRule:
         except Exception:
           discard
         # Set the name of the declared entity which is checked for documentation
-        var declName: string = try:
+        var declName: Declaration = try:
               ($node[namePos]).split[0]
             except KeyError, Exception:
               ""
@@ -200,7 +204,7 @@ checkRule:
                 text = "Can't check the declared entity '" & declName & "'.", e = e)
             return
   endCheck:
-    let notFoundMsg: string =
+    let notFoundMsg: Message =
       if rule.negation and rule.ruleType == search and rule.amount < 1:
         "The documentation found."
       else:
