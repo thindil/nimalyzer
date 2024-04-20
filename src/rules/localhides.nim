@@ -131,8 +131,9 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     # An empty node, don't check
     if node.len == 0:
       return
+    type VariableName = string
     let
-      varName: string = $node[namePos]
+      varName: VariableName = $node[namePos]
       astNode: PNode = parent
     # The declaration is inside as injected a template or variable is ignored
     # or the declaration doesn't have initialization, ignore it and move to
@@ -173,7 +174,7 @@ checkRule:
   initCheck:
     discard
   startCheck:
-    let negation: string = (if rule.negation: " not" else: "")
+    let negation: Message = (if rule.negation: " not" else: "")
   checking:
     try:
       # Sometimes the compiler detects declarations as children of the node
