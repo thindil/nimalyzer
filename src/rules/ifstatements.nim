@@ -266,10 +266,10 @@ checkRule:
       rule.amount = errorMessage(text = "Can't check the amount of branches of if statements, no value for the branches' amount set in the configuration file.")
       return
   startCheck:
-    let negation: string = (if rule.negation: "'t" else: "")
+    let negation: Message = (if rule.negation: "'t" else: "")
   checking:
     if node.kind in {nkIfStmt, nkWhenStmt}:
-      var oldAmount: int = rule.amount
+      var oldAmount: ResultAmount = rule.amount
       if node.len > 1:
         # Check if the if statement starts with negative condition and has else branch
         if rule.options[0].toLowerAscii in ["all", "negative"]:
@@ -305,7 +305,7 @@ checkRule:
         if not rule.enabled:
           continue
         if child.kind in {nkIfStmt, nkElifBranch, nkWhenStmt}:
-          var oldAmount: int = rule.amount
+          var oldAmount: ResultAmount = rule.amount
           if child.len > 1:
             # Check if the if statement starts with negative condition and has else branch
             if rule.options[0].toLowerAscii in ["all", "negative"]:
