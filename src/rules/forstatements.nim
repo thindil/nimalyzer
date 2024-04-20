@@ -108,7 +108,7 @@ proc checkIterators(nodeToCheck: PNode; message, checkType: var string;
   ##
   ## Returns modified arguments checkType, checkResult and rule
   body:
-    var callName: string = ""
+    var callName: Message = ""
     try:
       if nodeToCheck[^2].kind == nkCall:
         callName = $nodeToCheck[^2][0]
@@ -150,14 +150,14 @@ checkRule:
   initCheck:
     discard
   startCheck:
-    let negation: string = (if rule.negation: "'t" else: "")
+    let negation: Message = (if rule.negation: "'t" else: "")
   checking:
     if node.kind == nkForStmt or (node.kind == nkStmtList and node[0].kind == nkForStmt):
       let
         nodeToCheck: PNode = (if node.kind == nkForStmt: node else: node[0])
       var
         checkResult: bool = false
-        message, checkType: string = ""
+        message, checkType: Message = ""
       # Check if the for statement uses iterators pairs and items
       if rule.options[0].toLowerAscii in ["all", "iterators"]:
         checkIterators(nodeToCheck = nodeToCheck,
@@ -168,7 +168,7 @@ checkRule:
             checkType = checkType, checkResult = checkResult, rule = rule)
       if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
-      let oldAmount: int = rule.amount
+      let oldAmount: ResultAmount = rule.amount
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
           negativeMessage = negativeMessage, ruleData = checkType,
           node = nodeToCheck, params = [ $nodeToCheck.info.line, message])
@@ -189,7 +189,7 @@ checkRule:
             nodeToCheck: PNode = (if child.kind == nkForStmt: child else: child[0])
           var
             checkResult: bool = false
-            message, checkType: string = ""
+            message, checkType: Message = ""
           # Check if the for statement uses iterators pairs and items
           if rule.options[0].toLowerAscii in ["all", "iterators"]:
             checkIterators(nodeToCheck = nodeToCheck,
@@ -201,7 +201,7 @@ checkRule:
                 checkType = checkType, checkResult = checkResult, rule = rule)
           if rule.ruleType in {RuleTypes.count, search}:
             checkResult = not checkResult
-          let oldAmount: int = rule.amount
+          let oldAmount: ResultAmount = rule.amount
           setResult(checkResult = checkResult,
               positiveMessage = positiveMessage,
               negativeMessage = negativeMessage,
