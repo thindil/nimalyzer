@@ -114,6 +114,8 @@ ruleConfig(ruleName = "hasentity",
   ruleMinOptions = 2,
   ruleShowForCheck = true)
 
+type EntityName = string
+
 checkRule:
   initCheck:
     rule.amount = 0
@@ -129,7 +131,7 @@ checkRule:
       rule.amount = errorMessage(text = "Invalid type of entity: " &
           rule.options[0])
       return
-    let negation: string = (if rule.negation: "out" else: "")
+    let negation: Message = (if rule.negation: "out" else: "")
   checking:
     if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
         nkCommentStmt}:
@@ -141,18 +143,18 @@ checkRule:
                 parseEnum[TNodeKind](s = rule.options[2])
               except ValueError:
                 nkNone
-          var childIndex: int = -1
+          var childIndex: range[-2 .. int.high] = -1
           if rule.options.len == 4:
             childIndex = try:
                 rule.options[3].parseInt()
               except ValueError:
-                int.low
+                -2
           if node.kind == parentKind:
-            if childIndex == int.low:
+            if childIndex == -2:
               for child in node:
                 if child.kind != nodeKind:
                   continue
-                let childName: string = try:
+                let childName: EntityName = try:
                     $child[namePos]
                   except KeyError, Exception:
                     ""
@@ -163,7 +165,7 @@ checkRule:
                       negativeMessage = negativeMessage, node = child,
                       params = [rule.options[0], childName, $child.info.line])
             elif childIndex <= node.sons.high:
-              let childName: string = try:
+              let childName: EntityName = try:
                   if childIndex > -1:
                     $node[childIndex]
                   else:
