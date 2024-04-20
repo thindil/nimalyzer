@@ -124,6 +124,10 @@ ruleConfig(ruleName = "haspragma",
   ruleOptionValues = @["procedures", "templates", "all", "unborrowed"],
   ruleMinOptions = 2)
 
+type
+  ProcName = string
+  PragmaName = string
+
 {.hint[XCannotRaiseY]: off.}
 checkRule:
   initCheck:
@@ -139,13 +143,13 @@ checkRule:
           {nkTemplateDef}
         else:
           {}
-      negation: string = (if rule.negation: "out" else: "")
+      negation: Message = (if rule.negation: "out" else: "")
   checking:
     if node.kind in nodesToCheck:
       # Set the name of the procedure to check
       let
         pragmas: PNode = getDeclPragma(n = node)
-        procName: string = try:
+        procName: ProcName = try:
             $node[namePos]
           except KeyError, Exception:
             ""
@@ -254,7 +258,7 @@ fixRule:
   if rule.negation:
     for index, node in pragmas:
       try:
-        let pragma: string = $node
+        let pragma: PragmaName = $node
         if '*' notin [data[0], data[^1]] and pragma == data:
           delSon(father = pragmas, idx = index)
           result = true
@@ -294,9 +298,9 @@ fixRule:
       return true
     elif not data.contains(chars = {'*'}):
       let
-        startIndex: int = data.find(chars = {'['})
-        endIndex: int = data.find(chars = {']'})
-        pragmaName: string = data[0 .. data.find(chars = {':'}) - 1]
+        startIndex: ExtendedNatural = data.find(chars = {'['})
+        endIndex: ExtendedNatural = data.find(chars = {']'})
+        pragmaName: PragmaName = data[0 .. data.find(chars = {':'}) - 1]
         newPragma: PNode = newTree(kind = nkExprColonExpr, children = [])
         values: PNode = newTree(kind = nkBracket, children = [])
       newPragma.sons.add(y = newIdentNode(ident = getIdent(
