@@ -108,8 +108,9 @@ checkRule:
         {}
   checking:
     if node.kind in nodesToCheck:
+      type NodeName = string
       # Get the procedure's name
-      let procName: string = try:
+      let procName: NodeName = try:
             $node[0]
           except KeyError, Exception:
             ""
@@ -127,14 +128,14 @@ checkRule:
       if node[bodyPos].len == 0:
         continue
       else:
-        var index: int = -1
+        var index: ExtendedNatural = -1
         # Check each parameter
         for child in node[paramsPos].sons[1 .. ^1]:
           index = -1
           for i in 0..child.len - 3:
             try:
               let
-                varName: string = split(s = $child[i])[0]
+                varName: NodeName = split(s = $child[i])[0]
                 body: PNode = flattenStmts(n = node[bodyPos])
               for childNode in body:
                 index = find(s = $childNode, sub = varName)
@@ -164,7 +165,7 @@ checkRule:
               negativeMessage = positiveMessage, node = node, params = [
               procName, $node.info.line, ""])
   endCheck:
-    let negation: string = (if rule.negation: " not" else: "")
+    let negation: Message = (if rule.negation: " not" else: "")
 
 fixRule:
   # Don't change anything if rule has negation
