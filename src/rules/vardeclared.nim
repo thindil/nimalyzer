@@ -160,8 +160,8 @@ checkRule:
           $node.info.line & ". Reason: ", e = getCurrentException())
   endCheck:
     let
-      negation: string = (if rule.negation: "out" else: "")
-      ruleCheck: string = (if rule.options[0] ==
+      negation: Message = (if rule.negation: "out" else: "")
+      ruleCheck: Message = (if rule.options[0] ==
           "standardtypes": "int or string as type of" else: rule.options[0])
 
 fixRule:
