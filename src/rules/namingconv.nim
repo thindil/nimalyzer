@@ -117,11 +117,12 @@ checkRule:
     try:
       # Sometimes the compiler detects declarations as children of the node
       if node.kind in nodesToCheck:
+        type DeclarationName = string
         # Check each variable declaration if meet the rule requirements
         for declaration in node:
           if declaration.kind == nkEmpty:
             continue
-          let nameToCheck: string = (if declaration.kind in {nkCharLit ..
+          let nameToCheck: DeclarationName = (if declaration.kind in {nkCharLit ..
               nkTripleStrLit, nkSym, nkIdent}: $declaration else: $declaration[namePos])
           setResult(checkResult = match(s = nameToCheck, pattern = convention),
               positiveMessage = positiveMessage,
@@ -141,7 +142,7 @@ checkRule:
         " line: " & $node.info.line & ". Reason: ",
         e = getCurrentException())
   endCheck:
-    let negation: string = (if rule.negation: "not " else: "")
+    let negation: Message = (if rule.negation: "not " else: "")
 
 fixRule:
   discard
