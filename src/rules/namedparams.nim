@@ -86,7 +86,8 @@ proc check(node, astNode: PNode; rule: var RuleOptions;
   body:
     if not rule.enabled or rule.maxResults == 0:
       return
-    let callName: string = try:
+    type CallName = string
+    let callName: CallName = try:
           $node[namePos]
         except KeyError, Exception:
           ""
@@ -133,7 +134,7 @@ checkRule:
       check(node = node, astNode = parentNode, rule = rule,
           messagePrefix = messagePrefix)
   endCheck:
-    let negation: string = (if rule.negation: " not" else: "")
+    let negation: Message = (if rule.negation: " not" else: "")
 
 fixRule:
   discard
