@@ -161,7 +161,7 @@ checkRule:
                       if ($elem[^2]).toLowerAscii in ["int", "string"]:
                         checkResult = true
                         break standardTypes
-                    except:
+                    except Exception:
                       discard
                   else:
                     for elemChild in elem:
@@ -171,7 +171,7 @@ checkRule:
                             if ($elemField[^2]).toLowerAscii in ["int", "string"]:
                               checkResult = true
                               break standardTypes
-                          except:
+                          except Exception:
                             discard
               else:
                 try:
