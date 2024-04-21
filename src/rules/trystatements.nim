@@ -146,9 +146,10 @@ proc checkName(exceptNode: PNode; message, checkType: var string;
         " except statement with exception '" & rule.options[1] & "'."
     checkType = "name"
     checkResult = false
+    type ExceptionName = string
     for child in exceptNode:
       try:
-        let exceptionName: string = (if child.kind == nkIdent: (
+        let exceptionName: ExceptionName = (if child.kind == nkIdent: (
             $child).toLowerAscii elif child.kind == nkInfix: ($child[
             1]).toLowerAscii else: "")
         if exceptionName.len > 0 and exceptionName.toLowerAscii == rule.options[
@@ -179,7 +180,7 @@ proc checkStatement(nodeToCheck, astNode: PNode; rule: var RuleOptions;
         continue
       var
         checkResult: bool = false
-        message, checkType: string = ""
+        message, checkType: Message = ""
       # Check if the try statement contains general except statement
       if rule.options[0].toLowerAscii == "empty":
         checkEmpty(exceptNode = child, message = message,
@@ -190,7 +191,7 @@ proc checkStatement(nodeToCheck, astNode: PNode; rule: var RuleOptions;
             checkType = checkType, checkResult = checkResult, rule = rule)
       if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
-      let oldAmount: int = rule.amount
+      let oldAmount: ResultAmount = rule.amount
       setResult(checkResult = checkResult, positiveMessage = positiveMessage,
           negativeMessage = negativeMessage, ruleData = checkType,
           node = child, params = [$child.info.line, message])
@@ -207,7 +208,7 @@ checkRule:
       rule.amount = errorMessage(text = "Can't check try statements' names. No name specified to check.")
       return
   startCheck:
-    let negation: string = (if rule.negation: "'t" else: "")
+    let negation: Message = (if rule.negation: "'t" else: "")
   checking:
     if node.kind == nkTryStmt or (node.kind == nkStmtList and node[0].kind == nkTryStmt):
       let nodeToCheck: PNode = (if node.kind == nkTryStmt: node else: node[0])
