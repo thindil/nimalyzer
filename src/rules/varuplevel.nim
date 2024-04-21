@@ -101,8 +101,9 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     section != nil
     parent != nil
   body:
+    type VariableName = string
     let
-      varName: string = $node[namePos]
+      varName: VariableName = $node[namePos]
       astNode: PNode = parent
     # The declaration is global, or inside as injected a template or variable
     # is ignored or the declaration doesn't have initialization, ignore it
@@ -191,7 +192,7 @@ checkRule:
       rule.amount = errorMessage(text = messagePrefix &
           "can't check declaration of variable.", e = getCurrentException())
   endCheck:
-    let negation: string = (if rule.negation: "'t" else: "")
+    let negation: Message = (if rule.negation: "'t" else: "")
 
 fixRule:
   # Don't change anything if rule has negation
@@ -204,7 +205,7 @@ fixRule:
     require:
       nodes != nil
     body:
-      var nodeIndex, declIndex: int = -1
+      var nodeIndex, declIndex: ExtendedNatural = -1
       for index, node in nodes:
         if node.kind in {nkVarSection, nkLetSection}:
           nodeIndex = index
