@@ -101,7 +101,7 @@ checkRule:
   initCheck:
     discard
   startCheck:
-    let negation: string = (if rule.negation: "'t" else: "")
+    let negation: Message = (if rule.negation: "'t" else: "")
   checking:
     var checkResult: bool = false
     # Check if the object's type definition contains any public field
@@ -132,9 +132,9 @@ checkRule:
                     break publicFields
       if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
-      let oldAmount: int = rule.amount
+      let oldAmount: ResultAmount = rule.amount
       try:
-        let message: string = (if rule.negation: "contains" else: "doesn't contain") & " public fields."
+        let message: Message = (if rule.negation: "contains" else: "doesn't contain") & " public fields."
         setResult(checkResult = checkResult, positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, ruleData = "public fields",
             node = node, params = [$node.info.line, message, $astNode[0]])
@@ -182,9 +182,9 @@ checkRule:
                   discard
       if rule.ruleType in {RuleTypes.count, search}:
         checkResult = not checkResult
-      let oldAmount: int = rule.amount
+      let oldAmount: ResultAmount = rule.amount
       try:
-        let message: string = (if rule.negation: "contains" else: "doesn't contain") & " field of int or string type."
+        let message: Message = (if rule.negation: "contains" else: "doesn't contain") & " field of int or string type."
         setResult(checkResult = checkResult, positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, ruleData = "standard types",
             node = node, params = [$node.info.line, message, $astNode[0]])
