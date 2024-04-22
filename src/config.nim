@@ -77,7 +77,7 @@ proc kind*(config: ConfigData): ConfigKind {.sideEffect, raises: [], tags: [],
   ## Returns the value of the selected field
   config.kind
 
-proc text*(config: ConfigData): string {.sideEffect, raises: [], tags: [],
+proc text*(config: ConfigData): Message {.sideEffect, raises: [], tags: [],
     contractual.} =
   ## The getter of a field of ConfigData type
   ##
@@ -131,7 +131,7 @@ proc forceFixCommand*(config: ConfigData): bool {.sideEffect, raises: [],
   ## Returns the value of the selected field
   config.forceFixCommand
 
-proc explanation*(config: ConfigData): string {.sideEffect, raises: [], tags: [],
+proc explanation*(config: ConfigData): Message {.sideEffect, raises: [], tags: [],
     contractual.} =
   ## The getter of a field of ConfigData type
   ##
@@ -140,7 +140,7 @@ proc explanation*(config: ConfigData): string {.sideEffect, raises: [], tags: []
   ## Returns the value of the selected field
   config.explanation
 
-proc index*(config: ConfigData): int {.sideEffect, raises: [], tags: [],
+proc index*(config: ConfigData): ExtendedNatural {.sideEffect, raises: [], tags: [],
     contractual.} =
   ## The getter of a field of ConfigData type
   ##
@@ -161,7 +161,7 @@ const
     ## The list of available the program's configuration's options
 
 proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
-    sources: seq[string]; rules: seq[ConfigData]; fixCommand: string;
+    sources: seq[FilePath]; rules: seq[ConfigData]; fixCommand: FixCommand;
     maxReports: Natural; showSummary: bool] {.sideEffect, raises: [], tags: [
     ReadIOEffect, RootEffect], contractual.} =
   ## Parse the configuration file and get all the program's settings
