@@ -35,6 +35,9 @@ type
     ## The types of configuration entries: a program's rule or a custom message
     rule, message
 
+  ConfigOption = string
+    ## The configuration's option's name
+
   ConfigData* = object
     ## Contains information about the configuration of the program's rule or a
     ## custom message, depends on `kind` parameter. When the type of
@@ -95,8 +98,8 @@ proc negation*(config: ConfigData): bool {.sideEffect, raises: [], tags: [],
   ## Returns the value of the selected field
   config.negation
 
-proc ruleType*(config: ConfigData): RuleTypes {.sideEffect, raises: [], tags: [],
-    contractual.} =
+proc ruleType*(config: ConfigData): RuleTypes {.sideEffect, raises: [], tags: [
+    ], contractual.} =
   ## The getter of a field of ConfigData type
   ##
   ## * config - the ConfigData object which field will be get
@@ -113,8 +116,8 @@ proc name*(config: ConfigData): RuleName {.sideEffect, raises: [], tags: [],
   ## Returns the value of the selected field
   config.name
 
-proc options*(config: ConfigData): seq[string] {.sideEffect, raises: [], tags: [],
-    contractual.} =
+proc options*(config: ConfigData): seq[string] {.sideEffect, raises: [], tags: [
+    ], contractual.} =
   ## The getter of a field of ConfigData type
   ##
   ## * config - the ConfigData object which field will be get
@@ -131,8 +134,8 @@ proc forceFixCommand*(config: ConfigData): bool {.sideEffect, raises: [],
   ## Returns the value of the selected field
   config.forceFixCommand
 
-proc explanation*(config: ConfigData): Message {.sideEffect, raises: [], tags: [],
-    contractual.} =
+proc explanation*(config: ConfigData): Message {.sideEffect, raises: [], tags: [
+    ], contractual.} =
   ## The getter of a field of ConfigData type
   ##
   ## * config - the ConfigData object which field will be get
@@ -140,8 +143,8 @@ proc explanation*(config: ConfigData): Message {.sideEffect, raises: [], tags: [
   ## Returns the value of the selected field
   config.explanation
 
-proc index*(config: ConfigData): ExtendedNatural {.sideEffect, raises: [], tags: [],
-    contractual.} =
+proc index*(config: ConfigData): ExtendedNatural {.sideEffect, raises: [],
+    tags: [], contractual.} =
   ## The getter of a field of ConfigData type
   ##
   ## * config - the ConfigData object which field will be get
@@ -154,10 +157,10 @@ const
     windows): "open" else: "xdg-open" & " {fileName}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
-  configOptions*: array[17, string] = ["verbosity", "output", "source", "files",
-      "directory", "check", "search", "count", "fixcommand", "fix", "reset",
-      "message", "forcefixcommand", "maxreports", "explanation", "ignore",
-      "showsummary"]
+  configOptions*: array[17, ConfigOption] = ["verbosity", "output", "source",
+      "files", "directory", "check", "search", "count", "fixcommand", "fix",
+      "reset", "message", "forcefixcommand", "maxreports", "explanation",
+      "ignore", "showsummary"]
     ## The list of available the program's configuration's options
 
 proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
@@ -198,8 +201,8 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
         value: ConfigValue
         index: ExtendedNatural
 
-    proc addFile(fileName: string; sources: var seq[string]) {.gcsafe, raises: [
-        ], tags: [RootEffect], contractual.} =
+    proc addFile(fileName: FilePath; sources: var seq[FilePath]) {.gcsafe,
+        raises: [], tags: [RootEffect], contractual.} =
       ## Add the selected file as a source code to check for the program
       ##
       ## * fileName - the path to the file which will be added
