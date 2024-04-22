@@ -67,7 +67,7 @@ type
   RuleOptions* = object
     ## Contains information for the program's rules
     ##
-    ## * options         - The list of the program's rule
+    ## * options         - The list of the program's rule's options
     ## * parent          - If true, check is currently make in the parent (usualy
     ##                     module) entity
     ## * fileName        - The path to the file which is checked
