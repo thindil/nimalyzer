@@ -64,6 +64,9 @@ type
   ExtendedNatural* = range[-1 .. Natural.high]
     ## Natural type of it with added -1 value
 
+  RuleOption* = string
+    ## An option of a rule
+
   RuleOptions* = object
     ## Contains information for the program's rules
     ##
@@ -83,7 +86,7 @@ type
     ## * explanation     - The explanation which will be show to the user if check
     ##                     or fix type of rule setting is violated by the checked
     ##                     code
-    options: seq[string]
+    options: seq[RuleOption]
     parent: bool
     fileName: FilePath
     negation: bool
@@ -99,6 +102,9 @@ type
   RuleName* = string
     ## A name of a rule
 
+  RuleOptionValue = string
+    ## A value of an option of a rule
+
   RuleSettings* = object
     ## Contains information about the program's rule configuration
     ##
@@ -111,7 +117,7 @@ type
     name: RuleName
     checkProc: proc (astNode, parentNode: PNode; rule: var RuleOptions)
     options: seq[RuleOptionsTypes]
-    optionValues: seq[string]
+    optionValues: seq[RuleOptionValue]
     minOptions: Natural
     fixProc: proc (astNode, parentNode: PNode; rule: RuleOptions;
         data: string): bool
@@ -139,7 +145,7 @@ template optionsGetterSetter(name: untyped; typ: typedesc) =
     ## Returns modified options of the program's rule
     opt.`name` = value
 
-optionsGetterSetter(name = options, typ = seq[string])
+optionsGetterSetter(name = options, typ = seq[RuleOption])
 optionsGetterSetter(name = parent, typ = bool)
 optionsGetterSetter(name = fileName, typ = FilePath)
 optionsGetterSetter(name = negation, typ = bool)
@@ -152,7 +158,7 @@ optionsGetterSetter(name = forceFixCommand, typ = bool)
 optionsGetterSetter(name = maxResults, typ = Natural)
 optionsGetterSetter(name = explanation, typ = Explanation)
 
-proc name*(setting: RuleSettings): string {.sideEffect, raises: [], tags: [],
+proc name*(setting: RuleSettings): RuleName {.sideEffect, raises: [], tags: [],
     contractual.} =
   ## Getter for field `name` of `RuleSettings` type
   ##
@@ -180,9 +186,9 @@ const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"
 var rulesList*: seq[RuleSettings] = @[]
   ## The list of all available the program's rules with their settings
 
-proc message*(text: string; returnValue: var int; level: Level = lvlError;
-    decrease: bool = true) {.sideEffect, gcsafe, raises: [], tags: [RootEffect],
-    contractual.} =
+proc message*(text: Message; returnValue: var ResultAmount;
+    level: Level = lvlError; decrease: bool = true) {.sideEffect, gcsafe,
+    raises: [], tags: [RootEffect], contractual.} =
   ## Log the rule's selected message
   ##
   ## * text        - the messages which will be logged
@@ -205,7 +211,7 @@ proc message*(text: string; returnValue: var int; level: Level = lvlError;
     except Exception:
       echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
 
-proc errorMessage*(text: string; e: ref Exception = nil): int {.sideEffect,
+proc errorMessage*(text: Message; e: ref Exception = nil): ResultAmount {.sideEffect,
     gcsafe, raises: [], tags: [RootEffect], contractual.} =
   ## Log the error message in the rule
   ##
@@ -229,7 +235,7 @@ proc errorMessage*(text: string; e: ref Exception = nil): int {.sideEffect,
       echo "Can't log the message. Reason: ", getCurrentExceptionMsg()
     return 0
 
-proc setRuleState*(node: PNode; ruleName: string;
+proc setRuleState*(node: PNode; ruleName: RuleName;
     oldState: var bool) {.sideEffect, raises: [], tags: [RootEffect],
     contractual.} =
   ## Disable or enable again the rule for the selected Nim module if needed
@@ -257,8 +263,10 @@ proc setRuleState*(node: PNode; ruleName: string;
         except KeyError, Exception:
           discard
 
-template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
-    node: PNode; ruleData: string = ""; params: varargs[string]) =
+template setResult*(checkResult: bool; positiveMessage,
+    negativeMessage: Message;
+
+node: PNode; ruleData: string = ""; params: varargs[string]) =
   ## Update the amount of the rule results
   ##
   ## * checkResult     - if true, the entity follow the check of the rule
@@ -333,7 +341,7 @@ template setResult*(checkResult: bool; positiveMessage, negativeMessage: string;
           rule.amount = 1
 
 proc validateOptions*(rule: RuleSettings; options: seq[
-    string]): bool {.raises: [], tags: [RootEffect], contractual.} =
+    RuleOption]): bool {.raises: [], tags: [RootEffect], contractual.} =
   ## Validate the options entered from a configuration for the selected rule
   ##
   ## * rule     - the rule's settings for the selected rule, like name, options types, etc
@@ -540,9 +548,9 @@ macro checkRule*(code: untyped): untyped =
       newNilLit()])])]), nnkCall.newTree(children = [newIdentNode(i = "body"), code])])])])
 
 macro ruleConfig*(ruleName, ruleFoundMessage, ruleNotFoundMessage,
-    rulePositiveMessage, ruleNegativeMessage: string; ruleOptions: seq[
-    RuleOptionsTypes] = @[]; ruleOptionValues: seq[string] = @[];
-    ruleMinOptions: int = 0; ruleShowForCheck: bool = false): untyped =
+    rulePositiveMessage, ruleNegativeMessage: Message; ruleOptions: seq[
+    RuleOptionsTypes] = @[]; ruleOptionValues: seq[RuleOptionValue] = @[];
+    ruleMinOptions: Natural = 0; ruleShowForCheck: bool = false): untyped =
   ## Set the rule's settings, like name, options, etc
   ##
   ## * ruleName            - The name of the rule
