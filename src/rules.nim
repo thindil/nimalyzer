@@ -385,8 +385,8 @@ proc validateOptions*(rule: RuleSettings; options: seq[
               " option number " & $(index + 1) & " has invalid value: '" &
               option & "'.").bool
       of positive:
-        let intOption: ExtendedNatural = try:
-            options[index].parseInt()
+        let intOption: int32 = try:
+            options[index].parseInt().int32
           except ValueError:
             -1
         if intOption < 1:
