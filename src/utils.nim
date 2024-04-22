@@ -1,4 +1,4 @@
-# Copyright © 2023 Bartek Jasicki
+# Copyright © 2023-2024 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
 # Internal modules imports
 import rules
 
-proc message*(text: string; level: Level = lvlInfo) {.raises: [], tags: [
+proc message*(text: Message; level: Level = lvlInfo) {.raises: [], tags: [
     RootEffect], contractual.} =
   ## Log the selected message. If error happens during logging, print the
   ## error message and quit the program
@@ -45,7 +45,7 @@ proc message*(text: string; level: Level = lvlInfo) {.raises: [], tags: [
       echo "Stopping nimalyzer"
       quit QuitFailure
 
-proc abortProgram*(message: string; e: ref Exception = nil) {.gcsafe,
+proc abortProgram*(message: Message; e: ref Exception = nil) {.gcsafe,
     raises: [], tags: [RootEffect], contractual.} =
   ## Log the message and stop the program
   ##
