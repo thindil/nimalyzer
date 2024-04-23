@@ -261,9 +261,8 @@ proc setRuleState*(node: PNode; ruleName: RuleName;
           discard
 
 template setResult*(checkResult: bool; positiveMessage,
-    negativeMessage: Message;
-
-node: PNode; ruleData: string = ""; params: varargs[string]) =
+    negativeMessage: Message; node: PNode; ruleData: string = "";
+    params: varargs[string]) =
   ## Update the amount of the rule results
   ##
   ## * checkResult     - if true, the entity follow the check of the rule
