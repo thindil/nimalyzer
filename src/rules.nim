@@ -49,9 +49,6 @@ type
   FixCommand* = string
     ## The full command to execute by a rule for fix type of checks
 
-  Explanation* = string
-    ## The message show to the user as an explanation for a rule's setting
-
   FilePath* = string
     ## The path to the file which will be checked by a rule
 
@@ -97,7 +94,7 @@ type
     identsCache: IdentCache
     forceFixCommand: bool
     maxResults: Natural
-    explanation: Explanation
+    explanation: Message
 
   RuleName* = string
     ## A name of a rule
@@ -156,7 +153,7 @@ optionsGetterSetter(name = fixCommand, typ = FixCommand)
 optionsGetterSetter(name = identsCache, typ = IdentCache)
 optionsGetterSetter(name = forceFixCommand, typ = bool)
 optionsGetterSetter(name = maxResults, typ = Natural)
-optionsGetterSetter(name = explanation, typ = Explanation)
+optionsGetterSetter(name = explanation, typ = Message)
 
 proc name*(setting: RuleSettings): RuleName {.sideEffect, raises: [], tags: [],
     contractual.} =
