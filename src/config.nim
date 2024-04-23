@@ -67,7 +67,7 @@ type
       ruleType: RuleTypes
       index: ExtendedNatural
       forceFixCommand: bool
-      explanation: Explanation
+      explanation: Message
     of message:
       text: Message
 
