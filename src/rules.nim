@@ -64,6 +64,9 @@ type
   RuleOption* = string
     ## An option of a rule
 
+  RuleTypeName = string
+    ## A name of a rule's type
+
   RuleOptions* = object
     ## Contains information for the program's rules
     ##
@@ -177,7 +180,7 @@ proc checkProc*(setting: RuleSettings; astNode, parentNode: PNode;
   ## Returns the name of the rule
   setting.checkProc(astNode = astNode, parentNode = parentNode, rule = rule)
 
-const availableRuleTypes*: array[4, string] = ["check", "search", "count", "fix"]
+const availableRuleTypes*: array[4, RuleTypeName] = ["check", "search", "count", "fix"]
   ## The list of available types of the program rules
 
 var rulesList*: seq[RuleSettings] = @[]
