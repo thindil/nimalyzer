@@ -62,7 +62,7 @@ type
     case kind: ConfigKind
     of rule:
       name: RuleName
-      options: seq[string]
+      options: seq[RuleOption]
       negation: bool
       ruleType: RuleTypes
       index: ExtendedNatural
@@ -116,7 +116,7 @@ proc name*(config: ConfigData): RuleName {.sideEffect, raises: [], tags: [],
   ## Returns the value of the selected field
   config.name
 
-proc options*(config: ConfigData): seq[string] {.sideEffect, raises: [], tags: [
+proc options*(config: ConfigData): seq[RuleOption] {.sideEffect, raises: [], tags: [
     ], contractual.} =
   ## The getter of a field of ConfigData type
   ##
