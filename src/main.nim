@@ -62,7 +62,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
     try:
-      info(args = "Starting nimalyzer ver 0.8")
+      info(args = "Starting nimalyzer ver 0.9")
     except Exception:
       abortProgram(message = "Can't log messages.")
     # No configuration file specified, quit from the program
