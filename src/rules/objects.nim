@@ -149,6 +149,8 @@ checkRule:
         rule.amount = -1_000
       if not checkResult and rule.options[0].toLowerAscii == "publicfields":
         break
+    # Check if the object's type definition contains fields with string or int
+    # type
     if rule.options[0].toLowerAscii in ["standardtypes", "all"] and node.kind == nkObjectTy:
       checkResult = false
       block standardTypes:
