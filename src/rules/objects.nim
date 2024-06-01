@@ -27,6 +27,7 @@
 ## expressions. Checked things:
 ##
 ## * Do the object's type's declaration contains public fields.
+## * Do the object's type's declaration contains fields with type of int or string.
 ##
 ## The syntax in a configuration file is::
 ##
