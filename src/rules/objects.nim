@@ -28,6 +28,7 @@
 ##
 ## * Do the object's type's declaration contains public fields.
 ## * Do the object's type's declaration contains fields with type of int or string.
+## * Do the object's type has declared a constructor.
 ##
 ## The syntax in a configuration file is::
 ##
@@ -95,7 +96,7 @@ ruleConfig(ruleName = "objects",
   rulePositiveMessage = "declaration of type '{params[2]}', line: {params[0]} {params[1]}",
   ruleNegativeMessage = "declaration of type '{params[2]}', line: {params[0]} {params[1]}",
   ruleOptions = @[custom],
-  ruleOptionValues = @["publicfields", "all", "standardtypes"],
+  ruleOptionValues = @["publicfields", "all", "standardtypes", "constructor"],
   ruleMinOptions = 1)
 
 checkRule:
@@ -199,6 +200,17 @@ checkRule:
       # To show the rule's explaination the rule.amount must be negative
       if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
         rule.amount = -1_000
+      if not checkResult and rule.options[0].toLowerAscii == "standardtypes":
+        break
+    # Check if the module contains constructor for the object's type
+    if rule.options[0].toLowerAscii in ["constructor", "all"] and node.kind == nkObjectTy:
+      var objectName: string = try:
+          $astNode[0]
+        except:
+          ""
+      objectName.removeSuffix(c = '*')
+      let constructorNames: array[2, string] = ["new" & objectName, "init" & objectName]
+      echo constructorNames
       if not checkResult:
         break
   endCheck:
