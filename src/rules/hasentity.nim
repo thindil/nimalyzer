@@ -133,7 +133,7 @@ checkRule:
       return
     let negation: Message = (if rule.negation: "out" else: "")
   checking:
-    if node.kind notin {nkEmpty .. nkSym, nkCharLit .. nkTripleStrLit,
+    if node.kind notin {nkEmpty..nkSym, nkCharLit..nkTripleStrLit,
         nkCommentStmt}:
       try:
         # If parent node specified and the current node is the same kind as
@@ -143,7 +143,7 @@ checkRule:
                 parseEnum[TNodeKind](s = rule.options[2])
               except ValueError:
                 nkNone
-          var childIndex: range[-2 .. int.high] = -1
+          var childIndex: range[-2..int.high] = -1
           if rule.options.len == 4:
             childIndex = try:
                 rule.options[3].parseInt()

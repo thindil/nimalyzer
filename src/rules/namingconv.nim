@@ -138,7 +138,7 @@ checkRule:
             $node.info.line])
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
-        "can't check name of " & rule.options[0][0 .. ^2] &
+        "can't check name of " & rule.options[0][0..^2] &
         " line: " & $node.info.line & ". Reason: ",
         e = getCurrentException())
   endCheck:

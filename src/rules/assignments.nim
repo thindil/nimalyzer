@@ -182,7 +182,7 @@ fixRule:
         else:
           newInfix.add(son = newIdentNode(ident = getIdent(
           ic = rule.identsCache,
-          identifier = $($part)[0 .. ^2]), info = child.info))
+          identifier = $($part)[0..^2]), info = child.info))
       newAssignment.add(son = newInfix)
       parentNode[index] = newAssignment
     else:

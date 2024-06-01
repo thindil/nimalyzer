@@ -130,7 +130,7 @@ checkRule:
       else:
         var index: ExtendedNatural = -1
         # Check each parameter
-        for child in node[paramsPos].sons[1 .. ^1]:
+        for child in node[paramsPos].sons[1..^1]:
           index = -1
           for i in 0..child.len - 3:
             try:

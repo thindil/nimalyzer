@@ -216,7 +216,7 @@ fixRule:
               for elem in field:
                 if elem.kind == nkIdentDefs:
                   elem[0] = newIdentNode(ident = getIdent(ic = rule.identsCache,
-                      identifier = ($elem[0])[0 .. ^2]), info = elem[0].info)
+                      identifier = ($elem[0])[0..^2]), info = elem[0].info)
                   result = true
                 else:
                   for elemChild in elem:
@@ -227,14 +227,14 @@ fixRule:
                             if identPart.kind == nkPostfix:
                               ident[index] = newIdentNode(ident = getIdent(
                                   ic = rule.identsCache, identifier = ($ident[
-                                  index])[0 .. ^2]), info = ident.info)
+                                  index])[0..^2]), info = ident.info)
                               result = true
             else:
-              for i in 0 .. field.sons.len - 3:
+              for i in 0..field.sons.len - 3:
                 if field[i].kind == nkPostfix:
                   field[i] = newIdentNode(ident = getIdent(
                     ic = rule.identsCache,
-                    identifier = ($field[i])[0 .. ^2]), info = field.info)
+                    identifier = ($field[i])[0..^2]), info = field.info)
                   result = true
     except KeyError, Exception:
       discard errorMessage(text = "Can't set the object's field public. Reason: " &
@@ -259,14 +259,14 @@ fixRule:
                     if elemChild.kind == nkRecList:
                       for elemField in elemChild:
                         for ident in elemChild:
-                          for i in 0 .. ident.sons.len - 3:
+                          for i in 0..ident.sons.len - 3:
                             if ident[i].kind != nkPostfix:
                               ident[i] = newIdentNode(ident = getIdent(
                                   ic = rule.identsCache, identifier = $ident[
                                   i] & "*"), info = ident.info)
                               result = true
             else:
-              for i in 0 .. field.sons.len - 3:
+              for i in 0..field.sons.len - 3:
                 if field[i].kind != nkPostfix:
                   field[i] = newIdentNode(ident = getIdent(
                     ic = rule.identsCache,

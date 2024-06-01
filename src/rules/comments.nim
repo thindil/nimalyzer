@@ -124,7 +124,7 @@ checkRule:
         lineNumber.inc
         var cleanLine: FileLine = line.strip()
         if cleanLine.startsWith(prefix = '#') and cleanLine.len > 2:
-          cleanLine = cleanLine[cleanLine.find(sub = ' ') + 1 .. ^1]
+          cleanLine = cleanLine[cleanLine.find(sub = ' ') + 1..^1]
           case rule.options[0]
           # Check comment against the selected pattern
           of "pattern":
@@ -199,7 +199,7 @@ fixRule:
       for line in newFileName.lines:
         var cleanLine: FileLine = line.strip()
         if cleanLine.startsWith(prefix = '#') and cleanLine.len > 2:
-          cleanLine = cleanLine[cleanLine.find(sub = ' ') + 1 .. ^1]
+          cleanLine = cleanLine[cleanLine.find(sub = ' ') + 1..^1]
           if match(s = cleanLine, pattern = convention):
             continue
         newFile.writeLine(x = line)

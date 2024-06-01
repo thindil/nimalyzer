@@ -112,7 +112,7 @@ proc countCyclomatic(complexity: var Positive; node: PNode) {.raises: [KeyError,
     node != nil
   body:
     for child in node:
-      if child.kind in {nkCharLit .. nkSym}:
+      if child.kind in {nkCharLit..nkSym}:
         continue
       if child.kind in {nkForStmt, nkWhileStmt, nkElifBranch, nkWhenStmt,
           nkIfExpr} or (child.kind == nkIdent and $child in ["and", "or"]):

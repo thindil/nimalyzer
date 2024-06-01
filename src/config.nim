@@ -231,7 +231,7 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
         let
           configLine: seq[string] = line.split
           setting: ConfigSetting = ConfigSetting(name: configLine[
-              0].toLowerAscii, value: configLine[1 .. ^1].join(sep = " "),
+              0].toLowerAscii, value: configLine[1..^1].join(sep = " "),
               index: configOptions.find(item = configLine[0].toLowerAscii))
         # Comment line, skip
         if line.startsWith(prefix = '#') or line.len == 0:
@@ -279,7 +279,7 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
           let logMode: FileMode = (if setting.value.startsWith(
               prefix = "new ".toLowerAscii): fmWrite else: fmAppend)
           let fileName: FilePath = unixToNativePath(path = (if logMode ==
-              fmWrite: setting.value[4 .. ^1] else: setting.value))
+              fmWrite: setting.value[4..^1] else: setting.value))
           addHandler(handler = newFileLogger(filename = fileName,
               fmtStr = "[$time] - $levelname: ", mode = logMode))
           message(text = "Added the file '" & fileName & "' as a log file" & (

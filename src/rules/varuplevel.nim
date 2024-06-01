@@ -225,8 +225,8 @@ fixRule:
           "let": nkLetSection else: nkConstSection),
           children = [nodes[nodeIndex][declIndex]])
         nodes[nodeIndex].delSon(idx = declIndex)
-        nodes.sons = nodes.sons[0 .. nodeIndex - 1] & newSection & nodes.sons[
-            nodeIndex .. ^1]
+        nodes.sons = nodes.sons[0..nodeIndex - 1] & newSection & nodes.sons[
+            nodeIndex..^1]
 
   for nodes in parentNode:
     for baseNode in nodes:

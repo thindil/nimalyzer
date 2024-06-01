@@ -183,7 +183,7 @@ checkRule:
               return
           else:
             if rule.ruleType == fix:
-              for pragma in rule.options[1 .. ^1]:
+              for pragma in rule.options[1..^1]:
                 setResult(checkResult = false,
                     positiveMessage = positiveMessage,
                     negativeMessage = negativeMessage,
@@ -202,7 +202,7 @@ checkRule:
             discard
         if rule.options[0].toLowerAscii != "unborrowed" or "borrow" notin strPragmas:
           # Check the node for each selected pragma
-          for pragma in rule.options[1 .. ^1]:
+          for pragma in rule.options[1..^1]:
             if pragma[^1] == '*' and pragma[0] != '*':
               var hasPragma: bool = false
               for procPragma in strPragmas:
@@ -300,13 +300,13 @@ fixRule:
       let
         startIndex: ExtendedNatural = data.find(chars = {'['})
         endIndex: ExtendedNatural = data.find(chars = {']'})
-        pragmaName: PragmaName = data[0 .. data.find(chars = {':'}) - 1]
+        pragmaName: PragmaName = data[0..data.find(chars = {':'}) - 1]
         newPragma: PNode = newTree(kind = nkExprColonExpr, children = [])
         values: PNode = newTree(kind = nkBracket, children = [])
       newPragma.sons.add(y = newIdentNode(ident = getIdent(
           ic = rule.identsCache, identifier = pragmaName), info = (if pragmas ==
               nil: astNode.info else: pragmas.info)))
-      for value in data[startIndex + 1 .. endIndex - 1].split(sep = ','):
+      for value in data[startIndex + 1..endIndex - 1].split(sep = ','):
         if value.len == 0:
           continue
         values.sons.add(y = newIdentNode(ident = getIdent(ic = rule.identsCache,

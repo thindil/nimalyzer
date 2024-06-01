@@ -58,7 +58,7 @@ type
   Message* = string
     ## A message showed to the user
 
-  ExtendedNatural* = range[-1 .. Natural.high]
+  ExtendedNatural* = range[-1..Natural.high]
     ## Natural type of it with added -1 value
 
   RuleOption* = string

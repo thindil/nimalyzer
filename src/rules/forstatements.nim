@@ -61,7 +61,7 @@
 ## declaration of it should be::
 ##
 ##     {.ruleOff: "forStatements".}
-##     for i in 1 .. 5:
+##     for i in 1..5:
 ##       echo i
 ##
 ## To enable the rule again, the pragma *ruleOn: "forStatements"* should be
@@ -69,7 +69,7 @@
 ## for the statement, the full declaration should be::
 ##
 ##     {.ruleOn: "forStatements".}
-##     for i in 1 .. 5:
+##     for i in 1..5:
 ##       echo i
 ##
 ## Examples
