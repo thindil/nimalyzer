@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 Tag **BREAKING** means the change break compatibility with a previous version
 of the program.
 
+## [Unreleased]
+
+### Fixed
+- The rule `hasDoc` doesn't detect documentation in functions.
+
 ## [0.8.0] - 2024-04-23
 
 ### Added
