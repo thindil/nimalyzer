@@ -8,6 +8,7 @@ of the program.
 
 ### Fixed
 - The rule `hasDoc` doesn't detect documentation in functions.
+- Crash when trying to `fix` code documentation with `hasDoc` rule.
 
 ## [0.8.0] - 2024-04-23
 
