@@ -128,9 +128,9 @@ checkRule:
           {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef,
               nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef, nkEnumTy,
               nkConstSection, nkConstTy, nkVarSection, nkTypeSection, nkObjectTy,
-              nkLetSection}
+              nkLetSection, nkFuncDef}
         of "callables":
-          {nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef, nkTemplateDef, nkIteratorDef}
+          {nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef, nkTemplateDef, nkIteratorDef, nkFuncDef}
         of "types":
           {nkTypeSection, nkTypeDef, nkEnumTy, nkObjectTy, nkConstTy}
         of "typesfields":
