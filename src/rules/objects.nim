@@ -204,9 +204,11 @@ checkRule:
         break
     # Check if the module contains constructor for the object's type
     if rule.options[0].toLowerAscii in ["constructor", "all"] and node.kind == nkObjectTy:
-      var objectName: string = try:
+      checkResult = false
+      type ObjectName = string
+      var objectName: ObjectName = try:
           $astNode[0]
-        except:
+        except Exception:
           ""
       objectName.removeSuffix(c = '*')
       let constructorNames: array[2, string] = ["new" & objectName, "init" & objectName]
