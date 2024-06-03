@@ -257,7 +257,7 @@ setting shouldn't contain a new line characters.
     check not trystatements empty
     explanation Except branches with names of exceptions made code more readable. It also prevents problems when the checked code will start propagating new exceptions.
 
-    check not objects all
+    check not objects fields
     explanation Each object's declaration should define also getters and setters for its fields. It made maintaining the code easier, when the type will be upgraded or required to use in multithread environment.
 
     check not vardeclared standardtypes
@@ -386,7 +386,7 @@ there is no rules configured for the program.
     check not trystatements empty
     explanation Except branches with names of exceptions made code more readable. It also prevents problems when the checked code will start propagating new exceptions.
 
-    check not objects all
+    check not objects fields
     explanation Each object's declaration should define also getters and setters for its fields. It made maintaining the code easier, when the type will be upgraded or required to use in multithread environment.
 
     check not vardeclared standardtypes
