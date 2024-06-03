@@ -96,7 +96,8 @@ ruleConfig(ruleName = "objects",
   rulePositiveMessage = "declaration of type '{params[2]}', line: {params[0]} {params[1]}",
   ruleNegativeMessage = "declaration of type '{params[2]}', line: {params[0]} {params[1]}",
   ruleOptions = @[custom],
-  ruleOptionValues = @["publicfields", "all", "standardtypes", "constructor"],
+  ruleOptionValues = @["publicfields", "all", "standardtypes", "constructors",
+      "fields"],
   ruleMinOptions = 1)
 
 checkRule:
@@ -107,7 +108,8 @@ checkRule:
   checking:
     var checkResult: bool = false
     # Check if the object's type definition contains any public field
-    if rule.options[0].toLowerAscii in ["publicfields", "all"] and node.kind == nkObjectTy:
+    if rule.options[0].toLowerAscii in ["publicfields", "all", "fields"] and
+        node.kind == nkObjectTy:
       block publicFields:
         for child in node:
           if child.kind == nkRecList:
@@ -152,7 +154,8 @@ checkRule:
         break
     # Check if the object's type definition contains fields with string or int
     # type
-    if rule.options[0].toLowerAscii in ["standardtypes", "all"] and node.kind == nkObjectTy:
+    if rule.options[0].toLowerAscii in ["standardtypes", "all", "fields"] and
+        node.kind == nkObjectTy:
       checkResult = false
       block standardTypes:
         for child in node:
@@ -203,7 +206,7 @@ checkRule:
       if not checkResult and rule.options[0].toLowerAscii == "standardtypes":
         break
     # Check if the module contains constructor for the object's type
-    if rule.options[0].toLowerAscii in ["constructor", "all"] and node.kind == nkObjectTy:
+    if rule.options[0].toLowerAscii in ["constructors", "all"] and node.kind == nkObjectTy:
       checkResult = false
       type ObjectName = string
       var objectName: ObjectName = try:
@@ -212,7 +215,30 @@ checkRule:
           ""
       objectName.removeSuffix(c = '*')
       let constructorNames: array[2, string] = ["new" & objectName, "init" & objectName]
-      echo constructorNames
+      for child in parentNode:
+        if child.kind in {nkProcDef, nkFuncDef}:
+          try:
+            if $child[0] in constructorNames:
+              checkResult = true
+          except Exception:
+            rule.amount = errorMessage(text = messagePrefix &
+                "can't check for contructor of type " &
+                " line: " &
+                $node.info.line & ". Reason: ", e = getCurrentException())
+      let oldAmount: ResultAmount = rule.amount
+      try:
+        let message: Message = (if rule.negation: "has" else: "doesn't have") & " declared a constructor."
+        setResult(checkResult = checkResult, positiveMessage = positiveMessage,
+            negativeMessage = negativeMessage, ruleData = "constructors",
+            node = node, params = [$node.info.line, message, $astNode[0]])
+      except Exception:
+        rule.amount = errorMessage(text = messagePrefix &
+            "can't check declaration of type " &
+            " line: " &
+            $node.info.line & ". Reason: ", e = getCurrentException())
+      # To show the rule's explaination the rule.amount must be negative
+      if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+        rule.amount = -1_000
       if not checkResult:
         break
   endCheck:
