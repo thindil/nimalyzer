@@ -296,7 +296,7 @@ example, if the rule should be disabled for the selected statement, the full
 declaration of it should be::
 
     {.ruleOff: "forStatements".}
-    for i in 1 .. 5:
+    for i in 1..5:
       echo i
 
 To enable the rule again, the pragma *ruleOn: "forStatements"* should be
@@ -304,7 +304,7 @@ added in the code before it. For example, if the rule should be re-enabled
 for the statement, the full declaration should be::
 
     {.ruleOn: "forStatements".}
-    for i in 1 .. 5:
+    for i in 1..5:
       echo i
 
 Examples
@@ -813,6 +813,7 @@ expressions. Checked things:
 
 * Do the object's type's declaration contains public fields.
 * Do the object's type's declaration contains fields with type of int or string.
+* Do the object's type has declared a constructor.
 
 The syntax in a configuration file is::
 
@@ -833,11 +834,15 @@ The syntax in a configuration file is::
 * objects is the name of the rule. It is case-insensitive, thus it can be
   set as *objects*, *objects* or *oBjEcTs*.
 * checkType is the type of checks to perform on the objects' declarations. Proper
-  values are: *publicfields*, *all*, *standardtypes*. Setting it to publicfieds
-  will check existence of objects declarations which contains public fields.
-  Setting it to *standardtypes* will check existence of objects' declarations
-  which contains fields with string or int type. Setting it to all will perform
-  all checks.
+  values are: *publicfields*, *all*, *standardtypes*, *fields*, *constructors*.
+  Setting it to *publicfieds* will check existence of objects declarations which
+  contains public fields. Setting it to *standardtypes* will check existence of
+  objects' declarations which contains fields with string or int type. Setting it
+  to *all* will perform all checks. Setting it to *fields* will perform checks for
+  public fields and standard types. Setting it to *constructors* will check
+  existence of constructors of objects. The rule follow Nim coding standards and
+  check if exist procedure or function which is named `newObjectName` or
+  `initObjectName`.
 
 Disabling the rule
 ------------------
@@ -863,7 +868,7 @@ should be::
 Examples
 --------
 
-1. Check if all objects' types' declarations contains public fields and standard types::
+1. Check all objects' for public fieds, standard types and constructors::
 
     check objects all
 
