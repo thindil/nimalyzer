@@ -6,6 +6,11 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- The rule `objects` can now check for existence of constructors of objects.
+  It follows Nim coding standard, the constructors must have names like
+  `newObjectName` or `initObjectName` to be detected.
+
 ### Fixed
 - The rule `hasDoc` doesn't detect documentation in functions.
 - Crash when trying to `fix` code documentation with `hasDoc` rule.
