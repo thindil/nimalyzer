@@ -116,8 +116,8 @@ proc name*(config: ConfigData): RuleName {.sideEffect, raises: [], tags: [],
   ## Returns the value of the selected field
   config.name
 
-proc options*(config: ConfigData): seq[RuleOption] {.sideEffect, raises: [], tags: [
-    ], contractual.} =
+proc options*(config: ConfigData): seq[RuleOption] {.sideEffect, raises: [],
+    tags: [], contractual.} =
   ## The getter of a field of ConfigData type
   ##
   ## * config - the ConfigData object which field will be get
@@ -151,6 +151,35 @@ proc index*(config: ConfigData): ExtendedNatural {.sideEffect, raises: [],
   ##
   ## Returns the value of the selected field
   config.index
+
+proc initConfigData(kind: ConfigKind, name: RuleName = "", options: seq[
+    RuleOption] = @[], negation: bool = false, ruleType: RuleTypes = none,
+    index: ExtendedNatural = -1, forcefixcommand: bool = false;
+    message: Message = ""): ConfigData {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## Initialize a new instance of ConfigData object
+  ##
+  ## * kind            - The type of the object, rule or message
+  ## * name            - The name of the rule
+  ## * options         - The options list provided by the user in a configuration
+  ##                     file
+  ## * negation        - If true, the rule is negation
+  ## * ruleType        - The type of the rule
+  ## * index           - The index of the rule
+  ## * forceFixCommand - If true, force use setting fixCommand for the rule
+  ##                     instead of the rule's fix code
+  ## * message         - The explanation which will be show to the user if check
+  ##                     or fix type of rule setting is violated by the checked
+  ##                     code or the text to show to the user if kind of object
+  ##                     is set to message
+  ##
+  ## Returns the new instance of ConfigData object
+  if kind == rule:
+    result = ConfigData(kind: rule, name: name, options: options,
+        negation: negation, ruleType: ruleType, index: index,
+        forcefixcommand: forcefixcommand, explanation: message)
+  else:
+    result = ConfigData(kind: message, text: message)
 
 const
   fixCommand: FixCommand = when defined(macos) or defined(macosx) or defined(
@@ -326,8 +355,8 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
           if setting.value.len == 0:
             abortProgram(message = "Can't parse the 'message' setting in the configuration file, line: " &
                 $lineNumber & ". No message's text set.")
-          let newMessage: ConfigData = ConfigData(kind: message,
-              text: setting.value)
+          let newMessage: ConfigData = initConfigData(kind = message,
+              message = setting.value)
           result.rules.add(y = newMessage)
           message(text = "Added the custom message: '" & result.rules[^1].text &
               "' to the program's output.", level = lvlDebug)
@@ -382,9 +411,9 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
             abortProgram(message = "Unknown type of the rule: '" &
                 configRule.key & "'.")
           configRule.next
-          var newRule: ConfigData = ConfigData(kind: rule,
-              name: configRule.key.toLowerAscii, options: @[], negation: false,
-              ruleType: ruleType, index: -1, forceFixCommand: forceFixCommand)
+          var newRule: ConfigData = initConfigData(kind = rule,
+              name = configRule.key.toLowerAscii, ruleType = ruleType,
+              forceFixCommand = forceFixCommand)
           if newRule.name == "not":
             newRule.negation = true
             configRule.next
