@@ -9,3 +9,9 @@ type
     else:
       d*: int
     b, c: char
+
+proc inittest(t: char, a: int): test =
+  if t == 'a':
+    result = test(t: 'a', a: a, b: 'a', c: 'a')
+  else:
+    result = test(t: 'b', d: a, b: 'b', c: 'b')
