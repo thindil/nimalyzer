@@ -11,6 +11,11 @@ of the program.
   It follows Nim coding standard, the constructors must have names like
   `newObjectName` or `initObjectName` to be detected.
 
+### Changed
+- **BREAKING**: added option *fields* to `objects` rule to check only fields of
+  objects. The old option *all* now also checks for existence of contructors
+  of objects.
+
 ### Fixed
 - The rule `hasDoc` doesn't detect documentation in functions.
 - Crash when trying to `fix` code documentation with `hasDoc` rule.
