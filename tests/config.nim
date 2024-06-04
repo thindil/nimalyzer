@@ -35,7 +35,12 @@ suite "Unit tests for config module":
 
   setLogger()
 
-  test "Test parsing configuration file":
+  test "Creating a new ConfigData instance":
+    let testData: ConfigData = initConfigData(kind = rule, name = "newRule")
+    check:
+      testData.name == "newRule"
+
+  test "Parsing a configuration file":
     var sections: ExtendedNatural = 0
     let (sources, rules, fixCommand, maxReports, showSummary) = parseConfig(
         configFile = "config/nimalyzer.cfg", sections = sections)
