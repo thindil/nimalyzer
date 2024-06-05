@@ -122,6 +122,39 @@ type
     fixProc: proc (astNode, parentNode: PNode; rule: RuleOptions;
         data: string): bool
 
+proc initRuleOptions*(options: seq[RuleOption] = @[]; parent: bool = false;
+    fileName: FilePath = ""; negation: bool = false; ruleType: RuleTypes = none;
+    amount: ResultAmount = 0; enabled: bool = true; fixCommand: FixCommand = "";
+    identsCache: IdentCache = nil; forceFixCommand: bool = false;
+    maxResults: Natural = Natural.high;
+    explanation: Message = ""): RuleOptions {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## Initialize a new instance of RuleOptions object
+  ##
+  ## * options         - The list of the program's rule's options
+  ## * parent          - If true, check is currently make in the parent (usualy
+  ##                     module) entity
+  ## * fileName        - The path to the file which is checked
+  ## * negation        - If true, the rule show return oposite result
+  ## * ruleType        - The type of rule
+  ## * amount          - The amount of results found by the rule
+  ## * enabled         - If false, the rule is temporary disabled by pragmas
+  ## * fixCommand      - The command executed by the rule if no custom code is set
+  ##                     for fix type of rule
+  ## * identsCache     - The Nim identifiers cache
+  ## * forceFixCommand - If true, force the rule to use fixCommand instead of its
+  ##                     fix code
+  ## * explanation     - The explanation which will be show to the user if check
+  ##                     or fix type of rule setting is violated by the checked
+  ##                     code
+  ##
+  ## Returns the new instance of RuleOptions object
+  return RuleOptions(options: options, parent: parent, fileName: fileName,
+      negation: negation, ruleType: ruleType, amount: amount, enabled: enabled,
+      fixCommand: fixCommand, identsCache: identsCache,
+      forceFixCommand: forceFixCommand, maxResults: maxResults,
+      explanation: explanation)
+
 template optionsGetterSetter(name: untyped; typ: typedesc) =
   ## Set the getter for a field of RuleOptions type
   ##
