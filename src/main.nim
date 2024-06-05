@@ -113,7 +113,7 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
               let astNode: PNode = codeParser.parseAll
               codeParser.closeParser
               var
-                currentRule: RuleOptions = RuleOptions()
+                currentRule: RuleOptions = initRuleOptions()
                 index: Natural = 0
               currentRule.identsCache = nimCache
               currentRule.fileName = source
