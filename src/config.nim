@@ -230,6 +230,19 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
         value: ConfigValue
         index: ExtendedNatural
 
+    proc initConfigSetting(name: ConfigName; value: ConfigValue;
+        index: ExtendedNatural): ConfigSetting {.raises: [], tags: [],
+        contractual.} =
+      ## Initialize a new instance of ConfigSetting object
+      ##
+      ## * name  - the name of the setting from the file
+      ## * value - the value of the setting from the file
+      ## * index - the index of the setting in configOptions list. If it is an
+      ##           invalid option, it is -1.
+      ##
+      ## Returns the new instance of ConfigSetting object
+      return ConfigSetting(name: name, value: value, index: index)
+
     proc addFile(fileName: FilePath; sources: var seq[FilePath]) {.gcsafe,
         raises: [], tags: [RootEffect], contractual.} =
       ## Add the selected file as a source code to check for the program
@@ -259,9 +272,9 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
         lineNumber.inc
         let
           configLine: seq[string] = line.split
-          setting: ConfigSetting = ConfigSetting(name: configLine[
-              0].toLowerAscii, value: configLine[1..^1].join(sep = " "),
-              index: configOptions.find(item = configLine[0].toLowerAscii))
+          setting: ConfigSetting = initConfigSetting(name = configLine[
+              0].toLowerAscii, value = configLine[1..^1].join(sep = " "),
+              index = configOptions.find(item = configLine[0].toLowerAscii))
         # Comment line, skip
         if line.startsWith(prefix = '#') or line.len == 0:
           continue
