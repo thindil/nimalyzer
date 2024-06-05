@@ -15,6 +15,7 @@ of the program.
 - **BREAKING**: added option *fields* to `objects` rule to check only fields of
   objects. The old option *all* now also checks for existence of contructors
   of objects.
+- Updated the project's documentation.
 
 ### Fixed
 - The rule `hasDoc` doesn't detect documentation in functions.
