@@ -38,7 +38,7 @@ type
   ConfigOption = string
     ## The configuration's option's name
 
-  ConfigData* = object
+  ConfigData = object
     ## Contains information about the configuration of the program's rule or a
     ## custom message, depends on `kind` parameter. When the type of
     ## configuration entry is the program's rule, it has following fields:
