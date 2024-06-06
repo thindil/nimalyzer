@@ -105,6 +105,13 @@ type
   RuleOptionValue = string
     ## A value of an option of a rule
 
+  CheckProcType* = proc (astNode, parentNode: PNode; rule: var RuleOptions)
+    ## A procedure used to check a rule
+
+  FixProcType* = proc (astNode, parentNode: PNode; rule: RuleOptions;
+      data: string): bool
+    ## A procedure used to auto fix a rule
+
   RuleSettings* = object
     ## Contains information about the program's rule configuration
     ##
@@ -115,12 +122,11 @@ type
     ## * minOptions   - The minumal amount of options required by the rule
     ## * fixProc      - The procedure used to auto fix the rule
     name: RuleName
-    checkProc: proc (astNode, parentNode: PNode; rule: var RuleOptions)
+    checkProc: CheckProcType
     options: seq[RuleOptionsTypes]
     optionValues: seq[RuleOptionValue]
     minOptions: Natural
-    fixProc: proc (astNode, parentNode: PNode; rule: RuleOptions;
-        data: string): bool
+    fixProc: FixProcType
 
 proc initRuleOptions*(options: seq[RuleOption] = @[]; parent: bool = false;
     fileName: FilePath = ""; negation: bool = false; ruleType: RuleTypes = none;
