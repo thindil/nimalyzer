@@ -95,8 +95,8 @@
 import ../rules
 
 ruleConfig(ruleName = "objects",
-  ruleFoundMessage = "object's types declarations which can{negation} be upgraded",
-  ruleNotFoundMessage = "object's types declarations which can{negation} be upgraded not found.",
+  ruleFoundMessage = "issues with object's types declarations",
+  ruleNotFoundMessage = "issues with object's types declarations not found.",
   rulePositiveMessage = "type '{params[2]}', line: {params[0]} {params[1]}",
   ruleNegativeMessage = "type '{params[2]}', line: {params[0]} {params[1]}",
   ruleOptions = @[custom],
@@ -108,7 +108,7 @@ checkRule:
   initCheck:
     discard
   startCheck:
-    let negation: Message = (if rule.negation: "'t" else: "")
+    discard
   checking:
     var checkResult: bool = false
     # Check if the object's type definition contains any public field
