@@ -218,7 +218,8 @@ checkRule:
         except Exception:
           ""
       objectName.removeSuffix(c = '*')
-      let constructorNames: array[2, string] = ["new" & objectName, "init" & objectName]
+      let constructorNames: array[4, string] = ["new" & objectName, "new" &
+          objectName & "*", "init" & objectName, "init" & objectName & "*"]
       for child in parentNode:
         if child.kind in {nkProcDef, nkFuncDef}:
           try:
