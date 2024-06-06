@@ -230,6 +230,8 @@ checkRule:
                 "can't check for contructor of type " &
                 " line: " &
                 $node.info.line & ". Reason: ", e = getCurrentException())
+      if rule.ruleType in {RuleTypes.search, count}:
+        checkResult = not checkResult
       let oldAmount: ResultAmount = rule.amount
       try:
         let message: Message = (if rule.negation: "has" else: "doesn't have") & " declared a constructor."
