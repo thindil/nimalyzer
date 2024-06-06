@@ -1,5 +1,5 @@
 # Count: 0
-# Negative count: 2
+# Negative count: 3
 
 type
   test = object

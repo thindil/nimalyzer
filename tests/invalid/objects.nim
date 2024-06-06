@@ -1,4 +1,4 @@
-# Count: 2
+# Count: 3
 # Negative count: 0
 
 type
