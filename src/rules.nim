@@ -161,6 +161,23 @@ proc initRuleOptions*(options: seq[RuleOption] = @[]; parent: bool = false;
       forceFixCommand: forceFixCommand, maxResults: maxResults,
       explanation: explanation)
 
+proc initRuleSettings*(name: RuleName; checkProc: CheckProcType; options: seq[
+    RuleOptionsTypes]; optionValues: seq[RuleOptionValue]; minOptions: Natural;
+    fixProc: FixProcType): RuleSettings {.sideEffect, raises: [], tags: [],
+    contractual.} =
+  ## Initialize a new instance of RuleSettigns object
+  ##
+  ## * name         - The name of the rule
+  ## * checkProc    - The procedure used to check the rule
+  ## * options      - The rule's options which can be set
+  ## * optionValues - If the rule has option type custom, the values for the option
+  ## * minOptions   - The minumal amount of options required by the rule
+  ## * fixProc      - The procedure used to auto fix the rule
+  ##
+  ## Returns the new instance of RuleSettings object
+  return RuleSettings(name: name, checkProc: checkProc, options: options,
+      optionValues: optionValues, minOptions: minOptions, fixProc: fixProc)
+
 template optionsGetterSetter(name: untyped; typ: typedesc) =
   ## Set the getter for a field of RuleOptions type
   ##
