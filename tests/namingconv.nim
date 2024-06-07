@@ -30,3 +30,7 @@ import utils/helpers
 
 runRuleTest(files = @["namingconv"], validOptions = @["variables",
     "[a-z][a-zA-Z0-9_]"], invalidOptions = @[], disabledChecks = {fixTests})
+runRuleTest(files = @["namingconv"], validOptions = @["enumerations",
+    "[a-z][a-zA-Z0-9_]"], invalidOptions = @[], disabledChecks = {fixTests})
+runRuleTest(files = @["namingconv"], validOptions = @["procedures",
+    "[a-z][a-zA-Z0-9_]"], invalidOptions = @[], disabledChecks = {fixTests})
