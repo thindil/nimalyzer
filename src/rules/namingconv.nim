@@ -95,7 +95,7 @@ ruleConfig(ruleName = "namingconv",
   rulePositiveMessage = "name of '{params[0]}' line: {params[1]} follow naming convention.",
   ruleNegativeMessage = "name of '{params[0]}' line: {params[1]} doesn't follow naming convention.",
   ruleOptions = @[custom, str],
-  ruleOptionValues = @["variables", "enumerations", "procedures"],
+  ruleOptionValues = @["variables", "enumerations", "procedures", "types"],
   ruleMinOptions = 2)
 
 checkRule:
@@ -111,6 +111,8 @@ checkRule:
           {nkProcDef, nkFuncDef, nkMethodDef}
         of "enumerations":
           {nkEnumTy}
+        of "types":
+          {nkTypeSection}
         else:
           {}
   checking:
