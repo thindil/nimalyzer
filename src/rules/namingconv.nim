@@ -46,9 +46,10 @@
 ## * namingConv is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *namingconv*, *namingConv* or *nAmInGcOnV*.
 ## * entityType is the type of code's entities to check. Possible values are:
-##   variables - check the declarations of variables, enumerations - check the
-##   names of enumerations values and procedures - check the names of the
-##   declarations of procedures.
+##   *variables* - check the declarations of variables, *enumerations* - check the
+##   names of enumerations values, *procedures* - check the names of the
+##   declarations of procedures and *types* - check the names of the declared
+##   types.
 ## * nameExpression - the regular expression which the names of the selected
 ##   entities should follow. Any expression supported by PCRE is allowed.
 ##
