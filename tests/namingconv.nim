@@ -34,3 +34,5 @@ runRuleTest(files = @["namingconv"], validOptions = @["enumerations",
     "[a-z][a-zA-Z0-9_]"], invalidOptions = @[], disabledChecks = {fixTests})
 runRuleTest(files = @["namingconv"], validOptions = @["procedures",
     "[a-z][a-zA-Z0-9_]"], invalidOptions = @[], disabledChecks = {fixTests})
+runRuleTest(files = @["namingconv"], validOptions = @["types",
+    "[A-Z][a-zA-Z0-9_]"], invalidOptions = @[], disabledChecks = {fixTests})
