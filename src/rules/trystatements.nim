@@ -159,7 +159,7 @@ proc checkName(exceptNode: PNode; message, checkType: var string;
       except KeyError, Exception:
         discard
 
-{.push ruleOff: "paramsUsed".}
+{.push ruleOff: "params".}
 proc checkStatement(nodeToCheck, astNode: PNode; rule: var RuleOptions;
     messagePrefix: string) {.raises: [], tags: [RootEffect], contractual.} =
   ## Check the selected try statement's except branches do they follow the rule's
@@ -200,7 +200,7 @@ proc checkStatement(nodeToCheck, astNode: PNode; rule: var RuleOptions;
         rule.amount = -1_000
       if not checkResult:
         break
-{.push ruleOn: "paramsUsed".}
+{.push ruleOn: "params".}
 
 checkRule:
   initCheck:

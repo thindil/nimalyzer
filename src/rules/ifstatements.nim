@@ -126,7 +126,7 @@ ruleConfig(ruleName = "ifstatements",
   ruleOptionValues = @["all", "negative", "moveable", "empty", "min", "max"],
   ruleMinOptions = 1)
 
-{.push ruleOff: "paramsUsed".}
+{.push ruleOff: "params".}
 proc checkMinMax(node, parent: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [ValueError], tags: [RootEffect],
         contractual.} =
@@ -258,7 +258,7 @@ proc checkNegativeCondition(node, parent: PNode; messagePrefix: string;
         ruleData = "negation", params = [$node.info.line,
         (if rule.negation: "doesn't start" else: "starts") &
         " with a negative condition."])
-{.push ruleOn: "paramsUsed".}
+{.push ruleOn: "params".}
 
 checkRule:
   initCheck:

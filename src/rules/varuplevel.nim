@@ -85,7 +85,7 @@ ruleConfig(ruleName = "varuplevel",
   rulePositiveMessage = "declaration of {params[0]} line: {params[1]} can't be updated to {params[2]}.",
   ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} can be updated to {params[2]}.")
 
-{.push ruleOff: "paramsUsed".}
+{.push ruleOff: "params".}
 proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
     contractual.} =
@@ -167,7 +167,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
           node = node, ruleData = "let", params = [$node[namePos], $node.info.line, "let"])
-{.push ruleOn: "paramsUsed".}
+{.push ruleOn: "params".}
 
 checkRule:
   initCheck:
