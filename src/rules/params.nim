@@ -23,10 +23,13 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## The rule to check if the selected procedure uses all its parameter
+## The rule to check the parameters of routines. Checked things:
+##
+## * Do the routine uses all its parameters.
+##
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? paramsUsed [declarationType]
+##   [ruleType] ?not? params [declarationType]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -42,8 +45,8 @@
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about procedures which have all parameters used.
 ##   Probably useable only with search and count type of rule.
-## * paramsUsed is the name of the rule. It is case-insensitive, thus it can be
-##   set as *paramsUsed*, *paramsUsed* or *pArAmSuSeD*.
+## * params is the name of the rule. It is case-insensitive, thus it can be
+##   set as *Params*, *params* or *pArAmS*.
 ## * declarationType is the type of declaration which will be checked for the
 ##   parameters usage. Possible values: `procedures`: check all procedures,
 ##   functions and methods. `templates`: check templates only. `macros`: check
@@ -53,36 +56,36 @@
 ## Disabling the rule
 ## ------------------
 ## It is possible to disable the rule for a selected part of the checked code
-## by using pragma *ruleOff: "paramsUsed"* in the declaration from which the rule
+## by using pragma *ruleOff: "params"* in the declaration from which the rule
 ## should be disabled or in code before it. For example, if the rule should be
 ## disabled for procedure `main()`, the full declaration of it should be::
 ##
-##      proc main() {.ruleOff: "paramsUsed".}
+##      proc main() {.ruleOff: "params".}
 ##
-## To enable the rule again, the pragma *ruleOn: "paramsUsed"* should be added in
+## To enable the rule again, the pragma *ruleOn: "params"* should be added in
 ## the element which should be checked or in code before it. For example, if
 ## the rule should be re-enabled for function `myFunc(a: int)`, the full
 ## declaration should be::
 ##
-##      func myFunc(a: int) {.ruleOn: "paramsUsed".}
+##      func myFunc(a: int) {.ruleOn: "params".}
 ##
 ## Examples
 ## --------
 ##
 ## 1. Check if all procedures in module uses their parameters::
 ##
-##     check paramsUsed procedures
+##     check params procedures
 ##
 ## 2. Search for all declarations which don't use their all parameters::
 ##
-##     search not paramsUsed all
+##     search not params all
 
 # External modules imports
 import compiler/trees
 # Import default rules' modules
 import ../rules
 
-ruleConfig(ruleName = "paramsused",
+ruleConfig(ruleName = "params",
   ruleFoundMessage = "procedures which{negation} use all parameters",
   ruleNotFoundMessage = "procedures which{negation} use all parameters not found.",
   rulePositiveMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all its parameters.",

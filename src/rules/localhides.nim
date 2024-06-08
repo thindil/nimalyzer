@@ -112,7 +112,7 @@ proc checkChild(nodes: PNode; varName: string): PNode {.raises: [], tags: [
     except KeyError, Exception:
       discard
 
-{.push ruleOff: "paramsUsed".}
+{.push ruleOff: "params".}
 proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
     rule: var RuleOptions) {.raises: [KeyError, Exception], tags: [RootEffect],
     contractual.} =
@@ -167,7 +167,7 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
       setResult(checkResult = hiddenLine == 0, positiveMessage = positiveMessage,
           negativeMessage = negativeMessage, node = node, ruleData = $node[namePos],
           params = [$node[namePos], $node.info.line, $hiddenLine])
-{.push ruleOn: "paramsUsed".}
+{.push ruleOn: "params".}
 
 {.hint[XCannotRaiseY]: off.}
 checkRule:
