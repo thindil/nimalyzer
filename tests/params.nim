@@ -25,8 +25,8 @@
 
 ## Provides unit tests for params rule
 
-include ../src/rules/paramsused
+include ../src/rules/params
 import utils/helpers
 
-runRuleTest(files = @["paramsused"], validOptions = @["procedures"],
+runRuleTest(files = @["params"], validOptions = @["procedures"],
     invalidOptions = @["randomoption"], disabledChecks = {fixTests})
