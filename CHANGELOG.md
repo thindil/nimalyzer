@@ -10,6 +10,7 @@ of the program.
 - The rule `objects` can now check for existence of constructors of objects.
   It follows Nim coding standard, the constructors must have names like
   `newObjectName` or `initObjectName` to be detected.
+- The rule `namingconv` can now check naming conventions for declared types.
 
 ### Changed
 - **BREAKING**: added option *fields* to `objects` rule to check only fields of
