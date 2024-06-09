@@ -22,6 +22,7 @@ of the program.
 - The rule `hasDoc` doesn't detect documentation in functions.
 - Crash when trying to `fix` code documentation with `hasDoc` rule.
 - Adding code documentation with `hasDoc` rule.
+- Checking moveable branches with `ifstatements` rule.
 
 ## [0.8.0] - 2024-04-23
 
