@@ -210,10 +210,10 @@ setting shouldn't contain a new line characters.
 ::
     explanation Contracts helps in testing the program and all declared procedures should have declared contracts for them. The procedures should avoid raising exceptions and handle each possible exception by themselves for greater stability of the program. The information about the effects system by tags pragma can also help in understanding what exactly the procedure doing.
 
-    check paramsUsed procedures
+    check params procedures
     explanation Unused parameters only clutter the source code and can cause confusion.
 
-    check paramsUsed macros
+    check params macros
     explanation Unused parameters only clutter the source code and can cause confusion.
 
     check namedParams
@@ -342,10 +342,10 @@ there is no rules configured for the program.
     check hasPragma all contractual "raises: [*"
     explanation Contracts helps in testing the program and all declared procedures should have declared contracts for them. The procedures should avoid raising exceptions and handle each possible exception by themselves for greater stability of the program.
 
-    check paramsUsed procedures
+    check params procedures
     explanation Unused parameters only clutter the source code and can cause confusion.
 
-    check paramsUsed macros
+    check params macros
     explanation Unused parameters only clutter the source code and can cause confusion.
 
     check namedParams
