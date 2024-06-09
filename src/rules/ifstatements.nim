@@ -269,7 +269,6 @@ checkRule:
     let negation: Message = (if rule.negation: "'t" else: "")
   checking:
     if node.kind in {nkIfStmt, nkWhenStmt}:
-      var oldAmount: ResultAmount = rule.amount
       if node.len > 1:
         # Check if the if statement starts with negative condition and has else branch
         if rule.options[0].toLowerAscii in ["all", "negative"]:
@@ -281,12 +280,11 @@ checkRule:
                 text = "Can't check the if statement.", e = e)
             return
         # Check if the last if branch can be moved outside the if statement
-        if rule.options[0].toLowerAscii in ["all", "moveable"] and
-            rule.amount == oldAmount:
+        if rule.options[0].toLowerAscii in ["all", "moveable"]:
           checkMoveableBranch(node = node, parent = parentNode,
               messagePrefix = messagePrefix, rule = rule, negation = negation)
       # Check if the if statement contains empty branches (with discard only)
-      if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
+      if rule.options[0].toLowerAscii in ["all", "empty"]:
         var checkResult: bool = true
         checkEmptyBranch(node = node, parent = parentNode,
             messagePrefix = messagePrefix, rule = rule,
@@ -294,8 +292,7 @@ checkRule:
         if rule.ruleType == fix and not checkResult:
           return
       # Check the amount of the if statement branches (min and max)
-      if rule.options[0].toLowerAscii in ["min", "max"] and rule.amount ==
-          oldAmount and node.kind != nkWhenStmt:
+      if rule.options[0].toLowerAscii in ["min", "max"] and node.kind != nkWhenStmt:
         checkMinMax(node = node, parent = parentNode,
             messagePrefix = messagePrefix, rule = rule)
     else:
@@ -305,7 +302,6 @@ checkRule:
         if not rule.enabled:
           continue
         if child.kind in {nkIfStmt, nkElifBranch, nkWhenStmt}:
-          var oldAmount: ResultAmount = rule.amount
           if child.len > 1:
             # Check if the if statement starts with negative condition and has else branch
             if rule.options[0].toLowerAscii in ["all", "negative"]:
@@ -317,13 +313,12 @@ checkRule:
                     text = "Can't check the if statement.", e = e)
                 return
             # Check if the last if branch can be moved outside the if statement
-            if rule.options[0].toLowerAscii in ["all", "moveable"] and
-                rule.amount == oldAmount:
+            if rule.options[0].toLowerAscii in ["all", "moveable"]:
               checkMoveableBranch(node = child, parent = node,
                   messagePrefix = messagePrefix, rule = rule,
                   negation = negation)
           # Check if the if statement contains empty branches (with discard only)
-          if rule.options[0].toLowerAscii in ["all", "empty"] and rule.amount == oldAmount:
+          if rule.options[0].toLowerAscii in ["all", "empty"]:
             var checkResult: bool = true
             checkEmptyBranch(node = child, parent = node,
                 messagePrefix = messagePrefix, rule = rule,
@@ -331,8 +326,7 @@ checkRule:
             if rule.ruleType == fix and not checkResult:
               return
           # Check the amount of the if statement branches (min and max)
-          if rule.options[0].toLowerAscii in ["min", "max"] and rule.amount ==
-              oldAmount and node.kind != nkWhenStmt:
+          if rule.options[0].toLowerAscii in ["min", "max"]and node.kind != nkWhenStmt:
             checkMinMax(node = child, parent = node,
                 messagePrefix = messagePrefix, rule = rule)
   endCheck:
