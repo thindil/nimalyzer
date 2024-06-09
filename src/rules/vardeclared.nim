@@ -43,10 +43,10 @@
 ## * varDeclared is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *vardeclared*, *varDeclared* or *vArDeClArEd*.
 ## * declarationType is the desired type of variable's declaration to check.
-##   Possible values are: full - the declaration must have declared type and
-##   value for the variable, type - the declaration must have declared type for
-##   the variable, value - the declaration must have declared value for the
-##   variable, stadardtypes - the declaration has declared the variable with
+##   Possible values are: *full* - the declaration must have declared type and
+##   value for the variable, *type* - the declaration must have declared type for
+##   the variable, *value* - the declaration must have declared value for the
+##   variable, *standardtypes* - the declaration has declared the variable with
 ##   type int or string.
 ##
 ## Disabling the rule
