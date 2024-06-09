@@ -130,43 +130,41 @@ checkRule:
       # No body, definition only, skip
       if node[bodyPos].len == 0:
         continue
-      else:
-        var index: ExtendedNatural = -1
-        # Check each parameter
-        for child in node[paramsPos].sons[1..^1]:
-          index = -1
-          for i in 0..child.len - 3:
-            try:
-              let
-                varName: NodeName = split(s = $child[i])[0]
-                body: PNode = flattenStmts(n = node[bodyPos])
-              for childNode in body:
-                index = find(s = $childNode, sub = varName)
-                if index > -1:
-                  break
-              # The node doesn't use one of its parameters
-              if index == -1:
-                if rule.negation:
-                  setResult(checkResult = false, positiveMessage = "",
-                      negativeMessage = positiveMessage, node = node, params = [
-                      procName, $node.info.line, " doesn't"])
-                  break
-                else:
-                  setResult(checkResult = false, positiveMessage = "",
-                      negativeMessage = negativeMessage, ruleData = varName,
-                      node = node, params = [procName, $node.info.line, varName])
-                  if rule.ruleType == fix:
-                    return
-            except KeyError, Exception:
-              rule.amount = errorMessage(text = messagePrefix &
-                  "can't check parameters of procedure " & procName &
-                  " line: " &
-                  $node.info.line & ". Reason: ", e = getCurrentException())
-        # The node uses all of its parameters
-        if index > -1:
-          setResult(checkResult = true, positiveMessage = positiveMessage,
-              negativeMessage = positiveMessage, node = node, params = [
-              procName, $node.info.line, ""])
+      var index: ExtendedNatural = -1
+      # Check each parameter
+      for child in node[paramsPos].sons[1..^1]:
+        index = -1
+        for i in 0..child.len - 3:
+          try:
+            let
+              varName: NodeName = split(s = $child[i])[0]
+              body: PNode = flattenStmts(n = node[bodyPos])
+            for childNode in body:
+              index = find(s = $childNode, sub = varName)
+              if index > -1:
+                break
+            # The node doesn't use one of its parameters
+            if index == -1:
+              if rule.negation:
+                setResult(checkResult = false, positiveMessage = "",
+                    negativeMessage = positiveMessage, node = node, params = [
+                    procName, $node.info.line, " doesn't"])
+                break
+              setResult(checkResult = false, positiveMessage = "",
+                  negativeMessage = negativeMessage, ruleData = varName,
+                  node = node, params = [procName, $node.info.line, varName])
+              if rule.ruleType == fix:
+                return
+          except KeyError, Exception:
+            rule.amount = errorMessage(text = messagePrefix &
+                "can't check parameters of procedure " & procName &
+                " line: " &
+                $node.info.line & ". Reason: ", e = getCurrentException())
+      # The node uses all of its parameters
+      if index > -1:
+        setResult(checkResult = true, positiveMessage = positiveMessage,
+            negativeMessage = positiveMessage, node = node, params = [
+            procName, $node.info.line, ""])
   endCheck:
     let negation: Message = (if rule.negation: " not" else: "")
 
