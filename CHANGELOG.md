@@ -17,6 +17,9 @@ of the program.
   objects. The old option *all* now also checks for existence of contructors
   of objects.
 - Updated the project's documentation.
+- **BREAKING**: changed the name of the rule `paramsUsed` to `params`. The
+  reason after this change is to made the rule more generic, allowing it to
+  check more things related to routines' parameters.
 
 ### Fixed
 - The rule `hasDoc` doesn't detect documentation in functions.
