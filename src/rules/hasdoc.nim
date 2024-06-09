@@ -153,56 +153,55 @@ checkRule:
       # about the same
       if node.kind in {nkEnumTy, nkObjectTy}:
         continue
-      else:
+      try:
+        if '=' in $node[namePos]:
+          continue
+      except Exception:
+        discard
+      # Set the name of the declared entity which is checked for documentation
+      var declName: Declaration = try:
+            ($node[namePos]).split[0]
+          except KeyError, Exception:
+            ""
+      if declName.len == 0:
+        declName = try:
+            $astNode[namePos]
+          except KeyError, Exception:
+            ""
+      if declName.len == 0:
+        rule.amount = errorMessage(
+            text = "Can't get the name of the declared entity.")
+        return
+      if rule.enabled and (declName.endsWith(suffix = "*") or
+          node.kind in callableDefs):
         try:
-          if '=' in $node[namePos]:
-            continue
-        except Exception:
-          discard
-        # Set the name of the declared entity which is checked for documentation
-        var declName: Declaration = try:
-              ($node[namePos]).split[0]
-            except KeyError, Exception:
-              ""
-        if declName.len == 0:
-          declName = try:
-              $astNode[namePos]
-            except KeyError, Exception:
-              ""
-        if declName.len == 0:
-          rule.amount = errorMessage(
-              text = "Can't get the name of the declared entity.")
-          return
-        if rule.enabled and (declName.endsWith(suffix = "*") or
-            node.kind in callableDefs):
-          try:
-            var hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
-                node.comment.len > 0
-              elif node.kind == nkObjectTy:
+          var hasDoc: bool = if node.kind in {nkEnumTy, nkIdentDefs, nkConstDef}:
+              node.comment.len > 0
+            elif node.kind == nkObjectTy:
+              node[2].comment.len > 0
+            elif node.kind in callableDefs and node[bodyPos].len == 0:
+              node.comment.len > 0
+            elif node.kind == nkTypeDef:
+              case node[2].kind
+              of nkEnumTy:
                 node[2].comment.len > 0
-              elif node.kind in callableDefs and node[bodyPos].len == 0:
-                node.comment.len > 0
-              elif node.kind == nkTypeDef:
-                case node[2].kind
-                of nkEnumTy:
-                  node[2].comment.len > 0
-                of nkObjectTy:
-                  node[2][2].comment.len > 0
-                of nkRefTy:
-                  node[2][0][2].comment.len > 0
-                else:
-                  node.comment.len > 0
+              of nkObjectTy:
+                node[2][2].comment.len > 0
+              of nkRefTy:
+                node[2][0][2].comment.len > 0
               else:
-                node[^1].len > 0 and node[^1][0].kind == nkCommentStmt
-            if node.kind == nkTemplateDef and not hasDoc:
-              hasDoc = node.comment.len > 0
-            setResult(checkResult = hasDoc, positiveMessage = positiveMessage,
-                negativeMessage = negativeMessage, node = node, params = [
-                declName, $node.info.line])
-          except KeyError as e:
-            rule.amount = errorMessage(
-                text = "Can't check the declared entity '" & declName & "'.", e = e)
-            return
+                node.comment.len > 0
+            else:
+              node[^1].len > 0 and node[^1][0].kind == nkCommentStmt
+          if node.kind == nkTemplateDef and not hasDoc:
+            hasDoc = node.comment.len > 0
+          setResult(checkResult = hasDoc, positiveMessage = positiveMessage,
+              negativeMessage = negativeMessage, node = node, params = [
+              declName, $node.info.line])
+        except KeyError as e:
+          rule.amount = errorMessage(
+              text = "Can't check the declared entity '" & declName & "'.", e = e)
+          return
   endCheck:
     let notFoundMsg: Message =
       if rule.negation and rule.ruleType == search and rule.amount < 1:
