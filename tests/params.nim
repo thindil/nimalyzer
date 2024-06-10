@@ -28,5 +28,5 @@
 include ../src/rules/params
 import utils/helpers
 
-runRuleTest(files = @["params"], validOptions = @["procedures"],
-    invalidOptions = @["randomoption"], disabledChecks = {fixTests})
+runRuleTest(files = @["params"], validOptions = @["all", "procedures"],
+    invalidOptions = @["randomoption", "anotheroption"], disabledChecks = {fixTests})
