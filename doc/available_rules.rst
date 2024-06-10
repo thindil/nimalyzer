@@ -885,7 +885,7 @@ The rule to check the parameters of routines. Checked things:
 
 The syntax in a configuration file is::
 
-  [ruleType] ?not? params [declarationType]
+  [ruleType] ?not? params [checkType] [declarationType]
 
 * ruleType is the type of rule which will be executed. Proper values are:
   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -1028,10 +1028,10 @@ The syntax in a configuration file is::
 * varDeclared is the name of the rule. It is case-insensitive, thus it can be
   set as *vardeclared*, *varDeclared* or *vArDeClArEd*.
 * declarationType is the desired type of variable's declaration to check.
-  Possible values are: full - the declaration must have declared type and
-  value for the variable, type - the declaration must have declared type for
-  the variable, value - the declaration must have declared value for the
-  variable, stadardtypes - the declaration has declared the variable with
+  Possible values are: *full* - the declaration must have declared type and
+  value for the variable, *type* - the declaration must have declared type for
+  the variable, *value* - the declaration must have declared value for the
+  variable, *standardtypes* - the declaration has declared the variable with
   type int or string.
 
 Disabling the rule
