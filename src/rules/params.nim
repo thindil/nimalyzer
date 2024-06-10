@@ -86,8 +86,8 @@ import compiler/trees
 import ../rules
 
 ruleConfig(ruleName = "params",
-  ruleFoundMessage = "procedures which{negation} use all parameters",
-  ruleNotFoundMessage = "procedures which{negation} use all parameters not found.",
+  ruleFoundMessage = "procedures which{negation} {ruleCheck}",
+  ruleNotFoundMessage = "procedures which{negation} {ruleCheck} not found.",
   rulePositiveMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all its parameters.",
   ruleNegativeMessage = "procedure {params[0]} line: {params[1]} doesn't use parameter '{params[2]}'.",
   ruleOptions = @[str, custom],
@@ -160,7 +160,8 @@ checkRule:
                   return
             # Check if the routine uses standard types for its parameters
             if rule.options[0].toLowerAscii in ["all", "standardtypes"]:
-              echo varName
+              if $child[^2] in ["int", "string"]:
+                echo varName, " standard type"
           except KeyError, Exception:
             rule.amount = errorMessage(text = messagePrefix &
                 "can't check parameters of procedure " & procName &
@@ -172,7 +173,17 @@ checkRule:
             negativeMessage = positiveMessage, node = node, params = [
             procName, $node.info.line, ""])
   endCheck:
-    let negation: Message = (if rule.negation: " not" else: "")
+    let
+      negation: Message = (if rule.negation: " not" else: "")
+      ruleCheck: Message = case rule.options[0].toLowerAscii
+        of "all":
+          "pass all checks"
+        of "used":
+          "use all parameters"
+        of "standardtypes":
+          "contain int or string as type of parameters"
+        else:
+          ""
 
 fixRule:
   # Don't change anything if rule has negation
