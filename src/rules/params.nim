@@ -29,7 +29,7 @@
 ##
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? params [declarationType]
+##   [ruleType] ?not? params [checkType] [declarationType]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -90,15 +90,17 @@ ruleConfig(ruleName = "params",
   ruleNotFoundMessage = "procedures which{negation} use all parameters not found.",
   rulePositiveMessage = "procedure {params[0]} line: {params[1]}{params[2]} use all its parameters.",
   ruleNegativeMessage = "procedure {params[0]} line: {params[1]} doesn't use parameter '{params[2]}'.",
-  ruleOptions = @[custom],
+  ruleOptions = @[str, custom],
   ruleOptionValues = @["procedures", "templates", "macros", "all"],
-  ruleMinOptions = 1)
+  ruleMinOptions = 2)
 
 checkRule:
   initCheck:
-    discard
+    if rule.options[0].toLowerAscii notin ["all", "used", "standardtypes"]:
+      rule.amount = errorMessage(text = "Can't check the parameters of routines, invalid check type set in the configuration file.")
+      return
   startCheck:
-    let nodesToCheck: set[TNodeKind] = case rule.options[0]
+    let nodesToCheck: set[TNodeKind] = case rule.options[1]
       of "all":
         routineDefs
       of "procedures":
@@ -128,7 +130,7 @@ checkRule:
         else:
           rule.amount.inc
       # No body, definition only, skip
-      if node[bodyPos].len == 0:
+      if rule.options[0].toLowerAscii == "used" and node[bodyPos].len == 0:
         continue
       var index: ExtendedNatural = -1
       # Check each parameter
@@ -136,25 +138,29 @@ checkRule:
         index = -1
         for i in 0..child.len - 3:
           try:
-            let
-              varName: NodeName = split(s = $child[i])[0]
-              body: PNode = flattenStmts(n = node[bodyPos])
-            for childNode in body:
-              index = find(s = $childNode, sub = varName)
-              if index > -1:
-                break
-            # The node doesn't use one of its parameters
-            if index == -1:
-              if rule.negation:
+            let varName: NodeName = split(s = $child[i])[0]
+            # Check if the routine uses all its parameters
+            if rule.options[0].toLowerAscii in ["all", "used"]:
+              let body: PNode = flattenStmts(n = node[bodyPos])
+              for childNode in body:
+                index = find(s = $childNode, sub = varName)
+                if index > -1:
+                  break
+              # The node doesn't use one of its parameters
+              if index == -1:
+                if rule.negation:
+                  setResult(checkResult = false, positiveMessage = "",
+                      negativeMessage = positiveMessage, node = node, params = [
+                      procName, $node.info.line, " doesn't"])
+                  break
                 setResult(checkResult = false, positiveMessage = "",
-                    negativeMessage = positiveMessage, node = node, params = [
-                    procName, $node.info.line, " doesn't"])
-                break
-              setResult(checkResult = false, positiveMessage = "",
-                  negativeMessage = negativeMessage, ruleData = varName,
-                  node = node, params = [procName, $node.info.line, varName])
-              if rule.ruleType == fix:
-                return
+                    negativeMessage = negativeMessage, ruleData = varName,
+                    node = node, params = [procName, $node.info.line, varName])
+                if rule.ruleType == fix:
+                  return
+            # Check if the routine uses standard types for its parameters
+            if rule.options[0].toLowerAscii in ["all", "standardtypes"]:
+              echo varName
           except KeyError, Exception:
             rule.amount = errorMessage(text = messagePrefix &
                 "can't check parameters of procedure " & procName &
