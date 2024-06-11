@@ -160,8 +160,16 @@ checkRule:
                   return
             # Check if the routine uses standard types for its parameters
             if rule.options[0].toLowerAscii in ["all", "standardtypes"]:
-              if $child[^2] in ["int", "string"]:
-                echo varName, " standard type"
+              let checkResult = if rule.ruleType == check:
+                  $child[^2] in ["int", "string"]
+                else:
+                  $child[^2] notin ["int", "string"]
+              setResult(checkResult = checkResult,
+                  positiveMessage = "procedure {params[0]} line: {params[1]} parameter '{params[2]}' use " &
+                  $child[^2] & " as type.",
+                  negativeMessage = "procedure {params[0]} line: {params[1]} parameter '{params[2]}' doesn't use int or string as type.",
+                  ruleData = varName, node = node, params = [procName,
+                  $node.info.line, varName])
           except KeyError, Exception:
             rule.amount = errorMessage(text = messagePrefix &
                 "can't check parameters of procedure " & procName &
@@ -186,8 +194,9 @@ checkRule:
           ""
 
 fixRule:
-  # Don't change anything if rule has negation
-  if rule.negation:
+  # Don't change anything if rule has negation or the rule is set to check more
+  # than only used parameters
+  if rule.negation or rule.options[0].toLowerAscii != "used":
     return false
   # Remove unused parameters
   block removeUnusedParam:
