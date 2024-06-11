@@ -160,10 +160,12 @@ checkRule:
                   return
             # Check if the routine uses standard types for its parameters
             if rule.options[0].toLowerAscii in ["all", "standardtypes"]:
-              let checkResult = if rule.ruleType == check:
+              var checkResult = if rule.ruleType == check:
                   $child[^2] in ["int", "string"]
                 else:
                   $child[^2] notin ["int", "string"]
+              if rule.ruleType != check:
+                checkResult = not checkResult
               setResult(checkResult = checkResult,
                   positiveMessage = "procedure {params[0]} line: {params[1]} parameter '{params[2]}' use " &
                   $child[^2] & " as type.",
