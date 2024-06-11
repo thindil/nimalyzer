@@ -882,6 +882,7 @@ Params rule
 The rule to check the parameters of routines. Checked things:
 
 * Do the routine uses all its parameters.
+* Do the routine uses string or int for its parameters.
 
 The syntax in a configuration file is::
 
@@ -903,6 +904,10 @@ The syntax in a configuration file is::
   Probably useable only with search and count type of rule.
 * params is the name of the rule. It is case-insensitive, thus it can be
   set as *Params*, *params* or *pArAmS*.
+* checkType is the type of check to perform by the rule. Possible values:
+  `used`: check do all parameters of routines are used. `standardtypes`:
+  check do routines use string or int for their parameters. `all`: perform
+  all the rule's checks.
 * declarationType is the type of declaration which will be checked for the
   parameters usage. Possible values: `procedures`: check all procedures,
   functions and methods. `templates`: check templates only. `macros`: check
@@ -930,11 +935,11 @@ Examples
 
 1. Check if all procedures in module uses their parameters::
 
-    check params procedures
+    check params used procedures
 
 2. Search for all declarations which don't use their all parameters::
 
-    search not params all
+    search not params used all
 
 Trystatements rule
 ==================
