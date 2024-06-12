@@ -165,7 +165,7 @@ checkRule:
                   return
             # Check if the routine uses standard types for its parameters
             if rule.options[0].toLowerAscii in ["all", "standardtypes"]:
-              var checkResult = if rule.ruleType == check:
+              var checkResult: bool = if rule.ruleType == check:
                   $child[^2] in ["int", "string"]
                 else:
                   $child[^2] notin ["int", "string"]
