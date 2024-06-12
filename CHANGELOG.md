@@ -11,6 +11,8 @@ of the program.
   It follows Nim coding standard, the constructors must have names like
   `newObjectName` or `initObjectName` to be detected.
 - The rule `namingconv` can now check naming conventions for declared types.
+- The rule `params` can now check do routines use `int` or `string` for their
+  parameters declarations.
 
 ### Changed
 - **BREAKING**: added option *fields* to `objects` rule to check only fields of
