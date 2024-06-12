@@ -129,7 +129,7 @@ checkRule:
             text = "Can't get the name of the procedure.")
         return
       # No parameters, skip
-      if node[paramsPos].len < 2:
+      if node[paramsPos].len < 2 and rule.options[0].toLowerAscii == "used":
         if rule.negation:
           rule.amount.dec
         else:
@@ -171,12 +171,16 @@ checkRule:
                   $child[^2] notin ["int", "string"]
               if rule.ruleType != check:
                 checkResult = not checkResult
+              let oldAmount: ResultAmount = rule.amount
               setResult(checkResult = checkResult,
                   positiveMessage = "procedure {params[0]} line: {params[1]} parameter '{params[2]}' use " &
                   $child[^2] & " as type.",
                   negativeMessage = "procedure {params[0]} line: {params[1]} parameter '{params[2]}' doesn't use int or string as type.",
                   ruleData = varName, node = node, params = [procName,
                   $node.info.line, varName])
+              # To show the rule's explaination the rule.amount must be negative
+              if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+                rule.amount = -1_000
           except KeyError, Exception:
             rule.amount = errorMessage(text = messagePrefix &
                 "can't check parameters of procedure " & procName &
