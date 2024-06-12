@@ -42,7 +42,9 @@ proc main() {.contractual, raises: [], tags: [ReadDirEffect, WriteIOEffect,
     if not fileExists(filename = "nimalyzer.nimble"):
       quit(errormsg = "Please run the tool from the main directory of the project.")
 
-    proc createHeader(title: string; docFile: File) {.raises: [], tags: [
+    type DocTitle = string
+
+    proc createHeader(title: DocTitle; docFile: File) {.raises: [], tags: [
         WriteIOEffect], contractual.} =
       ## Create the header of the documentation file with its title
       ##
