@@ -177,23 +177,25 @@ lvlError. The settings below checks for:
 1.  If all procedures in the source code have pragma "contractual", "raises" and "tags". The last two can be empty or have listed values.
 2.  If all parameters of all procedures are used in the code.
 3.  If all parameters of all macros used in the code.
-4.  If all calls in the code uses named parameters.
-5.  If all public declarations and module have documentation, but without checking fields of objects' declarations.
-6.  If all variables' declarations have declared type and value for them.
-7.  If any local variable declaration can be updated to let or const.
-8.  If any local variable declaration hides previously declared variable.
-9.  If any `if` statement can be upgraded.
-10. If any `for` statement uses iterators `pairs` or `items`.
-11. If there are no empty `for` statements.
-12. If all source code files have the legal header.
-13. If any assignment can be updated to shorthand assignment.
-14. If any `case` statement can be replaced with `if` statement due to small amount of branches.
-15. If any `if` statement can be replaced with `case` statement due to large amount of branches.
-16. If any code block doesn't exceed limit of cyclomatic complexity.
-17. If any `try` statement doesn't have empty `except` branch
-18. If all object's type's declarations contains only private fields and don't use `string` or `int` for their fields' types.
-19. If all objects have declared constructors.
-20. If all variables' declarations don't use `string` or `int` types.
+4.  If all parameters of all procedures don't use `string` or `int` for their parameters.
+5.  If all parameters of all macros don't use `string` or `int` for their parameters.
+6.  If all calls in the code uses named parameters.
+7.  If all public declarations and module have documentation, but without checking fields of objects' declarations.
+8.  If all variables' declarations have declared type and value for them.
+9.  If any local variable declaration can be updated to let or const.
+10. If any local variable declaration hides previously declared variable.
+11. If any `if` statement can be upgraded.
+12. If any `for` statement uses iterators `pairs` or `items`.
+13. If there are no empty `for` statements.
+14. If all source code files have the legal header.
+15. If any assignment can be updated to shorthand assignment.
+16. If any `case` statement can be replaced with `if` statement due to small amount of branches.
+17. If any `if` statement can be replaced with `case` statement due to large amount of branches.
+18. If any code block doesn't exceed limit of cyclomatic complexity.
+19. If any `try` statement doesn't have empty `except` branch
+20. If all object's type's declarations contains only private fields and don't use `string` or `int` for their fields' types.
+21. If all objects have declared constructors.
+22. If all variables' declarations don't use `string` or `int` types.
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -215,6 +217,12 @@ setting shouldn't contain a new line characters.
 
     check params used macros
     explanation Unused parameters only clutter the source code and can cause confusion.
+
+    check not params standardtypes procedures
+    explanation Using standard types like string or int can lead to hard to find bugs when wrong parameters are interacting with self. Also, using a separated types give more information about the parameter.
+
+    check not params standardtypes macros
+    explanation Using standard types like string or int can lead to hard to find bugs when wrong parameters are interacting with self. Also, using a separated types give more information about the parameter.
 
     check namedParams
     explanation Named parameters allow avoiding assigning invalid values to the calls but also allow to assing the calls' parameters in arbitrary order.
@@ -331,7 +339,7 @@ setting `maxReports` to its default value.
 
 Here is the list of check rules to check by the program in the second section
 of the configuration. They are almost the same as for the previous list of
-the check rules, but the first rule checks also templates and macros. We also
+the check rules, with some minor differences in rules settings. We also
 set again the list of files to check and the message to show it only once as
 there is no rules configured for the program.
 ::
@@ -347,6 +355,9 @@ there is no rules configured for the program.
 
     check params used macros
     explanation Unused parameters only clutter the source code and can cause confusion.
+
+    check not params standardtypes all
+    explanation Using standard types like string or int can lead to hard to find bugs when wrong parameters are interacting with self. Also, using a separated types give more information about the parameter.
 
     check namedParams
     explanation Named parameters allow avoiding assigning invalid values to the calls but also allow to assing the calls' parameters in arbitrary order.
