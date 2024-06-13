@@ -86,7 +86,9 @@ ruleConfig(ruleName = "localhides",
   rulePositiveMessage = "declaration of '{params[0]}' line: {params[1]} is not hidden by local variable.",
   ruleNegativeMessage = "declaration of '{params[0]}' line: {params[1]} is hidden by local variable in line {params[2]}.")
 
-proc checkChild(nodes: PNode; varName: string): PNode {.raises: [], tags: [
+type VariableName = string
+
+proc checkChild(nodes: PNode; varName: VariableName): PNode {.raises: [], tags: [
     RootEffect], contractual.} =
   ## Check if the selected variable is hidden somewhere by a local variable
   ##
