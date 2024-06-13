@@ -160,7 +160,7 @@ checkRule:
 
 fixRule:
 
-  proc revertChanges(fileName: string, e: ref Exception): bool {.raises: [],
+  proc revertChanges(fileName: FilePath, e: ref Exception): bool {.raises: [],
       tags: [WriteIOEffect, ReadIOEffect, RootEffect], contractual.} =
     ## Revert changes to the checked file from the old version and print
     ## information about the issue
