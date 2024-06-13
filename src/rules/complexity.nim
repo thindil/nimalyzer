@@ -96,9 +96,9 @@ ruleConfig(ruleName = "complexity",
   ruleNotFoundMessage = "Code blocks with the complexity {moreOrLess} the selected not found.",
   rulePositiveMessage = "Code block at line: {params[0]} has {params[1]} complexity less or equal to {params[2]} ({params[3]}).",
   ruleNegativeMessage = "Code block at line: {params[0]} has {params[1]} complexity more than {params[2]} ({params[3]}).",
-  ruleOptions = @[custom, str, positive],
-  ruleOptionValues = @["cyclomatic"],
-  ruleMinOptions = 3)
+  ruleOptions = @[custom, positive],
+  ruleOptionValues = @["all", "routines", "loops", "conditions"],
+  ruleMinOptions = 2)
 
 proc countCyclomatic(complexity: var Positive; node: PNode) {.raises: [KeyError,
     Exception], tags: [RootEffect], contractual.} =
@@ -134,22 +134,18 @@ checkRule:
         {nkIfStmt, nkElifBranch, nkWhenStmt}
       else:
         {}
-    if nodesToCheck == {}:
-      rule.amount = errorMessage(text = "Can't check the complexity of the code, unknown type of a code to check: '" &
-          rule.options[1] & "'. Should be one of: 'all', 'routines', 'loops', 'conditions'")
-      return
   checking:
     if node.kind in nodesToCheck:
       var complexity: Positive = 2
       try:
         for child in node:
           countCyclomatic(complexity = complexity, node = child)
-        setResult(checkResult = complexity <= rule.options[2].parseInt,
+        setResult(checkResult = complexity <= rule.options[1].parseInt,
             positiveMessage = positiveMessage,
                 negativeMessage = negativeMessage,
             node = node, params = [$node.info.line, rule.options[0],
                 rule.options[
-            2], $complexity])
+            1], $complexity])
       except Exception:
         rule.amount = errorMessage(text = messagePrefix &
             "can't check code block at " & $node.info.line & " line. Reason: ",
