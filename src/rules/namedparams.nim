@@ -72,7 +72,7 @@ ruleConfig(ruleName = "namedparams",
   ruleNegativeMessage = "call {params[0]} line: {params[1]} doesn't have named parameter number: {params[2]}'.")
 
 proc check(node, astNode: PNode; rule: var RuleOptions;
-    messagePrefix: string) {.contractual, raises: [], tags: [RootEffect].} =
+    messagePrefix: Message) {.contractual, raises: [], tags: [RootEffect].} =
   ## Check the call if it uses named parameters
   ##
   ## * node    - the AST node representing the call to check
