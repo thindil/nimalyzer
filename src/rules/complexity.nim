@@ -23,12 +23,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-## Count the complexity of the selected code. Possible complexity formulas:
-## cyclomatic.
+## Count the cyclomatic complexity of the selected code. More information about
+## the formula: https://en.wikipedia.org/wiki/Cyclomatic_complexity
 ##
 ## The syntax in a configuration file is::
 ##
-##   [ruleType] ?not? complexity [checkType] [codeType] [value]
+##   [ruleType] ?not? complexity [codeType] [value]
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
@@ -44,9 +44,6 @@
 ##   value.
 ## * complexity is the name of the rule. It is case-insensitive, thus it can be
 ##   set as *complexity*, *complexity* or *--cOmPlExItY--*.
-## * checkType is the type of complexity to check. Proper value is *cyclomatic*.
-##   Setting it to cyclomatic value will set the rule to count cyclomatic
-##   complexity of the selected code blocks.
 ## * codeType -  the type of code blocks to check by the rule. Proper values
 ##   are: *all*, *routines*, *loops*, *conditions*. Setting it to all will count
 ##   the complexity of all code blocks in the code. Routines value will check
@@ -82,11 +79,11 @@
 ##
 ## 1. Check if all code blocks are maximum high risk code in cyclomatic complexity::
 ##
-##     check complexity cyclomatic all 50
+##     check complexity all 50
 ##
 ## 2. Search for procedures declaration which cyclomatic complexity is below medium risk::
 ##
-##     search not complexity cyclomatic routines 20
+##     search not complexity routines 20
 
 # Import default rules' modules
 import ../rules
@@ -123,7 +120,7 @@ checkRule:
   initCheck:
     discard
   startCheck:
-    let nodesToCheck: set[TNodeKind] = case rule.options[1].toLowerAscii
+    let nodesToCheck: set[TNodeKind] = case rule.options[0].toLowerAscii
       of "all":
         callableDefs + {nkForStmt, nkWhileStmt, nkIfStmt, nkElifBranch, nkWhenStmt}
       of "routines":
