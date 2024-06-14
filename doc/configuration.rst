@@ -260,7 +260,7 @@ setting shouldn't contain a new line characters.
     check ifStatements max 3
     explanation Long if statements can be replaced by case statements for better readability.
 
-    check complexity cyclomatic all 40
+    check complexity all 40
     explanation A code with high cyclomatic complexity is hard to understand and maintain. Please reduce the amount of the code branches (like, loops, if or case statements).
 
     check not trystatements empty
@@ -395,7 +395,7 @@ there is no rules configured for the program.
     check ifStatements max 3
     explanation Long if statements can be replaced by case statements for better readability.
 
-    check complexity cyclomatic all 40
+    check complexity all 40
     explanation A code with high cyclomatic complexity is hard to understand and maintain. Please reduce the amount of the code branches (like, loops, if or case statements).
 
     check not trystatements empty
