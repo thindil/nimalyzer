@@ -13,15 +13,21 @@ of the program.
 - The rule `namingconv` can now check naming conventions for declared types.
 - The rule `params` can now check do routines use `int` or `string` for their
   parameters declarations.
-
-### Changed
 - **BREAKING**: added option *fields* to `objects` rule to check only fields of
   objects. The old option *all* now also checks for existence of contructors
   of objects.
+
+### Changed
 - Updated the project's documentation.
 - **BREAKING**: changed the name of the rule `paramsUsed` to `params`. The
   reason after this change is to made the rule more generic, allowing it to
   check more things related to routines' parameters.
+
+### Removed
+- **BREAKING**: Option *checkType* from `complexity` rule. It wasn't need as the
+  the rule checks only cyclomatic complexity. If in the future there will
+  be added more types of complexities to check, the option can be
+  reintroduced.
 
 ### Fixed
 - The rule `hasDoc` doesn't detect documentation in functions.
