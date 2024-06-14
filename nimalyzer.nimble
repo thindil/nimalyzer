@@ -2,7 +2,7 @@ import std/os
 
 # Package
 
-version = "0.8"
+version = "0.9"
 author = "Bartek thindil Jasicki"
 description = "A static code analyzer for Nim"
 license = "BSD-3-Clause"
