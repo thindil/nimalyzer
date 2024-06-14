@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 Tag **BREAKING** means the change break compatibility with a previous version
 of the program.
 
-## [Unreleased]
+## [0.9.0] - 2024-06-14
 
 ### Added
 - The rule `objects` can now check for existence of constructors of objects.
