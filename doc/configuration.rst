@@ -83,7 +83,7 @@ instead of their code.
     forcefixcommand true
 
 Show the program's summary
------------------
+--------------------------
 If the setting is set to *true* or *1* the program will show the short summary
 information about resources usage during analyzing the code. If the setting is
 set to *false* or *0* or doesn't exist in the configuration file, the summary
