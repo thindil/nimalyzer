@@ -7,7 +7,8 @@ of the program.
 ## [Unreleased]
 
 ### Fixed
-- Building the project's documentation
+- Building the project's documentation.
+- Cross-compiling the Windows version of the program on Linux.
 
 ## [0.9.0] - 2024-06-14
 
