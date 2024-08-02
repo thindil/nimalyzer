@@ -113,9 +113,10 @@ checkRule:
     var checkResult: bool = false
     # Check if the object's type definition contains any public field
     if rule.options[0].toLowerAscii in ["publicfields", "all", "fields"] and
-        node.kind == nkObjectTy:
+        node.kind in {nkObjectTy, nkRefTy}:
       block publicFields:
-        for child in node:
+        let nodeToCheck: PNode = (if node.kind == nkObjectTy: node else: node[0])
+        for child in nodeToCheck:
           if child.kind == nkRecList:
             for field in child:
               if field.kind == nkRecCase:
@@ -159,10 +160,11 @@ checkRule:
     # Check if the object's type definition contains fields with string or int
     # type
     if rule.options[0].toLowerAscii in ["standardtypes", "all", "fields"] and
-        node.kind == nkObjectTy:
+        node.kind in {nkObjectTy, nkRefTy}:
       checkResult = false
       block standardTypes:
-        for child in node:
+        let nodeToCheck: PNode = (if node.kind == nkObjectTy: node else: node[0])
+        for child in nodeToCheck:
           if child.kind == nkRecList:
             for field in child:
               if field.kind == nkRecCase:
@@ -210,7 +212,8 @@ checkRule:
       if not checkResult and rule.options[0].toLowerAscii == "standardtypes":
         break
     # Check if the module contains constructor for the object's type
-    if rule.options[0].toLowerAscii in ["constructors", "all"] and node.kind == nkObjectTy:
+    if rule.options[0].toLowerAscii in ["constructors", "all"] and node.kind in
+        {nkObjectTy, nkRefTy}:
       checkResult = false
       type ObjectName = string
       var objectName: ObjectName = try:
