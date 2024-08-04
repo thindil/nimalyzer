@@ -78,7 +78,19 @@ checkRule:
   startCheck:
     let negation: Message = (if rule.negation: "'t" else: "")
   checking:
-    discard
+    try:
+      if node.kind == nkIdent and $node == "..":
+        echo "=================="
+        for index, child in parentNode:
+          for subChild in child:
+            for subSubChild in subChild:
+              if subSubchild == node:
+                echo "NODE:", parentNode
+                echo "CHILD:", child
+                echo "CHILD2:", subChild
+    except:
+      rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
+          rule.fileName & ". Reason: ", e = getCurrentException())
   endCheck:
     discard
 
