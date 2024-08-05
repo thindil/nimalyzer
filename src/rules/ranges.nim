@@ -72,6 +72,8 @@ ruleConfig(ruleName = "ranges",
   ruleOptionValues = @["spaces"],
   ruleMinOptions = 1)
 
+type FileLine = string
+
 checkRule:
   initCheck:
     discard
@@ -80,15 +82,17 @@ checkRule:
   checking:
     try:
       if node.kind == nkIdent and $node == "..":
-        echo "=================="
-        for index, child in parentNode:
-          for subChild in child:
-            for subSubChild in subChild:
-              if subSubchild == node:
-                echo "NODE:", parentNode
-                echo "CHILD:", child
-                echo "CHILD2:", subChild
-    except:
+        var
+          lineNumber: Natural = 0
+          rangeLine: FileLine = ""
+        for line in lines(fileName = rule.fileName):
+          lineNumber.inc
+          if lineNumber < node.info.line.Natural:
+            continue
+          rangeLine = line.strip()
+          break
+        echo "Line:|", rangeLine, "|"
+    except IOError, Exception:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
   endCheck:
