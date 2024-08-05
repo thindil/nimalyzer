@@ -125,7 +125,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
       codeParser.closeParser
       var ruleOptions: RuleOptions = RuleOptions()
       ruleOptions.parent = true
-      ruleOptions.fileName = "tests/tcomments/test.nim"
+      ruleOptions.fileName = $fileName2
       ruleOptions.negation = false
       ruleOptions.ruleType = check
       ruleOptions.options = validOptions
@@ -149,6 +149,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
 
       test "Checking the check type of the rule with the valid code":
         ruleOptions.parent = true
+        ruleOptions.fileName = $fileName
         ruleCheck(astNode = validCode, parentNode = validCode,
             rule = ruleOptions)
         check:
@@ -165,6 +166,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
 
       test "Checking the negative check type of the rule with the invalid code":
         ruleOptions.parent = true
+        ruleOptions.fileName = $fileName2
         ruleCheck(astNode = invalidCode, parentNode = invalidCode,
             rule = ruleOptions)
         check:
@@ -185,12 +187,13 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
             ruleOptions.amount == InvalidAmount
 
       test "Checking search type of the rule with the valid code.":
-          ruleOptions.parent = true
-          ruleOptions.amount = 0
-          ruleCheck(astNode = validCode, parentNode = validCode,
-              rule = ruleOptions)
-          check:
-            ruleOptions.amount == ValidAmount
+        ruleOptions.parent = true
+        ruleOptions.amount = 0
+        ruleOptions.fileName = $fileName
+        ruleCheck(astNode = validCode, parentNode = validCode,
+            rule = ruleOptions)
+        check:
+          ruleOptions.amount == ValidAmount
 
       test "Checking negative search type of the rule with the valid code.":
         ruleOptions.parent = true
@@ -204,6 +207,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
       test "Checking negative search type of the rule with the invalid code.":
         ruleOptions.parent = true
         ruleOptions.amount = 0
+        ruleOptions.fileName = $fileName2
         ruleCheck(astNode = invalidCode, parentNode = invalidCode,
             rule = ruleOptions)
         check:
@@ -222,6 +226,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
       test "Checking count type of the rule with the valid code.":
         ruleOptions.parent = true
         ruleOptions.amount = 0
+        ruleOptions.fileName = $fileName
         ruleCheck(astNode = validCode, parentNode = validCode,
             rule = ruleOptions)
         check:
@@ -231,6 +236,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
         ruleOptions.parent = true
         ruleOptions.negation = true
         ruleOptions.amount = 0
+        ruleOptions.fileName = $fileName2
         ruleCheck(astNode = invalidCode, parentNode = invalidCode,
             rule = ruleOptions)
         check:
@@ -239,6 +245,7 @@ template runRuleTest*(files, validOptions, invalidOptions: seq[string];
       test "Checking negative count type of the rule with the valid code.":
         ruleOptions.parent = true
         ruleOptions.amount = 0
+        ruleOptions.fileName = $fileName
         ruleCheck(astNode = validCode, parentNode = validCode,
             rule = ruleOptions)
         check:
