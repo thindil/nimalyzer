@@ -1,4 +1,4 @@
-# Count: 1
+# Count: 2
 # Negative count: 0
 
 type a = range[0 .. 5]
