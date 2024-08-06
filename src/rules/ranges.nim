@@ -91,7 +91,12 @@ checkRule:
             continue
           rangeLine = line.strip()
           break
-        echo "Line:|", rangeLine, "|"
+        setResult(checkResult = rangeLine[rangeLine.find(sub = "..") - 1] ==
+            ' ', positiveMessage = positiveMessage,
+            negativeMessage = negativeMessage, ruleData = "", node = node,
+            params = [$node.info.line, (
+            if rule.negation: "has" else: "doesn't have") &
+            " spaces between start and end of the range"])
     except IOError, Exception:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
           rule.fileName & ". Reason: ", e = getCurrentException())
