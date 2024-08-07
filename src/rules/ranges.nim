@@ -78,7 +78,10 @@ checkRule:
   initCheck:
     discard
   startCheck:
-    let negation: Message = (if rule.negation: "'t" else: "")
+    let negation: Message = (if rule.negation: "" else: "'t")
+    var hasMessage: Message = (if rule.negation: "has" else: "doesn't have")
+    if rule.ruleType != check:
+      hasMessage = (if rule.negation: "doesn't have" else: "has")
   checking:
     try:
       if node.kind == nkIdent and $node == "..":
@@ -94,8 +97,7 @@ checkRule:
         setResult(checkResult = rangeLine[rangeLine.find(sub = "..") - 1] ==
             ' ', positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, ruleData = "", node = node,
-            params = [$node.info.line, (
-            if rule.negation: "has" else: "doesn't have") &
+            params = [$node.info.line, hasMessage &
             " spaces between start and end of the range"])
     except IOError, Exception:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
