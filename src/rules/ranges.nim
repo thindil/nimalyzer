@@ -74,9 +74,16 @@ ruleConfig(ruleName = "ranges",
 
 type FileLine = string
 
+var fileContent: seq[string] = @[]
+
 checkRule:
   initCheck:
-    discard
+    fileContent = try:
+          rule.fileName.readFile.splitLines
+      except IOError:
+        rule.amount = errorMessage(text = messagePrefix & "can't read file '" &
+            rule.fileName & ". Reason: ", e = getCurrentException())
+        return
   startCheck:
     let negation: Message = (if rule.negation: "" else: "'t")
     var hasMessage: Message = (if rule.negation: "has" else: "doesn't have")
@@ -85,15 +92,7 @@ checkRule:
   checking:
     try:
       if node.kind == nkIdent and $node == "..":
-        var
-          lineNumber: Natural = 0
-          rangeLine: FileLine = ""
-        for line in lines(fileName = rule.fileName):
-          lineNumber.inc
-          if lineNumber < node.info.line.Natural:
-            continue
-          rangeLine = line.strip()
-          break
+        let rangeLine: FileLine = fileContent[node.info.line.Natural - 1]
         setResult(checkResult = rangeLine[rangeLine.find(sub = "..") - 1] ==
             ' ', positiveMessage = positiveMessage,
             negativeMessage = negativeMessage, ruleData = "", node = node,
