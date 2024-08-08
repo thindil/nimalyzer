@@ -95,8 +95,8 @@ checkRule:
         let rangeLine: FileLine = fileContent[node.info.line.Natural - 1]
         setResult(checkResult = rangeLine[rangeLine.find(sub = "..") - 1] ==
             ' ', positiveMessage = positiveMessage,
-            negativeMessage = negativeMessage, ruleData = "", node = node,
-            params = [$node.info.line, hasMessage &
+            negativeMessage = negativeMessage, ruleData = $node.info.line,
+            node = node, params = [$node.info.line, hasMessage &
             " spaces between start and end of the range"])
     except IOError, Exception:
       rule.amount = errorMessage(text = messagePrefix & "can't check file '" &
@@ -105,4 +105,21 @@ checkRule:
     discard
 
 fixRule:
-  discard
+
+  let newFileName: FilePath = rule.fileName & ".bak"
+  try:
+    moveFile(source = rule.fileName, dest = newFileName)
+    let newFile: File = open(filename = rule.fileName, mode = fmWrite)
+    newFile.close
+  except OSError, IOError, Exception:
+    discard errorMessage(text = "Can't fix file '" &
+        rule.fileName & ". Reason: ", e = getCurrentException())
+    try:
+      removeFile(file = rule.fileName)
+    except OSError:
+      discard
+    try:
+      moveFile(source = newFileName, dest = rule.fileName)
+    except IOError, OSError, Exception:
+      discard
+    return false
