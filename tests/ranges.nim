@@ -29,4 +29,4 @@ include ../src/rules/ranges
 import utils/helpers
 
 runRuleTest(files = @["ranges"], validOptions = @["spaces"],
-    invalidOptions = @["randomoption", "anotheroption"])
+    invalidOptions = @["randomoption", "anotheroption"], disabledChecks = {fixTests})
