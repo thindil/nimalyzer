@@ -117,7 +117,7 @@ checkRule:
           newFile.writeLine(x = line)
         newFile.close
       except OSError, IOError, Exception:
-        discard errorMessage(text = "Can't fix file '" &
+        discard errorMessage(text = "Can't save file '" &
             rule.fileName & ". Reason: ", e = getCurrentException())
         try:
           removeFile(file = rule.fileName)
@@ -129,4 +129,14 @@ checkRule:
           discard
 
 fixRule:
-  discard
+  let lineNumber = try:
+      data.parseInt
+    except ValueError:
+      discard errorMessage(text = "Can't fix file '" &
+          rule.fileName & ". Reason: ", e = getCurrentException())
+      return false
+  if rule.negation:
+    fileContent[lineNumber] = fileContent[lineNumber].replace(sub = " ..", by = "..")
+  else:
+    fileContent[lineNumber] = fileContent[lineNumber].replace(sub = "..", by = " .. ")
+  echo fileContent
