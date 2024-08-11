@@ -150,7 +150,7 @@ checkRule:
           discard
 
 fixRule:
-  let lineNumber = try:
+  let lineNumber: Natural = try:
       data.parseInt
     except ValueError:
       discard errorMessage(text = "Can't fix file '" &
