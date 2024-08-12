@@ -35,7 +35,7 @@
 ##
 ## * ruleType is the type of rule which will be executed. Proper values are:
 ##   *check*, *search*, *count* and *fix*. For more information about the types of
-##   rules, please refer to the program's documentation.Check type will raise
+##   rules, please refer to the program's documentation. Check type will raise
 ##   an error if there is a declaration which violates any of the checks. Search
 ##   type will list all declarations which violates any of checks or raise an
 ##   error if nothing found. Count type will simply list the amount of the
