@@ -6,6 +6,10 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- New rule `ranges` to check ranges declarations in a code do they have spaces
+  before and after the sign `..`.
+
 ### Changed
 - Updated the project's documentation.
 
