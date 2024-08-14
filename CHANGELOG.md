@@ -6,6 +6,9 @@ of the program.
 
 ## [Unreleased]
 
+### Changed
+- Updated the project's documentation.
+
 ### Fixed
 - Building the project's documentation.
 - Cross-compiling the Windows version of the program on Linux.
