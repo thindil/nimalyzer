@@ -11,8 +11,8 @@ of *int* with name which starts with *newVar*. It is controlled by
 configuration files containing a set of rules, their parameters and options
 related to the program behavior.
 
-At this moment, the project is in **alpha** stage, still many rules of the
-program are missing, and should have a nice amount of bugs.
+At this moment, the project is in **beta** stage, most of its features are added,
+but it still should have a nice amount of bugs.
 
 If you read this file on GitHub: **please don't send pull requests here**. All will
 be automatically closed. Any code propositions should go to the
