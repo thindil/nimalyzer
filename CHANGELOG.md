@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 Tag **BREAKING** means the change break compatibility with a previous version
 of the program.
 
-## [Unreleased]
+## [0.10.0] - 2024-08-16
 
 ### Added
 - New rule `ranges` to check ranges declarations in a code do they have spaces
