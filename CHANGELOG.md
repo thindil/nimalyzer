@@ -12,6 +12,7 @@ of the program.
 
 ### Changed
 - Updated the project's documentation.
+- Updated README.md.
 
 ### Fixed
 - Building the project's documentation.
