@@ -68,7 +68,7 @@ type
       index: ExtendedNatural
       forceFixCommand: bool
       explanation: Message
-    of message:
+    of ConfigKind.message:
       text: Message
 
 proc kind*(config: ConfigData): ConfigKind {.sideEffect, raises: [], tags: [],
@@ -179,7 +179,7 @@ proc initConfigData(kind: ConfigKind, name: RuleName = "", options: seq[
         negation: negation, ruleType: ruleType, index: index,
         forcefixcommand: forcefixcommand, explanation: message)
   else:
-    result = ConfigData(kind: message, text: message)
+    result = ConfigData(kind: ConfigKind.message, text: message)
 
 const
   fixCommand: FixCommand = when defined(macos) or defined(macosx) or defined(
