@@ -10,6 +10,9 @@ type
       d*: int
     b, c: char
 
+using
+  dontCheck: ref test
+
 proc inittest(t: char, a: int): test =
   if t == 'a':
     result = test(t: 'a', a: a, b: 'a', c: 'a')

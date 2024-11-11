@@ -9,3 +9,6 @@ type
     else:
       d: int8
     b, c: char
+
+using
+  dontCheck: ref test
