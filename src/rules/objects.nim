@@ -110,147 +110,150 @@ checkRule:
   startCheck:
     discard
   checking:
-    var checkResult: bool = false
-    # Check if the object's type definition contains any public field
-    if rule.options[0].toLowerAscii in ["publicfields", "all", "fields"] and
-        node.kind in {nkObjectTy, nkRefTy}:
-      block publicFields:
-        let nodeToCheck: PNode = (if node.kind == nkObjectTy: node else: node[0])
-        for child in nodeToCheck:
-          if child.kind == nkRecList:
-            for field in child:
-              if field.kind == nkRecCase:
-                for elem in field:
-                  if elem.kind == nkIdentDefs:
-                    for ident in elem:
-                      if ident.kind == nkPostfix:
-                        checkResult = true
-                        break publicFields
-                  else:
-                    for elemChild in elem:
-                      if elemChild.kind == nkRecList:
-                        for elemField in elemChild:
-                          for ident in elemChild:
+    if node.kind == nkTypeSection:
+      for objType in node:
+        for nodeChild in objType:
+          var checkResult: bool = false
+          # Check if the object's type definition contains any public field
+          if rule.options[0].toLowerAscii in ["publicfields", "all", "fields"] and
+              nodeChild.kind in {nkObjectTy, nkRefTy}:
+            block publicFields:
+              let nodeToCheck: PNode = (if nodeChild.kind == nkObjectTy: nodeChild else: nodeChild[0])
+              for child in nodeToCheck:
+                if child.kind == nkRecList:
+                  for field in child:
+                    if field.kind == nkRecCase:
+                      for elem in field:
+                        if elem.kind == nkIdentDefs:
+                          for ident in elem:
                             if ident.kind == nkPostfix:
                               checkResult = true
                               break publicFields
-              else:
-                for ident in field:
-                  if ident.kind == nkPostfix:
-                    checkResult = true
-                    break publicFields
-      if rule.ruleType in {RuleTypes.count, search}:
-        checkResult = not checkResult
-      let oldAmount: ResultAmount = rule.amount
-      try:
-        let message: Message = (if rule.negation: "contains" else: "doesn't contain") & " public fields."
-        setResult(checkResult = checkResult, positiveMessage = positiveMessage,
-            negativeMessage = negativeMessage, ruleData = "public fields",
-            node = node, params = [$node.info.line, message, $astNode[0]])
-      except Exception:
-        rule.amount = errorMessage(text = messagePrefix &
-            "can't check declaration of type " &
-            " line: " &
-            $node.info.line & ". Reason: ", e = getCurrentException())
-      # To show the rule's explaination the rule.amount must be negative
-      if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
-        rule.amount = -1_000
-      if not checkResult and rule.options[0].toLowerAscii == "publicfields":
-        break
-    # Check if the object's type definition contains fields with string or int
-    # type
-    if rule.options[0].toLowerAscii in ["standardtypes", "all", "fields"] and
-        node.kind in {nkObjectTy, nkRefTy}:
-      checkResult = false
-      block standardTypes:
-        let nodeToCheck: PNode = (if node.kind == nkObjectTy: node else: node[0])
-        for child in nodeToCheck:
-          if child.kind == nkRecList:
-            for field in child:
-              if field.kind == nkRecCase:
-                for elem in field:
-                  if elem.kind == nkIdentDefs:
-                    try:
-                      if ($elem[^2]).toLowerAscii in ["int", "string"]:
-                        checkResult = true
-                        break standardTypes
-                    except Exception:
-                      discard
-                  else:
-                    for elemChild in elem:
-                      if elemChild.kind == nkRecList:
-                        for elemField in elemChild:
+                        else:
+                          for elemChild in elem:
+                            if elemChild.kind == nkRecList:
+                              for elemField in elemChild:
+                                for ident in elemChild:
+                                  if ident.kind == nkPostfix:
+                                    checkResult = true
+                                    break publicFields
+                    else:
+                      for ident in field:
+                        if ident.kind == nkPostfix:
+                          checkResult = true
+                          break publicFields
+            if rule.ruleType in {RuleTypes.count, search}:
+              checkResult = not checkResult
+            let oldAmount: ResultAmount = rule.amount
+            try:
+              let message: Message = (if rule.negation: "contains" else: "doesn't contain") & " public fields."
+              setResult(checkResult = checkResult, positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage, ruleData = "public fields",
+                  node = objType, params = [$objType.info.line, message, $objType[0]])
+            except Exception:
+              rule.amount = errorMessage(text = messagePrefix &
+                  "can't check declaration of type " &
+                  " line: " &
+                  $nodeChild.info.line & ". Reason: ", e = getCurrentException())
+            # To show the rule's explaination the rule.amount must be negative
+            if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+              rule.amount = -1_000
+            if not checkResult and rule.options[0].toLowerAscii == "publicfields":
+              break
+          # Check if the object's type definition contains fields with string or int
+          # type
+          if rule.options[0].toLowerAscii in ["standardtypes", "all", "fields"] and
+              nodeChild.kind in {nkObjectTy, nkRefTy}:
+            checkResult = false
+            block standardTypes:
+              let nodeToCheck: PNode = (if nodeChild.kind == nkObjectTy: nodeChild else: nodeChild[0])
+              for child in nodeToCheck:
+                if child.kind == nkRecList:
+                  for field in child:
+                    if field.kind == nkRecCase:
+                      for elem in field:
+                        if elem.kind == nkIdentDefs:
                           try:
-                            if ($elemField[^2]).toLowerAscii in ["int", "string"]:
+                            if ($elem[^2]).toLowerAscii in ["int", "string"]:
                               checkResult = true
                               break standardTypes
                           except Exception:
                             discard
-              else:
+                        else:
+                          for elemChild in elem:
+                            if elemChild.kind == nkRecList:
+                              for elemField in elemChild:
+                                try:
+                                  if ($elemField[^2]).toLowerAscii in ["int", "string"]:
+                                    checkResult = true
+                                    break standardTypes
+                                except Exception:
+                                  discard
+                    else:
+                      try:
+                        if ($field[^2]).toLowerAscii in ["int", "string"]:
+                          checkResult = true
+                          break standardTypes
+                      except Exception:
+                        discard
+            if rule.ruleType in {RuleTypes.count, search}:
+              checkResult = not checkResult
+            let oldAmount: ResultAmount = rule.amount
+            try:
+              let message: Message = (if rule.negation: "contains" else: "doesn't contain") & " field of int or string type."
+              setResult(checkResult = checkResult, positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage, ruleData = "standard types",
+                  node = objType, params = [$objType.info.line, message, $objType[0]])
+            except Exception:
+              rule.amount = errorMessage(text = messagePrefix &
+                  "can't check declaration of type " &
+                  " line: " &
+                  $nodeChild.info.line & ". Reason: ", e = getCurrentException())
+            # To show the rule's explaination the rule.amount must be negative
+            if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+              rule.amount = -1_000
+            if not checkResult and rule.options[0].toLowerAscii == "standardtypes":
+              break
+          # Check if the module contains constructor for the object's type
+          if rule.options[0].toLowerAscii in ["constructors", "all"] and nodeChild.kind in
+              {nkObjectTy, nkRefTy}:
+            checkResult = false
+            type ObjectName = string
+            var objectName: ObjectName = try:
+                $objType[0]
+              except Exception:
+                ""
+            objectName.removeSuffix(c = '*')
+            let constructorNames: array[4, string] = ["new" & objectName, "new" &
+                objectName & "*", "init" & objectName, "init" & objectName & "*"]
+            for child in parentNode:
+              if child.kind in {nkProcDef, nkFuncDef}:
                 try:
-                  if ($field[^2]).toLowerAscii in ["int", "string"]:
+                  if $child[0] in constructorNames:
                     checkResult = true
-                    break standardTypes
                 except Exception:
-                  discard
-      if rule.ruleType in {RuleTypes.count, search}:
-        checkResult = not checkResult
-      let oldAmount: ResultAmount = rule.amount
-      try:
-        let message: Message = (if rule.negation: "contains" else: "doesn't contain") & " field of int or string type."
-        setResult(checkResult = checkResult, positiveMessage = positiveMessage,
-            negativeMessage = negativeMessage, ruleData = "standard types",
-            node = node, params = [$node.info.line, message, $astNode[0]])
-      except Exception:
-        rule.amount = errorMessage(text = messagePrefix &
-            "can't check declaration of type " &
-            " line: " &
-            $node.info.line & ". Reason: ", e = getCurrentException())
-      # To show the rule's explaination the rule.amount must be negative
-      if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
-        rule.amount = -1_000
-      if not checkResult and rule.options[0].toLowerAscii == "standardtypes":
-        break
-    # Check if the module contains constructor for the object's type
-    if rule.options[0].toLowerAscii in ["constructors", "all"] and node.kind in
-        {nkObjectTy, nkRefTy}:
-      checkResult = false
-      type ObjectName = string
-      var objectName: ObjectName = try:
-          $astNode[0]
-        except Exception:
-          ""
-      objectName.removeSuffix(c = '*')
-      let constructorNames: array[4, string] = ["new" & objectName, "new" &
-          objectName & "*", "init" & objectName, "init" & objectName & "*"]
-      for child in parentNode:
-        if child.kind in {nkProcDef, nkFuncDef}:
-          try:
-            if $child[0] in constructorNames:
-              checkResult = true
-          except Exception:
-            rule.amount = errorMessage(text = messagePrefix &
-                "can't check for contructor of type " &
-                " line: " &
-                $node.info.line & ". Reason: ", e = getCurrentException())
-      if rule.ruleType in {RuleTypes.search, count}:
-        checkResult = not checkResult
-      let oldAmount: ResultAmount = rule.amount
-      try:
-        let message: Message = (if rule.negation: "has" else: "doesn't have") & " declared a constructor."
-        setResult(checkResult = checkResult, positiveMessage = positiveMessage,
-            negativeMessage = negativeMessage, ruleData = "constructors",
-            node = node, params = [$node.info.line, message, $astNode[0]])
-      except Exception:
-        rule.amount = errorMessage(text = messagePrefix &
-            "can't check declaration of type " &
-            " line: " &
-            $node.info.line & ". Reason: ", e = getCurrentException())
-      # To show the rule's explaination the rule.amount must be negative
-      if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
-        rule.amount = -1_000
-      if not checkResult:
-        break
+                  rule.amount = errorMessage(text = messagePrefix &
+                      "can't check for contructor of type " &
+                      " line: " &
+                      $nodeChild.info.line & ". Reason: ", e = getCurrentException())
+            if rule.ruleType in {RuleTypes.search, count}:
+              checkResult = not checkResult
+            let oldAmount: ResultAmount = rule.amount
+            try:
+              let message: Message = (if rule.negation: "has" else: "doesn't have") & " declared a constructor."
+              setResult(checkResult = checkResult, positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage, ruleData = "constructors",
+                  node = objType, params = [$objType.info.line, message, $objType[0]])
+            except Exception:
+              rule.amount = errorMessage(text = messagePrefix &
+                  "can't check declaration of type " &
+                  " line: " &
+                  $nodeChild.info.line & ". Reason: ", e = getCurrentException())
+            # To show the rule's explaination the rule.amount must be negative
+            if rule.negation and oldAmount > rule.amount and rule.ruleType == check:
+              rule.amount = -1_000
+            if not checkResult:
+              break
   endCheck:
     discard
 
