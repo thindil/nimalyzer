@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 Tag **BREAKING** means the change break compatibility with a previous version
 of the program.
 
+## [Unreleased]
+
+### Fixed
+- The rule `objects` should check only types definition.
+
 ## [0.10.1] - 2024-10-13
 
 ### Fixed
