@@ -209,7 +209,8 @@ checkRule:
             try:
               let message: Message = (if rule.negation: "contains" else: "doesn't contain") & " public fields."
               setResult(checkResult = checkResult,
-                  positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+                  positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage,
                   ruleData = "public fields",
                   node = objType, params = [$objType.info.line, message,
                       $objType[0]])
@@ -233,7 +234,8 @@ checkRule:
             try:
               let message: Message = (if rule.negation: "contains" else: "doesn't contain") & " field of int or string type."
               setResult(checkResult = checkResult,
-                  positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+                  positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage,
                   ruleData = "standard types",
                   node = objType, params = [$objType.info.line, message,
                       $objType[0]])
@@ -249,7 +251,7 @@ checkRule:
               break
           # Check if the module contains constructor for the object's type
           if rule.options[0].toLowerAscii in ["constructors", "all"] and
-              nodeChild.kind in{nkObjectTy, nkRefTy}:
+              nodeChild.kind in {nkObjectTy, nkRefTy}:
             checkResult = false
             type ObjectName = string
             var objectName: ObjectName = try:
@@ -260,7 +262,18 @@ checkRule:
             let constructorNames: array[4, string] = ["new" & objectName,
                 "new" & objectName & "*", "init" & objectName, "init" &
                     objectName & "*"]
-            for child in parentNode:
+            var nodeToCheck: PNode = (if node in
+                parentNode.sons: parentNode else: nil)
+            if nodeToCheck == nil:
+              for chNode in parentNode:
+                if chNode.kind == nkStmtList and node in chNode.sons:
+                  nodeToCheck = chNode
+                  break
+                for chNode2 in chNode:
+                  if chNode2.kind == nkStmtList and node in chNode2.sons:
+                    nodeToCheck = chNode2
+                    break
+            for child in nodeToCheck:
               if child.kind in {nkProcDef, nkFuncDef}:
                 try:
                   if $child[0] in constructorNames:
@@ -277,7 +290,8 @@ checkRule:
             try:
               let message: Message = (if rule.negation: "has" else: "doesn't have") & " declared a constructor."
               setResult(checkResult = checkResult,
-                  positiveMessage = positiveMessage, negativeMessage = negativeMessage,
+                  positiveMessage = positiveMessage,
+                  negativeMessage = negativeMessage,
                   ruleData = "constructors",
                   node = objType, params = [$objType.info.line, message,
                       $objType[0]])
