@@ -199,10 +199,16 @@ checkRule:
     if node.kind == nkTypeSection:
       for objType in node:
         for nodeChild in objType:
+          if nodeChild.kind == nkPragmaExpr:
+            setRuleState(node = nodeChild[1], ruleName = ruleSettings.name,
+                oldState = rule.enabled)
+          if not rule.enabled:
+            continue
+          if nodeChild.kind notin {nkObjectTy, nkRefTy}:
+            continue
           var checkResult: bool = false
           # Check if the object's type definition contains any public field
-          if rule.options[0].toLowerAscii in ["publicfields", "all",
-              "fields"] and nodeChild.kind in {nkObjectTy, nkRefTy}:
+          if rule.options[0].toLowerAscii in ["publicfields", "all", "fields"]:
             checkPublicFields(nodeChild = nodeChild, rule = rule,
                 checkResult = checkResult)
             let oldAmount: ResultAmount = rule.amount
@@ -226,8 +232,7 @@ checkRule:
               break
           # Check if the object's type definition contains fields with string or int
           # type
-          if rule.options[0].toLowerAscii in ["standardtypes", "all",
-              "fields"] and nodeChild.kind in {nkObjectTy, nkRefTy}:
+          if rule.options[0].toLowerAscii in ["standardtypes", "all", "fields"]:
             checkStandardTypes(nodeChild = nodeChild, rule = rule,
                 checkResult = checkResult)
             let oldAmount: ResultAmount = rule.amount
@@ -250,14 +255,15 @@ checkRule:
             if not checkResult and rule.options[0].toLowerAscii == "standardtypes":
               break
           # Check if the module contains constructor for the object's type
-          if rule.options[0].toLowerAscii in ["constructors", "all"] and
-              nodeChild.kind in {nkObjectTy, nkRefTy}:
+          if rule.options[0].toLowerAscii in ["constructors", "all"]:
             checkResult = false
             type ObjectName = string
             var objectName: ObjectName = try:
                 $objType[0]
               except Exception:
                 ""
+            if objectName.contains(sub = " "):
+              objectName = objectName.split()[0]
             objectName.removeSuffix(c = '*')
             let constructorNames: array[4, string] = ["new" & objectName,
                 "new" & objectName & "*", "init" & objectName, "init" &
