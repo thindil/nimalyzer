@@ -8,6 +8,8 @@ of the program.
 
 ### Fixed
 - The rule `objects` should check only types definition.
+- The rule `objects` doesn't detect constructors when an object definition
+  contains pragmas.
 
 ## [0.10.1] - 2024-10-13
 
