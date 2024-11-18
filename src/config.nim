@@ -186,10 +186,10 @@ const
     windows): "open" else: "xdg-open" & " {fileName}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
-  configOptions*: array[17, ConfigOption] = ["verbosity", "output", "source",
+  configOptions*: array[18, ConfigOption] = ["verbosity", "output", "source",
       "files", "directory", "check", "search", "count", "fixcommand", "fix",
       "reset", "message", "forcefixcommand", "maxreports", "explanation",
-      "ignore", "showsummary"]
+      "ignore", "showsummary", "ignoredir"]
     ## The list of available the program's configuration's options
 
 proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
@@ -363,6 +363,18 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
               message(text = "Removed the file '" & fileName &
                   "' from the list of files to check.", level = lvlDebug)
               break
+        # Remove all files from the selected directory from the list of source
+        # code files to check
+        of "ignoredir":
+          var index: ExtendedNatural = 0
+          while index < result.sources.len:
+            let fileName: FilePath = result.sources[index]
+            if fileName.parentDir == setting.value:
+              result.sources.del(i = index)
+              message(text = "Removed the file '" & fileName &
+                  "' from the list of files to check.", level = lvlDebug)
+              index.dec
+            index.inc
         # Set the message to show during the program's work
         of "message":
           if setting.value.len == 0:
