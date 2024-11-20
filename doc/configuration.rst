@@ -149,6 +149,18 @@ the list of files to check.
 ::
     ignore src/rules.nim
 
+Ignore directory
+----------------
+The ignoredir directive allows to remove all files from the selected directory
+from the list of files to analyze. The path to the directory should be exactly
+the same as set by 'source', 'files' or 'directory' settings. The syntax is:
+    ignoredir [directory path]. If the previous setting for the directory was an
+absolute path, the ignoredir setting must be an absolute path too. The setting
+below will remove all files in the directory "src/rules" from the list of files
+to check.
+::
+    ignoredir src/rules
+
 Message
 -------
 The message directive allows to add a message to the program's output during
@@ -196,6 +208,7 @@ lvlError. The settings below checks for:
 20. If all object's type's declarations contains only private fields and don't use `string` or `int` for their fields' types.
 21. If all objects have declared constructors.
 22. If all variables' declarations don't use `string` or `int` types.
+23. If all ranges declarations don't have spaces before and after `..` sign
 
 ::
     check hasPragma procedures contractual "raises: [*" "tags: [*"
@@ -274,6 +287,9 @@ setting shouldn't contain a new line characters.
 
     check not vardeclared standardtypes
     explanation Using standard types like string or int can lead to hard to find bugs when wrong variables are interacting with self. Also, using a separated types give more information about the variable.
+
+    check not ranges spaces
+    explanation It just enforce Nim coding style. Don't add spaces before and after sign ..
 
 Search rules
 ------------
@@ -409,3 +425,6 @@ there is no rules configured for the program.
 
     check not vardeclared standardtypes
     explanation Using standard types like string or int can lead to hard to find bugs when wrong variables are interacting with self. Also, using a separated types give more information about the variable.
+
+    check not ranges spaces
+    explanation It just enforce Nim coding style. Don't add spaces before and after sign ..
