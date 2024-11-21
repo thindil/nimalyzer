@@ -6,6 +6,9 @@ of the program.
 
 ## [Unreleased]
 
+### Changed
+- Updated the project's documentation.
+
 ### Fixed
 - The rule `objects` should check only types definition.
 - The rule `objects` doesn't detect constructors when an object definition
