@@ -6,6 +6,10 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- The configuration setting `ignoreDir` for remove all files from the selected
+  directory from the list of files to check.
+
 ### Changed
 - Updated the project's documentation.
 
