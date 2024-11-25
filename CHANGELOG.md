@@ -12,6 +12,7 @@ of the program.
 
 ### Changed
 - Updated the project's documentation.
+- Don't check for named parameters in *sizeof* procedure by `namedParams` rule.
 
 ### Fixed
 - The rule `objects` should check only types definition.
