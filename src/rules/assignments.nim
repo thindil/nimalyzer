@@ -103,6 +103,8 @@ checkRule:
         try:
           if node.sons[1].len < 3:
             continue
+          if $node[1][0] notin ["+", "-", "*", "/", "&"]:
+            continue
         except FieldDefect:
           continue
         if $node[1][1] == $node[0]:
@@ -133,6 +135,8 @@ checkRule:
           if child.kind == nkAsgn:
             try:
               if child.sons[1].len < 3:
+                continue
+              if $child[1][0] notin ["+", "-", "*", "/", "&"]:
                 continue
             except FieldDefect:
               continue
