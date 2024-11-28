@@ -18,6 +18,8 @@ of the program.
 - The rule `objects` should check only types definition.
 - The rule `objects` doesn't detect constructors when an object definition
   contains pragmas.
+- The rule `assignments` should check only valid shorthand assignments or full
+  assignments which can be updated.
 
 ## [0.10.1] - 2024-10-13
 
