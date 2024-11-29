@@ -351,6 +351,9 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
         of "directory":
           try:
             for fileName in walkDirRec(dir = setting.value):
+              let (_, _, ext) = splitFile(path = fileName)
+              if ext notin [".nim", ".nims"]:
+                continue
               addFile(fileName = fileName, sources = result.sources)
           except OSError:
             abortProgram(message = "Can't add files to check, line: " &
