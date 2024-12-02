@@ -13,6 +13,9 @@ of the program.
 ### Changed
 - Updated the project's documentation.
 - Don't check for named parameters in *sizeof* procedure by `namedParams` rule.
+- **BREAKING**: The `directory` configuration setting now adds to check by default
+  only files with *.nim* or *.nims* extensions. It may break configuration if files
+  to check have their extensions different.
 
 ### Fixed
 - The rule `objects` should check only types definition.
