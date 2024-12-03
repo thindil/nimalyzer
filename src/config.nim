@@ -186,10 +186,10 @@ const
     windows): "open" else: "xdg-open" & " {fileName}"
     ## The command executed when a fix type of rule encounter a problem. By
     ## default it try to open the selected file in the default editor.
-  configOptions*: array[18, ConfigOption] = ["verbosity", "output", "source",
+  configOptions*: array[19, ConfigOption] = ["verbosity", "output", "source",
       "files", "directory", "check", "search", "count", "fixcommand", "fix",
       "reset", "message", "forcefixcommand", "maxreports", "explanation",
-      "ignore", "showsummary", "ignoredir"]
+      "ignore", "showsummary", "ignoredir", "extensions"]
     ## The list of available the program's configuration's options
 
 proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
@@ -268,6 +268,7 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
         configSection: Natural = sections
         forceFixCommand: bool = false
         lineNumber: Natural = 0
+        extensions: seq[string] = @[".nim", ".nims"]
       for line in configFile.lines:
         lineNumber.inc
         let
@@ -352,7 +353,7 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
           try:
             for fileName in walkDirRec(dir = setting.value):
               let (_, _, ext) = splitFile(path = fileName)
-              if ext notin [".nim", ".nims"]:
+              if ext notin extensions:
                 continue
               addFile(fileName = fileName, sources = result.sources)
           except OSError:
@@ -425,6 +426,14 @@ proc parseConfig*(configFile: FilePath; sections: var ExtendedNatural): tuple[
             result.showSummary = true
             message(text = "Enabled showing the program's summary information.",
                 level = lvlDebug)
+        # Add an additional files' extension to list of files to check
+        of "extensions":
+          if setting.value.len == 0:
+            abortProgram(message = "Can't parse the 'extensions' setting in the configuration file, line: " &
+                $lineNumber & ". No list of extensions set.")
+          extensions &= setting.value.split(sep = ", ")
+          message(text = "Added file extensions to check:" & setting.value &
+              ".", level = lvlDebug)
         else:
           discard
         # Set the program's rule to test the code
