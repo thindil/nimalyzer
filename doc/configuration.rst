@@ -112,6 +112,17 @@ executed (working directory).
     source tools/genrule.nim
     source tests/utils/helpers.nim
 
+Extensions
+----------
+By default, the program adds to check only files with extensions *.nim* or
+*.nims*. If your source code files have different extensions, you can add their
+list with 'extensions' setting. All extensions must be separated by comma and
+space. It is recommended to set this setting before any 'directory' settings.
+The setting below will add extensions *.inc* and *.cfg* to the list of files'
+extensions for 'directory' setting.
+::
+extensions .inc, .cfg
+
 Directory
 ---------
 The directory which content will be analyzed. The path must be in Unix form.
