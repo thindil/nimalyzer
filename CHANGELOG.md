@@ -9,6 +9,8 @@ of the program.
 ### Added
 - The configuration setting `ignoreDir` for remove all files from the selected
   directory from the list of files to check.
+- The configuration setting `extensions` for add additional files' extensions
+  when adding files with `directory` configuration setting.
 
 ### Changed
 - Updated the project's documentation.
