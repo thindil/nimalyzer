@@ -112,6 +112,8 @@
 ##
 ##      check hasPragma procedures contractual "lock: *"
 
+# Standard library imports
+import std/hashes
 # Import default rules' modules
 import ../rules
 
@@ -128,10 +130,12 @@ type
   ProcName = string
   PragmaName = string
 
+var checked: seq[Hash] = @[]
+
 {.hint[XCannotRaiseY]: off.}
 checkRule:
   initCheck:
-    discard
+    checked = @[]
   startCheck:
     let
       nodesToCheck: set[TNodeKind] = case rule.options[0]
@@ -152,10 +156,18 @@ checkRule:
         procName: ProcName = try:
             $node[namePos]
           except KeyError, Exception:
-            ""
-      if procName.len == 0:
+            rule.amount = errorMessage(
+                text = "Can't get the name of the procedure.")
+            return
+      try:
+        let routineHash: Hash = hash(x = procName & $node[paramsPos])
+        if ($node[bodyPos]).len == 0:
+          checked.add(y = routineHash)
+        elif routineHash in checked:
+          continue
+      except Exception:
         rule.amount = errorMessage(
-            text = "Can't get the name of the procedure.")
+            text = "Can't check if thing is a forward declaration.")
         return
       # The node doesn't have any pragmas
       if pragmas == nil:
