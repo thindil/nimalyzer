@@ -25,6 +25,8 @@ of the program.
   contains pragmas.
 - The rule `assignments` should check only valid shorthand assignments or full
   assignments which can be updated.
+- The rule `hasPragma` now properly detect pragmas only in forward declaration
+  of routines.
 
 ## [0.10.1] - 2024-10-13
 
