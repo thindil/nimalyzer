@@ -1,4 +1,4 @@
-# Copyright © 2024 Bartek Jasicki
+# Copyright © 2024-2025 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -95,9 +95,9 @@ proc check(node, astNode: PNode; rule: var RuleOptions;
       rule.amount = errorMessage(text = "Can't get the name of the call. Reason: ",
           e = getCurrentException())
       return
-    # Ignore checking for defined and sizeof procedures. It looks like they
-    # don't like named parameters
-    if callName in ["defined", "sizeof"]:
+    # Ignore checking for some system magic calls. It looks like they don't
+    # like named parameters
+    if callName in ["defined", "sizeof", "type"]:
       return
     try:
       for i in 1..<node.sons.len:
