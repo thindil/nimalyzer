@@ -102,6 +102,8 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
             # Try to convert the source code file to AST
             let fileName: AbsoluteFile = toAbsolute(file = source,
                 base = toAbsoluteDir(path = getCurrentDir()))
+            if not fileExists(x = fileName):
+              abortProgram(message = "Can't find file '" & $fileName & "'.")
             try:
               openParser(p = codeParser, filename = fileName,
                   inputStream = llStreamOpen(filename = fileName,
