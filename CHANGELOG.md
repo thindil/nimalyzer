@@ -9,6 +9,9 @@ of the program.
 ### Changed
 - Don't check for named parameters in *type* procedure by `namedParams` rule.
 
+### Fixed
+- Crash when the program can't find a file to check.
+
 ## [0.11.0] - 2024-12-11
 
 ### Added
