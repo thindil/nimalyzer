@@ -4,8 +4,10 @@
 ## Template doc.
 var i* = 0 ## Template doc.
 
-func myFunc() =
+func myFunc()
   ## Template doc.
+
+func myFunc() =
   discard
 
 proc myProc() =

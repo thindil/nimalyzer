@@ -3,6 +3,8 @@
 
 var i* = 0
 
+func myFunc()
+
 func myFunc() =
   discard
 
