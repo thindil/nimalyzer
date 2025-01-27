@@ -1,4 +1,4 @@
-# Copyright © 2023-2024 Bartek Jasicki
+# Copyright © 2023-2025 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -84,6 +84,8 @@
 ##
 ##     search not hasDoc modules
 
+# Standard library imports
+import std/hashes
 # Import default rules' modules
 import ../rules
 
@@ -99,12 +101,16 @@ ruleConfig(ruleName = "hasdoc",
 type
   DocString = string
   Declaration = string
+  NodeName = string
 
-var docTemplate: DocString = ""
+var
+  docTemplate: DocString = ""
+  checked: seq[Hash] = @[]
 
 {.hint[XCannotRaiseY]: off.}
 checkRule:
   initCheck:
+    checked = @[]
     if rule.enabled:
       if rule.ruleType == fix and not rule.negation:
         if rule.options.len < 2:
@@ -127,10 +133,12 @@ checkRule:
         of "all":
           {nkIdentDefs, nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef,
               nkTemplateDef, nkIteratorDef, nkConstDef, nkTypeDef, nkEnumTy,
-              nkConstSection, nkConstTy, nkVarSection, nkTypeSection, nkObjectTy,
+              nkConstSection, nkConstTy, nkVarSection, nkTypeSection,
+              nkObjectTy,
               nkLetSection, nkFuncDef}
         of "callables":
-          {nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef, nkTemplateDef, nkIteratorDef, nkFuncDef}
+          {nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef, nkTemplateDef,
+              nkIteratorDef, nkFuncDef}
         of "types":
           {nkTypeSection, nkTypeDef, nkEnumTy, nkObjectTy, nkConstTy}
         of "typesfields":
@@ -141,6 +149,26 @@ checkRule:
   checking:
     # Check only elements which can have documentation
     if node.kind in nodesToCheck:
+      # Check if the declaration is a forward declaration
+      if node.kind in {nkProcDef, nkMethodDef, nkConverterDef, nkMacroDef,
+          nkTemplateDef, nkIteratorDef, nkFuncDef}:
+        let
+          nodeName: NodeName = try:
+              $node[namePos]
+            except KeyError, Exception:
+              rule.amount = errorMessage(
+                  text = "Can't get the name of the node.")
+              return
+        try:
+          let routineHash: Hash = hash(x = nodeName & $node[paramsPos])
+          if ($node[bodyPos]).len == 0:
+            checked.add(y = routineHash)
+          elif routineHash in checked:
+            continue
+        except Exception:
+          rule.amount = errorMessage(
+              text = "Can't check if thing is a forward declaration.")
+          return
       # Special check for sections
       if node.kind in {nkConstSection, nkVarSection, nkTypeSection, nkTypeDef, nkLetSection}:
         ruleCheck(astNode = node, parentNode = parentNode, rule = rule)
@@ -216,6 +244,7 @@ fixRule:
     if astNode.kind == nkObjectTy:
       astNode[2].comment = ""
     elif astNode.kind notin {nkEnumTy, nkIdentDefs, nkConstDef}:
+      astNode.comment = ""
       for index, node in astNode:
         if node.kind == nkCommentStmt:
           astNode.delSon(idx = index)
