@@ -11,6 +11,8 @@ of the program.
 
 ### Fixed
 - Crash when the program can't find a file to check.
+- The rule `hasDoc` now properly detect documentation's comments only in
+  forward declaration of routines.
 
 ## [0.11.0] - 2024-12-11
 
