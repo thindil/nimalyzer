@@ -161,10 +161,13 @@ checkRule:
               return
         try:
           let routineHash: Hash = hash(x = nodeName & $node[paramsPos])
-          if ($node[bodyPos]).len == 0:
-            checked.add(y = routineHash)
-          elif routineHash in checked:
-            continue
+          try:
+            if ($node[bodyPos]).len == 0:
+              checked.add(y = routineHash)
+            elif routineHash in checked:
+              continue
+          except Exception:
+            discard
         except Exception:
           rule.amount = errorMessage(
               text = "Can't check if thing is a forward declaration.")

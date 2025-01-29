@@ -1,4 +1,4 @@
-# Copyright © 2023-2024 Bartek Jasicki
+# Copyright © 2023-2025 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -161,13 +161,16 @@ checkRule:
             return
       try:
         let routineHash: Hash = hash(x = procName & $node[paramsPos])
-        if ($node[bodyPos]).len == 0:
-          checked.add(y = routineHash)
-        elif routineHash in checked:
-          continue
+        try:
+          if ($node[bodyPos]).len == 0:
+            checked.add(y = routineHash)
+          elif routineHash in checked:
+            continue
+        except Exception:
+          discard
       except Exception:
-        rule.amount = errorMessage(
-            text = "Can't check if thing is a forward declaration.")
+        rule.amount = errorMessage(text = "Can't check if thing is a forward declaration.",
+            e = getCurrentException())
         return
       # The node doesn't have any pragmas
       if pragmas == nil:
