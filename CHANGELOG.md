@@ -8,6 +8,7 @@ of the program.
 
 ### Changed
 - Don't check for named parameters in *type* procedure by `namedParams` rule.
+- Crash when checking very long routines for pragmas with `hasPragma` rule.
 
 ### Fixed
 - Crash when the program can't find a file to check.
