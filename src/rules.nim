@@ -1,4 +1,4 @@
-# Copyright © 2023-2024 Bartek Jasicki
+# Copyright © 2023-2025 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -374,6 +374,8 @@ template setResult*(checkResult: bool; positiveMessage,
           message(text = messagePrefix & negativeMessage.multiReplace(
               replacements = replacements), returnValue = rule.amount)
           rule.amount = int.low
+          if rule.maxResults == 0:
+            return
           rule.maxResults.dec
           if rule.maxResults == 0:
             return
