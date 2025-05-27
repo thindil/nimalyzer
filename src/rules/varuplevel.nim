@@ -1,4 +1,4 @@
-# Copyright © 2023-2024 Bartek thindil Jasicki
+# Copyright © 2023-2025 Bartek thindil Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -118,7 +118,8 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         isUpdatable = not isUpdatable
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          node = node, ruleData = "const", params = [$node[namePos], $node.info.line, "constant"])
+          node = node, ruleData = "const", params = [$node[namePos],
+              $node.info.line, "constant"])
     # Check if var declaration can be updated
     else:
       # No default value, can't be updated
@@ -166,7 +167,8 @@ proc setCheckResult(node, section, parent: PNode; messagePrefix: string;
         isUpdatable = not isUpdatable
       setResult(checkResult = not isUpdatable,
           positiveMessage = positiveMessage, negativeMessage = negativeMessage,
-          node = node, ruleData = "let", params = [$node[namePos], $node.info.line, "let"])
+          node = node, ruleData = "let", params = [$node[namePos],
+              $node.info.line, "let"])
 {.push ruleOn: "params".}
 
 checkRule:
@@ -190,7 +192,8 @@ checkRule:
             messagePrefix = messagePrefix, rule = rule)
     except KeyError, Exception:
       rule.amount = errorMessage(text = messagePrefix &
-          "can't check declaration of variable.", e = getCurrentException())
+          "can't check declaration of variable. Reason: ",
+          e = getCurrentException())
   endCheck:
     let negation: Message = (if rule.negation: "'t" else: "")
 
