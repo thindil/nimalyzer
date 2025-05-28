@@ -6,6 +6,10 @@ of the program.
 
 ## [Unreleased]
 
+### Changed
+- Better looking information about the program's error in the `varUplevel`
+  rule.
+
 ### Fixed
 - Possible crash when reaching limit of allowed detected errors.
 
