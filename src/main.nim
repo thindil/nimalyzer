@@ -26,7 +26,7 @@
 ## This is the main module of the program.
 
 # Standard library imports
-import std/[macros, os, strformat, strutils, times]
+import std/[macros, os, parsecfg, streams, strformat, strutils, times]
 # External modules imports
 import compiler/[idents, llstream, options, parser, pathutils]
 import colored_logger
@@ -62,7 +62,12 @@ proc main() {.raises: [], tags: [ReadIOEffect, WriteIOEffect, RootEffect],
     addHandler(handler = logger)
     setLogFilter(lvl = lvlInfo)
     try:
-      info(args = "Starting nimalyzer ver 0.12.0")
+      type ProgVersion = string
+      const version: ProgVersion = staticRead(filename = getProjectPath().parentDir &
+          DirSep &
+          "nimalyzer.nimble").newStringStream.loadConfig.getSectionValue(
+          section = "", key = "version")
+      info(args = "Starting nimalyzer ver " & version)
     except Exception:
       abortProgram(message = "Can't log messages.")
     # No configuration file specified, quit from the program
