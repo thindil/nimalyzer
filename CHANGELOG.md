@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 Tag **BREAKING** means the change break compatibility with a previous version
 of the program.
 
-## [Unreleased]
+## [0.12.1] - 2025-05-30
 
 ### Changed
 - Better looking information about the program's error in the `varUplevel`
