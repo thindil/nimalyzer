@@ -1,4 +1,4 @@
-# Copyright © 2023-2024 Bartek Jasicki
+# Copyright © 2023-2025 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -148,9 +148,14 @@ checkRule:
             if rule.options[0].toLowerAscii in ["all", "used"]:
               let body: PNode = flattenStmts(n = node[bodyPos])
               for childNode in body:
-                index = find(s = $childNode, sub = varName)
-                if index > -1:
-                  break
+                try:
+                  index = find(s = $childNode, sub = varName)
+                  if index > -1:
+                    break
+                except RangeDefect:
+                  rule.amount = errorMessage(text = messagePrefix &
+                      "can't check parameters of procedure " & procName &
+                      " line: " & $node.info.line & ". Reason: procedure is too big.")
               # The node doesn't use one of its parameters
               if index == -1:
                 if rule.negation:
