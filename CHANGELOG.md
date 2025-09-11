@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 Tag **BREAKING** means the change break compatibility with a previous version
 of the program.
 
+## [Unreleased]
+
+### Fixed
+- Crash when checking very long routines for parameters with `params` rule.
+
 ## [0.12.1] - 2025-05-30
 
 ### Changed
