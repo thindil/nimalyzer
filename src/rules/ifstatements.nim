@@ -275,9 +275,10 @@ checkRule:
           try:
             checkNegativeCondition(node = node, parent = parentNode,
                 messagePrefix = messagePrefix, rule = rule)
-          except Exception as e:
+          except Exception:
             rule.amount = errorMessage(
-                text = "Can't check the if statement.", e = e)
+                text = "Can't check the if statement line: " & $node.info.line &
+                ". Reason: ", e = getCurrentException())
             return
         # Check if the last if branch can be moved outside the if statement
         if rule.options[0].toLowerAscii in ["all", "moveable"]:
@@ -326,7 +327,7 @@ checkRule:
             if rule.ruleType == fix and not checkResult:
               return
           # Check the amount of the if statement branches (min and max)
-          if rule.options[0].toLowerAscii in ["min", "max"]and node.kind != nkWhenStmt:
+          if rule.options[0].toLowerAscii in ["min", "max"] and node.kind != nkWhenStmt:
             checkMinMax(node = child, parent = node,
                 messagePrefix = messagePrefix, rule = rule)
   endCheck:
