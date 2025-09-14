@@ -6,6 +6,10 @@ of the program.
 
 ## [Unreleased]
 
+### Changed
+- Better looking information about the program's error in the `ifStatements`
+  rule.
+
 ### Fixed
 - Crash when checking very long routines for parameters with `params` rule.
 
