@@ -1,4 +1,4 @@
-# Copyright © 2023-2024 Bartek thindil Jasicki
+# Copyright © 2023-2025 Bartek thindil Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -275,6 +275,11 @@ checkRule:
           try:
             checkNegativeCondition(node = node, parent = parentNode,
                 messagePrefix = messagePrefix, rule = rule)
+          except RangeDefect:
+            rule.amount = errorMessage(
+                text = "Can't check the if statement line: " & $node.info.line &
+                ". Reason: the if statement block is too big.")
+            return
           except Exception:
             rule.amount = errorMessage(
                 text = "Can't check the if statement line: " & $node.info.line &
