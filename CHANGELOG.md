@@ -12,6 +12,7 @@ of the program.
 
 ### Fixed
 - Crash when checking very long routines for parameters with `params` rule.
+- Crash when checking very long *if* statements with `ifStatements` rule.
 
 ## [0.12.1] - 2025-05-30
 
