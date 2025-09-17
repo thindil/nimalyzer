@@ -166,11 +166,13 @@ checkRule:
               checked.add(y = routineHash)
             elif routineHash in checked:
               continue
-          except Exception:
-            discard
+          except RangeDefect:
+            rule.amount = errorMessage(text = "Can't check if routine in line: " &
+                $node.info.line & " is a forward declaration. Reason: the routine is too big.")
         except Exception:
-          rule.amount = errorMessage(
-              text = "Can't check if thing is a forward declaration.")
+          rule.amount = errorMessage(text = "Can't check if routine in line: " &
+              $node.info.line & " is a forward declaration.",
+              e = getCurrentException())
           return
       # Special check for sections
       if node.kind in {nkConstSection, nkVarSection, nkTypeSection, nkTypeDef, nkLetSection}:
