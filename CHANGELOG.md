@@ -9,7 +9,8 @@ of the program.
 ### Changed
 - Better looking information about the program's error in the `ifStatements`
   rule.
-- Better looking information about too long routines in the `hasDoc`.
+- Better looking information about too long routines in the `hasDoc` and
+  `hasPragma` rules.
 
 ### Fixed
 - Crash when checking very long routines for parameters with `params` rule.
