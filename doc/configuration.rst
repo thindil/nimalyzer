@@ -250,7 +250,7 @@ setting shouldn't contain a new line characters.
     explanation Using standard types like string or int can lead to hard to find bugs when wrong parameters are interacting with self. Also, using a separated types give more information about the parameter.
 
     check namedParams
-    explanation Named parameters allow avoiding assigning invalid values to the calls but also allow to assing the calls' parameters in arbitrary order.
+    explanation Named parameters allow avoiding assigning invalid values to the calls but also allow to assign the calls' parameters in arbitrary order.
 
     check hasDoc all
     explanation The documentation is a love's letter to your future self. :) Documentation make our lives easier, especially if we have return to the code after a longer period of time.
@@ -388,7 +388,7 @@ there is no rules configured for the program.
     explanation Using standard types like string or int can lead to hard to find bugs when wrong parameters are interacting with self. Also, using a separated types give more information about the parameter.
 
     check namedParams
-    explanation Named parameters allow avoiding assigning invalid values to the calls but also allow to assing the calls' parameters in arbitrary order.
+    explanation Named parameters allow avoiding assigning invalid values to the calls but also allow to assign the calls' parameters in arbitrary order.
 
     check hasDoc all
     explanation The documentation is a love's letter to your future self. :) Documentation make our lives easier, especially if we have return to the code after a longer period of time.
