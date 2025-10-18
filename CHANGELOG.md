@@ -8,6 +8,7 @@ of the program.
 
 ### Fixed
 - Typos in the configuration's documentation, ticket: #c8c1aff8e5
+- Documentation for `complexity` rule, ticket: #cac8a77a3b
 
 ## [0.12.2] - 2025-09-21
 
