@@ -1,4 +1,4 @@
-# Copyright © 2023-2024 Bartek thindil Jasicki
+# Copyright © 2023-2025 Bartek thindil Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,10 +35,10 @@
 ##   rules, please refer to the program's documentation. Check type will raise
 ##   an error if the selected type of code block has complexity above the selected
 ##   value. Search type will list all code blocks of the selected
-##   type with the complexity above the selected value and raise error if nothing
-##   was found. Count type will simply list the amount of the selected code
-##   blocks with complexity above the value. Fix type will execute the default
-##   shell command set by the program's setting **fixCommand**.
+##   type with the complexity less than or equal to the selected value and raise
+##   error if nothing was found. Count type will simply list the amount of the
+##   selected code blocks with complexity less than or equal the value. Fix type will
+##   execute the default shell command set by the program's setting **fixCommand**.
 ## * optional word *not* means negation for the rule. Adding word *not* will
 ##   change to inform only about code blocks with complexity below the selected
 ##   value.
