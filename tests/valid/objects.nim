@@ -9,6 +9,7 @@ type
     else:
       d*: int
     b, c: char
+  TestError = object of CatchableError
 
 using
   dontCheck: ref test
