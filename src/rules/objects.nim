@@ -1,4 +1,4 @@
-# Copyright © 2024 Bartek thindil Jasicki
+# Copyright © 2024-2026 Bartek thindil Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -204,7 +204,11 @@ checkRule:
                 oldState = rule.enabled)
           if not rule.enabled:
             continue
+          # Not an object declaration, skip it
           if nodeChild.kind notin {nkObjectTy, nkRefTy}:
+            continue
+          # No fields declared, skip it
+          if nodeChild[2].kind == nkEmpty:
             continue
           var checkResult: bool = false
           # Check if the object's type definition contains any public field
