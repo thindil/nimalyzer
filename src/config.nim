@@ -1,4 +1,4 @@
-# Copyright © 2023-2024 Bartek Jasicki
+# Copyright © 2023-2026 Bartek Jasicki
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -71,86 +71,29 @@ type
     of ConfigKind.message:
       text: Message
 
-proc kind*(config: ConfigData): ConfigKind {.sideEffect, raises: [], tags: [],
-    contractual.} =
-  ## The getter of a field of ConfigData type
+template configGetter(name: untyped; typ: typedesc) =
+  ## Set the getter for a field of ConfigData type
   ##
-  ## * config - the ConfigData object which field will be get
-  ##
-  ## Returns the value of the selected field
-  config.kind
+  ## * name - the name of the field for which the getter will be set
+  ## * typ  - the type of the value of the field
+  proc `name`*(config: ConfigData): `typ` {.sideEffect, raises: [], tags: [],
+      contractual.} =
+    ## The getter of a field of RuleOption type
+    ##
+    ## * opt - the options of the selected rule
+    ##
+    ## Returns the value of the selected field
+    config.`name`
 
-proc text*(config: ConfigData): Message {.sideEffect, raises: [], tags: [],
-    contractual.} =
-  ## The getter of a field of ConfigData type
-  ##
-  ## * config - the ConfigData object which field will be get
-  ##
-  ## Returns the value of the selected field
-  config.text
-
-proc negation*(config: ConfigData): bool {.sideEffect, raises: [], tags: [],
-    contractual.} =
-  ## The getter of a field of ConfigData type
-  ##
-  ## * config - the ConfigData object which field will be get
-  ##
-  ## Returns the value of the selected field
-  config.negation
-
-proc ruleType*(config: ConfigData): RuleTypes {.sideEffect, raises: [], tags: [
-    ], contractual.} =
-  ## The getter of a field of ConfigData type
-  ##
-  ## * config - the ConfigData object which field will be get
-  ##
-  ## Returns the value of the selected field
-  config.ruleType
-
-proc name*(config: ConfigData): RuleName {.sideEffect, raises: [], tags: [],
-    contractual.} =
-  ## The getter of a field of ConfigData type
-  ##
-  ## * config - the ConfigData object which field will be get
-  ##
-  ## Returns the value of the selected field
-  config.name
-
-proc options*(config: ConfigData): seq[RuleOption] {.sideEffect, raises: [],
-    tags: [], contractual.} =
-  ## The getter of a field of ConfigData type
-  ##
-  ## * config - the ConfigData object which field will be get
-  ##
-  ## Returns the value of the selected field
-  config.options
-
-proc forceFixCommand*(config: ConfigData): bool {.sideEffect, raises: [],
-    tags: [], contractual.} =
-  ## The getter of a field of ConfigData type
-  ##
-  ## * config - the ConfigData object which field will be get
-  ##
-  ## Returns the value of the selected field
-  config.forceFixCommand
-
-proc explanation*(config: ConfigData): Message {.sideEffect, raises: [], tags: [
-    ], contractual.} =
-  ## The getter of a field of ConfigData type
-  ##
-  ## * config - the ConfigData object which field will be get
-  ##
-  ## Returns the value of the selected field
-  config.explanation
-
-proc index*(config: ConfigData): ExtendedNatural {.sideEffect, raises: [],
-    tags: [], contractual.} =
-  ## The getter of a field of ConfigData type
-  ##
-  ## * config - the ConfigData object which field will be get
-  ##
-  ## Returns the value of the selected field
-  config.index
+configGetter(name = kind, typ = ConfigKind)
+configGetter(name = text, typ = Message)
+configGetter(name = negation, typ = bool)
+configGetter(name = ruleType, typ = RuleTypes)
+configGetter(name = name, typ = RuleName)
+configGetter(name = options, typ = seq[RuleOption])
+configGetter(name = forceFixCommand, typ = bool)
+configGetter(name = explanation, typ = Message)
+configGetter(name = index, typ = ExtendedNatural)
 
 proc initConfigData(kind: ConfigKind, name: RuleName = "", options: seq[
     RuleOption] = @[], negation: bool = false, ruleType: RuleTypes = none,
