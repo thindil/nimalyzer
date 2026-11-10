@@ -90,8 +90,8 @@ import ../rules
 ruleConfig(ruleName = "tests",
   ruleFoundMessage = "routines with test's suite found",
   ruleNotFoundMessage = "routines with test's suite not found.",
-  rulePositiveMessage = "routine '{params[2]}', line: {params[0]} {params[1]}",
-  ruleNegativeMessage = "routine '{params[2]}', line: {params[0]} {params[1]}",
+  rulePositiveMessage = "routine '{params[0]}', line: {params[1]} has a test",
+  ruleNegativeMessage = "routine '{params[0]}', line: {params[1]} doesn't have a test",
   ruleOptions = @[custom, str],
   ruleOptionValues = @["calls", "unittest2"],
   ruleMinOptions = 1)
@@ -102,6 +102,44 @@ type
 var
   checked: seq[Hash] = @[]
   nodesToCheck: PNode = nil
+
+proc check(node, astNode: PNode; rule: var RuleOptions;
+    messagePrefix: Message; routineName: ProcName) {.contractual, raises: [], tags: [RootEffect].} =
+  ## Find the call of the selected routine
+  ##
+  ## * node        - the AST node representing the call to check
+  ## * astNode     - the parent node of the call to check
+  ## * rule        - the rule options set by the user and the previous iterations
+  ##                 of the procedure
+  ## * routineName - the name of routine to look for
+  ##
+  ## Returns the updated parameter rule.
+  require:
+    node != nil
+    routineName.len > 0
+  body:
+    if not rule.enabled or rule.maxResults == 0:
+      return
+    let callName: ProcName = try:
+          $node[namePos]
+        except KeyError, Exception:
+          ""
+    if callName.len == 0:
+      return
+    var checkResult: bool = callName == routineName
+    if checkResult:
+      setResult(checkResult = checkResult,
+          positiveMessage = positiveMessage,
+          negativeMessage = negativeMessage, node = node, params = [callName,
+          $node.info.line])
+    try:
+      for subNode in node.sons:
+        check(node = subNode, astNode = node, rule = rule,
+            messagePrefix = messagePrefix, routineName = routineName)
+    except KeyError, Exception:
+      rule.amount = errorMessage(text = messagePrefix &
+          "can't look for tests of routine " & callName & " line: " &
+          $node.info.line & ". Reason: ", e = getCurrentException())
 
 checkRule:
   initCheck:
@@ -144,12 +182,6 @@ checkRule:
         codeParser.closeParser
       else:
         nodesToCheck = parentNode
-      try:
-        echo "NODES:"
-        echo nodesToCheck
-        echo "ENDNODES"
-      except:
-        discard
     checked = @[]
   startCheck:
     discard
@@ -178,12 +210,8 @@ checkRule:
         return
       for child in nodesToCheck:
         if child.kind in {nkCall, nkDotCall}:
-          echo "CHILD"
-          try:
-            echo child
-          except:
-            discard
-          echo "ENDCHILD"
+          check(node = child, astNode = parentNode, rule = rule,
+              messagePrefix = messagePrefix, routineName = procName)
   endCheck:
     discard
 
