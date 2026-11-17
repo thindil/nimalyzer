@@ -88,7 +88,7 @@ import compiler/[idents, llstream, options, parser, pathutils]
 import ../rules
 
 ruleConfig(ruleName = "tests",
-  ruleFoundMessage = "routines with test's suite found",
+  ruleFoundMessage = "routines with test's suite",
   ruleNotFoundMessage = "routines with test's suite not found.",
   rulePositiveMessage = "routine '{params[0]}', line: {params[1]} has a test",
   ruleNegativeMessage = "routine '{params[0]}', line: {params[1]} doesn't have a test",
@@ -104,7 +104,8 @@ var
   nodesToCheck: PNode = nil
 
 proc check(node, astNode: PNode; rule: var RuleOptions;
-    messagePrefix: Message; routineName: ProcName) {.contractual, raises: [], tags: [RootEffect].} =
+    messagePrefix: Message; routineName: ProcName) {.contractual, raises: [],
+        tags: [RootEffect].} =
   ## Find the call of the selected routine
   ##
   ## * node        - the AST node representing the call to check
@@ -213,7 +214,13 @@ checkRule:
           check(node = child, astNode = parentNode, rule = rule,
               messagePrefix = messagePrefix, routineName = procName)
   endCheck:
-    discard
+    if rule.amount == 0:
+      if rule.negation:
+        rule.amount = 1
+      elif rule.ruleType == check:
+        message(text = messagePrefix & " not subroutine with test suite found.",
+            returnValue = rule.amount)
+        rule.amount = int.low
 
 fixRule:
   discard
