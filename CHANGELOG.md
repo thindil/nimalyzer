@@ -6,10 +6,14 @@ of the program.
 
 ## [Unreleased]
 
+### Added
+- New rule `tests` to check if all subroutines declarations in a code have also
+  declared a test suite. For now it only support unittest2 module.
+
 ### Fixed
 - Typos in the configuration's documentation, ticket: #c8c1aff8e5
 - Documentation for `complexity` rule, ticket: #cac8a77a3b
-- Rule `objects` no longer checks inherited objects without fields
+- Rule `objects` no longer checks inherited objects without fields.
 
 ## [0.12.2] - 2025-09-21
 
